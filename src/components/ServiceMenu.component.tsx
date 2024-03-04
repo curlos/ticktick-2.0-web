@@ -1,24 +1,9 @@
-import React from "react";
-import { MdMenuOpen, MdCheckBox, MdCalendarMonth, MdGridView } from "react-icons/md";
+import Icon from "./Icon.component";
 
-interface IconProps {
-    name: string;
-    customClass?: string;
-    fill?: number;
-    wght?: number;
-    grad?: number;
-    opsz?: number;
-}
-
-const Icon: React.FC<IconProps> = ({ name, customClass, fill = 1, wght = 400, grad = 0, opsz = 48 }) => (
-    <span className={"material-symbols-rounded" + (customClass ? ' ' + customClass : '')} style={{
-        fontVariationSettings: `'FILL' ${fill}, 'wght' ${wght}, 'GRAD' ${grad}, 'opsz' ${opsz}`
-    }}>{name}</span>
-);
 
 const ServiceMenu = () => {
     return (
-        <div className="bg-black h-full flex flex-col justify-between gap-10 h-screen">
+        <div className="bg-black h-full flex flex-col justify-between gap-10 h-screen pt-2 pb-3">
             <div>
                 <div className="rounded-full bg-black p-2 mb-3">
                     <img src="/prestige-9-bo2.png" alt="user-icon" className="w-[35px] h-[35px]" />
