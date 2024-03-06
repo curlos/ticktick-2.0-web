@@ -1,42 +1,52 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+[data-theme=black-theme] {
+    --primary: rgb(49, 54, 67);
+    --grey: rgb(25, 25, 25);
+    --gallery: rgb(238, 238, 238);
+    --main-background: rgb(255, 255, 255);
+    --primary-front: rgb(0, 0, 0);
+    --summer-bg: rgb(5, 93, 116);
+    --white: rgb(255, 255, 255);
+    --black: rgb(0, 0, 0);
+    --priority-low: rgb(71, 114, 250);
+    --priority-medium: rgb(250, 168, 12);
+    --priority-high: rgb(225, 62, 57);
+    --min-cal-color: rgb(255, 255, 255);
+    --sidebar-icon-number-color: rgb(229, 229, 229);
+    --sidebar-bg-color: rgb(229, 229, 229);
+    --sidebar-color: rgb(25, 25, 25);
+    --left-sidebar-color: rgb(255, 255, 255);
+    --left-sidebar-bg-color: rgb(25, 25, 25);
+    --orange: rgb(255, 89, 0);
+    --green: rgb(12, 206, 156);
+    --turquoise: rgb(16, 195, 238);
+    --dark-red: rgb(224, 49, 49);
+    --brand-primary: rgb(71, 114, 250);
+    --brand-secondary: rgb(255, 176, 0);
+    --warn-red: rgb(224, 49, 49);
+    --highlight: rgb(251, 193, 64);
+    --highlight-sub: rgb(242, 217, 162);
+    --team-orange: rgb(251, 129, 66);
+    --team-orange-active: rgb(206, 108, 58);
+    --team-orange-hover: rgb(252, 154, 104);
+    --team-orange-disable: rgb(253, 205, 179);
+    --cancel-btn-hover: rgb(244, 244, 244);
+    --cancel-btn-active: rgb(232, 232, 232);
+    --screen-background: rgb(255, 255, 255);
+    --light-black: rgb(51, 51, 51);
+    --btn-active-color: rgb(44, 48, 59);
+    --btn-hover-color: rgb(90, 94, 105);
+    --btn-disable-color: rgb(173, 175, 180);
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
 }
