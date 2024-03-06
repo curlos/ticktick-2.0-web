@@ -12,7 +12,7 @@ interface ListItemProps {
 }
 
 const ListItem: React.FC<ListItemProps> = ({ name, iconName, emoji, iconFill, numberOfTasks, listColor, folder }) => (
-    <div className={"p-2 rounded-lg flex items-center justify-between cursor-pointer hover:bg-color-medium-gray cursor-pointer" + (name === 'Hello Mobile' ? ' bg-color-light-gray' : '')}>
+    <div className={"p-2 rounded-lg flex items-center justify-between cursor-pointer hover:bg-color-gray-600 cursor-pointer" + (name === 'Hello Mobile' ? ' bg-color-gray-200' : '')}>
         <div className="flex items-center gap-2">
             <div className="flex items-center gap-0">
                 {folder && <Icon name={"chevron_right"} customClass={"text-white !text-[12px] ml-[-12px]"} fill={iconFill != undefined ? iconFill : 1} />}
@@ -25,7 +25,7 @@ const ListItem: React.FC<ListItemProps> = ({ name, iconName, emoji, iconFill, nu
         </div>
 
         {numberOfTasks ? (
-            <div className="text-color-lighter-gray">{numberOfTasks}</div>
+            <div className="text-color-gray-100">{numberOfTasks}</div>
         ) : ''}
     </div>
 );
@@ -158,11 +158,11 @@ const TaskListSidebar = () => {
                 ))}
             </div>
 
-            <hr className="my-3 border-color-light-gray opacity-50" />
+            <hr className="my-3 border-color-gray-200 opacity-50" />
 
             <div className="">
                 <div>
-                    <div className="p-2 text-color-light-gray">Lists</div>
+                    <div className="p-2 text-color-gray-200">Lists</div>
 
                     <div>
                         {generalLists.map((listPropsAndValues, index) => (
@@ -172,17 +172,17 @@ const TaskListSidebar = () => {
                 </div>
 
                 <div className="pt-3">
-                    <div className="p-2 text-color-lighter-gray">Filters</div>
-                    <div className="p-2 rounded-lg text-color-lighter-gray bg-color-medium-gray text-[12px]">Display tasks filtered by list, date, priority, tag, and more</div>
+                    <div className="p-2 text-color-gray-100">Filters</div>
+                    <div className="p-2 rounded-lg text-color-gray-100 bg-color-gray-600 text-[12px]">Display tasks filtered by list, date, priority, tag, and more</div>
                 </div>
 
                 <div className="pt-3">
-                    <div className="p-2 text-color-lighter-gray">Tags</div>
-                    <div className="p-2 rounded-lg text-color-lighter-gray bg-color-medium-gray text-[12px]">Categorize your tasks with tags. Quickly select a tag by typing "#" when adding a task</div>
+                    <div className="p-2 text-color-gray-100">Tags</div>
+                    <div className="p-2 rounded-lg text-color-gray-100 bg-color-gray-600 text-[12px]">Categorize your tasks with tags. Quickly select a tag by typing "#" when adding a task</div>
                 </div>
             </div>
 
-            <hr className="my-4 border-color-lighter-gray opacity-50" />
+            <hr className="my-4 border-color-gray-100 opacity-50" />
 
             {statusLists.map((listPropsAndValues, index) => (
                 <ListItem key={index} {...listPropsAndValues} />

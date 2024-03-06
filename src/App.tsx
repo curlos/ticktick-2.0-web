@@ -1,5 +1,6 @@
 import './App.css';
 import ServiceMenu from './components/ServiceMenu.component';
+import TaskList from './components/TaskList.component';
 import TaskListSidebar from './components/TaskListSidebar.component';
 
 function App() {
@@ -12,7 +13,9 @@ function App() {
         <div className="flex-[3]">
           <TaskListSidebar />
         </div>
-        <div className="flex-[10] bg-blue-500">dsadasd</div>
+        <div className="flex-[10] bg-blue-500">
+          <TaskList />
+        </div>
         <div className="flex-[6] bg-red-500">dsadasd</div>
       </div>
     </>
