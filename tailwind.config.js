@@ -9,7 +9,8 @@ export default {
       colors: {
         'color-primary': 'rgb(49, 54, 67)',
         'color-gray': '#191919',
-        'color-light-gray': '#757575',
+        'color-lighter-gray': '#919191',
+        'color-light-gray': '#474747',
         'color-medium-gray': '#2f2f2f'
       },
     },
