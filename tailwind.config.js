@@ -8,9 +8,9 @@ export default {
     extend: {
       colors: {
         'color-primary': 'rgb(49, 54, 67)',
-        'color-gray': 'rgb(25, 25, 25)',
+        'color-gray': '#191919',
         'color-light-gray': '#757575',
-        'color-medium-gray': '#474747'
+        'color-medium-gray': '#2f2f2f'
       },
     },
   },

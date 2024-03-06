@@ -7,7 +7,7 @@ interface IconProps {
     opsz?: number;
 }
 
-const Icon: React.FC<IconProps> = ({ name, customClass, fill = 1, wght = 400, grad = 0, opsz = 48 }) => (
+const Icon: React.FC<IconProps> = ({ name, customClass, fill = 1, wght = 400, grad = 0, opsz = 24 }) => (
     <span className={"material-symbols-rounded" + (customClass ? ' ' + customClass : '')} style={{
         fontVariationSettings: `'FILL' ${fill}, 'wght' ${wght}, 'GRAD' ${grad}, 'opsz' ${opsz}`
     }}>{name}</span>
