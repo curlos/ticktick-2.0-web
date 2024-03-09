@@ -14,8 +14,6 @@ const TaskListByCategory: React.FC<TaskListByCategoryProps> = ({ tasks }) => {
     const [showTasks, setShowTasks] = useState(true);
     const categoryIconClass = "text-color-gray-100 !text-[16px] hover:text-white";
 
-    console.log(tasks);
-
     return (
         <div>
             {category && (
@@ -45,7 +43,7 @@ const TaskListPage = () => {
                 <div className="flex justify-between items-center">
                     <div className="flex gap-1 items-center">
                         <Icon name="menu_open" customClass={"text-white !text-[24px]"} />
-                        <h3 className="text-[20px]">Hello Mobile</h3>
+                        <h3 className="text-[20px] font-[600]">Hello Mobile</h3>
                     </div>
 
                     <div className="flex items-center gap-2">
