@@ -12,19 +12,19 @@ const ServiceMenu = () => {
                 </div>
                 <div className="flex flex-col items-center gap-3">
                     <Icon name="check_box" customClass={iconCustomClass} />
-                    <Icon name="calendar_month" customClass={iconCustomClass} />
-                    <Icon name="grid_view" customClass={iconCustomClass} />
+                    {/* <Icon name="calendar_month" customClass={iconCustomClass} /> */}
+                    {/* <Icon name="grid_view" customClass={iconCustomClass} /> */}
                     <Icon name="timer" customClass={iconCustomClass} />
-                    <Icon name="location_on" customClass={iconCustomClass} />
-                    <Icon name="search" customClass={iconCustomClass} grad={200} />
+                    {/* <Icon name="location_on" customClass={iconCustomClass} /> */}
+                    {/* <Icon name="search" customClass={iconCustomClass} grad={200} /> */}
                 </div>
             </div>
 
-            <div className="flex flex-col items-center gap-3">
+            {/* <div className="flex flex-col items-center gap-3">
                 <Icon name="sync" customClass={iconCustomClass} grad={200} />
                 <Icon name="notifications" customClass={iconCustomClass} />
                 <Icon name="help" customClass={iconCustomClass} />
-            </div>
+            </div> */}
         </div>
     );
 };

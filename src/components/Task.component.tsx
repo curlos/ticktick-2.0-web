@@ -2,16 +2,17 @@ import { useState } from "react";
 import Icon from "./Icon.component";
 import { TaskObj } from "../types/types";
 import { millisecondsToHoursAndMinutes } from "../utils/helpers.utils";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 interface TaskProps {
     tasks: Array<TaskObj>;
     taskId: string;
-    fromTaskDetails: boolean;
+    fromTaskDetails?: boolean;
 }
 
 const Task: React.FC<TaskProps> = ({ tasks, taskId, fromTaskDetails }) => {
     let navigate = useNavigate();
+    let { taskId: taskIdFromUrl } = useParams();
 
     const { _id, title, directSubtasks, parentId, completedPomodoros, timeTaken, estimatedDuration, deadline } = tasks[taskId];
 
@@ -22,8 +23,14 @@ const Task: React.FC<TaskProps> = ({ tasks, taskId, fromTaskDetails }) => {
     const categoryIconClass = ' text-color-gray-100 !text-[16px] hover:text-white' + (directSubtasks?.length >= 1 ? '' : ' invisible');
 
     return (
-        <div className={`${(!parentId || fromTaskDetails) ? 'py-2' : 'pt-2 pl-6'}`}>
-            <div className="flex items-center gap-1">
+        <div className={`${(!parentId || fromTaskDetails) ? 'ml-0' : 'ml-4'}`}>
+            <div
+                className={`flex items-center p-2 hover:bg-color-gray-600 cursor-pointer rounded-lg` + (taskIdFromUrl == taskId ? ' bg-color-gray-300' : '')}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/tasks/${_id}`);
+                }}
+            >
                 {!fromTaskDetails && (
                     <div className="flex items-center cursor-pointer" onClick={() => setShowSubtasks(!showSubtasks)}>
                         {showSubtasks ? (
@@ -35,16 +42,22 @@ const Task: React.FC<TaskProps> = ({ tasks, taskId, fromTaskDetails }) => {
                 )}
 
                 <div className="flex gap-1 cursor-pointer">
-                    {!completed ? (
-                        <Icon name="check_box_outline_blank" customClass={"text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-p"} />
-                    ) : (
-                        <Icon name="check_box" customClass={"text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-p"} />
-                    )}
-
-                    <div onClick={(e) => {
+                    <div className="h-[20px]" onClick={(e) => {
                         e.stopPropagation();
-                        navigate(`/tasks/${_id}`);
+                        setCompleted(!completed);
                     }}>
+                        {!completed ? (
+                            directSubtasks.length >= 1 ? (
+                                <Icon name="list_alt" fill={0} customClass={"text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-p"} />
+                            ) : (
+                                <Icon name="check_box_outline_blank" customClass={"text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-p"} />
+                            )
+                        ) : (
+                            <Icon name="check_box" customClass={"text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-p"} />
+                        )}
+                    </div>
+
+                    <div className={completed ? 'line-through text-color-gray-100' : ''}>
                         {title}
                     </div>
                 </div>

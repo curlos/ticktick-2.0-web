@@ -52,7 +52,11 @@ const TaskDetailsPage = () => {
             <div className="flex justify-between items-center p-4 border-b border-color-gray-200">
                 <div className="flex items-center gap-2">
                     {!completed ? (
-                        <Icon name="check_box_outline_blank" customClass={"text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-p"} />
+                        directSubtasks.length >= 1 ? (
+                            <Icon name="list_alt" fill={0} customClass={"text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-p"} />
+                        ) : (
+                            <Icon name="check_box_outline_blank" customClass={"text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-p"} />
+                        )
                     ) : (
                         <Icon name="check_box" customClass={"text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-p"} />
                     )}
