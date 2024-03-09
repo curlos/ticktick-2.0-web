@@ -1,14 +1,21 @@
 import { useState } from "react";
 import Icon from "../components/Icon.component";
+import { TaskObj } from "../types/types";
+import Task from "./Task.component";
 
-const TaskList: React.FC<Array<Object>> = ({ tasks }) => {
+interface TaskListProps {
+    tasks: Array<TaskObj>;
+}
+
+const TaskList: React.FC<TaskListProps> = ({ tasks }) => {
+
     return (
         <div>
-            <div className="flex items-center text-[12px]">
-                <Icon name="chevron_right" customClass={"text-color-gray-100 !text-[16px]"} />
-                <span className="mr-[6px]">High</span>
-                <span className="text-color-gray-100">3</span>
-            </div>
+            {Object.values(tasks).map((task) => {
+                return (
+                    !task.parentId && <Task key={task._id} tasks={tasks} taskId={task._id} />
+                );
+            })}
         </div>
     );
 };
