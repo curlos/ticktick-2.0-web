@@ -3,17 +3,72 @@ import { useEffect, useState } from "react";
 import Icon from "../Icon.component";
 import { areDatesEqual } from "../../utils/helpers.utils";
 
+
+
+interface BigDateIconOptionProps {
+    iconName: string;
+    tooltipText: string;
+    onClick?: () => void;
+}
+
+const BigDateIconOption: React.FC<BigDateIconOptionProps> = ({ iconName, tooltipText, onClick }) => {
+    const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+
+    return (
+        <div>
+            <Icon name={iconName} fill={0} customClass="text-color-gray-50 !text-[24px] hover:text-white hover:bg-color-gray-200 p-1 rounded cursor-pointer" onClick={onClick} onMouseOver={() => setIsTooltipVisible(true)} onMouseLeave={() => setIsTooltipVisible(false)} />
+            <Tooltip isVisible={isTooltipVisible} customClasses={' !bg-black'}>
+                <div className="p-2 text-[12px] text-nowrap">
+                    {tooltipText}
+                </div>
+            </Tooltip>
+        </div>
+    );
+};
+
 interface CalendarProps {
     dueDate: Date | null;
     setDueDate: React.Dispatch<React.SetStateAction<Date | null>>;
 }
 
+const BigDateIconOptionList: React.FC<CalendarProps> = ({ dueDate, setDueDate }) => {
+    const today = new Date();
+
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const nextWeek = new Date(today);
+    nextWeek.setDate(nextWeek.getDate() + 7);
+
+    const nextMonth = new Date(today);
+    nextMonth.setMonth(nextMonth.getMonth() + 1);
+
+    return (
+        <div className="my-5 flex justify-between">
+            <BigDateIconOption iconName="sunny" tooltipText="Today" onClick={() => {
+                setDueDate(today);
+            }} />
+            <BigDateIconOption iconName="wb_twilight" tooltipText="Tomorrow" onClick={() => {
+                setDueDate(tomorrow);
+            }} />
+            <BigDateIconOption iconName="event_upcoming" tooltipText="Next Week" onClick={() => {
+                setDueDate(nextWeek);
+            }} />
+            <BigDateIconOption iconName="clear_night" tooltipText="Next Month" onClick={() => {
+                setDueDate(nextMonth);
+            }} />
+        </div>
+    );
+};
+
 const Calendar: React.FC<CalendarProps> = ({ dueDate, setDueDate }) => {
     const [currentDate, setCurrentDate] = useState(new Date());
 
     useEffect(() => {
-        setDueDate(new Date());
-    }, []);
+        if (dueDate) {
+            setCurrentDate(dueDate);
+        }
+    }, [dueDate]);
 
     function getCalendarMonth(year, month) {
         const calendar = [];
@@ -72,11 +127,33 @@ const Calendar: React.FC<CalendarProps> = ({ dueDate, setDueDate }) => {
                         <div key={`week-${index}`} className="mb-1 grid grid-cols-7 gap-1">
                             {week.map((day, index) => {
                                 const isCurrentMonth = day.getMonth() === currentDate.getMonth();
+                                const isDayToday = areDatesEqual(new Date(), day);
+                                const isChosenDay = areDatesEqual(dueDate, day);
+                                let appliedStyles = [];
+
+                                if (isCurrentMonth) {
+                                    if (isChosenDay) {
+                                        appliedStyles.push('bg-blue-500 text-white');
+                                    } else if (isDayToday) {
+                                        appliedStyles.push('bg-color-gray-200 text-blue-500');
+                                    } else {
+                                        appliedStyles.push('text-white bg-transparent hover:bg-color-gray-20');
+                                    }
+                                } else {
+                                    appliedStyles.push('text-color-gray-100 bg-transparent hover:bg-color-gray-20');
+                                }
+
+                                const handleClick = () => {
+                                    setCurrentDate(new Date(day.getFullYear(), day.getMonth(), 1));
+                                    setDueDate(day);
+                                };
+
                                 return (
-                                    <div key={`day-${index}`} className={`py-1 cursor-pointer rounded-full ${isCurrentMonth ? 'text-white' : 'text-color-gray-100'} ${areDatesEqual(dueDate, day) ? ' bg-blue-500 text-white' : ' bg-transparent hover:bg-color-gray-200'}`} onClick={() => {
-                                        setCurrentDate(new Date(day.getFullYear(), day.getMonth(), 1));
-                                        setDueDate(day);
-                                    }}>
+                                    <div
+                                        key={`day-${index}`}
+                                        className={`py-1 cursor-pointer rounded-full ${appliedStyles}`}
+                                        onClick={handleClick}
+                                    >
                                         {day.getDate()}
                                     </div>
                                 );
@@ -97,7 +174,6 @@ interface TooltipPrioritiesProps {
 
 const TooltipCalendar: React.FC<TooltipPrioritiesProps> = ({ isTooltipVisible, dueDate, setDueDate }) => {
     const [selectedView, setSelectedView] = useState('date');
-    const bigIconsStyle = "text-color-gray-50 !text-[24px] hover:text-white hover:bg-color-gray-200 p-1 rounded cursor-pointer";
 
     interface TimeOptionProps {
         name: string;
@@ -115,29 +191,6 @@ const TooltipCalendar: React.FC<TooltipPrioritiesProps> = ({ isTooltipVisible, d
         </div>
     );
 
-    interface BigDateIconOptionProps {
-        iconName: string;
-        tooltipText: string;
-    }
-
-    const BigDateIconOption: React.FC<BigDateIconOptionProps> = ({ iconName, tooltipText }) => {
-        const [isTooltipVisible, setIsTooltipVisible] = useState(false);
-
-        return (
-            <div>
-                <Icon name={iconName} fill={0} customClass={bigIconsStyle} onFocus={() => setIsTooltipVisible(true)} onBlur={() => setIsTooltipVisible(false)} />
-                <Tooltip isVisible={isTooltipVisible} customClasses={' bg-black'}>
-                    <div>
-                        sadasd
-                        sadasd
-                        sadasd
-                        sadasddsad
-                    </div>
-                </Tooltip>
-            </div>
-        );
-    };
-
 
     return (
         <div className={`${isTooltipVisible ? '' : 'hidden'} custom-tooltip-position`}>
@@ -149,12 +202,7 @@ const TooltipCalendar: React.FC<TooltipPrioritiesProps> = ({ isTooltipVisible, d
                             <div className={"rounded-md p-[2px]" + (selectedView === 'duration' ? ' bg-color-gray-600' : '')} onClick={() => setSelectedView('duration')}>Duration</div>
                         </div>
 
-                        <div className="my-5 flex justify-between">
-                            <BigDateIconOption iconName="sunny" tooltipText="today" />
-                            <BigDateIconOption iconName="wb_twilight" tooltipText="today" />
-                            <BigDateIconOption iconName="event_upcoming" tooltipText="today" />
-                            <BigDateIconOption iconName="clear_night" tooltipText="today" />
-                        </div>
+                        <BigDateIconOptionList dueDate={dueDate} setDueDate={setDueDate} />
                     </div>
 
                     <Calendar dueDate={dueDate} setDueDate={setDueDate} />
