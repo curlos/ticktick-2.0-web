@@ -16,7 +16,7 @@ function App() {
 
   const HomePage = () => {
     return (
-      <div className="flex">
+      <div className="flex max-w-screen">
         <div className="">
           <ServiceMenu />
         </div>

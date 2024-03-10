@@ -57,7 +57,7 @@ const Task: React.FC<TaskProps> = ({ tasks, taskId, fromTaskDetails }) => {
                         )}
                     </div>
 
-                    <div className={completed ? 'line-through text-color-gray-100' : ''}>
+                    <div className={'break-all' + (completed ? ' line-through text-color-gray-100' : '')}>
                         {title}
                     </div>
                 </div>
