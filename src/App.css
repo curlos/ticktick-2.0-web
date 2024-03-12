@@ -50,3 +50,19 @@
     scrollbar-width: none;
     /* Firefox */
 }
+
+/* Styles applied within the .gray-scrollbar class context */
+.gray-scrollbar::-webkit-scrollbar {
+    width: 10px;
+}
+
+.gray-scrollbar::-webkit-scrollbar-thumb {
+    background: #919191;
+    border-radius: 5px;
+}
+
+/* Firefox and other standard property supporting browsers */
+.gray-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #919191 transparent;
+}
