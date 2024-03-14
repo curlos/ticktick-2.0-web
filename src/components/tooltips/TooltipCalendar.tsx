@@ -1,8 +1,12 @@
 import Tooltip from "./Tooltip";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Icon from "../Icon.component";
-import { areDatesEqual } from "../../utils/helpers.utils";
+import { areDatesEqual, debounce } from "../../utils/helpers.utils";
 import CustomRadioButton from "../CustomRadioButton";
+import Fuse from 'fuse.js';
+import TooltipTimeZoneSelector from "./TooltipTimeZoneSelector";
+import TooltipFixedOrFloatingTimeZone from "./TooltipFixedOrFloatingTimeZone";
+import TooltipTime from "./TooltipTIme";
 
 interface BigDateIconOptionProps {
     iconName: string;
@@ -165,127 +169,6 @@ const Calendar: React.FC<CalendarProps> = ({ dueDate, setDueDate }) => {
     );
 };
 
-interface TooltipTimeProps {
-    isTimeTooltipVisibile: boolean;
-}
-
-const getTimesArray = () => {
-    let timesArray = [];
-    for (let hour = 0; hour < 24; hour++) {
-        for (let min = 0; min < 60; min += 30) {
-            let time =
-                `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
-            timesArray.push(time);
-        }
-    }
-
-    return timesArray;
-};
-
-const TooltipTime: React.FC<TooltipTimeProps> = ({ isTimeTooltipVisibile }) => {
-    const timesArray = getTimesArray();
-    const [selectedTime, setSelectedTime] = useState('14:00');
-    const [isTimezoneTooltipVisible, setIsTimezoneTooltipVisible] = useState(true);
-    const [isTooltipFixedOrFloatingTimeZone, setIsTooltipFixedOrFloatingTimeZone] = useState(true);
-
-    console.log(timesArray);
-
-    return (
-        <Tooltip isVisible={isTimeTooltipVisibile} customClasses={' mt-[-280px] ml-[-5px] shadow-2xl border border-color-gray-200 rounded-[4px]'}>
-            <div className="w-[260px] p-1">
-                <div className="overflow-auto gray-scrollbar h-[240px]">
-                    {timesArray.map((time) => {
-                        const isTimeSelected = selectedTime == time;
-
-                        return (
-                            <div
-                                key={time}
-                                className="flex items-center justify-between hover:bg-color-gray-300 p-2 rounded-lg"
-                                onClick={() => setSelectedTime(time)}
-                            >
-                                <div className={isTimeSelected ? 'text-blue-500' : ''}>{time}</div>
-                                {isTimeSelected && <Icon name="check" fill={0} customClass={'text-blue-500 !text-[18px] hover:text-white cursor-pointer'} />}
-                            </div>
-                        );
-                    })}
-                </div>
-
-                {/* TODO: Possibly add a button that lets you choose the specific Timezone. I think it'd be interesting but NOT required at the moment. */}
-                <div className="p-2 mt-2">
-                    <div className="border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500" onClick={() => {
-                        setIsTimezoneTooltipVisible(!isTimezoneTooltipVisible);
-                    }}>
-                        <TooltipFixedOrFloatingTimeZone isVisible={isTooltipFixedOrFloatingTimeZone} setIsVisible={setIsTooltipFixedOrFloatingTimeZone} />
-                        <div>New York, GMT-4</div>
-                        <Icon name="expand_more" fill={0} customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'} />
-                    </div>
-                </div>
-            </div>
-        </Tooltip>
-    );
-};
-
-interface TooltipFixedOrFloatingTimeZoneProps {
-    isVisible: boolean;
-    setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-const TooltipFixedOrFloatingTimeZone: React.FC<TooltipFixedOrFloatingTimeZoneProps> = ({ isVisible, setIsVisible }) => {
-    const [tempSelectedZone, setTempSelectedZone] = useState('New York, GMT-4');
-    const [selectedTimeTrackingType, setSelectedTimeTrackingType] = useState('Fixed Time Zone');
-
-    const handleRadioChange = (e) => {
-        console.log(e.target.value);
-        setSelectedTimeTrackingType(e.target.value);
-    };
-
-    return (
-        <Tooltip isVisible={isVisible} customClasses={' mt-[-290px] ml-[-22px] shadow-2xl border border-color-gray-200 rounded-lg'}>
-            <div className="w-[260px] p-3 rounded" onClick={(e) => e.stopPropagation()}>
-                <CustomRadioButton
-                    label="Fixed Time Zone"
-                    name="Fixed Time Zone"
-                    checked={selectedTimeTrackingType === 'Fixed Time Zone'}
-                    onChange={handleRadioChange}
-                />
-
-                {/* selectedTimeTrackingType === 'Fixed Time Zone' */}
-
-                <div className="border border-color-gray-200 rounded p-[2px] px-2 flex justify-between items-center hover:border-blue-500 mt-2 mb-5">
-                    {/* {isTimezoneTooltipVisible && (
-                        <Tooltip isVisible={isTimezoneTooltipVisible} customClasses={' mt-[-280px] ml-[-20px] shadow-2xl border border-color-gray-200 rounded-[4px]'}>
-                            <div className="w-[260px]">
-                                Fixed Time Zone
-                            </div>
-                        </Tooltip>
-                    )} */}
-                    <div className="text-[12px]">New York, GMT-4</div>
-                    <Icon name="expand_more" fill={0} customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'} />
-                </div>
-
-                <CustomRadioButton
-                    label="Floating Time"
-                    name="Floating Time"
-                    checked={selectedTimeTrackingType === 'Floating Time'}
-                    onChange={handleRadioChange}
-                />
-                <div className="text-[12px] mt-1 text-color-gray-100">When time zone changes, time remains the same.</div>
-
-                <div className="mt-5 mb-4 text-center text-color-gray-100 underline text-[12px]">Learn More</div>
-
-                <div className="grid grid-cols-2 gap-2">
-                    <button className="border border-color-gray-200 rounded py-[2px] cursor-pointer hover:bg-color-gray-200" onClick={() => {
-                        setIsVisible(false);
-                    }}>Cancel</button>
-                    <button className="bg-blue-500 rounded py-[2px] cursor-pointer hover:bg-blue-600" onClick={() => {
-                        setIsVisible(false);
-                    }}>Ok</button>
-                </div>
-            </div>
-        </Tooltip>
-    );
-};
-
 interface TooltipPrioritiesProps {
     isTooltipVisible: boolean;
     dueDate: Date | null;
@@ -294,7 +177,7 @@ interface TooltipPrioritiesProps {
 
 const TooltipCalendar: React.FC<TooltipPrioritiesProps> = ({ isTooltipVisible, dueDate, setDueDate }) => {
     const [selectedView, setSelectedView] = useState('date');
-    const [isTimeTooltipVisibile, setIsTimeTooltipVisible] = useState(true);
+    const [isTimeTooltipVisibile, setIsTimeTooltipVisible] = useState(false);
     interface TimeOptionProps {
         name: string;
         iconName: string;
@@ -331,7 +214,7 @@ const TooltipCalendar: React.FC<TooltipPrioritiesProps> = ({ isTooltipVisible, d
                     <div className="px-1 mb-4">
                         <TooltipTime isTimeTooltipVisibile={isTimeTooltipVisibile} />
                         <TimeOption name="Time" iconName="schedule" onClick={() => {
-                            setIsTimeTooltipVisible(true);
+                            setIsTimeTooltipVisible(!isTimeTooltipVisibile);
                         }} />
                         <TimeOption name="Reminder" iconName="alarm" />
                         {/* TODO: Could add this in the future but I haven't personally used this feature too much, so will leave it for later as I don't actually fully understand it quite yet. */}

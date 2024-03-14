@@ -39,3 +39,27 @@ export function areDatesEqual(date1: Date | null, date2: Date | null) {
         date1.getFullYear() === date2.getFullYear()
     );
 }
+
+export function debounce(func, wait, immediate = null) {
+    var timeout;
+    var cancelled = false; // flag to check if the debounce was cancelled
+
+    var debounced = function () {
+        var context = this, args = arguments;
+        var later = function () {
+            timeout = null;
+            if (!immediate && !cancelled) func.apply(context, args);
+        };
+        var callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) func.apply(context, args);
+    };
+
+    debounced.cancel = function () {
+        clearTimeout(timeout);
+        cancelled = true; // set the flag
+    };
+
+    return debounced;
+}
