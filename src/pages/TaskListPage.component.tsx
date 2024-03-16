@@ -47,7 +47,7 @@ const AddTaskInput = () => {
         flagColor: '#7B7B7B'
     });
     const [dueDate, setDueDate] = useState(null);
-    const [isTooltipVisible, setIsTooltipVisible] = useState(true);
+    const [isTooltipCalendarVisible, setIsTooltipCalendarVisible] = useState(false);
 
     const handleAddTask = async (e) => {
         e.preventDefault();
@@ -103,8 +103,8 @@ const AddTaskInput = () => {
                     onBlur={() => setFocused(false)}
                 ></input>
                 <span className="h-[24px] cursor-pointer">
-                    <Icon name="calendar_month" customClass={"text-color-gray-100 !text-[20px]"} />
-                    <TooltipCalendar isTooltipVisible={isTooltipVisible} dueDate={dueDate} setDueDate={setDueDate} />
+                    <Icon name="calendar_month" customClass={"text-color-gray-100 !text-[20px]"} onClick={() => setIsTooltipCalendarVisible(!isTooltipCalendarVisible)} />
+                    <TooltipCalendar isVisible={isTooltipCalendarVisible} setIsVisible={setIsTooltipCalendarVisible} dueDate={dueDate} setDueDate={setDueDate} />
                 </span>
                 <span className="h-[24px] cursor-pointer">
                     <Icon name="expand_more" customClass={"text-color-gray-100 !text-[22px]"} />

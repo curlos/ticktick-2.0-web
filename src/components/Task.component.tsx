@@ -32,7 +32,10 @@ const Task: React.FC<TaskProps> = ({ tasks, taskId, fromTaskDetails }) => {
                 }}
             >
                 {!fromTaskDetails && (
-                    <div className="flex items-center cursor-pointer" onClick={() => setShowSubtasks(!showSubtasks)}>
+                    <div className="flex items-center cursor-pointer" onClick={(e) => {
+                        e.stopPropagation();
+                        setShowSubtasks(!showSubtasks);
+                    }}>
                         {showSubtasks ? (
                             <Icon name="expand_more" customClass={categoryIconClass} />
                         ) : (
