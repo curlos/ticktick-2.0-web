@@ -63,3 +63,23 @@ export function debounce(func, wait, immediate = null) {
 
     return debounced;
 }
+
+export function getDateWithOrdinalAndMonth(date: Date, includeMonth = false) {
+    const day = date.getDate();
+    let ordinal = 'th';
+    if (day % 10 === 1 && day !== 11) {
+        ordinal = 'st';
+    } else if (day % 10 === 2 && day !== 12) {
+        ordinal = 'nd';
+    } else if (day % 10 === 3 && day !== 13) {
+        ordinal = 'rd';
+    }
+    const formattedDay = `${day}${ordinal}`;
+
+    if (includeMonth) {
+        const month = date.toLocaleString('en-US', { month: 'long' });
+        return `${month} ${formattedDay}`;
+    }
+
+    return formattedDay;
+}

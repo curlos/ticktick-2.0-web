@@ -38,6 +38,27 @@ function App() {
     );
   };
 
+  const FocusPage = () => {
+    return (
+      <div className="flex max-w-screen">
+        <div className="">
+          <ServiceMenu />
+        </div>
+        <div className="flex-[10] bg-blue-500">
+          <TaskListPage />
+        </div>
+        <div className="flex-[6] bg-red-500">
+          {/* <ResizableBox width={500} height={'100%'} resizeHandles={['sw', 'se', 'nw', 'ne', 'w', 'e', 'n', 's']}>
+            <div className="h-full">
+              <TaskDetailsPage />
+            </div>
+          </ResizableBox> */}
+          <TaskDetailsPage />
+        </div>
+      </div>
+    );
+  };
+
   return (
     <>
       <div className="w-[100vw] max-w-[100%] text-white text-[14px] select-none">
@@ -47,8 +68,14 @@ function App() {
               <HomePage />
             }>
             </Route>
+
             <Route path="/tasks/:taskId" element={
               <HomePage />
+            }>
+            </Route>
+
+            <Route path="/focus" element={
+              <FocusPage />
             }>
             </Route>
             {/* Fallback route for 404 Not Found */}

@@ -1,8 +1,10 @@
 import Icon from "./Icon.component";
+import { useNavigate } from "react-router";
 
 
 const ServiceMenu = () => {
-    const iconCustomClass = "text-white !text-[24px]";
+    const iconCustomClass = "text-white !text-[24px] cursor-pointer";
+    const navigate = useNavigate();
 
     return (
         <div className="bg-black h-full flex flex-col justify-between gap-10 h-screen pt-2 pb-3">
@@ -11,10 +13,10 @@ const ServiceMenu = () => {
                     <img src="/prestige-9-bo2.png" alt="user-icon" className="w-[35px] h-[35px]" />
                 </div>
                 <div className="flex flex-col items-center gap-3">
-                    <Icon name="check_box" customClass={iconCustomClass} />
+                    <Icon name="check_box" customClass={iconCustomClass} onClick={() => navigate('/')} />
                     {/* <Icon name="calendar_month" customClass={iconCustomClass} /> */}
                     {/* <Icon name="grid_view" customClass={iconCustomClass} /> */}
-                    <Icon name="timer" customClass={iconCustomClass} />
+                    <Icon name="timer" customClass={iconCustomClass} onClick={() => navigate('/focus')} />
                     {/* <Icon name="location_on" customClass={iconCustomClass} /> */}
                     {/* <Icon name="search" customClass={iconCustomClass} grad={200} /> */}
                 </div>

@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import TextareaAutosize from 'react-textarea-autosize';
 import { TaskObj } from "../types/types";
 import Task from "./Task.component";
+import TooltipCalendar from "./tooltips/TooltipCalendar";
 
 const EmptyTask = () => (
     <div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700 flex justify-center items-center text-[18px] text-color-gray-100">
@@ -22,6 +23,8 @@ const TaskDetailsPage = () => {
     const [completed, setCompleted] = useState(false);
     const [task, setTask] = useState<TaskObj>();
     const [parentTask, setParentTask] = useState<TaskObj | null>();
+    const [dueDate, setDueDate] = useState(null);
+    const [isTooltipCalendarVisible, setIsTooltipCalendarVisible] = useState(true);
 
     let { taskId } = useParams();
     let navigate = useNavigate();
@@ -61,10 +64,12 @@ const TaskDetailsPage = () => {
                         <Icon name="check_box" customClass={"text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-p"} />
                     )}
 
-                    <div className="flex items-center gap-1 border-l border-color-gray-200 text-color-gray-100 px-2">
+                    <div
+                        className="flex items-center gap-1 border-l border-color-gray-200 text-color-gray-100 px-2 cursor-pointer" onClick={() => setIsTooltipCalendarVisible(!isTooltipCalendarVisible)}>
                         <Icon name="calendar_month" customClass={"!text-[20px] hover:text-white cursor-p"} />
                         Due Date
                     </div>
+                    <TooltipCalendar isVisible={isTooltipCalendarVisible} setIsVisible={setIsTooltipCalendarVisible} dueDate={dueDate} setDueDate={setDueDate} customClasses=" ml-[-100px] mt-[15px]" />
                 </div>
 
                 <Icon name="flag" customClass={"text-color-gray-100 text-red-500 !text-[22px] hover:text-white cursor-p"} />

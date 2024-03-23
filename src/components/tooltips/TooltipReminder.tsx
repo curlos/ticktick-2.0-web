@@ -39,7 +39,7 @@ const TooltipReminder: React.FC<TooltipReminderProps> = ({ isVisible, setIsVisib
                 <div className="p-1">
                     {Object.keys(basicReminderOptions).map((name: string) => (
                         <div
-                            className="flex items-center justify-between hover:bg-color-gray-300 p-2 rounded-lg"
+                            className="flex items-center justify-between hover:bg-color-gray-300 p-2 rounded-lg cursor-pointer"
                             onClick={() => {
                                 console.log({
                                     ...basicReminderOptions, [name]: {
@@ -68,7 +68,7 @@ const TooltipReminder: React.FC<TooltipReminderProps> = ({ isVisible, setIsVisib
                 <TooltipAdvancedReminder isVisible={isTooltipAdvancedReminderVisible} setIsVisible={setIsTooltipAdvancedReminderVisible} reminder={reminder} setReminder={setReminder} />
 
                 <div className="p-1">
-                    <div className="p-2 mb-2 flex items-center justify-between hover:bg-color-gray-300 p-2 rounded-lg" onClick={() => setIsTooltipAdvancedReminderVisible(!isTooltipAdvancedReminderVisible)}>Custom</div>
+                    <div className="p-2 mb-2 flex items-center justify-between hover:bg-color-gray-300 p-2 rounded-lg cursor-pointer" onClick={() => setIsTooltipAdvancedReminderVisible(!isTooltipAdvancedReminderVisible)}>Custom</div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 pb-4 px-3">

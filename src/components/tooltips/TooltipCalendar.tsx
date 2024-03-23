@@ -8,6 +8,7 @@ import TooltipTimeZoneSelector from "./TooltipTimeZoneSelector";
 import TooltipFixedOrFloatingTimeZone from "./TooltipFixedOrFloatingTimeZone";
 import TooltipTime from "./TooltipTIme";
 import TooltipReminder from "./TooltipReminder";
+import TooltipRepeat from "./TooltipRepeat";
 
 interface BigDateIconOptionProps {
     iconName: string;
@@ -175,13 +176,16 @@ interface TooltipPrioritiesProps {
     setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
     dueDate: Date | null;
     setDueDate: React.Dispatch<React.SetStateAction<Date | null>>;
+    customClasses?: string;
 }
 
-const TooltipCalendar: React.FC<TooltipPrioritiesProps> = ({ isVisible, setIsVisible, dueDate, setDueDate }) => {
+const TooltipCalendar: React.FC<TooltipPrioritiesProps> = ({ isVisible, setIsVisible, dueDate, setDueDate, customClasses }) => {
     const [selectedView, setSelectedView] = useState('date');
     const [isTimeTooltipVisibile, setIsTimeTooltipVisible] = useState(false);
     const [isTooltipReminderVisible, setIsTooltipReminderVisible] = useState(false);
+    const [isTooltipRepeatVisible, setIsTooltipRepeatVisible] = useState(true);
     const [reminder, setReminder] = useState('');
+    const [repeat, setRepeat] = useState('');
     interface TimeOptionProps {
         name: string;
         iconName: string;
@@ -189,7 +193,7 @@ const TooltipCalendar: React.FC<TooltipPrioritiesProps> = ({ isVisible, setIsVis
     }
 
     const TimeOption: React.FC<TimeOptionProps> = ({ name, iconName, onClick }) => (
-        <div className="flex items-center justify-between h-[40px] px-2 text-[13px] text-color-gray-25 hover:bg-color-gray-200 rounded" onClick={onClick}>
+        <div className="flex items-center justify-between h-[40px] px-2 text-[13px] text-color-gray-25 hover:bg-color-gray-200 rounded cursor-pointer" onClick={onClick}>
             <div className="flex items-center gap-1">
                 <Icon name={iconName} fill={0} customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'} />
                 <div>{name}</div>
@@ -202,7 +206,7 @@ const TooltipCalendar: React.FC<TooltipPrioritiesProps> = ({ isVisible, setIsVis
 
     return (
         <div className={`${isVisible ? '' : 'hidden'} custom-tooltip-position`}>
-            <Tooltip isVisible={isVisible} customClasses={' ml-[-70px] shadow-2xl'}>
+            <Tooltip isVisible={isVisible} customClasses={' ml-[-70px] shadow-2xl' + (customClasses ? ` ${customClasses}` : '')}>
                 <div className="w-[260px]">
                     <div className="p-4">
                         <div className="grid grid-cols-2 bg-color-gray-700 rounded-md p-1 text-center">
@@ -216,20 +220,27 @@ const TooltipCalendar: React.FC<TooltipPrioritiesProps> = ({ isVisible, setIsVis
                     <Calendar dueDate={dueDate} setDueDate={setDueDate} />
 
                     <div className="px-1 mb-4">
+                        {/* Time */}
                         <TooltipTime isTimeTooltipVisibile={isTimeTooltipVisibile} />
                         <TimeOption name="Time" iconName="schedule" onClick={() => {
                             setIsTimeTooltipVisible(!isTimeTooltipVisibile);
                         }} />
+
+                        {/* Reminder */}
                         <TooltipReminder isVisible={isTooltipReminderVisible} setIsVisible={setIsTooltipReminderVisible} reminder={reminder} setReminder={setReminder} />
                         <TimeOption
                             name="Reminder"
                             iconName="alarm"
-                            onClick={() => {
-                                setIsTooltipReminderVisible(!isTooltipReminderVisible);
-                            }}
+                            onClick={() => setIsTooltipReminderVisible(!isTooltipReminderVisible)}
                         />
-                        {/* TODO: Could add this in the future but I haven't personally used this feature too much, so will leave it for later as I don't actually fully understand it quite yet. */}
-                        {/* <TimeOption name="Repeat" iconName="repeat" /> */}
+
+                        {/* Repeat */}
+                        <TooltipRepeat isVisible={isTooltipRepeatVisible} setIsVisible={setIsTooltipRepeatVisible} repeat={repeat} setRepeat={setRepeat} />
+                        <TimeOption
+                            name="Repeat"
+                            iconName="repeat"
+                            onClick={() => setIsTooltipRepeatVisible(!isTooltipRepeatVisible)}
+                        />
                     </div>
 
                     <div className="grid grid-cols-2 gap-2 px-3 pb-4">

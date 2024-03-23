@@ -4,7 +4,6 @@ import TaskList from "../components/TaskList.component";
 import { useDispatch, useSelector } from "react-redux";
 import { addTask } from '../store/store';
 import { TaskObj } from "../types/types";
-import TextareaAutosize from 'react-textarea-autosize';
 import TooltipCalendar from "../components/tooltips/TooltipCalendar";
 
 interface TaskListByCategoryProps {
