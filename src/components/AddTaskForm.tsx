@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { addTask } from "../store/store";
 import Icon from "./Icon.component";
 import DropdownCalendar from "./Dropdown/DropdownCalendar";
 import TextareaAutosize from 'react-textarea-autosize';
 import DropdownPriorities from "./Dropdown/DropdownPriorities";
 import { PRIORITIES } from "../utils/priorities.utils";
+import { addTask } from "../slices/tasksSlice";
 
 const AddTaskForm = () => {
     const dispatch = useDispatch();

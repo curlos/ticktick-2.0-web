@@ -1,10 +1,8 @@
 import { useState } from "react";
 import Icon from "../components/Icon.component";
 import TaskList from "../components/TaskList.component";
-import { useDispatch, useSelector } from "react-redux";
-import { addTask } from '../store/store';
+import { useSelector } from "react-redux";
 import { TaskObj } from "../types/types";
-import DropdownCalendar from "../components/Dropdown/DropdownCalendar";
 import AddTaskForm from "../components/AddTaskForm";
 
 interface TaskListByCategoryProps {

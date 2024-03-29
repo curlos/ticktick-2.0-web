@@ -37,6 +37,7 @@ const DropdownReminder: React.FC<DropdownReminderProps> = ({ isVisible, setIsVis
                 <div className="p-1">
                     {Object.keys(basicReminderOptions).map((name: string) => (
                         <div
+                            key={name}
                             className="flex items-center justify-between hover:bg-color-gray-300 p-2 rounded-lg cursor-pointer"
                             onClick={() => {
                                 // console.log({

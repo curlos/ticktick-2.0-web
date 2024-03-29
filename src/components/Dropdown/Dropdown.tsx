@@ -11,10 +11,10 @@ interface DropdownProps {
 
 // Update your component to use forwardRef
 const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(({ children, isVisible, setIsVisible, customClasses, positionAdjustment }, ref) => {
-    if (!isVisible) return null;
-
     const dropdownRef = useRef(null);
     useOutsideClick(dropdownRef, () => setIsVisible(false));
+
+    if (!isVisible) return null;
 
     // Apply dynamic class based on positionAdjustment
     const positionClass = positionAdjustment || '';

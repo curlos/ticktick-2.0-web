@@ -1,7 +1,4 @@
-import Fuse from "fuse.js";
 import Dropdown from "./Dropdown";
-import { useEffect, useRef, useState } from "react";
-import { debounce } from "../../utils/helpers.utils";
 import Icon from "../Icon.component";
 import { IPriorityItem, PRIORITIES } from "../../utils/priorities.utils";
 

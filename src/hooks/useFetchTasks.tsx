@@ -1,8 +1,8 @@
 // src/hooks/useFetchTasks.js
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { setTasks } from '../store/store';
 import { arrayToObjectByKey } from '../utils/helpers.utils';
+import { setTasks } from '../slices/tasksSlice';
 
 const useFetchTasks = () => {
     const dispatch = useDispatch();
