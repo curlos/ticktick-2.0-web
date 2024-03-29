@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Dropdown from "./Dropdown";
 import Icon from "../Icon.component";
 
@@ -31,26 +31,24 @@ const DropdownReminder: React.FC<DropdownReminderProps> = ({ isVisible, setIsVis
     const [basicReminderOptions, setBasicReminderOptions] = useState(BASIC_REMINDER_OPTIONS);
     const [isDropdownAdvancedReminderVisible, setIsDropdownAdvancedReminderVisible] = useState(false);
 
-    console.log(basicReminderOptions);
-
     return (
-        <Dropdown isVisible={isVisible} customClasses={' mt-[-290px] ml-[-22px] shadow-2xl border border-color-gray-200 rounded-lg'}>
+        <Dropdown isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' mt-[-290px] ml-[-22px] shadow-2xl border border-color-gray-200 rounded-lg'}>
             <div className="w-[260px] rounded" onClick={(e) => e.stopPropagation()}>
                 <div className="p-1">
                     {Object.keys(basicReminderOptions).map((name: string) => (
                         <div
                             className="flex items-center justify-between hover:bg-color-gray-300 p-2 rounded-lg cursor-pointer"
                             onClick={() => {
-                                console.log({
-                                    ...basicReminderOptions, [name]: {
-                                        ...basicReminderOptions[name], checked: !basicReminderOptions[name].checked
-                                    }
-                                });
-                                setBasicReminderOptions({
-                                    ...basicReminderOptions, [name]: {
-                                        ...basicReminderOptions[name], checked: !basicReminderOptions[name].checked
-                                    }
-                                });
+                                // console.log({
+                                //     ...basicReminderOptions, [name]: {
+                                //         ...basicReminderOptions[name], checked: !basicReminderOptions[name].checked
+                                //     }
+                                // });
+                                // setBasicReminderOptions({
+                                //     ...basicReminderOptions, [name]: {
+                                //         ...basicReminderOptions[name], checked: !basicReminderOptions[name].checked
+                                //     }
+                                // });
                                 // setIsVisible(false);
                             }}
                         >
@@ -92,7 +90,7 @@ const DropdownAdvancedReminder: React.FC<DropdownAdvancedReminderProps> = ({ isV
     const [remindAt, setRemindAt] = useState();
 
     return (
-        <Dropdown isVisible={isVisible} customClasses={' mt-[-210px] ml-[0px] shadow-2xl border border-color-gray-200 rounded-lg'}>
+        <Dropdown isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' mt-[-210px] ml-[0px] shadow-2xl border border-color-gray-200 rounded-lg'}>
             <div className="w-[260px] p-3 rounded" onClick={(e) => e.stopPropagation()}>
                 <div className="border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500" onClick={() => {
                     setIsDropdownUnitOfTimeVisible(!isDropdownUnitOfTimeVisible);
@@ -157,7 +155,7 @@ interface DropdownUnitOfTimeProps {
 const DropdownUnitOfTime: React.FC<DropdownUnitOfTimeProps> = ({ isVisible, setIsVisible, selectedUnitOfTime, setSelectedUnitOfTime }) => {
     const UNITS_OF_TIME = ['Day', 'Week'];
     return (
-        <Dropdown isVisible={isVisible} customClasses={' mb-[-115px] ml-[-10px] p-1 shadow-2xl border border-color-gray-200 rounded-lg'}>
+        <Dropdown isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' mb-[-115px] ml-[-10px] p-1 shadow-2xl border border-color-gray-200 rounded-lg'}>
             {UNITS_OF_TIME.map((unitOfTime) => (
                 <div
                     className="w-[230px] flex items-center justify-between hover:bg-color-gray-300 p-2 rounded-lg"

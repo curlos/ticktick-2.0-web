@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import CustomRadioButton from "../CustomRadioButton";
 import Dropdown from "./Dropdown";
 import Icon from "../Icon.component";
@@ -20,7 +20,7 @@ const DropdownFixedOrFloatingTimeZone: React.FC<DropdownFixedOrFloatingTimeZoneP
     };
 
     return (
-        <Dropdown isVisible={isVisible} customClasses={' mt-[-290px] ml-[-22px] shadow-2xl border border-color-gray-200 rounded-lg'}>
+        <Dropdown isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' mt-[-290px] ml-[-22px] shadow-2xl border border-color-gray-200 rounded-lg'}>
             <div className="w-[260px] p-3 rounded" onClick={(e) => e.stopPropagation()}>
                 <CustomRadioButton
                     label="Fixed Time Zone"

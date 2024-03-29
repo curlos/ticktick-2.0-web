@@ -1,19 +1,29 @@
-import React from 'react';
+import React, { forwardRef, useRef } from 'react';
+import useOutsideClick from '../../hooks/useOutsideClick';
 
 interface DropdownProps {
     children: React.ReactNode;
     isVisible: boolean;
+    setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
     customClasses?: string;
+    positionAdjustment: string;
 }
 
-const Dropdown: React.FC<DropdownProps> = ({ children, isVisible, customClasses }) => {
+// Update your component to use forwardRef
+const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(({ children, isVisible, setIsVisible, customClasses, positionAdjustment }, ref) => {
     if (!isVisible) return null;
 
+    const dropdownRef = useRef(null);
+    useOutsideClick(dropdownRef, () => setIsVisible(false));
+
+    // Apply dynamic class based on positionAdjustment
+    const positionClass = positionAdjustment || '';
+
     return (
-        <div className={"absolute z-50 text-white bg-color-gray-600 rounded-lg text-sm" + (customClasses ? customClasses : '')}>
+        <div ref={dropdownRef} className={`dropdown absolute z-50 text-white bg-color-gray-600 rounded-lg text-sm ${positionClass} ${customClasses || ''}`}>
             {children}
         </div>
     );
-};
+});
 
 export default Dropdown;

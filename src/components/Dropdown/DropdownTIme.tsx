@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Dropdown from "./Dropdown";
 import Icon from "../Icon.component";
 import DropdownFixedOrFloatingTimeZone from "./DropdownFixedOrFloatingTimeZone";
@@ -18,16 +18,17 @@ const getTimesArray = () => {
 
 interface DropdownTimeProps {
     isTimeDropdownVisibile: boolean;
+    setIsTimeDropdownVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const DropdownTime: React.FC<DropdownTimeProps> = ({ isTimeDropdownVisibile }) => {
+const DropdownTime: React.FC<DropdownTimeProps> = ({ isTimeDropdownVisibile, setIsTimeDropdownVisible }) => {
     const timesArray = getTimesArray();
     const [selectedTime, setSelectedTime] = useState('14:00');
     const [isDropdownFixedOrFloatingTimeZone, setIsDropdownFixedOrFloatingTimeZone] = useState(false);
     const [timeZone, setTimeZone] = useState('New York, EDT');
 
     return (
-        <Dropdown isVisible={isTimeDropdownVisibile} customClasses={' mt-[-280px] ml-[-5px] shadow-2xl border border-color-gray-200 rounded-[4px]'}>
+        <Dropdown isVisible={isTimeDropdownVisibile} setIsVisible={setIsTimeDropdownVisible} customClasses={' mt-[-280px] ml-[-5px] shadow-2xl border border-color-gray-200 rounded-[4px]'}>
             <div className="w-[260px] p-1">
                 <div className="overflow-auto gray-scrollbar h-[240px]">
                     {timesArray.map((time) => {

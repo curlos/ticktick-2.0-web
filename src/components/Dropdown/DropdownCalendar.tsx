@@ -22,7 +22,7 @@ const BigDateIconOption: React.FC<BigDateIconOptionProps> = ({ iconName, Dropdow
     return (
         <div>
             <Icon name={iconName} fill={0} customClass="text-color-gray-50 !text-[24px] hover:text-white hover:bg-color-gray-200 p-1 rounded cursor-pointer" onClick={onClick} onMouseOver={() => setIsDropdownVisible(true)} onMouseLeave={() => setIsDropdownVisible(false)} />
-            <Dropdown isVisible={isDropdownVisible} customClasses={' !bg-black'}>
+            <Dropdown isVisible={isDropdownVisible} setIsVisible={setIsDropdownVisible} customClasses={' !bg-black'}>
                 <div className="p-2 text-[12px] text-nowrap">
                     {DropdownText}
                 </div>
@@ -186,6 +186,7 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({ isVisible, setIsV
     const [isDropdownRepeatVisible, setIsDropdownRepeatVisible] = useState(false);
     const [reminder, setReminder] = useState('');
     const [repeat, setRepeat] = useState('');
+
     interface TimeOptionProps {
         name: string;
         iconName: string;
@@ -206,7 +207,7 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({ isVisible, setIsV
 
     return (
         <div className={`${isVisible ? '' : 'hidden'} custom-Dropdown-position`}>
-            <Dropdown isVisible={isVisible} customClasses={' ml-[-70px] shadow-2xl' + (customClasses ? ` ${customClasses}` : '')}>
+            <Dropdown isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' ml-[-70px] shadow-2xl' + (customClasses ? ` ${customClasses}` : '')}>
                 <div className="w-[260px]">
                     <div className="p-4">
                         <div className="grid grid-cols-2 bg-color-gray-700 rounded-md p-1 text-center">
@@ -221,7 +222,7 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({ isVisible, setIsV
 
                     <div className="px-1 mb-4">
                         {/* Time */}
-                        <DropdownTime isTimeDropdownVisibile={isTimeDropdownVisibile} />
+                        <DropdownTime isTimeDropdownVisibile={isTimeDropdownVisibile} setIsTimeDropdownVisible={setIsTimeDropdownVisible} />
                         <TimeOption name="Time" iconName="schedule" onClick={() => {
                             setIsTimeDropdownVisible(!isTimeDropdownVisibile);
                         }} />

@@ -71,7 +71,6 @@ const DropdownTimeZoneSelector: React.FC<DropdownTimeZoneSelectorProps> = ({
         } else {
             // When searchText is not empty, perform the search using Fuse.js
             searchedCities = fuse.search(searchText);
-            console.log(searchedCities);
         }
 
         setCities(searchedCities.map(result => result.item));
@@ -104,7 +103,7 @@ const DropdownTimeZoneSelector: React.FC<DropdownTimeZoneSelectorProps> = ({
     }, [cities]); // Triggered when 'cities' changes
 
     return (
-        <Dropdown isVisible={isVisible} customClasses={' ml-[-13px] shadow-2xl border border-color-gray-200 rounded-[4px]'}>
+        <Dropdown isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' ml-[-13px] shadow-2xl border border-color-gray-200 rounded-[4px]'}>
             <div className="w-[260px]">
                 <div className="flex items-center gap-1 p-1 px-2">
                     <Icon name="search" fill={0} customClass={'text-color-gray-50 !text-[24px] hover:text-white cursor-pointer'} />
