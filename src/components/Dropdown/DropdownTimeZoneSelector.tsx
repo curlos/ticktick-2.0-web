@@ -1,17 +1,17 @@
 import Fuse from "fuse.js";
-import Tooltip from "./Tooltip";
+import Dropdown from "./Dropdown";
 import { useEffect, useRef, useState } from "react";
 import { debounce } from "../../utils/helpers.utils";
 import Icon from "../Icon.component";
 
-interface TooltipTimeZoneSelectorProps {
+interface DropdownTimeZoneSelectorProps {
     isVisible: boolean;
     setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
     tempSelectedTimeZone: string;
     setTempSelectedTimeZone: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const TooltipTimeZoneSelector: React.FC<TooltipTimeZoneSelectorProps> = ({
+const DropdownTimeZoneSelector: React.FC<DropdownTimeZoneSelectorProps> = ({
     isVisible, setIsVisible, tempSelectedTimeZone, setTempSelectedTimeZone
 }) => {
     const [allCities, setAllCities] = useState([]);
@@ -104,7 +104,7 @@ const TooltipTimeZoneSelector: React.FC<TooltipTimeZoneSelectorProps> = ({
     }, [cities]); // Triggered when 'cities' changes
 
     return (
-        <Tooltip isVisible={isVisible} customClasses={' ml-[-13px] shadow-2xl border border-color-gray-200 rounded-[4px]'}>
+        <Dropdown isVisible={isVisible} customClasses={' ml-[-13px] shadow-2xl border border-color-gray-200 rounded-[4px]'}>
             <div className="w-[260px]">
                 <div className="flex items-center gap-1 p-1 px-2">
                     <Icon name="search" fill={0} customClass={'text-color-gray-50 !text-[24px] hover:text-white cursor-pointer'} />
@@ -126,8 +126,8 @@ const TooltipTimeZoneSelector: React.FC<TooltipTimeZoneSelectorProps> = ({
                     ))}
                 </div>
             </div>
-        </Tooltip>
+        </Dropdown>
     );
 };
 
-export default TooltipTimeZoneSelector;
+export default DropdownTimeZoneSelector;

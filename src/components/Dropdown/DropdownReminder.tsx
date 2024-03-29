@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Tooltip from "./Tooltip";
+import Dropdown from "./Dropdown";
 import Icon from "../Icon.component";
 
 const BASIC_REMINDER_OPTIONS = {
@@ -20,21 +20,21 @@ const BASIC_REMINDER_OPTIONS = {
     },
 };
 
-interface TooltipReminderProps {
+interface DropdownReminderProps {
     isVisible: boolean;
     setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
     reminder: string;
     setReminder: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const TooltipReminder: React.FC<TooltipReminderProps> = ({ isVisible, setIsVisible, reminder, setReminder }) => {
+const DropdownReminder: React.FC<DropdownReminderProps> = ({ isVisible, setIsVisible, reminder, setReminder }) => {
     const [basicReminderOptions, setBasicReminderOptions] = useState(BASIC_REMINDER_OPTIONS);
-    const [isTooltipAdvancedReminderVisible, setIsTooltipAdvancedReminderVisible] = useState(false);
+    const [isDropdownAdvancedReminderVisible, setIsDropdownAdvancedReminderVisible] = useState(false);
 
     console.log(basicReminderOptions);
 
     return (
-        <Tooltip isVisible={isVisible} customClasses={' mt-[-290px] ml-[-22px] shadow-2xl border border-color-gray-200 rounded-lg'}>
+        <Dropdown isVisible={isVisible} customClasses={' mt-[-290px] ml-[-22px] shadow-2xl border border-color-gray-200 rounded-lg'}>
             <div className="w-[260px] rounded" onClick={(e) => e.stopPropagation()}>
                 <div className="p-1">
                     {Object.keys(basicReminderOptions).map((name: string) => (
@@ -65,10 +65,10 @@ const TooltipReminder: React.FC<TooltipReminderProps> = ({ isVisible, setIsVisib
                 <hr className="border-color-gray-200" />
 
 
-                <TooltipAdvancedReminder isVisible={isTooltipAdvancedReminderVisible} setIsVisible={setIsTooltipAdvancedReminderVisible} reminder={reminder} setReminder={setReminder} />
+                <DropdownAdvancedReminder isVisible={isDropdownAdvancedReminderVisible} setIsVisible={setIsDropdownAdvancedReminderVisible} reminder={reminder} setReminder={setReminder} />
 
                 <div className="p-1">
-                    <div className="p-2 mb-2 flex items-center justify-between hover:bg-color-gray-300 p-2 rounded-lg cursor-pointer" onClick={() => setIsTooltipAdvancedReminderVisible(!isTooltipAdvancedReminderVisible)}>Custom</div>
+                    <div className="p-2 mb-2 flex items-center justify-between hover:bg-color-gray-300 p-2 rounded-lg cursor-pointer" onClick={() => setIsDropdownAdvancedReminderVisible(!isDropdownAdvancedReminderVisible)}>Custom</div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 pb-4 px-3">
@@ -77,29 +77,29 @@ const TooltipReminder: React.FC<TooltipReminderProps> = ({ isVisible, setIsVisib
                 </div>
 
             </div>
-        </Tooltip>
+        </Dropdown>
     );
 };
 
-interface TooltipAdvancedReminderProps extends TooltipReminderProps {
+interface DropdownAdvancedReminderProps extends DropdownReminderProps {
 
 }
 
-const TooltipAdvancedReminder: React.FC<TooltipAdvancedReminderProps> = ({ isVisible, setIsVisible, reminder, setReminder }) => {
+const DropdownAdvancedReminder: React.FC<DropdownAdvancedReminderProps> = ({ isVisible, setIsVisible, reminder, setReminder }) => {
     const [selectedUnitOfTime, setSelectedUnitOfTime] = useState('Day');
-    const [isTooltipUnitOfTimeVisible, setIsTooltipUnitOfTimeVisible] = useState(false);
+    const [isDropdownUnitOfTimeVisible, setIsDropdownUnitOfTimeVisible] = useState(false);
     const [unitsInAdvance, setUnitsInAdvance] = useState(1);
     const [remindAt, setRemindAt] = useState();
 
     return (
-        <Tooltip isVisible={isVisible} customClasses={' mt-[-210px] ml-[0px] shadow-2xl border border-color-gray-200 rounded-lg'}>
+        <Dropdown isVisible={isVisible} customClasses={' mt-[-210px] ml-[0px] shadow-2xl border border-color-gray-200 rounded-lg'}>
             <div className="w-[260px] p-3 rounded" onClick={(e) => e.stopPropagation()}>
                 <div className="border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500" onClick={() => {
-                    setIsTooltipUnitOfTimeVisible(!isTooltipUnitOfTimeVisible);
+                    setIsDropdownUnitOfTimeVisible(!isDropdownUnitOfTimeVisible);
                 }}>
-                    <TooltipUnitOfTime
-                        isVisible={isTooltipUnitOfTimeVisible}
-                        setIsVisible={setIsTooltipUnitOfTimeVisible}
+                    <DropdownUnitOfTime
+                        isVisible={isDropdownUnitOfTimeVisible}
+                        setIsVisible={setIsDropdownUnitOfTimeVisible}
                         selectedUnitOfTime={selectedUnitOfTime}
                         setSelectedUnitOfTime={setSelectedUnitOfTime}
                     />
@@ -127,7 +127,7 @@ const TooltipAdvancedReminder: React.FC<TooltipAdvancedReminderProps> = ({ isVis
                 </div>
 
             </div>
-        </Tooltip>
+        </Dropdown>
     );
 };
 
@@ -147,17 +147,17 @@ const CustomInput: React.FC<CustomInputProps> = ({ type, value, setValue }) => (
     />
 );
 
-interface TooltipUnitOfTimeProps {
+interface DropdownUnitOfTimeProps {
     isVisible: boolean;
     setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
     selectedUnitOfTime: string;
     setSelectedUnitOfTime: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const TooltipUnitOfTime: React.FC<TooltipUnitOfTimeProps> = ({ isVisible, setIsVisible, selectedUnitOfTime, setSelectedUnitOfTime }) => {
+const DropdownUnitOfTime: React.FC<DropdownUnitOfTimeProps> = ({ isVisible, setIsVisible, selectedUnitOfTime, setSelectedUnitOfTime }) => {
     const UNITS_OF_TIME = ['Day', 'Week'];
     return (
-        <Tooltip isVisible={isVisible} customClasses={' mb-[-115px] ml-[-10px] p-1 shadow-2xl border border-color-gray-200 rounded-lg'}>
+        <Dropdown isVisible={isVisible} customClasses={' mb-[-115px] ml-[-10px] p-1 shadow-2xl border border-color-gray-200 rounded-lg'}>
             {UNITS_OF_TIME.map((unitOfTime) => (
                 <div
                     className="w-[230px] flex items-center justify-between hover:bg-color-gray-300 p-2 rounded-lg"
@@ -172,8 +172,8 @@ const TooltipUnitOfTime: React.FC<TooltipUnitOfTimeProps> = ({ isVisible, setIsV
                     )}
                 </div>
             ))}
-        </Tooltip>
+        </Dropdown>
     );
 };
 
-export default TooltipReminder;
+export default DropdownReminder;

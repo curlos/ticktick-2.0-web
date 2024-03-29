@@ -1,12 +1,12 @@
 import React from 'react';
 
-interface TooltipProps {
+interface DropdownProps {
     children: React.ReactNode;
     isVisible: boolean;
     customClasses?: string;
 }
 
-const Tooltip: React.FC<TooltipProps> = ({ children, isVisible, customClasses }) => {
+const Dropdown: React.FC<DropdownProps> = ({ children, isVisible, customClasses }) => {
     if (!isVisible) return null;
 
     return (
@@ -16,4 +16,4 @@ const Tooltip: React.FC<TooltipProps> = ({ children, isVisible, customClasses })
     );
 };
 
-export default Tooltip;
+export default Dropdown;

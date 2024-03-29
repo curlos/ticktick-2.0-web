@@ -1,32 +1,32 @@
-import Tooltip from "./Tooltip";
+import Dropdown from "./Dropdown";
 import { useEffect, useRef, useState } from "react";
 import Icon from "../Icon.component";
 import { areDatesEqual, debounce } from "../../utils/helpers.utils";
 import CustomRadioButton from "../CustomRadioButton";
 import Fuse from 'fuse.js';
-import TooltipTimeZoneSelector from "./TooltipTimeZoneSelector";
-import TooltipFixedOrFloatingTimeZone from "./TooltipFixedOrFloatingTimeZone";
-import TooltipTime from "./TooltipTIme";
-import TooltipReminder from "./TooltipReminder";
-import TooltipRepeat from "./TooltipRepeat";
+import DropdownTimeZoneSelector from "./DropdownTimeZoneSelector";
+import DropdownFixedOrFloatingTimeZone from "./DropdownFixedOrFloatingTimeZone";
+import DropdownTime from "./DropdownTIme";
+import DropdownReminder from "./DropdownReminder";
+import DropdownRepeat from "./DropdownRepeat";
 
 interface BigDateIconOptionProps {
     iconName: string;
-    tooltipText: string;
+    DropdownText: string;
     onClick?: () => void;
 }
 
-const BigDateIconOption: React.FC<BigDateIconOptionProps> = ({ iconName, tooltipText, onClick }) => {
-    const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+const BigDateIconOption: React.FC<BigDateIconOptionProps> = ({ iconName, DropdownText, onClick }) => {
+    const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
     return (
         <div>
-            <Icon name={iconName} fill={0} customClass="text-color-gray-50 !text-[24px] hover:text-white hover:bg-color-gray-200 p-1 rounded cursor-pointer" onClick={onClick} onMouseOver={() => setIsTooltipVisible(true)} onMouseLeave={() => setIsTooltipVisible(false)} />
-            <Tooltip isVisible={isTooltipVisible} customClasses={' !bg-black'}>
+            <Icon name={iconName} fill={0} customClass="text-color-gray-50 !text-[24px] hover:text-white hover:bg-color-gray-200 p-1 rounded cursor-pointer" onClick={onClick} onMouseOver={() => setIsDropdownVisible(true)} onMouseLeave={() => setIsDropdownVisible(false)} />
+            <Dropdown isVisible={isDropdownVisible} customClasses={' !bg-black'}>
                 <div className="p-2 text-[12px] text-nowrap">
-                    {tooltipText}
+                    {DropdownText}
                 </div>
-            </Tooltip>
+            </Dropdown>
         </div>
     );
 };
@@ -50,16 +50,16 @@ const BigDateIconOptionList: React.FC<CalendarProps> = ({ dueDate, setDueDate })
 
     return (
         <div className="my-5 flex justify-between">
-            <BigDateIconOption iconName="sunny" tooltipText="Today" onClick={() => {
+            <BigDateIconOption iconName="sunny" DropdownText="Today" onClick={() => {
                 setDueDate(today);
             }} />
-            <BigDateIconOption iconName="wb_twilight" tooltipText="Tomorrow" onClick={() => {
+            <BigDateIconOption iconName="wb_twilight" DropdownText="Tomorrow" onClick={() => {
                 setDueDate(tomorrow);
             }} />
-            <BigDateIconOption iconName="event_upcoming" tooltipText="Next Week" onClick={() => {
+            <BigDateIconOption iconName="event_upcoming" DropdownText="Next Week" onClick={() => {
                 setDueDate(nextWeek);
             }} />
-            <BigDateIconOption iconName="clear_night" tooltipText="Next Month" onClick={() => {
+            <BigDateIconOption iconName="clear_night" DropdownText="Next Month" onClick={() => {
                 setDueDate(nextMonth);
             }} />
         </div>
@@ -171,7 +171,7 @@ const Calendar: React.FC<CalendarProps> = ({ dueDate, setDueDate }) => {
     );
 };
 
-interface TooltipPrioritiesProps {
+interface DropdownPrioritiesProps {
     isVisible: boolean;
     setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
     dueDate: Date | null;
@@ -179,11 +179,11 @@ interface TooltipPrioritiesProps {
     customClasses?: string;
 }
 
-const TooltipCalendar: React.FC<TooltipPrioritiesProps> = ({ isVisible, setIsVisible, dueDate, setDueDate, customClasses }) => {
+const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({ isVisible, setIsVisible, dueDate, setDueDate, customClasses }) => {
     const [selectedView, setSelectedView] = useState('date');
-    const [isTimeTooltipVisibile, setIsTimeTooltipVisible] = useState(false);
-    const [isTooltipReminderVisible, setIsTooltipReminderVisible] = useState(false);
-    const [isTooltipRepeatVisible, setIsTooltipRepeatVisible] = useState(false);
+    const [isTimeDropdownVisibile, setIsTimeDropdownVisible] = useState(false);
+    const [isDropdownReminderVisible, setIsDropdownReminderVisible] = useState(false);
+    const [isDropdownRepeatVisible, setIsDropdownRepeatVisible] = useState(false);
     const [reminder, setReminder] = useState('');
     const [repeat, setRepeat] = useState('');
     interface TimeOptionProps {
@@ -205,8 +205,8 @@ const TooltipCalendar: React.FC<TooltipPrioritiesProps> = ({ isVisible, setIsVis
 
 
     return (
-        <div className={`${isVisible ? '' : 'hidden'} custom-tooltip-position`}>
-            <Tooltip isVisible={isVisible} customClasses={' ml-[-70px] shadow-2xl' + (customClasses ? ` ${customClasses}` : '')}>
+        <div className={`${isVisible ? '' : 'hidden'} custom-Dropdown-position`}>
+            <Dropdown isVisible={isVisible} customClasses={' ml-[-70px] shadow-2xl' + (customClasses ? ` ${customClasses}` : '')}>
                 <div className="w-[260px]">
                     <div className="p-4">
                         <div className="grid grid-cols-2 bg-color-gray-700 rounded-md p-1 text-center">
@@ -221,25 +221,25 @@ const TooltipCalendar: React.FC<TooltipPrioritiesProps> = ({ isVisible, setIsVis
 
                     <div className="px-1 mb-4">
                         {/* Time */}
-                        <TooltipTime isTimeTooltipVisibile={isTimeTooltipVisibile} />
+                        <DropdownTime isTimeDropdownVisibile={isTimeDropdownVisibile} />
                         <TimeOption name="Time" iconName="schedule" onClick={() => {
-                            setIsTimeTooltipVisible(!isTimeTooltipVisibile);
+                            setIsTimeDropdownVisible(!isTimeDropdownVisibile);
                         }} />
 
                         {/* Reminder */}
-                        <TooltipReminder isVisible={isTooltipReminderVisible} setIsVisible={setIsTooltipReminderVisible} reminder={reminder} setReminder={setReminder} />
+                        <DropdownReminder isVisible={isDropdownReminderVisible} setIsVisible={setIsDropdownReminderVisible} reminder={reminder} setReminder={setReminder} />
                         <TimeOption
                             name="Reminder"
                             iconName="alarm"
-                            onClick={() => setIsTooltipReminderVisible(!isTooltipReminderVisible)}
+                            onClick={() => setIsDropdownReminderVisible(!isDropdownReminderVisible)}
                         />
 
                         {/* Repeat */}
-                        <TooltipRepeat isVisible={isTooltipRepeatVisible} setIsVisible={setIsTooltipRepeatVisible} repeat={repeat} setRepeat={setRepeat} />
+                        <DropdownRepeat isVisible={isDropdownRepeatVisible} setIsVisible={setIsDropdownRepeatVisible} repeat={repeat} setRepeat={setRepeat} />
                         <TimeOption
                             name="Repeat"
                             iconName="repeat"
-                            onClick={() => setIsTooltipRepeatVisible(!isTooltipRepeatVisible)}
+                            onClick={() => setIsDropdownRepeatVisible(!isDropdownRepeatVisible)}
                         />
                     </div>
 
@@ -252,9 +252,9 @@ const TooltipCalendar: React.FC<TooltipPrioritiesProps> = ({ isVisible, setIsVis
                         }}>Ok</button>
                     </div>
                 </div>
-            </Tooltip>
+            </Dropdown>
         </div>
     );
 };
 
-export default TooltipCalendar;
+export default DropdownCalendar;

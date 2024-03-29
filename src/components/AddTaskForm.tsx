@@ -2,22 +2,23 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addTask } from "../store/store";
 import Icon from "./Icon.component";
-import TooltipCalendar from "./tooltips/TooltipCalendar";
+import DropdownCalendar from "./Dropdown/DropdownCalendar";
 import TextareaAutosize from 'react-textarea-autosize';
+import DropdownPriorities from "./Dropdown/DropdownPriorities";
+import { PRIORITIES } from "../utils/priorities.utils";
 
 const AddTaskForm = () => {
     const dispatch = useDispatch();
 
     const [title, setTitle] = useState('');
     const [focused, setFocused] = useState(false);
-    const [priority, setPriority] = useState({
-        name: 'No Priority',
-        backendValue: null,
-        flagColor: '#7B7B7B'
-    });
     const [dueDate, setDueDate] = useState(null);
-    const [isTooltipCalendarVisible, setIsTooltipCalendarVisible] = useState(false);
+    const [isDropdownCalendarVisible, setIsDropdownCalendarVisible] = useState(false);
+    const [isDropdownPrioritiesVisible, setIsDropdownPrioritiesVisible] = useState(false);
+    const [tempSelectedPriority, setTempSelectedPriority] = useState('none');
     const [description, setDescription] = useState('');
+
+    const priority = PRIORITIES[tempSelectedPriority];
 
     const handleAddTask = async (e) => {
         e.preventDefault();
@@ -50,7 +51,7 @@ const AddTaskForm = () => {
             setTitle('');
             setPriority({
                 name: 'No Priority',
-                backendValue: null,
+                backendValue: 'none',
                 flagColor: '#7B7B7B'
             });
         } catch (error) {
@@ -64,34 +65,40 @@ const AddTaskForm = () => {
                 className={"mt-3 gap-1 bg-color-gray-600 rounded-lg border" + (focused ? ' border-blue-500' : ' border-transparent')}
                 onSubmit={handleAddTask}
             >
-                {/* <input
-                    className="text-[14px] bg-transparent placeholder:text-[#7C7C7C] mb-0 w-full outline-none resize-none"
-                    placeholder={`Task name`}
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    onFocus={() => setFocused(true)}
-                    onBlur={() => setFocused(false)}
-                ></input> */}
-
                 <div className="p-3 pb-1">
                     <TextareaAutosize className="text-[14px] placeholder:text-[#7C7C7C] font-bold mb-0 bg-transparent w-full outline-none resize-none" placeholder="Task name" value={title} onChange={(e) => setTitle(e.target.value)}></TextareaAutosize>
                     <TextareaAutosize className="text-[14px] placeholder:text-[#7C7C7C] bg-transparent w-full outline-none resize-none" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)}></TextareaAutosize>
 
                     <div className="flex gap-2 mt-3">
                         <div
-                            className="text-[14px] flex items-center gap-1 text-color-gray-100 p-1 border border-color-gray-100 rounded-md cursor-pointer" onClick={() => setIsTooltipCalendarVisible(!isTooltipCalendarVisible)}>
+                            className="text-[14px] flex items-center gap-1 text-color-gray-100 p-1 border border-color-gray-100 rounded-md cursor-pointer" onClick={() => setIsDropdownCalendarVisible(!isDropdownCalendarVisible)}>
                             <Icon name="calendar_month" customClass={"!text-[16px] hover:text-white"} />
                             Due Date
-
-                            <TooltipCalendar isVisible={isTooltipCalendarVisible} setIsVisible={setIsTooltipCalendarVisible} dueDate={dueDate} setDueDate={setDueDate} />
                         </div>
 
-                        <div
-                            className="text-[14px] flex items-center gap-1 text-color-gray-100 p-1 border border-color-gray-100 rounded-md cursor-pointer" onClick={() => setIsTooltipCalendarVisible(!isTooltipCalendarVisible)}>
-                            <Icon name="calendar_month" customClass={"!text-[16px] hover:text-white"} />
-                            Priority
+                        <DropdownCalendar isVisible={isDropdownCalendarVisible} setIsVisible={setIsDropdownCalendarVisible} dueDate={dueDate} setDueDate={setDueDate} />
 
-                            <TooltipCalendar isVisible={isTooltipCalendarVisible} setIsVisible={setIsTooltipCalendarVisible} dueDate={dueDate} setDueDate={setDueDate} />
+                        <div
+                            className="text-[14px] text-color-gray-100 p-1 border border-color-gray-100 rounded-md cursor-pointer" onClick={() => setIsDropdownPrioritiesVisible(!isDropdownPrioritiesVisible)}>
+                            {tempSelectedPriority === 'none' ? (
+                                <div className="flex items-center gap-1">
+                                    <Icon name="calendar_month" customClass={"!text-[16px] hover:text-white"} />
+                                    Priority
+                                </div>
+                            ) : (
+                                <div className="flex items-center gap-1">
+                                    <Icon name="flag" customClass={`${priority.textFlagColor} !text-[22px] cursor-pointer`} />
+                                    {priority.name}
+                                </div>
+                            )}
+
+                            <DropdownPriorities
+                                isVisible={isDropdownPrioritiesVisible}
+                                setIsVisible={setIsDropdownPrioritiesVisible}
+                                tempSelectedPriority={tempSelectedPriority}
+                                setTempSelectedPriority={setTempSelectedPriority}
+                            />
+
                         </div>
                     </div>
                 </div>

@@ -4,7 +4,7 @@ import TaskList from "../components/TaskList.component";
 import { useDispatch, useSelector } from "react-redux";
 import { addTask } from '../store/store';
 import { TaskObj } from "../types/types";
-import TooltipCalendar from "../components/tooltips/TooltipCalendar";
+import DropdownCalendar from "../components/Dropdown/DropdownCalendar";
 import AddTaskForm from "../components/AddTaskForm";
 
 interface TaskListByCategoryProps {

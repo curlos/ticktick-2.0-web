@@ -1,26 +1,26 @@
 import { useState } from "react";
 import CustomRadioButton from "../CustomRadioButton";
-import Tooltip from "./Tooltip";
+import Dropdown from "./Dropdown";
 import Icon from "../Icon.component";
-import TooltipTimeZoneSelector from "./TooltipTimeZoneSelector";
+import DropdownTimeZoneSelector from "./DropdownTimeZoneSelector";
 
-interface TooltipFixedOrFloatingTimeZoneProps {
+interface DropdownFixedOrFloatingTimeZoneProps {
     isVisible: boolean;
     setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
     setTimeZone: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const TooltipFixedOrFloatingTimeZone: React.FC<TooltipFixedOrFloatingTimeZoneProps> = ({ isVisible, setIsVisible, setTimeZone }) => {
+const DropdownFixedOrFloatingTimeZone: React.FC<DropdownFixedOrFloatingTimeZoneProps> = ({ isVisible, setIsVisible, setTimeZone }) => {
     const [tempSelectedTimeZone, setTempSelectedTimeZone] = useState('New York, EDT');
     const [selectedTimeTrackingType, setSelectedTimeTrackingType] = useState('Fixed Time Zone');
-    const [isTimeZoneSelectorTooltipVisible, setIsTimeZoneSelectorTooltipVisible] = useState(false);
+    const [isTimeZoneSelectorDropdownVisible, setIsTimeZoneSelectorDropdownVisible] = useState(false);
 
     const handleRadioChange = (e) => {
         setSelectedTimeTrackingType(e.target.value);
     };
 
     return (
-        <Tooltip isVisible={isVisible} customClasses={' mt-[-290px] ml-[-22px] shadow-2xl border border-color-gray-200 rounded-lg'}>
+        <Dropdown isVisible={isVisible} customClasses={' mt-[-290px] ml-[-22px] shadow-2xl border border-color-gray-200 rounded-lg'}>
             <div className="w-[260px] p-3 rounded" onClick={(e) => e.stopPropagation()}>
                 <CustomRadioButton
                     label="Fixed Time Zone"
@@ -38,17 +38,17 @@ const TooltipFixedOrFloatingTimeZone: React.FC<TooltipFixedOrFloatingTimeZonePro
                             return;
                         }
 
-                        setIsTimeZoneSelectorTooltipVisible(!isTimeZoneSelectorTooltipVisible);
+                        setIsTimeZoneSelectorDropdownVisible(!isTimeZoneSelectorDropdownVisible);
                     }}
                 >
                     <div className={`text-[12px]` + (selectedTimeTrackingType === 'Floating Time' ? ' text-color-gray-100' : '')}>{tempSelectedTimeZone}</div>
                     <Icon name="expand_more" fill={0} customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'} />
                 </div>
 
-                {isTimeZoneSelectorTooltipVisible && (
-                    <TooltipTimeZoneSelector
-                        isVisible={isTimeZoneSelectorTooltipVisible}
-                        setIsVisible={setIsTimeZoneSelectorTooltipVisible}
+                {isTimeZoneSelectorDropdownVisible && (
+                    <DropdownTimeZoneSelector
+                        isVisible={isTimeZoneSelectorDropdownVisible}
+                        setIsVisible={setIsTimeZoneSelectorDropdownVisible}
                         tempSelectedTimeZone={tempSelectedTimeZone}
                         setTempSelectedTimeZone={setTempSelectedTimeZone}
                     />
@@ -74,8 +74,8 @@ const TooltipFixedOrFloatingTimeZone: React.FC<TooltipFixedOrFloatingTimeZonePro
                     }}>Ok</button>
                 </div>
             </div>
-        </Tooltip>
+        </Dropdown>
     );
 };
 
-export default TooltipFixedOrFloatingTimeZone;
+export default DropdownFixedOrFloatingTimeZone;

@@ -1,7 +1,7 @@
 import { useState } from "react";
-import Tooltip from "./Tooltip";
+import Dropdown from "./Dropdown";
 import Icon from "../Icon.component";
-import TooltipFixedOrFloatingTimeZone from "./TooltipFixedOrFloatingTimeZone";
+import DropdownFixedOrFloatingTimeZone from "./DropdownFixedOrFloatingTimeZone";
 
 const getTimesArray = () => {
     let timesArray = [];
@@ -16,18 +16,18 @@ const getTimesArray = () => {
     return timesArray;
 };
 
-interface TooltipTimeProps {
-    isTimeTooltipVisibile: boolean;
+interface DropdownTimeProps {
+    isTimeDropdownVisibile: boolean;
 }
 
-const TooltipTime: React.FC<TooltipTimeProps> = ({ isTimeTooltipVisibile }) => {
+const DropdownTime: React.FC<DropdownTimeProps> = ({ isTimeDropdownVisibile }) => {
     const timesArray = getTimesArray();
     const [selectedTime, setSelectedTime] = useState('14:00');
-    const [isTooltipFixedOrFloatingTimeZone, setIsTooltipFixedOrFloatingTimeZone] = useState(false);
+    const [isDropdownFixedOrFloatingTimeZone, setIsDropdownFixedOrFloatingTimeZone] = useState(false);
     const [timeZone, setTimeZone] = useState('New York, EDT');
 
     return (
-        <Tooltip isVisible={isTimeTooltipVisibile} customClasses={' mt-[-280px] ml-[-5px] shadow-2xl border border-color-gray-200 rounded-[4px]'}>
+        <Dropdown isVisible={isTimeDropdownVisibile} customClasses={' mt-[-280px] ml-[-5px] shadow-2xl border border-color-gray-200 rounded-[4px]'}>
             <div className="w-[260px] p-1">
                 <div className="overflow-auto gray-scrollbar h-[240px]">
                     {timesArray.map((time) => {
@@ -48,16 +48,16 @@ const TooltipTime: React.FC<TooltipTimeProps> = ({ isTimeTooltipVisibile }) => {
 
                 <div className="p-2 mt-2">
                     <div className="border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500" onClick={() => {
-                        setIsTooltipFixedOrFloatingTimeZone(!isTooltipFixedOrFloatingTimeZone);
+                        setIsDropdownFixedOrFloatingTimeZone(!isDropdownFixedOrFloatingTimeZone);
                     }}>
-                        <TooltipFixedOrFloatingTimeZone isVisible={isTooltipFixedOrFloatingTimeZone} setIsVisible={setIsTooltipFixedOrFloatingTimeZone} setTimeZone={setTimeZone} />
+                        <DropdownFixedOrFloatingTimeZone isVisible={isDropdownFixedOrFloatingTimeZone} setIsVisible={setIsDropdownFixedOrFloatingTimeZone} setTimeZone={setTimeZone} />
                         <div>{timeZone}</div>
                         <Icon name="expand_more" fill={0} customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'} />
                     </div>
                 </div>
             </div>
-        </Tooltip>
+        </Dropdown>
     );
 };
 
-export default TooltipTime;
+export default DropdownTime;

@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import TextareaAutosize from 'react-textarea-autosize';
 import { TaskObj } from "../types/types";
 import Task from "./Task.component";
-import TooltipCalendar from "./tooltips/TooltipCalendar";
+import DropdownCalendar from "./Dropdown/DropdownCalendar";
 
 const EmptyTask = () => (
     <div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700 flex justify-center items-center text-[18px] text-color-gray-100">
@@ -24,7 +24,7 @@ const TaskDetailsPage = () => {
     const [task, setTask] = useState<TaskObj>();
     const [parentTask, setParentTask] = useState<TaskObj | null>();
     const [dueDate, setDueDate] = useState(null);
-    const [isTooltipCalendarVisible, setIsTooltipCalendarVisible] = useState(false);
+    const [isDropdownCalendarVisible, setIsDropdownCalendarVisible] = useState(false);
 
     let { taskId } = useParams();
     let navigate = useNavigate();
@@ -65,11 +65,11 @@ const TaskDetailsPage = () => {
                     )}
 
                     <div
-                        className="flex items-center gap-1 border-l border-color-gray-200 text-color-gray-100 px-2 cursor-pointer" onClick={() => setIsTooltipCalendarVisible(!isTooltipCalendarVisible)}>
+                        className="flex items-center gap-1 border-l border-color-gray-200 text-color-gray-100 px-2 cursor-pointer" onClick={() => setIsDropdownCalendarVisible(!isDropdownCalendarVisible)}>
                         <Icon name="calendar_month" customClass={"!text-[20px] hover:text-white cursor-p"} />
                         Due Date
                     </div>
-                    <TooltipCalendar isVisible={isTooltipCalendarVisible} setIsVisible={setIsTooltipCalendarVisible} dueDate={dueDate} setDueDate={setDueDate} customClasses=" ml-[-100px] mt-[15px]" />
+                    <DropdownCalendar isVisible={isDropdownCalendarVisible} setIsVisible={setIsDropdownCalendarVisible} dueDate={dueDate} setDueDate={setDueDate} customClasses=" ml-[-100px] mt-[15px]" />
                 </div>
 
                 <Icon name="flag" customClass={"text-color-gray-100 text-red-500 !text-[22px] hover:text-white cursor-p"} />

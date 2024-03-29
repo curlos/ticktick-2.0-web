@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Tooltip from "./Tooltip";
+import Dropdown from "./Dropdown";
 import Icon from "../Icon.component";
 import { getDateWithOrdinalAndMonth } from "../../utils/helpers.utils";
 
@@ -41,19 +41,19 @@ const BASIC_REMINDER_OPTIONS = {
     },
 };
 
-interface TooltipRepeatProps {
+interface DropdownRepeatProps {
     isVisible: boolean;
     setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
     repeat: string;
     setRepeat: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const TooltipRepeat: React.FC<TooltipRepeatProps> = ({ isVisible, setIsVisible, repeat, setRepeat }) => {
+const DropdownRepeat: React.FC<DropdownRepeatProps> = ({ isVisible, setIsVisible, repeat, setRepeat }) => {
     const [basicOptions, setBasicOptions] = useState(BASIC_REMINDER_OPTIONS);
-    const [isTooltipCustomRepeatVisible, setIsTooltipCustomRepeatVisible] = useState(false);
+    const [isDropdownCustomRepeatVisible, setIsDropdownCustomRepeatVisible] = useState(false);
 
     return (
-        <Tooltip isVisible={isVisible} customClasses={' mt-[-250px] ml-[-5px] shadow-2xl border border-color-gray-200 rounded-lg'}>
+        <Dropdown isVisible={isVisible} customClasses={' mt-[-250px] ml-[-5px] shadow-2xl border border-color-gray-200 rounded-lg'}>
             <div className="w-[260px] rounded" onClick={(e) => e.stopPropagation()}>
                 <div className="p-1">
                     {Object.keys(basicOptions).map((name: string) => {
@@ -84,10 +84,10 @@ const TooltipRepeat: React.FC<TooltipRepeatProps> = ({ isVisible, setIsVisible, 
                 <hr className="border-color-gray-200" />
 
 
-                <TooltipCustomRepeat isVisible={isTooltipCustomRepeatVisible} setIsVisible={setIsTooltipCustomRepeatVisible} repeat={repeat} setRepeat={setRepeat} />
+                <DropdownCustomRepeat isVisible={isDropdownCustomRepeatVisible} setIsVisible={setIsDropdownCustomRepeatVisible} repeat={repeat} setRepeat={setRepeat} />
 
                 <div className="p-1">
-                    <div className="p-2 mb-2 flex items-center justify-between hover:bg-color-gray-300 p-2 rounded-lg cursor-pointer" onClick={() => setIsTooltipCustomRepeatVisible(!isTooltipCustomRepeatVisible)}>Custom</div>
+                    <div className="p-2 mb-2 flex items-center justify-between hover:bg-color-gray-300 p-2 rounded-lg cursor-pointer" onClick={() => setIsDropdownCustomRepeatVisible(!isDropdownCustomRepeatVisible)}>Custom</div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 pb-4 px-3">
@@ -96,29 +96,29 @@ const TooltipRepeat: React.FC<TooltipRepeatProps> = ({ isVisible, setIsVisible, 
                 </div>
 
             </div>
-        </Tooltip>
+        </Dropdown>
     );
 };
 
-interface TooltipAdvancedReminderProps extends TooltipRepeatProps {
+interface DropdownAdvancedReminderProps extends DropdownRepeatProps {
 
 }
 
-const TooltipCustomRepeat: React.FC<TooltipAdvancedReminderProps> = ({ isVisible, setIsVisible, repeat, setRepeat }) => {
+const DropdownCustomRepeat: React.FC<DropdownAdvancedReminderProps> = ({ isVisible, setIsVisible, repeat, setRepeat }) => {
     const [selectedUnitOfTime, setSelectedUnitOfTime] = useState('By Due Dates');
-    const [isTooltipUnitOfTimeVisible, setIsTooltipUnitOfTimeVisible] = useState(false);
+    const [isDropdownUnitOfTimeVisible, setIsDropdownUnitOfTimeVisible] = useState(false);
     const [everyUnit, setEveryUnit] = useState(1);
     const [remindAt, setRemindAt] = useState();
 
     return (
-        <Tooltip isVisible={isVisible} customClasses={' mt-[-210px] ml-[0px] shadow-2xl border border-color-gray-200 rounded-lg'}>
+        <Dropdown isVisible={isVisible} customClasses={' mt-[-210px] ml-[0px] shadow-2xl border border-color-gray-200 rounded-lg'}>
             <div className=" w-[260px] p-3 rounded" onClick={(e) => e.stopPropagation()}>
                 <div className="border border-color-gray-200 rounded py-1 px-[6px] flex justify-between items-center hover:border-blue-500 cursor-pointer" onClick={() => {
-                    setIsTooltipUnitOfTimeVisible(!isTooltipUnitOfTimeVisible);
+                    setIsDropdownUnitOfTimeVisible(!isDropdownUnitOfTimeVisible);
                 }}>
-                    <Dropdown
-                        isVisible={isTooltipUnitOfTimeVisible}
-                        setIsVisible={setIsTooltipUnitOfTimeVisible}
+                    <CustomDropdown
+                        isVisible={isDropdownUnitOfTimeVisible}
+                        setIsVisible={setIsDropdownUnitOfTimeVisible}
                         selectedValue={selectedUnitOfTime}
                         setSelectedValue={setSelectedUnitOfTime}
                     />
@@ -155,7 +155,7 @@ const TooltipCustomRepeat: React.FC<TooltipAdvancedReminderProps> = ({ isVisible
                 </div>
 
             </div>
-        </Tooltip>
+        </Dropdown>
     );
 };
 
@@ -166,10 +166,10 @@ interface DropdownProps {
     setSelectedValue: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const Dropdown: React.FC<DropdownProps> = ({ isVisible, setIsVisible, selectedValue, setSelectedValue }) => {
+const CustomDropdown: React.FC<DropdownProps> = ({ isVisible, setIsVisible, selectedValue, setSelectedValue }) => {
     const values = ['By Due Dates', 'By Completion Date', 'By Specific Dates'];
     return (
-        <Tooltip isVisible={isVisible} customClasses={' w-[100%] mb-[-150px] ml-[-10px] p-1 shadow-2xl border border-color-gray-200 rounded-lg'}>
+        <Dropdown isVisible={isVisible} customClasses={' w-[100%] mb-[-150px] ml-[-10px] p-1 shadow-2xl border border-color-gray-200 rounded-lg'}>
             {values.map((value) => (
                 <div
                     className="flex items-center justify-between hover:bg-color-gray-300 p-2 rounded-lg cursor-pointer"
@@ -184,8 +184,8 @@ const Dropdown: React.FC<DropdownProps> = ({ isVisible, setIsVisible, selectedVa
                     )}
                 </div>
             ))}
-        </Tooltip>
+        </Dropdown>
     );
 };
 
-export default TooltipRepeat;
+export default DropdownRepeat;

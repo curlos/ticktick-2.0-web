@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@headlessui/react": "^1.7.18",
     "@mdi/js": "^7.4.47",
     "@reduxjs/toolkit": "^2.2.1",
     "fuse.js": "^7.0.0",
