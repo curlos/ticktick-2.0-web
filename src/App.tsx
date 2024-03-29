@@ -10,6 +10,7 @@ import TaskListSidebar from './components/TaskListSidebar.component';
 import useFetchTasks from './hooks/useFetchTasks';
 import TaskDetailsPage from './components/TaskDetails';
 import { Resizable, ResizableBox } from 'react-resizable';
+import FocusTimer from './components/FocusTimer';
 
 function App() {
   useFetchTasks(); // This will fetch tasks when the component mounts
@@ -45,7 +46,7 @@ function App() {
           <ServiceMenu />
         </div>
         <div className="flex-[10] bg-blue-500">
-          <TaskListPage />
+          <FocusTimer />
         </div>
         <div className="flex-[6] bg-red-500">
           {/* <ResizableBox width={500} height={'100%'} resizeHandles={['sw', 'se', 'nw', 'ne', 'w', 'e', 'n', 's']}>
