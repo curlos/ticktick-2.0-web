@@ -24,7 +24,7 @@ const TaskDetailsPage = () => {
     const [task, setTask] = useState<TaskObj>();
     const [parentTask, setParentTask] = useState<TaskObj | null>();
     const [dueDate, setDueDate] = useState(null);
-    const [isTooltipCalendarVisible, setIsTooltipCalendarVisible] = useState(true);
+    const [isTooltipCalendarVisible, setIsTooltipCalendarVisible] = useState(false);
 
     let { taskId } = useParams();
     let navigate = useNavigate();
@@ -87,8 +87,6 @@ const TaskDetailsPage = () => {
 
                 <TextareaAutosize className="text-[16px] placeholder:text-[#7C7C7C] font-bold mb-0 bg-transparent w-full outline-none resize-none" placeholder="What would you like to do?" value={currTitle} onChange={(e) => setCurrTitle(e.target.value)}></TextareaAutosize>
                 <TextareaAutosize className="text-[14px] placeholder:text-[#7C7C7C] mt-2 mb-4 bg-transparent w-full outline-none resize-none" placeholder="Description" value={currDescription} onChange={(e) => setCurrDescription(e.target.value)}></TextareaAutosize>
-
-                {/* <hr className="border-color-gray-200 mt-2 mb-3" /> */}
 
                 {directSubtasks.map((subtaskId: string) => (
                     <Task key={subtaskId} tasks={allTasks} taskId={subtaskId} fromTaskDetails={true} />

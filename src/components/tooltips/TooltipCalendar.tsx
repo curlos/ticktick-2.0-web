@@ -183,7 +183,7 @@ const TooltipCalendar: React.FC<TooltipPrioritiesProps> = ({ isVisible, setIsVis
     const [selectedView, setSelectedView] = useState('date');
     const [isTimeTooltipVisibile, setIsTimeTooltipVisible] = useState(false);
     const [isTooltipReminderVisible, setIsTooltipReminderVisible] = useState(false);
-    const [isTooltipRepeatVisible, setIsTooltipRepeatVisible] = useState(true);
+    const [isTooltipRepeatVisible, setIsTooltipRepeatVisible] = useState(false);
     const [reminder, setReminder] = useState('');
     const [repeat, setRepeat] = useState('');
     interface TimeOptionProps {
