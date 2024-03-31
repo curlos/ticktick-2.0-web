@@ -6,6 +6,7 @@ import TextareaAutosize from 'react-textarea-autosize';
 import { TaskObj } from "../types/types";
 import Task from "./Task.component";
 import DropdownCalendar from "./Dropdown/DropdownCalendar";
+import AddTaskForm from "./AddTaskForm";
 
 const EmptyTask = () => (
     <div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700 flex justify-center items-center text-[18px] text-color-gray-100">
@@ -25,6 +26,7 @@ const TaskDetailsPage = () => {
     const [parentTask, setParentTask] = useState<TaskObj | null>();
     const [dueDate, setDueDate] = useState(null);
     const [isDropdownCalendarVisible, setIsDropdownCalendarVisible] = useState(false);
+    const [showAddTaskForm, setShowAddTaskForm] = useState(false);
 
     let { taskId } = useParams();
     let navigate = useNavigate();
@@ -93,9 +95,15 @@ const TaskDetailsPage = () => {
                 ))}
 
                 {directSubtasks && directSubtasks.length > 1 && (
-                    <div className="text-blue-500 flex items-center gap-1 cursor-pointer mt-1">
-                        <Icon name="add" customClass={"text-color-gray-100 text-blue-500 !text-[22px] hover:text-white cursor-p"} />
-                        Add Subtask
+                    <div>
+                        {!showAddTaskForm && (
+                            <button className="flex items-center gap-1 my-2" onClick={() => setShowAddTaskForm(true)}>
+                                <Icon name="add" customClass={"text-blue-500 !text-[20px]"} />
+                                <span className="text-blue-500">Add Subtask</span>
+                            </button>
+                        )}
+
+                        {showAddTaskForm && <AddTaskForm setShowAddTaskForm={setShowAddTaskForm} />}
                     </div>
                 )}
             </div>

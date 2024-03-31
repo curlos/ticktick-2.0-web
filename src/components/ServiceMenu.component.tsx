@@ -1,8 +1,11 @@
 import Icon from "./Icon.component";
 import { useNavigate } from "react-router";
+import ModalAddTaskForm from "./Modal/ModalAddTaskForm";
+import { useState } from "react";
 
 
 const ServiceMenu = () => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const iconCustomClass = "text-white !text-[24px] cursor-pointer";
     const navigate = useNavigate();
 
@@ -19,6 +22,7 @@ const ServiceMenu = () => {
                     <Icon name="timer" customClass={iconCustomClass} onClick={() => navigate('/focus')} />
                     {/* <Icon name="location_on" customClass={iconCustomClass} /> */}
                     {/* <Icon name="search" customClass={iconCustomClass} grad={200} /> */}
+                    <Icon name="add_task" customClass={iconCustomClass} onClick={() => setIsModalOpen(true)} />
                 </div>
             </div>
 
@@ -27,6 +31,8 @@ const ServiceMenu = () => {
                 <Icon name="notifications" customClass={iconCustomClass} />
                 <Icon name="help" customClass={iconCustomClass} />
             </div> */}
+
+            <ModalAddTaskForm isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
         </div>
     );
 };

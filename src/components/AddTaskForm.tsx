@@ -7,7 +7,11 @@ import DropdownPriorities from "./Dropdown/DropdownPriorities";
 import { PRIORITIES } from "../utils/priorities.utils";
 import { addTask } from "../slices/tasksSlice";
 
-const AddTaskForm = () => {
+interface AddTaskFormProps {
+    setShowAddTaskForm: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm }) => {
     const dispatch = useDispatch();
 
     const [title, setTitle] = useState('');
@@ -112,7 +116,7 @@ const AddTaskForm = () => {
                     </div>
 
                     <div className="space-x-2">
-                        <button className="border border-color-gray-200 rounded-md py-1 cursor-pointer hover:bg-color-gray-200 p-3">Cancel</button>
+                        <button className="border border-color-gray-200 rounded-md py-1 cursor-pointer hover:bg-color-gray-200 p-3" onClick={() => setShowAddTaskForm(false)}>Cancel</button>
                         <button className="bg-blue-500 rounded-md py-1 cursor-pointer hover:bg-blue-600 p-3">Add task</button>
                     </div>
                 </div>

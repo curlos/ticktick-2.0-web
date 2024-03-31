@@ -17,7 +17,7 @@ const TaskListByCategory: React.FC<TaskListByCategoryProps> = ({ tasks }) => {
     return (
         <div>
             {category && (
-                <div className="flex items-center text-[12px] cursor-pointer" onClick={() => setShowTasks(!showTasks)}>
+                <div className="flex items-center text-[12px] cursor-pointer mb-2" onClick={() => setShowTasks(!showTasks)}>
                     {showTasks ? (
                         <Icon name="expand_more" customClass={categoryIconClass} />
                     ) : (
@@ -36,6 +36,7 @@ const TaskListByCategory: React.FC<TaskListByCategoryProps> = ({ tasks }) => {
 
 const TaskListPage = () => {
     const allTasks = useSelector((state) => state.tasks.tasks);
+    const [showAddTaskForm, setShowAddTaskForm] = useState(false);
 
     return (
         <div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700">
@@ -52,11 +53,19 @@ const TaskListPage = () => {
                     </div>
                 </div>
 
-                <AddTaskForm />
-
                 <div className="mt-4 space-y-4">
                     <TaskListByCategory tasks={allTasks} />
                 </div>
+
+
+
+                {!showAddTaskForm && <button className="flex items-center gap-1 my-2" onClick={() => setShowAddTaskForm(true)}>
+                    <Icon name="add" customClass={"text-blue-500 !text-[20px]"} />
+                    <span className="text-blue-500">Add Task</span>
+                </button>}
+
+                {showAddTaskForm && <AddTaskForm setShowAddTaskForm={setShowAddTaskForm} />}
+
             </div>
         </div>
     );

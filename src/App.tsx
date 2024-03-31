@@ -11,6 +11,7 @@ import useFetchTasks from './hooks/useFetchTasks';
 import TaskDetailsPage from './components/TaskDetails';
 import { Resizable, ResizableBox } from 'react-resizable';
 import FocusTimer from './components/FocusTimer';
+import ModalAddTaskForm from './components/Modal/ModalAddTaskForm';
 
 function App() {
   useFetchTasks(); // This will fetch tasks when the component mounts
