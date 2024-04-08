@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import CustomRadioButton from "../CustomRadioButton";
 import Dropdown from "./Dropdown";
-import Icon from "../Icon.component";
+import Icon from "../Icon";
 import DropdownTimeZoneSelector from "./DropdownTimeZoneSelector";
 
 interface DropdownFixedOrFloatingTimeZoneProps {

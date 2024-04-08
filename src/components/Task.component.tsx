@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Icon from "./Icon.component";
+import Icon from "./Icon";
 import { TaskObj } from "../types/types";
 import { millisecondsToHoursAndMinutes } from "../utils/helpers.utils";
 import { useNavigate, useParams } from "react-router-dom";
@@ -51,12 +51,12 @@ const Task: React.FC<TaskProps> = ({ tasks, taskId, fromTaskDetails }) => {
                     }}>
                         {!completed ? (
                             directSubtasks.length >= 1 ? (
-                                <Icon name="list_alt" fill={0} customClass={"text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-p"} />
+                                <Icon name="list_alt" fill={0} customClass={"text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-pointer"} />
                             ) : (
-                                <Icon name="check_box_outline_blank" customClass={"text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-p"} />
+                                <Icon name="check_box_outline_blank" customClass={"text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-pointer"} />
                             )
                         ) : (
-                            <Icon name="check_box" customClass={"text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-p"} />
+                            <Icon name="check_box" customClass={"text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-pointer"} />
                         )}
                     </div>
 

@@ -2,10 +2,12 @@ import { useState, useEffect } from "react";
 import alarmSound from '/clock-alarm-8761.mp3';
 import iosDarkNoise from '/IOS Dark Noise Background sound 1 Hour.mp3';
 import { Link } from "react-router-dom";
-import Icon from "./Icon.component";
+import Icon from "./Icon";
 import { CircularProgressbarWithChildren, buildStyles } from "react-circular-progressbar";
 import 'react-circular-progressbar/dist/styles.css';
 import PixelArt from "./PixelArt";
+import Dropdown from "./Dropdown/Dropdown";
+import ModalFocusSettings from "./Modal/ModalFocusSettings";
 
 const bgThemeColor = 'bg-[#4772F9]';
 const textThemeColor = 'text-[#4772F9]';
@@ -148,15 +150,56 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = () => {
     );
 };
 
+interface DropdownPrioritiesProps {
+    isVisible: boolean;
+    setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
+    setIsModalFocusSettingsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const DropdownOptions: React.FC<DropdownPrioritiesProps> = ({ isVisible, setIsVisible, setIsModalFocusSettingsOpen }) => {
+    const [selectedView, setSelectedView] = useState('date');
+
+    interface AdditionalOptionProps {
+        text: string;
+        iconName: string;
+        onClick: () => void;
+    }
+
+    const AdditionalOption: React.FC<AdditionalOptionProps> = ({ text, iconName, onClick }) => {
+        return (
+            <div className="p-2 flex items-center gap-2 hover:bg-color-gray-300 cursor-pointer" onClick={onClick}>
+                <Icon name={iconName} customClass={"!text-[18px] text-color-gray-100 hover:text-white"} fill={0} />
+                <div className="text-[13px]">{text}</div>
+            </div>
+        );
+    };
+
+    return (
+        <div className={`${isVisible ? '' : 'hidden'}`}>
+            <Dropdown isVisible={isVisible} setIsVisible={setIsVisible} customClasses={'ml-[-125px] shadow-2xl !rounded border border-color-gray-200'}>
+                <div className="w-[164px] p-1">
+                    <AdditionalOption text="Statistics" iconName="schedule" onClick={() => null} />
+                    <AdditionalOption text="Focus Settings" iconName="tune" onClick={() => {
+                        setIsVisible(false);
+                        setIsModalFocusSettingsOpen(true);
+                    }} />
+                </div>
+            </Dropdown>
+        </div>
+    );
+};
+
 interface TopBarProps {
     selectedButton: string,
     setSelectedButton: React.Dispatch<React.SetStateAction<string>>;
+    setIsModalFocusSettingsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const TopBar: React.FC<TopBarProps> = ({ selectedButton, setSelectedButton }) => {
+const TopBar: React.FC<TopBarProps> = ({ selectedButton, setSelectedButton, setIsModalFocusSettingsOpen }) => {
     const sharedButtonStyle = `py-1 px-4 rounded-3xl cursor-pointer`;
     const selectedButtonStyle = `${sharedButtonStyle} bg-[#222735] text-[#4671F7] font-semibold`;
     const unselectedButtonStyle = `${sharedButtonStyle} text-[#666666]`;
+    const [isDropdownFocusOptionsVisible, setIsDropdownFocusOptionsVisible] = useState(false);
 
     return (
         <div className="flex justify-between items-center">
@@ -167,18 +210,23 @@ const TopBar: React.FC<TopBarProps> = ({ selectedButton, setSelectedButton }) =>
                 <div className={selectedButton === 'stopwatch' ? selectedButtonStyle : unselectedButtonStyle} onClick={() => setSelectedButton('stopwatch')}>Stopwatch</div>
             </div>
 
-            <Icon name="more_horiz" customClass={"text-color-gray-100 !text-[18px] hover:text-white cursor-p"} fill={0} />
+            <div>
+                <Icon name="more_horiz" customClass={"text-color-gray-100 !text-[24px] rounded hover:bg-color-gray-300 cursor-pointer"} fill={0} onClick={() => setIsDropdownFocusOptionsVisible(!isDropdownFocusOptionsVisible)} />
+                <DropdownOptions isVisible={isDropdownFocusOptionsVisible} setIsVisible={setIsDropdownFocusOptionsVisible} setIsModalFocusSettingsOpen={setIsModalFocusSettingsOpen} />
+            </div>
         </div>
     );
 };
 
 const FocusTimer = () => {
-    const [selectedButton, setSelectedButton] = useState('stopwatch');
+    const [selectedButton, setSelectedButton] = useState('pomo');
+    const [isModalFocusSettingsOpen, setIsModalFocusSettingsOpen] = useState(false);
+
 
     return (
         <div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700">
             <div className="p-4 h-full border-l border-r border-color-gray-200 flex flex-col">
-                <TopBar selectedButton={selectedButton} setSelectedButton={setSelectedButton} />
+                <TopBar selectedButton={selectedButton} setSelectedButton={setSelectedButton} setIsModalFocusSettingsOpen={setIsModalFocusSettingsOpen} />
                 <div className="flex-1 flex justify-center items-center">
                     {selectedButton === 'pomo' ? (
                         <PomodoroTimer selectedButton={selectedButton} />
@@ -187,6 +235,8 @@ const FocusTimer = () => {
                     )}
                 </div>
             </div>
+
+            <ModalFocusSettings isModalOpen={isModalFocusSettingsOpen} setIsModalOpen={setIsModalFocusSettingsOpen} />
         </div>
     );
 };

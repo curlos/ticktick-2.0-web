@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Dropdown from "./Dropdown";
-import Icon from "../Icon.component";
+import Icon from "../Icon";
 import DropdownFixedOrFloatingTimeZone from "./DropdownFixedOrFloatingTimeZone";
 
 const getTimesArray = () => {

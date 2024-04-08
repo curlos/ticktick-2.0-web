@@ -1,5 +1,5 @@
 import Dropdown from "./Dropdown";
-import Icon from "../Icon.component";
+import Icon from "../Icon";
 import { IPriorityItem, PRIORITIES } from "../../utils/priorities.utils";
 
 interface DropdownPrioritiesProps {

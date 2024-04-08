@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import Icon from "./Icon.component";
+import Icon from "./Icon";
 import DropdownCalendar from "./Dropdown/DropdownCalendar";
 import TextareaAutosize from 'react-textarea-autosize';
 import DropdownPriorities from "./Dropdown/DropdownPriorities";
 import { PRIORITIES } from "../utils/priorities.utils";
 import { addTask } from "../slices/tasksSlice";
+import DropdownLists from "./Dropdown/DropdownLists";
 
 interface AddTaskFormProps {
     setShowAddTaskForm: React.Dispatch<React.SetStateAction<boolean>>;
@@ -19,7 +20,9 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm }) => {
     const [dueDate, setDueDate] = useState(null);
     const [isDropdownCalendarVisible, setIsDropdownCalendarVisible] = useState(false);
     const [isDropdownPrioritiesVisible, setIsDropdownPrioritiesVisible] = useState(false);
+    const [isDropdownListsVisible, setIsDropdownListsVisible] = useState(false);
     const [tempSelectedPriority, setTempSelectedPriority] = useState('none');
+    const [selectedList, setSelectedList] = useState('Hello Mobile');
     const [description, setDescription] = useState('');
 
     const priority = PRIORITIES[tempSelectedPriority];
@@ -70,7 +73,7 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm }) => {
                 onSubmit={handleAddTask}
             >
                 <div className="p-3 pb-1">
-                    <TextareaAutosize className="text-[14px] placeholder:text-[#7C7C7C] font-bold mb-0 bg-transparent w-full outline-none resize-none" placeholder="Task name" value={title} onChange={(e) => setTitle(e.target.value)}></TextareaAutosize>
+                    <TextareaAutosize className="text-[16px] placeholder:text-[#7C7C7C] font-bold mb-0 bg-transparent w-full outline-none resize-none" placeholder="Task name" value={title} onChange={(e) => setTitle(e.target.value)}></TextareaAutosize>
                     <TextareaAutosize className="text-[14px] placeholder:text-[#7C7C7C] bg-transparent w-full outline-none resize-none" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)}></TextareaAutosize>
 
                     <div className="flex gap-2 mt-3">
@@ -110,9 +113,13 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm }) => {
                 <hr className="border-color-gray-200 my-1" />
 
                 <div className="p-2 pt-1 flex justify-between items-center">
-                    <div className="flex items-center gap-1 font-bold text-[12px] cursor-pointer">
-                        Hello Mobile
-                        <Icon name="expand_more" customClass={"!text-[16px] hover:text-white"} />
+                    <div>
+                        <div className="flex items-center gap-1 font-bold text-[12px] cursor-pointer" onClick={() => setIsDropdownListsVisible(true)}>
+                            {selectedList}
+                            <Icon name="expand_more" customClass={"!text-[16px] hover:text-white"} />
+                        </div>
+
+                        <DropdownLists isVisible={isDropdownListsVisible} setIsVisible={setIsDropdownListsVisible} selectedList={selectedList} setSelectedList={setSelectedList} />
                     </div>
 
                     <div className="space-x-2">

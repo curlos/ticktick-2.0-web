@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Icon from "./Icon.component";
+import Icon from "./Icon";
 
 interface ListItemProps {
     name: string;

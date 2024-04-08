@@ -1,6 +1,6 @@
 import Dropdown from "./Dropdown";
 import { useEffect, useRef, useState } from "react";
-import Icon from "../Icon.component";
+import Icon from "../Icon";
 import { areDatesEqual, debounce } from "../../utils/helpers.utils";
 import CustomRadioButton from "../CustomRadioButton";
 import Fuse from 'fuse.js';
@@ -206,7 +206,7 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({ isVisible, setIsV
 
 
     return (
-        <div className={`${isVisible ? '' : 'hidden'} custom-Dropdown-position`}>
+        <div className={`${isVisible ? '' : 'hidden'}`}>
             <Dropdown isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' ml-[-70px] shadow-2xl' + (customClasses ? ` ${customClasses}` : '')}>
                 <div className="w-[260px]">
                     <div className="p-4">

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Icon from "./Icon.component";
+import Icon from "./Icon";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from 'react-router-dom';
 import TextareaAutosize from 'react-textarea-autosize';
@@ -11,7 +11,7 @@ import AddTaskForm from "./AddTaskForm";
 const EmptyTask = () => (
     <div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700 flex justify-center items-center text-[18px] text-color-gray-100">
         <div className="text-center space-y-5">
-            <Icon name="ads_click" customClass={"text-color-gray-100 text-blue-500 !text-[50px] hover:text-white cursor-p"} />
+            <Icon name="ads_click" customClass={"text-color-gray-100 text-blue-500 !text-[50px] hover:text-white cursor-pointer"} />
             <div>Click task title to view the details</div>
         </div>
     </div>
@@ -58,23 +58,23 @@ const TaskDetailsPage = () => {
                 <div className="flex items-center gap-2">
                     {!completed ? (
                         directSubtasks.length >= 1 ? (
-                            <Icon name="list_alt" fill={0} customClass={"text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-p"} />
+                            <Icon name="list_alt" fill={0} customClass={"text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-pointer"} />
                         ) : (
-                            <Icon name="check_box_outline_blank" customClass={"text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-p"} />
+                            <Icon name="check_box_outline_blank" customClass={"text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-pointer"} />
                         )
                     ) : (
-                        <Icon name="check_box" customClass={"text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-p"} />
+                        <Icon name="check_box" customClass={"text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-pointer"} />
                     )}
 
                     <div
                         className="flex items-center gap-1 border-l border-color-gray-200 text-color-gray-100 px-2 cursor-pointer" onClick={() => setIsDropdownCalendarVisible(!isDropdownCalendarVisible)}>
-                        <Icon name="calendar_month" customClass={"!text-[20px] hover:text-white cursor-p"} />
+                        <Icon name="calendar_month" customClass={"!text-[20px] hover:text-white cursor-pointer"} />
                         Due Date
                     </div>
                     <DropdownCalendar isVisible={isDropdownCalendarVisible} setIsVisible={setIsDropdownCalendarVisible} dueDate={dueDate} setDueDate={setDueDate} customClasses=" ml-[-100px] mt-[15px]" />
                 </div>
 
-                <Icon name="flag" customClass={"text-color-gray-100 text-red-500 !text-[22px] hover:text-white cursor-p"} />
+                <Icon name="flag" customClass={"text-color-gray-100 text-red-500 !text-[22px] hover:text-white cursor-pointer"} />
             </div>
 
             <div className="p-4 flex flex-col justify-between">
@@ -111,14 +111,14 @@ const TaskDetailsPage = () => {
             <div className="p-4 flex-1 flex flex-col justify-end text-color-gray-100">
                 <div className="flex justify-between items-center">
                     <div className="flex items-center gap-1">
-                        <Icon name="drive_file_move" customClass={"text-color-gray-100 !text-[18px] hover:text-white cursor-p"} />
+                        <Icon name="drive_file_move" customClass={"text-color-gray-100 !text-[18px] hover:text-white cursor-pointer"} />
                         Hello Mobile
                     </div>
 
                     <div className="flex items-center gap-2">
-                        <Icon name="edit_note" customClass={"text-color-gray-100 !text-[18px] hover:text-white cursor-p"} fill={0} />
-                        <Icon name="comment" customClass={"text-color-gray-100 !text-[18px] hover:text-white cursor-p"} fill={0} />
-                        <Icon name="more_horiz" customClass={"text-color-gray-100 !text-[18px] hover:text-white cursor-p"} fill={0} />
+                        <Icon name="edit_note" customClass={"text-color-gray-100 !text-[18px] hover:text-white cursor-pointer"} fill={0} />
+                        <Icon name="comment" customClass={"text-color-gray-100 !text-[18px] hover:text-white cursor-pointer"} fill={0} />
+                        <Icon name="more_horiz" customClass={"text-color-gray-100 !text-[18px] hover:text-white cursor-pointer"} fill={0} />
                     </div>
                 </div>
             </div>

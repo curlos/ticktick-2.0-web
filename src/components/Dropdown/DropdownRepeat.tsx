@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import Dropdown from "./Dropdown";
-import Icon from "../Icon.component";
+import Icon from "../Icon";
 import { getDateWithOrdinalAndMonth } from "../../utils/helpers.utils";
 
 const BASIC_REMINDER_OPTIONS = {

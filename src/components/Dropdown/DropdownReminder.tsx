@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import Dropdown from "./Dropdown";
-import Icon from "../Icon.component";
+import Icon from "../Icon";
+import CustomInput from "../CustomInput";
 
 const BASIC_REMINDER_OPTIONS = {
     'On the day (09:00)': {
@@ -129,22 +130,6 @@ const DropdownAdvancedReminder: React.FC<DropdownAdvancedReminderProps> = ({ isV
         </Dropdown>
     );
 };
-
-interface CustomInputProps {
-    type?: string;
-    value: any;
-    setValue: React.Dispatch<React.SetStateAction<any>>;
-}
-
-const CustomInput: React.FC<CustomInputProps> = ({ type, value, setValue }) => (
-    <input
-        type={type || "text"}
-        className="text-center text-[14px] p-[2px] bg-color-gray-200 placeholder:text-[#7C7C7C] mb-0 w-full resize-none outline-none rounded focus:outline-blue-500"
-        placeholder={`+ Add task to "Hello Mobile", press Enter to save.`}
-        value={value}
-        onChange={(e) => setValue(Number(e.target.value))}
-    />
-);
 
 interface DropdownUnitOfTimeProps {
     isVisible: boolean;

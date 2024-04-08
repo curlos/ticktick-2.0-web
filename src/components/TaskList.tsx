@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Icon from "../components/Icon.component";
+import Icon from "./Icon";
 import { TaskObj } from "../types/types";
 import Task from "./Task.component";
 

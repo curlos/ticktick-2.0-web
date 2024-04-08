@@ -1,4 +1,4 @@
-import Icon from "./Icon.component";
+import Icon from "./Icon";
 import { useNavigate } from "react-router";
 import ModalAddTaskForm from "./Modal/ModalAddTaskForm";
 import { useState } from "react";

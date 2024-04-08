@@ -4,62 +4,19 @@ import {
   Routes,
   Route,
 } from 'react-router-dom';
-import ServiceMenu from './components/ServiceMenu.component';
-import TaskListPage from './pages/TaskListPage.component';
-import TaskListSidebar from './components/TaskListSidebar.component';
+import ServiceMenu from './components/ServiceMenu';
+import TaskListPage from './pages/TaskListPage';
+import TaskListSidebar from './components/TaskListSidebar';
 import useFetchTasks from './hooks/useFetchTasks';
 import TaskDetailsPage from './components/TaskDetails';
 import { Resizable, ResizableBox } from 'react-resizable';
 import FocusTimer from './components/FocusTimer';
 import ModalAddTaskForm from './components/Modal/ModalAddTaskForm';
+import FocusPage from './pages/FocusPage';
+import HomePage from './pages/HomePage';
 
 function App() {
   useFetchTasks(); // This will fetch tasks when the component mounts
-
-  const HomePage = () => {
-    return (
-      <div className="flex max-w-screen">
-        <div className="">
-          <ServiceMenu />
-        </div>
-        <div className="flex-[3]">
-          <TaskListSidebar />
-        </div>
-        <div className="flex-[10] bg-blue-500">
-          <TaskListPage />
-        </div>
-        <div className="flex-[6] bg-red-500">
-          {/* <ResizableBox width={500} height={'100%'} resizeHandles={['sw', 'se', 'nw', 'ne', 'w', 'e', 'n', 's']}>
-            <div className="h-full">
-              <TaskDetailsPage />
-            </div>
-          </ResizableBox> */}
-          <TaskDetailsPage />
-        </div>
-      </div>
-    );
-  };
-
-  const FocusPage = () => {
-    return (
-      <div className="flex max-w-screen">
-        <div className="">
-          <ServiceMenu />
-        </div>
-        <div className="flex-[10] bg-blue-500">
-          <FocusTimer />
-        </div>
-        <div className="flex-[6] bg-red-500">
-          {/* <ResizableBox width={500} height={'100%'} resizeHandles={['sw', 'se', 'nw', 'ne', 'w', 'e', 'n', 's']}>
-            <div className="h-full">
-              <TaskDetailsPage />
-            </div>
-          </ResizableBox> */}
-          <TaskDetailsPage />
-        </div>
-      </div>
-    );
-  };
 
   return (
     <>
