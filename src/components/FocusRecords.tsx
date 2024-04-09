@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { formatTimeToHoursAndMinutes } from "../utils/helpers.utils";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import Icon from "./Icon";
+import useSticky from "../hooks/useSticky";
 
 interface StatsOverviewProps {
     overviewData: object;
@@ -74,14 +75,32 @@ const FocusRecords = () => {
             name: "TickTick 2.0 (Web)",
             description: `# Honestly didn’t get too much done here. I did finish the rest of the UI for the focus settings modal but the CSS sliding animation for the checkboxes had me fussing over how the state is controlled for these checkboxes. They need to remain uncontrolled to have the animation.`,
             timeFocused: 2700000
+        },
+        {
+            _id: 1,
+            name: "TickTick 2.0 (Web)",
+            description: `# Honestly didn’t get too much done here. I did finish the rest of the UI for the focus settings modal but the CSS sliding animation for the checkboxes had me fussing over how the state is controlled for these checkboxes. They need to remain uncontrolled to have the animation.`,
+            timeFocused: 2700000
+        },
+        {
+            _id: 1,
+            name: "TickTick 2.0 (Web)",
+            description: `# Honestly didn’t get too much done here. I did finish the rest of the UI for the focus settings modal but the CSS sliding animation for the checkboxes had me fussing over how the state is controlled for these checkboxes. They need to remain uncontrolled to have the animation.`,
+            timeFocused: 2700000
         }
     ]);
 
+    const scrollableRef = useRef(null); // Reference to the scrollable container
+    const stickyRef = useRef(null); // Reference to the sticky element
+    const isSticky = useSticky(scrollableRef, stickyRef); // Pass both refs to the hook
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
     return (
-        <div className="flex flex-col w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700">
+        <div ref={scrollableRef} className="flex flex-col w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700">
             <StatsOverview overviewData={overviewData} />
 
-            <div className="flex justify-between items-center px-5 mb-4">
+            <div ref={stickyRef} className={`flex justify-between items-center px-5 mb-4 sticky top-0` + (isSticky ? ' border-b border-color-gray-100 p-2 pt-4 bg-color-gray-700 z-10' : '')}>
                 <h4 className="text-[18px]">Focus Record</h4>
                 <Icon name="add" customClass={"!text-[20px] text-color-gray-100 cursor-pointer rounded hover:bg-color-gray-300"} />
             </div>
@@ -121,6 +140,8 @@ const FocusRecords = () => {
                         </li>
                     );
                 })}
+
+
             </div>
         </div>
     );
