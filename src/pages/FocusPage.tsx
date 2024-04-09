@@ -1,3 +1,4 @@
+import FocusRecords from "../components/FocusRecords";
 import FocusTimer from "../components/FocusTimer";
 import ServiceMenu from "../components/ServiceMenu";
 import TaskDetailsPage from "../components/TaskDetails";
@@ -11,9 +12,8 @@ const FocusPage = () => {
             <div className="flex-[10] bg-blue-500">
                 <FocusTimer />
             </div>
-            <div className="flex-[6] bg-red-500">
-
-
+            <div className="flex-[5] bg-red-500">
+                <FocusRecords />
             </div>
         </div>
     );

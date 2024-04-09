@@ -83,3 +83,14 @@ export function getDateWithOrdinalAndMonth(date: Date, includeMonth = false) {
 
     return formattedDay;
 }
+
+export function formatTimeToHoursAndMinutes(ms: number) {
+    // Convert milliseconds to total minutes
+    const totalMinutes = ms / (1000 * 60);
+    // Extract hours
+    const hours = Math.floor(totalMinutes / 60);
+    // Extract remaining minutes after converting to hours
+    const minutes = Math.floor(totalMinutes % 60);
+
+    return { hours, minutes };
+}
