@@ -79,8 +79,8 @@ const ModalFocusSettings: React.FC<ModalFocusSettingsProps> = ({ isModalOpen, se
 
     const CheckboxOption: React.FC<CheckboxOptionProps> = ({ text, backendPropName, iconElem, inputRef }) => {
         const handleChange = (event) => {
-            console.log(event.target.checked);
-            console.log(backendPropName);
+            // console.log(event.target.checked);
+            // console.log(backendPropName);
         };
 
         return (

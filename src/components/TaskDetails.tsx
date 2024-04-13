@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { useNavigate, useParams } from 'react-router-dom';
 import TextareaAutosize from 'react-textarea-autosize';
 import { TaskObj } from "../types/types";
-import Task from "./Task.component";
+import Task from "./Task";
 import DropdownCalendar from "./Dropdown/DropdownCalendar";
 import AddTaskForm from "./AddTaskForm";
 

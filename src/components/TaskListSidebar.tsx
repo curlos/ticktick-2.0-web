@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Icon from "./Icon";
+import ModalAddList from "./Modal/ModalAddList";
 
 interface ListItemProps {
     name: string;
@@ -150,6 +151,8 @@ const TaskListSidebar = () => {
         }
     ];
 
+    const [isModalAddListOpen, setIsModalAddListOpen] = useState(true);
+
     return (
         <div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray p-4">
             <div>
@@ -162,7 +165,14 @@ const TaskListSidebar = () => {
 
             <div className="">
                 <div>
-                    <div className="p-2 text-color-gray-200">Lists</div>
+                    <div className="flex items-center justify-between py-1 pr-1 hover:bg-color-gray-600 rounded cursor-pointer">
+                        <div className="flex items-center">
+                            <Icon name={"chevron_right"} customClass={"text-color-gray-100 !text-[16px]"} />
+                            <div className="text-color-gray-100">Lists</div>
+                        </div>
+
+                        <Icon name={"add"} customClass={"text-color-gray-100 !text-[16px] hover:text-white"} onClick={() => setIsModalAddListOpen(!isModalAddListOpen)} />
+                    </div>
 
                     <div>
                         {generalLists.map((listPropsAndValues, index) => (
@@ -187,6 +197,8 @@ const TaskListSidebar = () => {
             {statusLists.map((listPropsAndValues, index) => (
                 <ListItem key={index} {...listPropsAndValues} />
             ))}
+
+            <ModalAddList isModalOpen={isModalAddListOpen} setIsModalOpen={setIsModalAddListOpen} />
         </div>
     );
 };

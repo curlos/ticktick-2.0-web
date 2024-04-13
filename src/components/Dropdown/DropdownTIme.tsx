@@ -19,16 +19,18 @@ const getTimesArray = () => {
 interface DropdownTimeProps {
     isTimeDropdownVisibile: boolean;
     setIsTimeDropdownVisible: React.Dispatch<React.SetStateAction<boolean>>;
+    showTimeZoneOption?: boolean;
+    customClasses?: string;
 }
 
-const DropdownTime: React.FC<DropdownTimeProps> = ({ isTimeDropdownVisibile, setIsTimeDropdownVisible }) => {
+const DropdownTime: React.FC<DropdownTimeProps> = ({ isTimeDropdownVisibile, setIsTimeDropdownVisible, showTimeZoneOption = true, customClasses }) => {
     const timesArray = getTimesArray();
     const [selectedTime, setSelectedTime] = useState('14:00');
     const [isDropdownFixedOrFloatingTimeZone, setIsDropdownFixedOrFloatingTimeZone] = useState(false);
     const [timeZone, setTimeZone] = useState('New York, EDT');
 
     return (
-        <Dropdown isVisible={isTimeDropdownVisibile} setIsVisible={setIsTimeDropdownVisible} customClasses={' mt-[-280px] ml-[-5px] shadow-2xl border border-color-gray-200 rounded-[4px]'}>
+        <Dropdown isVisible={isTimeDropdownVisibile} setIsVisible={setIsTimeDropdownVisible} customClasses={' mt-[-280px] ml-[-5px] shadow-2xl border border-color-gray-200 rounded-[4px]' + (customClasses ? ` ${customClasses}` : '')}>
             <div className="w-[260px] p-1">
                 <div className="overflow-auto gray-scrollbar h-[240px]">
                     {timesArray.map((time) => {
@@ -47,15 +49,17 @@ const DropdownTime: React.FC<DropdownTimeProps> = ({ isTimeDropdownVisibile, set
                     })}
                 </div>
 
-                <div className="p-2 mt-2">
-                    <div className="border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500" onClick={() => {
-                        setIsDropdownFixedOrFloatingTimeZone(!isDropdownFixedOrFloatingTimeZone);
-                    }}>
-                        <DropdownFixedOrFloatingTimeZone isVisible={isDropdownFixedOrFloatingTimeZone} setIsVisible={setIsDropdownFixedOrFloatingTimeZone} setTimeZone={setTimeZone} />
-                        <div>{timeZone}</div>
-                        <Icon name="expand_more" fill={0} customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'} />
+                {showTimeZoneOption && (
+                    <div className="p-2 mt-2">
+                        <div className="border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500" onClick={() => {
+                            setIsDropdownFixedOrFloatingTimeZone(!isDropdownFixedOrFloatingTimeZone);
+                        }}>
+                            <DropdownFixedOrFloatingTimeZone isVisible={isDropdownFixedOrFloatingTimeZone} setIsVisible={setIsDropdownFixedOrFloatingTimeZone} setTimeZone={setTimeZone} />
+                            <div>{timeZone}</div>
+                            <Icon name="expand_more" fill={0} customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'} />
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
         </Dropdown>
     );

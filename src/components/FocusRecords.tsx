@@ -4,6 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import Icon from "./Icon";
 import useSticky from "../hooks/useSticky";
+import ModalAddFocusRecord from "./Modal/ModalAddFocusRecord";
 
 interface StatsOverviewProps {
     overviewData: object;
@@ -94,7 +95,7 @@ const FocusRecords = () => {
     const stickyRef = useRef(null); // Reference to the sticky element
     const isSticky = useSticky(scrollableRef, stickyRef); // Pass both refs to the hook
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalAddFocusRecordOpen, setIsModalAddFocusRecordOpen] = useState(true);
 
     return (
         <div ref={scrollableRef} className="flex flex-col w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700">
@@ -102,7 +103,7 @@ const FocusRecords = () => {
 
             <div ref={stickyRef} className={`flex justify-between items-center px-5 mb-4 sticky top-0` + (isSticky ? ' border-b border-color-gray-100 p-2 pt-4 bg-color-gray-700 z-10' : '')}>
                 <h4 className="text-[18px]">Focus Record</h4>
-                <Icon name="add" customClass={"!text-[20px] text-color-gray-100 cursor-pointer rounded hover:bg-color-gray-300"} />
+                <Icon name="add" customClass={"!text-[20px] text-color-gray-100 cursor-pointer rounded hover:bg-color-gray-300"} onClick={() => setIsModalAddFocusRecordOpen(true)} />
             </div>
 
             <div className="text-[13px] px-5">
@@ -141,7 +142,7 @@ const FocusRecords = () => {
                     );
                 })}
 
-
+                <ModalAddFocusRecord isModalOpen={isModalAddFocusRecordOpen} setIsModalOpen={setIsModalAddFocusRecordOpen} />
             </div>
         </div>
     );
