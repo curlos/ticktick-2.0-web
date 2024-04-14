@@ -151,7 +151,7 @@ const TaskListSidebar = () => {
         }
     ];
 
-    const [isModalAddListOpen, setIsModalAddListOpen] = useState(true);
+    const [isModalAddListOpen, setIsModalAddListOpen] = useState(false);
 
     return (
         <div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray p-4">

@@ -264,16 +264,6 @@ const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({ isVisible, setIsVisib
 
             <div className="space-y-2 h-[300px] gray-scrollbar overflow-auto">
                 <TaskListByCategory tasks={allTasks} selectedFocusRecordTask={selectedFocusRecordTask} setSelectedFocusRecordTask={setSelectedFocusRecordTask} />
-                <div>
-                    <div className="text-[12px] flex items-center cursor-pointer">
-                        <Icon name="chevron_right" customClass={"!text-[12px] text-color-gray-100 hover:text-white cursor-pointer"} />
-                        High
-                    </div>
-
-                    <div>
-                        Multi-Month Plans Project
-                    </div>
-                </div>
             </div>
 
             {/* <div className="mb-2 px-2">

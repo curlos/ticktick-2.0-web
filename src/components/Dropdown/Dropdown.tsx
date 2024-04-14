@@ -6,7 +6,7 @@ interface DropdownProps {
     isVisible: boolean;
     setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
     customClasses?: string;
-    positionAdjustment: string;
+    positionAdjustment?: string;
 }
 
 // Update your component to use forwardRef
