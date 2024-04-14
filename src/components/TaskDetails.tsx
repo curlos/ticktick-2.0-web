@@ -27,6 +27,35 @@ const TaskDetailsPage = () => {
     const [dueDate, setDueDate] = useState(null);
     const [isDropdownCalendarVisible, setIsDropdownCalendarVisible] = useState(false);
     const [showAddTaskForm, setShowAddTaskForm] = useState(false);
+    const [showAddCommentInput, setShowAddCommentInput] = useState(false);
+    const [currentComment, setCurrentComment] = useState('');
+    const [comments, setComments] = useState([
+        {
+            'username': 'curlos',
+            'timePosted': 'just now',
+            'content': 'Lakers VS. Pelicans'
+        },
+        {
+            'username': 'curlos',
+            'timePosted': 'just now',
+            'content': 'Lakers VS. Pelicans'
+        },
+        {
+            'username': 'curlos',
+            'timePosted': 'just now',
+            'content': 'Lakers VS. Pelicans'
+        },
+        {
+            'username': 'curlos',
+            'timePosted': 'just now',
+            'content': 'Lakers VS. Pelicans'
+        },
+        {
+            'username': 'curlos',
+            'timePosted': 'just now',
+            'content': 'Lakers VS. Pelicans'
+        }
+    ]);
 
     let { taskId } = useParams();
     let navigate = useNavigate();
@@ -44,7 +73,7 @@ const TaskDetailsPage = () => {
                 setParentTask(null);
             }
         }
-    }, [taskId]);
+    }, [taskId, allTasks]);
 
     if (!task) {
         return <EmptyTask />;
@@ -108,8 +137,46 @@ const TaskDetailsPage = () => {
                 )}
             </div>
 
-            <div className="p-4 flex-1 flex flex-col justify-end text-color-gray-100">
-                <div className="flex justify-between items-center">
+            <div className="flex-1 flex flex-col justify-end">
+                {comments && comments.length > 0 && (
+                    <div className="p-4 border-t border-color-gray-200 text-[13px]">
+                        <div className="mb-4 flex items-center gap-2 text-[14px]">
+                            <span>Comments</span>
+                            <span>{comments.length}</span>
+                        </div>
+
+                        <div className="space-y-6">
+                            {comments.map((comment) => (
+                                <div className="flex">
+                                    <div className="rounded-full bg-black p-1 mb-3">
+                                        <img src="/prestige-9-bo2.png" alt="user-icon" className="w-[32px] h-[32px]" />
+                                    </div>
+
+                                    <div className="ml-2">
+                                        <div className="flex items-center gap-4 text-color-gray-100">
+                                            <div>{comment.username}</div>
+                                            <div>{comment.timePosted}</div>
+                                        </div>
+
+                                        <div className="mt-2">
+                                            {comment.content}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            <div className="relative bottom-0">
+                {showAddCommentInput && (
+                    <div className="p-4 border-t border-b border-color-gray-200">
+                        <TextareaAutosize className="placeholder-color-gray-100 bg-color-gray-300 p-[10px] rounded-md w-full outline-none border border-transparent focus:border-blue-500 resize-none" placeholder="Write a comment" value={currentComment} onChange={(e) => setCurrentComment(e.target.value)}></TextareaAutosize>
+                    </div>
+                )}
+
+                <div className="px-4 py-3 flex justify-between items-center text-color-gray-100">
                     <div className="flex items-center gap-1">
                         <Icon name="drive_file_move" customClass={"text-color-gray-100 !text-[18px] hover:text-white cursor-pointer"} />
                         Hello Mobile
@@ -117,7 +184,7 @@ const TaskDetailsPage = () => {
 
                     <div className="flex items-center gap-2">
                         <Icon name="edit_note" customClass={"text-color-gray-100 !text-[18px] hover:text-white cursor-pointer"} fill={0} />
-                        <Icon name="comment" customClass={"text-color-gray-100 !text-[18px] hover:text-white cursor-pointer"} fill={0} />
+                        <Icon name="comment" customClass={"text-color-gray-100 !text-[18px] hover:text-white cursor-pointer"} fill={0} onClick={() => setShowAddCommentInput(!showAddCommentInput)} />
                         <Icon name="more_horiz" customClass={"text-color-gray-100 !text-[18px] hover:text-white cursor-pointer"} fill={0} />
                     </div>
                 </div>
