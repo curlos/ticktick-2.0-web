@@ -1,5 +1,5 @@
 import ServiceMenu from "../components/ServiceMenu";
-import TaskDetailsPage from "../components/TaskDetails";
+import TaskDetails from "../components/TaskDetails";
 import TaskListSidebar from "../components/TaskListSidebar";
 import TaskListPage from "./TaskListPage";
 
@@ -18,10 +18,10 @@ const HomePage = () => {
             <div className="flex-[6] bg-red-500">
                 {/* <ResizableBox width={500} height={'100%'} resizeHandles={['sw', 'se', 'nw', 'ne', 'w', 'e', 'n', 's']}>
             <div className="h-full">
-              <TaskDetailsPage />
+              <TaskDetails />
             </div>
           </ResizableBox> */}
-                <TaskDetailsPage />
+                <TaskDetails />
             </div>
         </div>
     );

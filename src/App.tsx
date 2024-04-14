@@ -4,14 +4,7 @@ import {
   Routes,
   Route,
 } from 'react-router-dom';
-import ServiceMenu from './components/ServiceMenu';
-import TaskListPage from './pages/TaskListPage';
-import TaskListSidebar from './components/TaskListSidebar';
 import useFetchTasks from './hooks/useFetchTasks';
-import TaskDetailsPage from './components/TaskDetails';
-import { Resizable, ResizableBox } from 'react-resizable';
-import FocusTimer from './components/FocusTimer';
-import ModalAddTaskForm from './components/Modal/ModalAddTaskForm';
 import FocusPage from './pages/FocusPage';
 import HomePage from './pages/HomePage';
 

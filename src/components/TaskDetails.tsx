@@ -17,7 +17,7 @@ const EmptyTask = () => (
     </div>
 );
 
-const TaskDetailsPage = () => {
+const TaskDetails = () => {
     const allTasks = useSelector((state) => state.tasks.tasks);
     const [currTitle, setCurrTitle] = useState('');
     const [currDescription, setCurrDescription] = useState('');
@@ -82,7 +82,7 @@ const TaskDetailsPage = () => {
     const { _id, directSubtasks, completedPomodoros, timeTaken, estimatedDuration, deadline } = task;
 
     return (
-        <div className="flex flex-col w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700">
+        <div className="flex flex-col w-full h-full max-h-screen bg-color-gray-700">
             <div className="flex justify-between items-center p-4 border-b border-color-gray-200">
                 <div className="flex items-center gap-2">
                     {!completed ? (
@@ -106,70 +106,72 @@ const TaskDetailsPage = () => {
                 <Icon name="flag" customClass={"text-color-gray-100 text-red-500 !text-[22px] hover:text-white cursor-pointer"} />
             </div>
 
-            <div className="p-4 flex flex-col justify-between">
-                {parentTask && (
-                    <div className="w-full flex justify-between items-center text-color-gray-100 cursor-pointer" onClick={() => navigate(`/tasks/${parentTask._id}`)}>
-                        <div className="max-w-[368px]">
-                            <div className="truncate text-[12px]">{parentTask.title}</div>
+            <div className="flex-1 overflow-auto no-scrollbar">
+                <div className="p-4 flex flex-col justify-between">
+                    {parentTask && (
+                        <div className="w-full flex justify-between items-center text-color-gray-100 cursor-pointer" onClick={() => navigate(`/tasks/${parentTask._id}`)}>
+                            <div className="max-w-[368px]">
+                                <div className="truncate text-[12px]">{parentTask.title}</div>
+                            </div>
+                            <Icon name="chevron_right" customClass={'text-color-gray-100 !text-[16px] hover:text-white'} />
                         </div>
-                        <Icon name="chevron_right" customClass={'text-color-gray-100 !text-[16px] hover:text-white'} />
-                    </div>
-                )}
+                    )}
 
-                <TextareaAutosize className="text-[16px] placeholder:text-[#7C7C7C] font-bold mb-0 bg-transparent w-full outline-none resize-none" placeholder="What would you like to do?" value={currTitle} onChange={(e) => setCurrTitle(e.target.value)}></TextareaAutosize>
-                <TextareaAutosize className="text-[14px] placeholder:text-[#7C7C7C] mt-2 mb-4 bg-transparent w-full outline-none resize-none" placeholder="Description" value={currDescription} onChange={(e) => setCurrDescription(e.target.value)}></TextareaAutosize>
+                    <TextareaAutosize className="text-[16px] placeholder:text-[#7C7C7C] font-bold mb-0 bg-transparent w-full outline-none resize-none" placeholder="What would you like to do?" value={currTitle} onChange={(e) => setCurrTitle(e.target.value)}></TextareaAutosize>
+                    <TextareaAutosize className="text-[14px] placeholder:text-[#7C7C7C] mt-2 mb-4 bg-transparent w-full outline-none resize-none" placeholder="Description" value={currDescription} onChange={(e) => setCurrDescription(e.target.value)}></TextareaAutosize>
 
-                {directSubtasks.map((subtaskId: string) => (
-                    <Task key={subtaskId} tasks={allTasks} taskId={subtaskId} fromTaskDetails={true} />
-                ))}
+                    {directSubtasks.map((subtaskId: string) => (
+                        <Task key={subtaskId} tasks={allTasks} taskId={subtaskId} fromTaskDetails={true} />
+                    ))}
 
-                {directSubtasks && directSubtasks.length > 1 && (
-                    <div>
-                        {!showAddTaskForm && (
-                            <button className="flex items-center gap-1 my-2" onClick={() => setShowAddTaskForm(true)}>
-                                <Icon name="add" customClass={"text-blue-500 !text-[20px]"} />
-                                <span className="text-blue-500">Add Subtask</span>
-                            </button>
-                        )}
+                    {directSubtasks && directSubtasks.length > 1 && (
+                        <div>
+                            {!showAddTaskForm && (
+                                <button className="flex items-center gap-1 my-2" onClick={() => setShowAddTaskForm(true)}>
+                                    <Icon name="add" customClass={"text-blue-500 !text-[20px]"} />
+                                    <span className="text-blue-500">Add Subtask</span>
+                                </button>
+                            )}
 
-                        {showAddTaskForm && <AddTaskForm setShowAddTaskForm={setShowAddTaskForm} />}
-                    </div>
-                )}
-            </div>
-
-            <div className="flex-1 flex flex-col justify-end">
-                {comments && comments.length > 0 && (
-                    <div className="p-4 border-t border-color-gray-200 text-[13px]">
-                        <div className="mb-4 flex items-center gap-2 text-[14px]">
-                            <span>Comments</span>
-                            <span>{comments.length}</span>
+                            {showAddTaskForm && <AddTaskForm setShowAddTaskForm={setShowAddTaskForm} />}
                         </div>
+                    )}
+                </div>
 
-                        <div className="space-y-6">
-                            {comments.map((comment) => (
-                                <div className="flex">
-                                    <div className="rounded-full bg-black p-1 mb-3">
-                                        <img src="/prestige-9-bo2.png" alt="user-icon" className="w-[32px] h-[32px]" />
-                                    </div>
+                <div className="flex-1 flex flex-col justify-end">
+                    {comments && comments.length > 0 && (
+                        <div className="p-4 border-t border-color-gray-200 text-[13px]">
+                            <div className="mb-4 flex items-center gap-2 text-[14px]">
+                                <span>Comments</span>
+                                <span>{comments.length}</span>
+                            </div>
 
-                                    <div className="ml-2">
-                                        <div className="flex items-center gap-4 text-color-gray-100">
-                                            <div>{comment.username}</div>
-                                            <div>{comment.timePosted}</div>
+                            <div className="space-y-6">
+                                {comments.map((comment) => (
+                                    <div className="flex">
+                                        <div className="rounded-full bg-black p-1 mb-3">
+                                            <img src="/prestige-9-bo2.png" alt="user-icon" className="w-[32px] h-[32px]" />
                                         </div>
 
-                                        <div className="mt-2">
-                                            {comment.content}
+                                        <div className="ml-2">
+                                            <div className="flex items-center gap-4 text-color-gray-100">
+                                                <div>{comment.username}</div>
+                                                <div>{comment.timePosted}</div>
+                                            </div>
+
+                                            <div className="mt-2">
+                                                {comment.content}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                )}
+                    )}
+                </div>
             </div>
 
-            <div className="relative bottom-0">
+            <div>
                 {showAddCommentInput && (
                     <div className="p-4 border-t border-b border-color-gray-200">
                         <TextareaAutosize className="placeholder-color-gray-100 bg-color-gray-300 p-[10px] rounded-md w-full outline-none border border-transparent focus:border-blue-500 resize-none" placeholder="Write a comment" value={currentComment} onChange={(e) => setCurrentComment(e.target.value)}></TextareaAutosize>
@@ -183,9 +185,9 @@ const TaskDetailsPage = () => {
                     </div>
 
                     <div className="flex items-center gap-2">
-                        <Icon name="edit_note" customClass={"text-color-gray-100 !text-[18px] hover:text-white cursor-pointer"} fill={0} />
-                        <Icon name="comment" customClass={"text-color-gray-100 !text-[18px] hover:text-white cursor-pointer"} fill={0} onClick={() => setShowAddCommentInput(!showAddCommentInput)} />
-                        <Icon name="more_horiz" customClass={"text-color-gray-100 !text-[18px] hover:text-white cursor-pointer"} fill={0} />
+                        <Icon name="edit_note" customClass={"text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer"} fill={0} />
+                        <Icon name="comment" customClass={"text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer"} fill={0} onClick={() => setShowAddCommentInput(!showAddCommentInput)} />
+                        <Icon name="more_horiz" customClass={"text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer"} fill={0} />
                     </div>
                 </div>
             </div>
@@ -193,4 +195,4 @@ const TaskDetailsPage = () => {
     );
 };
 
-export default TaskDetailsPage;
+export default TaskDetails;
