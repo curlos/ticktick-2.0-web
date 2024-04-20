@@ -3,16 +3,15 @@ import Dropdown from "./Dropdown";
 import { useEffect, useRef, useState } from "react";
 import { debounce } from "../../utils/helpers.utils";
 import Icon from "../Icon";
+import { DropdownProps } from "../../interfaces/interfaces";
 
-interface DropdownTimeZoneSelectorProps {
-    isVisible: boolean;
-    setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
+interface DropdownTimeZoneSelectorProps extends DropdownProps {
     tempSelectedTimeZone: string;
     setTempSelectedTimeZone: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const DropdownTimeZoneSelector: React.FC<DropdownTimeZoneSelectorProps> = ({
-    isVisible, setIsVisible, tempSelectedTimeZone, setTempSelectedTimeZone
+    toggleRef, isVisible, setIsVisible, tempSelectedTimeZone, setTempSelectedTimeZone
 }) => {
     const [allCities, setAllCities] = useState([]);
     const [cities, setCities] = useState([]);
@@ -81,7 +80,9 @@ const DropdownTimeZoneSelector: React.FC<DropdownTimeZoneSelectorProps> = ({
     }
 
     const CityWithOffset: React.FC<CityWithOffsetProps> = ({ cityWithOffset }) => (
-        <div className="flex items-center justify-between hover:bg-color-gray-300 p-2 rounded-lg"
+        <div
+            key={cityWithOffset}
+            className="flex items-center justify-between hover:bg-color-gray-300 p-2 rounded-lg"
             onClick={() => {
                 setTempSelectedTimeZone(cityWithOffset);
                 setIsVisible(false);
@@ -103,7 +104,7 @@ const DropdownTimeZoneSelector: React.FC<DropdownTimeZoneSelectorProps> = ({
     }, [cities]); // Triggered when 'cities' changes
 
     return (
-        <Dropdown isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' ml-[-13px] shadow-2xl border border-color-gray-200 rounded-[4px]'}>
+        <Dropdown toggleRef={toggleRef} isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' ml-[-13px] shadow-2xl border border-color-gray-200 rounded-[4px]'}>
             <div className="w-[260px]">
                 <div className="flex items-center gap-1 p-1 px-2">
                     <Icon name="search" fill={0} customClass={'text-color-gray-50 !text-[24px] hover:text-white cursor-pointer'} />

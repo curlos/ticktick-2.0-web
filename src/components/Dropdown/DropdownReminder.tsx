@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import Dropdown from "./Dropdown";
 import Icon from "../Icon";
 import CustomInput from "../CustomInput";
+import { DropdownProps } from "../../interfaces/interfaces";
 
 const BASIC_REMINDER_OPTIONS = {
     'On the day (09:00)': {
@@ -21,19 +22,19 @@ const BASIC_REMINDER_OPTIONS = {
     },
 };
 
-interface DropdownReminderProps {
-    isVisible: boolean;
-    setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
+interface DropdownReminderProps extends DropdownProps {
     reminder: string;
     setReminder: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const DropdownReminder: React.FC<DropdownReminderProps> = ({ isVisible, setIsVisible, reminder, setReminder }) => {
+const DropdownReminder: React.FC<DropdownReminderProps> = ({ toggleRef, isVisible, setIsVisible, reminder, setReminder }) => {
     const [basicReminderOptions, setBasicReminderOptions] = useState(BASIC_REMINDER_OPTIONS);
     const [isDropdownAdvancedReminderVisible, setIsDropdownAdvancedReminderVisible] = useState(false);
 
+    const dropdownAdvancedReminderRef = useRef(null);
+
     return (
-        <Dropdown isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' mt-[-290px] ml-[-22px] shadow-2xl border border-color-gray-200 rounded-lg'}>
+        <Dropdown toggleRef={toggleRef} isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' mt-[-290px] ml-[-5px] shadow-2xl border border-color-gray-200 rounded-lg'}>
             <div className="w-[260px] rounded" onClick={(e) => e.stopPropagation()}>
                 <div className="p-1">
                     {Object.keys(basicReminderOptions).map((name: string) => (
@@ -65,10 +66,14 @@ const DropdownReminder: React.FC<DropdownReminderProps> = ({ isVisible, setIsVis
                 <hr className="border-color-gray-200" />
 
 
-                <DropdownAdvancedReminder isVisible={isDropdownAdvancedReminderVisible} setIsVisible={setIsDropdownAdvancedReminderVisible} reminder={reminder} setReminder={setReminder} />
+                <DropdownAdvancedReminder toggleRef={dropdownAdvancedReminderRef} isVisible={isDropdownAdvancedReminderVisible} setIsVisible={setIsDropdownAdvancedReminderVisible} reminder={reminder} setReminder={setReminder} />
 
                 <div className="p-1">
-                    <div className="p-2 mb-2 flex items-center justify-between hover:bg-color-gray-300 p-2 rounded-lg cursor-pointer" onClick={() => setIsDropdownAdvancedReminderVisible(!isDropdownAdvancedReminderVisible)}>Custom</div>
+                    <div
+                        ref={dropdownAdvancedReminderRef}
+                        className="p-2 mb-2 flex items-center justify-between hover:bg-color-gray-300 p-2 rounded-lg cursor-pointer"
+                        onClick={() => setIsDropdownAdvancedReminderVisible(!isDropdownAdvancedReminderVisible)}
+                    >Custom</div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 pb-4 px-3">
@@ -81,23 +86,28 @@ const DropdownReminder: React.FC<DropdownReminderProps> = ({ isVisible, setIsVis
     );
 };
 
-interface DropdownAdvancedReminderProps extends DropdownReminderProps {
+interface DropdownAdvancedReminderProps extends DropdownReminderProps { }
 
-}
-
-const DropdownAdvancedReminder: React.FC<DropdownAdvancedReminderProps> = ({ isVisible, setIsVisible, reminder, setReminder }) => {
+const DropdownAdvancedReminder: React.FC<DropdownAdvancedReminderProps> = ({ toggleRef, isVisible, setIsVisible, reminder, setReminder }) => {
     const [selectedUnitOfTime, setSelectedUnitOfTime] = useState('Day');
     const [isDropdownUnitOfTimeVisible, setIsDropdownUnitOfTimeVisible] = useState(false);
     const [unitsInAdvance, setUnitsInAdvance] = useState(1);
     const [remindAt, setRemindAt] = useState();
 
+    const dropdownUnitOfTimeRef = useRef(null);
+
     return (
-        <Dropdown isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' mt-[-210px] ml-[0px] shadow-2xl border border-color-gray-200 rounded-lg'}>
+        <Dropdown toggleRef={toggleRef} isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' mt-[-210px] ml-[0px] shadow-2xl border border-color-gray-200 rounded-lg'}>
             <div className="w-[260px] p-3 rounded" onClick={(e) => e.stopPropagation()}>
-                <div className="border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500" onClick={() => {
-                    setIsDropdownUnitOfTimeVisible(!isDropdownUnitOfTimeVisible);
-                }}>
+                <div
+                    ref={dropdownUnitOfTimeRef}
+                    className="border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500"
+                    onClick={() => {
+                        setIsDropdownUnitOfTimeVisible(!isDropdownUnitOfTimeVisible);
+                    }}
+                >
                     <DropdownUnitOfTime
+                        toggleRef={dropdownUnitOfTimeRef}
                         isVisible={isDropdownUnitOfTimeVisible}
                         setIsVisible={setIsDropdownUnitOfTimeVisible}
                         selectedUnitOfTime={selectedUnitOfTime}
@@ -131,17 +141,15 @@ const DropdownAdvancedReminder: React.FC<DropdownAdvancedReminderProps> = ({ isV
     );
 };
 
-interface DropdownUnitOfTimeProps {
-    isVisible: boolean;
-    setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
+interface DropdownUnitOfTimeProps extends DropdownProps {
     selectedUnitOfTime: string;
     setSelectedUnitOfTime: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const DropdownUnitOfTime: React.FC<DropdownUnitOfTimeProps> = ({ isVisible, setIsVisible, selectedUnitOfTime, setSelectedUnitOfTime }) => {
+const DropdownUnitOfTime: React.FC<DropdownUnitOfTimeProps> = ({ toggleRef, isVisible, setIsVisible, selectedUnitOfTime, setSelectedUnitOfTime }) => {
     const UNITS_OF_TIME = ['Day', 'Week'];
     return (
-        <Dropdown isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' mb-[-115px] ml-[-10px] p-1 shadow-2xl border border-color-gray-200 rounded-lg'}>
+        <Dropdown toggleRef={toggleRef} isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' mb-[-115px] ml-[-10px] p-1 shadow-2xl border border-color-gray-200 rounded-lg'}>
             {UNITS_OF_TIME.map((unitOfTime) => (
                 <div
                     className="w-[230px] flex items-center justify-between hover:bg-color-gray-300 p-2 rounded-lg"

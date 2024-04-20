@@ -1,7 +1,8 @@
 import Modal from "./Modal";
 import Icon from "../Icon";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Dropdown from "../Dropdown/Dropdown";
+import { DropdownProps } from "../../interfaces/interfaces";
 
 interface ModalAddListProps {
     isModalOpen: boolean;
@@ -61,6 +62,8 @@ const ModalAddList: React.FC<ModalAddListProps> = ({ isModalOpen, setIsModalOpen
 
     const [isNameInputFocused, setIsNameInputFocused] = useState(false);
 
+    const dropdownFolderRef = useRef(null);
+
     return (
         <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} position="top-center" customClasses="!w-[400px]">
             <div className="bg-color-gray-650 rounded-lg shadow-lg py-4 px-6">
@@ -92,7 +95,7 @@ const ModalAddList: React.FC<ModalAddListProps> = ({ isModalOpen, setIsModalOpen
                             </div>
 
                             {DEFAULT_COLORS_LOWERCASE.map((color) => (
-                                <div className={'border-[2px] rounded-full p-[2px]'} style={{ borderColor: listColor === color ? color : 'transparent' }} onClick={() => setListColor(color)}>
+                                <div key={color} className={'border-[2px] rounded-full p-[2px]'} style={{ borderColor: listColor === color ? color : 'transparent' }} onClick={() => setListColor(color)}>
                                     <div className={`h-[14px] w-[14px] rounded-full cursor-pointer`} style={{ backgroundColor: color }} />
                                 </div>
                             ))}
@@ -105,7 +108,7 @@ const ModalAddList: React.FC<ModalAddListProps> = ({ isModalOpen, setIsModalOpen
                         <div className="text-color-gray-100 w-[96px]">View</div>
                         <div className="flex items-center gap-1">
                             {views.map((view) => (
-                                <Icon name={view.iconName} customClass={"!text-[22px] px-3 py-1 text-color-gray-100 bg-color-gray-300 rounded-md cursor-pointer border border-transparent" + (selectedView === view.type ? ' !border-blue-500 !text-blue-500' : '')} onClick={() => setSelectedView(view.type)} />
+                                <Icon key={view} name={view.iconName} customClass={"!text-[22px] px-3 py-1 text-color-gray-100 bg-color-gray-300 rounded-md cursor-pointer border border-transparent" + (selectedView === view.type ? ' !border-blue-500 !text-blue-500' : '')} onClick={() => setSelectedView(view.type)} />
                             ))}
                         </div>
                     </div>
@@ -113,14 +116,18 @@ const ModalAddList: React.FC<ModalAddListProps> = ({ isModalOpen, setIsModalOpen
                     <div className="flex items-center">
                         <div className="text-color-gray-100 w-[96px]">Folder</div>
                         <div className="flex-1">
-                            <div className="border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500 rounded-md cursor-pointer" onClick={() => {
-                                setIsDropdownFolderVisible(!isDropdownFolderVisible);
-                            }}>
+                            <div
+                                ref={dropdownFolderRef}
+                                className="border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500 rounded-md cursor-pointer"
+                                onClick={() => {
+                                    setIsDropdownFolderVisible(!isDropdownFolderVisible);
+                                }}
+                            >
                                 <div>{selectedFolder}</div>
                                 <Icon name="expand_more" fill={0} customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'} />
                             </div>
 
-                            <DropdownFolder isVisible={isDropdownFolderVisible} setIsVisible={setIsDropdownFolderVisible} selectedFolder={selectedFolder} setSelectedFolder={setSelectedFolder} isModalNewFolderOpen={isModalNewFolderOpen} setIsModalNewFolderOpen={setIsModalNewFolderOpen} />
+                            <DropdownFolder toggleRef={dropdownFolderRef} isVisible={isDropdownFolderVisible} setIsVisible={setIsDropdownFolderVisible} selectedFolder={selectedFolder} setSelectedFolder={setSelectedFolder} isModalNewFolderOpen={isModalNewFolderOpen} setIsModalNewFolderOpen={setIsModalNewFolderOpen} />
                         </div>
                     </div>
                 </div>
@@ -141,21 +148,19 @@ const ModalAddList: React.FC<ModalAddListProps> = ({ isModalOpen, setIsModalOpen
     );
 };
 
-interface DropdownFolderProps {
-    isVisible: boolean;
-    setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
+interface DropdownFolderProps extends DropdownProps {
     selectedFolder: string;
     setSelectedFolder: React.Dispatch<React.SetStateAction<string>>;
     isModalNewFolderOpen: boolean;
     setIsModalNewFolderOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const DropdownFolder: React.FC<DropdownFolderProps> = ({ isVisible, setIsVisible, selectedFolder, setSelectedFolder, setIsModalNewFolderOpen }) => {
+const DropdownFolder: React.FC<DropdownFolderProps> = ({ toggleRef, isVisible, setIsVisible, selectedFolder, setSelectedFolder, setIsModalNewFolderOpen }) => {
 
     const foldersArray = ['None', 'GreatFrontEnd', 'Hobbies & Interests', 'Tech Interview Prep'];
 
     return (
-        <Dropdown isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' mt-[5px] shadow-2xl border border-color-gray-200 rounded-lg'}>
+        <Dropdown toggleRef={toggleRef} isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' mt-[5px] shadow-2xl border border-color-gray-200 rounded-lg'}>
             <div className="w-[232px] p-1 rounded" onClick={(e) => e.stopPropagation()}>
                 <div className="overflow-auto gray-scrollbar">
                     {foldersArray.map((folder) => {

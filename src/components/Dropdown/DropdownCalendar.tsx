@@ -5,6 +5,7 @@ import DropdownTime from "./DropdownTIme";
 import DropdownReminder from "./DropdownReminder";
 import DropdownRepeat from "./DropdownRepeat";
 import SelectCalendar from "../SelectCalendar";
+import { DropdownProps } from "../../interfaces/interfaces";
 
 interface BigDateIconOptionProps {
     iconName: string;
@@ -14,11 +15,12 @@ interface BigDateIconOptionProps {
 
 const BigDateIconOption: React.FC<BigDateIconOptionProps> = ({ iconName, DropdownText, onClick }) => {
     const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+    const dropdownRef = useRef(null);
 
     return (
         <div>
-            <Icon name={iconName} fill={0} customClass="text-color-gray-50 !text-[24px] hover:text-white hover:bg-color-gray-200 p-1 rounded cursor-pointer" onClick={onClick} onMouseOver={() => setIsDropdownVisible(true)} onMouseLeave={() => setIsDropdownVisible(false)} />
-            <Dropdown isVisible={isDropdownVisible} setIsVisible={setIsDropdownVisible} customClasses={' !bg-black'}>
+            <Icon toggleRef={dropdownRef} name={iconName} fill={0} customClass="text-color-gray-50 !text-[24px] hover:text-white hover:bg-color-gray-200 p-1 rounded cursor-pointer" onClick={onClick} onMouseOver={() => setIsDropdownVisible(true)} onMouseLeave={() => setIsDropdownVisible(false)} />
+            <Dropdown toggleRef={dropdownRef} isVisible={isDropdownVisible} setIsVisible={setIsDropdownVisible} customClasses={' !bg-black'}>
                 <div className="p-2 text-[12px] text-nowrap">
                     {DropdownText}
                 </div>
@@ -62,15 +64,13 @@ const BigDateIconOptionList: React.FC<CalendarProps> = ({ dueDate, setDueDate })
     );
 };
 
-interface DropdownPrioritiesProps {
-    isVisible: boolean;
-    setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
+interface DropdownPrioritiesProps extends DropdownProps {
     dueDate: Date | null;
     setDueDate: React.Dispatch<React.SetStateAction<Date | null>>;
     customClasses?: string;
 }
 
-const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({ isVisible, setIsVisible, dueDate, setDueDate, customClasses }) => {
+const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({ toggleRef, isVisible, setIsVisible, dueDate, setDueDate, customClasses }) => {
     const [selectedView, setSelectedView] = useState('date');
     const [isDropdownTimeVisible, setIsDropdownTimeVisible] = useState(false);
     const [isDropdownReminderVisible, setIsDropdownReminderVisible] = useState(false);
@@ -78,14 +78,19 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({ isVisible, setIsV
     const [reminder, setReminder] = useState('');
     const [repeat, setRepeat] = useState('');
 
+    const dropdownTimeRef = useRef(null);
+    const dropdownReminderRef = useRef(null);
+    const dropdownRepeatRef = useRef(null);
+
     interface TimeOptionProps {
         name: string;
         iconName: string;
         onClick?: () => void;
+        toggleRef: React.MutableRefObject<null>;
     }
 
-    const TimeOption: React.FC<TimeOptionProps> = ({ name, iconName, onClick }) => (
-        <div className="flex items-center justify-between h-[40px] px-2 text-[13px] text-color-gray-25 hover:bg-color-gray-200 rounded cursor-pointer" onClick={onClick}>
+    const TimeOption: React.FC<TimeOptionProps> = ({ name, iconName, onClick, toggleRef }) => (
+        <div ref={toggleRef} className="flex items-center justify-between h-[40px] px-2 text-[13px] text-color-gray-25 hover:bg-color-gray-200 rounded cursor-pointer" onClick={onClick}>
             <div className="flex items-center gap-1">
                 <Icon name={iconName} fill={0} customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'} />
                 <div>{name}</div>
@@ -98,7 +103,7 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({ isVisible, setIsV
 
     return (
         <div className={`${isVisible ? '' : 'hidden'}`}>
-            <Dropdown isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' ml-[-70px] shadow-2xl' + (customClasses ? ` ${customClasses}` : '')}>
+            <Dropdown toggleRef={toggleRef} isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' ml-[-70px] shadow-2xl' + (customClasses ? ` ${customClasses}` : '')}>
                 <div className="w-[260px]">
                     <div className="p-4">
                         <div className="grid grid-cols-2 bg-color-gray-700 rounded-md p-1 text-center">
@@ -113,22 +118,24 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({ isVisible, setIsV
 
                     <div className="px-1 mb-4">
                         {/* Time */}
-                        <DropdownTime isTimeDropdownVisibile={isDropdownTimeVisible} setIsTimeDropdownVisible={setIsDropdownTimeVisible} />
-                        <TimeOption name="Time" iconName="schedule" onClick={() => {
+                        <DropdownTime toggleRef={dropdownTimeRef} isVisible={isDropdownTimeVisible} setIsVisible={setIsDropdownTimeVisible} />
+                        <TimeOption toggleRef={dropdownTimeRef} name="Time" iconName="schedule" onClick={() => {
                             setIsDropdownTimeVisible(!isDropdownTimeVisible);
                         }} />
 
                         {/* Reminder */}
-                        <DropdownReminder isVisible={isDropdownReminderVisible} setIsVisible={setIsDropdownReminderVisible} reminder={reminder} setReminder={setReminder} />
+                        <DropdownReminder toggleRef={dropdownReminderRef} isVisible={isDropdownReminderVisible} setIsVisible={setIsDropdownReminderVisible} reminder={reminder} setReminder={setReminder} />
                         <TimeOption
+                            toggleRef={dropdownReminderRef}
                             name="Reminder"
                             iconName="alarm"
                             onClick={() => setIsDropdownReminderVisible(!isDropdownReminderVisible)}
                         />
 
                         {/* Repeat */}
-                        <DropdownRepeat isVisible={isDropdownRepeatVisible} setIsVisible={setIsDropdownRepeatVisible} repeat={repeat} setRepeat={setRepeat} />
+                        <DropdownRepeat toggleRef={dropdownRepeatRef} isVisible={isDropdownRepeatVisible} setIsVisible={setIsDropdownRepeatVisible} repeat={repeat} setRepeat={setRepeat} />
                         <TimeOption
+                            toggleRef={dropdownRepeatRef}
                             name="Repeat"
                             iconName="repeat"
                             onClick={() => setIsDropdownRepeatVisible(!isDropdownRepeatVisible)}

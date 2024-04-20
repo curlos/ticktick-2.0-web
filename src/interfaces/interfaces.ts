@@ -14,3 +14,9 @@ export interface TaskObj {
 export interface Tasks {
     [key: string]: TaskObj;
 }
+
+export interface DropdownProps {
+    isVisible: boolean;
+    setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
+    toggleRef: React.MutableRefObject<null>;
+}

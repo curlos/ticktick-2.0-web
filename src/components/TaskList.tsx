@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Icon from "./Icon";
-import { TaskObj } from "../types/types";
+import { TaskObj } from "../interfaces/interfaces";
 import Task from "./Task";
 
 interface TaskListProps {

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TaskObj } from "../types/types";
+import { TaskObj } from "../interfaces/interfaces";
 import Icon from "./Icon";
 import TaskList from "./TaskList";
 

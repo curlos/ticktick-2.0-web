@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import Icon from "./Icon";
 import DropdownCalendar from "./Dropdown/DropdownCalendar";
@@ -15,6 +15,7 @@ interface AddTaskFormProps {
 const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm }) => {
     const dispatch = useDispatch();
 
+    // useState
     const [title, setTitle] = useState('');
     const [focused, setFocused] = useState(false);
     const [dueDate, setDueDate] = useState(null);
@@ -24,6 +25,11 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm }) => {
     const [tempSelectedPriority, setTempSelectedPriority] = useState('none');
     const [selectedList, setSelectedList] = useState('Hello Mobile');
     const [description, setDescription] = useState('');
+
+    // useRef
+    const dropdownCalendarToggleRef = useRef(null);
+    const dropdownPrioritiesRef = useRef(null);
+    const dropdownListsRef = useRef(null);
 
     const priority = PRIORITIES[tempSelectedPriority];
 
@@ -78,14 +84,16 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm }) => {
 
                     <div className="flex gap-2 mt-3">
                         <div
+                            ref={dropdownCalendarToggleRef}
                             className="text-[14px] flex items-center gap-1 text-color-gray-100 p-1 border border-color-gray-100 rounded-md cursor-pointer" onClick={() => setIsDropdownCalendarVisible(!isDropdownCalendarVisible)}>
                             <Icon name="calendar_month" customClass={"!text-[16px] hover:text-white"} />
                             Due Date
                         </div>
 
-                        <DropdownCalendar isVisible={isDropdownCalendarVisible} setIsVisible={setIsDropdownCalendarVisible} dueDate={dueDate} setDueDate={setDueDate} />
+                        <DropdownCalendar toggleRef={dropdownCalendarToggleRef} isVisible={isDropdownCalendarVisible} setIsVisible={setIsDropdownCalendarVisible} dueDate={dueDate} setDueDate={setDueDate} />
 
                         <div
+                            ref={dropdownPrioritiesRef}
                             className="text-[14px] text-color-gray-100 p-1 border border-color-gray-100 rounded-md cursor-pointer" onClick={() => setIsDropdownPrioritiesVisible(!isDropdownPrioritiesVisible)}>
                             {tempSelectedPriority === 'none' ? (
                                 <div className="flex items-center gap-1">
@@ -100,6 +108,7 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm }) => {
                             )}
 
                             <DropdownPriorities
+                                toggleRef={dropdownPrioritiesRef}
                                 isVisible={isDropdownPrioritiesVisible}
                                 setIsVisible={setIsDropdownPrioritiesVisible}
                                 tempSelectedPriority={tempSelectedPriority}
@@ -114,12 +123,12 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm }) => {
 
                 <div className="p-2 pt-1 flex justify-between items-center">
                     <div>
-                        <div className="flex items-center gap-1 font-bold text-[12px] cursor-pointer" onClick={() => setIsDropdownListsVisible(true)}>
+                        <div ref={dropdownListsRef} className="flex items-center gap-1 font-bold text-[12px] cursor-pointer" onClick={() => setIsDropdownListsVisible(!isDropdownListsVisible)}>
                             {selectedList}
                             <Icon name="expand_more" customClass={"!text-[16px] hover:text-white"} />
                         </div>
 
-                        <DropdownLists isVisible={isDropdownListsVisible} setIsVisible={setIsDropdownListsVisible} selectedList={selectedList} setSelectedList={setSelectedList} />
+                        <DropdownLists toggleRef={dropdownListsRef} isVisible={isDropdownListsVisible} setIsVisible={setIsDropdownListsVisible} selectedList={selectedList} setSelectedList={setSelectedList} />
                     </div>
 
                     <div className="space-x-2">

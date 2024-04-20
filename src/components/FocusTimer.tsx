@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import alarmSound from '/clock-alarm-8761.mp3';
 import iosDarkNoise from '/IOS Dark Noise Background sound 1 Hour.mp3';
 import { Link } from "react-router-dom";
@@ -8,6 +8,7 @@ import 'react-circular-progressbar/dist/styles.css';
 import PixelArt from "./PixelArt";
 import Dropdown from "./Dropdown/Dropdown";
 import ModalFocusSettings from "./Modal/ModalFocusSettings";
+import { DropdownProps } from "../interfaces/interfaces";
 
 const bgThemeColor = 'bg-[#4772F9]';
 const textThemeColor = 'text-[#4772F9]';
@@ -150,13 +151,11 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = () => {
     );
 };
 
-interface DropdownPrioritiesProps {
-    isVisible: boolean;
-    setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
+interface DropdownPrioritiesProps extends DropdownProps {
     setIsModalFocusSettingsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const DropdownOptions: React.FC<DropdownPrioritiesProps> = ({ isVisible, setIsVisible, setIsModalFocusSettingsOpen }) => {
+const DropdownOptions: React.FC<DropdownPrioritiesProps> = ({ toggleRef, isVisible, setIsVisible, setIsModalFocusSettingsOpen }) => {
     const [selectedView, setSelectedView] = useState('date');
 
     interface AdditionalOptionProps {
@@ -176,7 +175,7 @@ const DropdownOptions: React.FC<DropdownPrioritiesProps> = ({ isVisible, setIsVi
 
     return (
         <div className={`${isVisible ? '' : 'hidden'}`}>
-            <Dropdown isVisible={isVisible} setIsVisible={setIsVisible} customClasses={'ml-[-125px] shadow-2xl !rounded border border-color-gray-200'}>
+            <Dropdown toggleRef={toggleRef} isVisible={isVisible} setIsVisible={setIsVisible} customClasses={'ml-[-125px] shadow-2xl !rounded border border-color-gray-200'}>
                 <div className="w-[164px] p-1">
                     <AdditionalOption text="Statistics" iconName="schedule" onClick={() => null} />
                     <AdditionalOption text="Focus Settings" iconName="tune" onClick={() => {
@@ -201,6 +200,8 @@ const TopBar: React.FC<TopBarProps> = ({ selectedButton, setSelectedButton, setI
     const unselectedButtonStyle = `${sharedButtonStyle} text-[#666666]`;
     const [isDropdownFocusOptionsVisible, setIsDropdownFocusOptionsVisible] = useState(false);
 
+    const dropdownOptionsRef = useRef(null);
+
     return (
         <div className="flex justify-between items-center">
             <div></div>
@@ -211,8 +212,8 @@ const TopBar: React.FC<TopBarProps> = ({ selectedButton, setSelectedButton, setI
             </div>
 
             <div>
-                <Icon name="more_horiz" customClass={"text-color-gray-100 !text-[24px] rounded hover:bg-color-gray-300 cursor-pointer"} fill={0} onClick={() => setIsDropdownFocusOptionsVisible(!isDropdownFocusOptionsVisible)} />
-                <DropdownOptions isVisible={isDropdownFocusOptionsVisible} setIsVisible={setIsDropdownFocusOptionsVisible} setIsModalFocusSettingsOpen={setIsModalFocusSettingsOpen} />
+                <Icon toggleRef={dropdownOptionsRef} name="more_horiz" customClass={"text-color-gray-100 !text-[24px] rounded hover:bg-color-gray-300 cursor-pointer"} fill={0} onClick={() => setIsDropdownFocusOptionsVisible(!isDropdownFocusOptionsVisible)} />
+                <DropdownOptions toggleRef={dropdownOptionsRef} isVisible={isDropdownFocusOptionsVisible} setIsVisible={setIsDropdownFocusOptionsVisible} setIsModalFocusSettingsOpen={setIsModalFocusSettingsOpen} />
             </div>
         </div>
     );

@@ -2,7 +2,7 @@ import { useState } from "react";
 import Icon from "../components/Icon";
 import TaskList from "../components/TaskList";
 import { useSelector } from "react-redux";
-import { TaskObj } from "../types/types";
+import { TaskObj } from "../interfaces/interfaces";
 import AddTaskForm from "../components/AddTaskForm";
 import TaskListByCategory from "../components/TaskListByCategory";
 

@@ -1,18 +1,17 @@
 import React, { forwardRef, useRef } from 'react';
 import useOutsideClick from '../../hooks/useOutsideClick';
+import { DropdownProps } from '../../interfaces/interfaces';
 
-interface DropdownProps {
+interface BaseDropdownProps extends DropdownProps {
     children: React.ReactNode;
-    isVisible: boolean;
-    setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
     customClasses?: string;
     positionAdjustment?: string;
 }
 
 // Update your component to use forwardRef
-const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(({ children, isVisible, setIsVisible, customClasses, positionAdjustment }, ref) => {
+const Dropdown = forwardRef<HTMLDivElement, BaseDropdownProps>(({ children, isVisible, setIsVisible, customClasses, positionAdjustment, toggleRef }, ref) => {
     const dropdownRef = useRef(null);
-    useOutsideClick(dropdownRef, () => setIsVisible(false));
+    useOutsideClick(dropdownRef, toggleRef, () => setIsVisible(false));
 
     if (!isVisible) return null;
 

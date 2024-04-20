@@ -1,16 +1,15 @@
 import Dropdown from "./Dropdown";
 import Icon from "../Icon";
 import { IPriorityItem, PRIORITIES } from "../../utils/priorities.utils";
+import { DropdownProps } from "../../interfaces/interfaces";
 
-interface DropdownPrioritiesProps {
-    isVisible: boolean;
-    setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
+interface DropdownPrioritiesProps extends DropdownProps {
     tempSelectedPriority: string;
     setTempSelectedPriority: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const DropdownPriorities: React.FC<DropdownPrioritiesProps> = ({
-    isVisible, setIsVisible, tempSelectedPriority, setTempSelectedPriority
+    toggleRef, isVisible, setIsVisible, tempSelectedPriority, setTempSelectedPriority
 }) => {
 
     interface PriorityProps {
@@ -40,7 +39,7 @@ const DropdownPriorities: React.FC<DropdownPrioritiesProps> = ({
     };
 
     return (
-        <Dropdown isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' ml-[-13px] shadow-2xl border border-color-gray-200 rounded-lg'}>
+        <Dropdown toggleRef={toggleRef} isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' ml-[-13px] shadow-2xl border border-color-gray-200 rounded-lg'}>
             <div className="w-[200px]">
                 <div>
                     {Object.keys(PRIORITIES).map((key: string) => (

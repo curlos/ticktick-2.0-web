@@ -3,24 +3,24 @@ import CustomRadioButton from "../CustomRadioButton";
 import Dropdown from "./Dropdown";
 import Icon from "../Icon";
 import DropdownTimeZoneSelector from "./DropdownTimeZoneSelector";
+import { DropdownProps } from "../../interfaces/interfaces";
 
-interface DropdownFixedOrFloatingTimeZoneProps {
-    isVisible: boolean;
-    setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
+interface DropdownFixedOrFloatingTimeZoneProps extends DropdownProps {
     setTimeZone: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const DropdownFixedOrFloatingTimeZone: React.FC<DropdownFixedOrFloatingTimeZoneProps> = ({ isVisible, setIsVisible, setTimeZone }) => {
+const DropdownFixedOrFloatingTimeZone: React.FC<DropdownFixedOrFloatingTimeZoneProps> = ({ toggleRef, isVisible, setIsVisible, setTimeZone }) => {
     const [tempSelectedTimeZone, setTempSelectedTimeZone] = useState('New York, EDT');
     const [selectedTimeTrackingType, setSelectedTimeTrackingType] = useState('Fixed Time Zone');
     const [isTimeZoneSelectorDropdownVisible, setIsTimeZoneSelectorDropdownVisible] = useState(false);
+    const dropdownTimeZoneSelectorRef = useRef(null);
 
     const handleRadioChange = (e) => {
         setSelectedTimeTrackingType(e.target.value);
     };
 
     return (
-        <Dropdown isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' mt-[-290px] ml-[-22px] shadow-2xl border border-color-gray-200 rounded-lg'}>
+        <Dropdown toggleRef={toggleRef} isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' mt-[-290px] ml-[-22px] shadow-2xl border border-color-gray-200 rounded-lg'}>
             <div className="w-[260px] p-3 rounded" onClick={(e) => e.stopPropagation()}>
                 <CustomRadioButton
                     label="Fixed Time Zone"
@@ -32,6 +32,7 @@ const DropdownFixedOrFloatingTimeZone: React.FC<DropdownFixedOrFloatingTimeZoneP
                 {/* selectedTimeTrackingType === 'Fixed Time Zone' */}
 
                 <div
+                    ref={dropdownTimeZoneSelectorRef}
                     className="border border-color-gray-200 rounded p-[2px] px-2 flex justify-between items-center hover:border-blue-500 mt-2 mb-5"
                     onClick={() => {
                         if (selectedTimeTrackingType === 'Floating Time') {
@@ -47,6 +48,7 @@ const DropdownFixedOrFloatingTimeZone: React.FC<DropdownFixedOrFloatingTimeZoneP
 
                 {isTimeZoneSelectorDropdownVisible && (
                     <DropdownTimeZoneSelector
+                        toggleRef={dropdownTimeZoneSelectorRef}
                         isVisible={isTimeZoneSelectorDropdownVisible}
                         setIsVisible={setIsTimeZoneSelectorDropdownVisible}
                         tempSelectedTimeZone={tempSelectedTimeZone}

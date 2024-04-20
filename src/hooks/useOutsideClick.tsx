@@ -6,11 +6,14 @@ import { useEffect } from 'react';
  * @param {React.RefObject} ref - The ref of the element to detect outside clicks for.
  * @param {Function} onOutsideClick - The callback to execute when an outside click is detected.
  */
-const useOutsideClick = (ref, onOutsideClick) => {
+const useOutsideClick = (ref, toggleRef, onOutsideClick) => {
 
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (ref && ref.current && !ref.current.contains(event.target)) {
+            if (
+                ref.current && !ref.current.contains(event.target) &&
+                (!toggleRef.current || !toggleRef.current.contains(event.target))
+            ) {
                 onOutsideClick();
             }
         };

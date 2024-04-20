@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Icon from "./Icon";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from 'react-router-dom';
 import TextareaAutosize from 'react-textarea-autosize';
-import { TaskObj } from "../types/types";
+import { DropdownProps, TaskObj } from "../interfaces/interfaces";
 import Task from "./Task";
 import DropdownCalendar from "./Dropdown/DropdownCalendar";
 import AddTaskForm from "./AddTaskForm";
@@ -30,37 +30,45 @@ const TaskDetails = () => {
     const [dueDate, setDueDate] = useState(null);
     const [isDropdownCalendarVisible, setIsDropdownCalendarVisible] = useState(false);
     const [isDropdownTaskOptionsVisible, setIsDropdownTaskOptionsVisible] = useState(false);
-    const [isModalTaskActivitiesOpen, setIsModalTaskActivitiesOpen] = useState(true);
+    const [isModalTaskActivitiesOpen, setIsModalTaskActivitiesOpen] = useState(false);
     const [showAddTaskForm, setShowAddTaskForm] = useState(false);
     const [showAddCommentInput, setShowAddCommentInput] = useState(false);
     const [currentComment, setCurrentComment] = useState('');
     const [comments, setComments] = useState([
         {
+            'id': 1,
             'username': 'curlos',
             'timePosted': 'just now',
             'content': 'Lakers VS. Pelicans'
         },
         {
+            'id': 2,
             'username': 'curlos',
             'timePosted': 'just now',
             'content': 'Lakers VS. Pelicans'
         },
         {
+            'id': 3,
             'username': 'curlos',
             'timePosted': 'just now',
             'content': 'Lakers VS. Pelicans'
         },
         {
+            'id': 4,
             'username': 'curlos',
             'timePosted': 'just now',
             'content': 'Lakers VS. Pelicans'
         },
         {
+            'id': 5,
             'username': 'curlos',
             'timePosted': 'just now',
             'content': 'Lakers VS. Pelicans'
         }
     ]);
+
+    const dropdownCalendarToggleRef = useRef(null);
+    const dropdownTaskOptionsRef = useRef(null);
 
     let { taskId } = useParams();
     let navigate = useNavigate();
@@ -101,11 +109,13 @@ const TaskDetails = () => {
                     )}
 
                     <div
-                        className="flex items-center gap-1 border-l border-color-gray-200 text-color-gray-100 px-2 cursor-pointer" onClick={() => setIsDropdownCalendarVisible(!isDropdownCalendarVisible)}>
+                        ref={dropdownCalendarToggleRef}
+                        className="flex items-center gap-1 border-l border-color-gray-200 text-color-gray-100 px-2 cursor-pointer" onClick={() => setIsDropdownCalendarVisible(!isDropdownCalendarVisible)}
+                    >
                         <Icon name="calendar_month" customClass={"!text-[20px] hover:text-white cursor-pointer"} />
                         Due Date
                     </div>
-                    <DropdownCalendar isVisible={isDropdownCalendarVisible} setIsVisible={setIsDropdownCalendarVisible} dueDate={dueDate} setDueDate={setDueDate} customClasses=" ml-[-100px] mt-[15px]" />
+                    <DropdownCalendar toggleRef={dropdownCalendarToggleRef} isVisible={isDropdownCalendarVisible} setIsVisible={setIsDropdownCalendarVisible} dueDate={dueDate} setDueDate={setDueDate} customClasses=" ml-[-100px] mt-[15px]" />
                 </div>
 
                 <Icon name="flag" customClass={"text-color-gray-100 text-red-500 !text-[22px] hover:text-white cursor-pointer"} />
@@ -153,7 +163,7 @@ const TaskDetails = () => {
 
                             <div className="space-y-6">
                                 {comments.map((comment) => (
-                                    <div className="flex">
+                                    <div key={comment.id} className="flex">
                                         <div className="rounded-full bg-black p-1 mb-3">
                                             <img src="/prestige-9-bo2.png" alt="user-icon" className="w-[32px] h-[32px]" />
                                         </div>
@@ -190,11 +200,11 @@ const TaskDetails = () => {
                     </div>
 
                     <div className="flex items-center gap-2">
-                        <Icon name="edit_note" customClass={"text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer"} fill={0} />
+                        {/* <Icon name="edit_note" customClass={"text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer"} fill={0} /> */}
                         <Icon name="comment" customClass={"text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer"} fill={0} onClick={() => setShowAddCommentInput(!showAddCommentInput)} />
-                        <Icon name="more_horiz" customClass={"text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer"} fill={0} onClick={() => setIsDropdownTaskOptionsVisible(!isDropdownTaskOptionsVisible)} />
+                        <Icon toggleRef={dropdownTaskOptionsRef} name="more_horiz" customClass={"text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer"} fill={0} onClick={() => setIsDropdownTaskOptionsVisible(!isDropdownTaskOptionsVisible)} />
 
-                        <DropdownTaskOptions isVisible={isDropdownTaskOptionsVisible} setIsVisible={setIsDropdownTaskOptionsVisible} />
+                        <DropdownTaskOptions toggleRef={dropdownTaskOptionsRef} isVisible={isDropdownTaskOptionsVisible} setIsVisible={setIsDropdownTaskOptionsVisible} setIsModalTaskActivitiesOpen={setIsModalTaskActivitiesOpen} />
                     </div>
                 </div>
             </div>
@@ -204,14 +214,16 @@ const TaskDetails = () => {
     );
 };
 
-interface DropdownTaskOptionsProps {
-    isVisible: boolean;
-    setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
+interface DropdownTaskOptionsProps extends DropdownProps {
+    setIsModalTaskActivitiesOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const DropdownTaskOptions: React.FC<DropdownTaskOptionsProps> = ({ isVisible, setIsVisible }) => {
+const DropdownTaskOptions: React.FC<DropdownTaskOptionsProps> = ({ toggleRef, isVisible, setIsVisible, setIsModalTaskActivitiesOpen }) => {
     const [isDropdownStartFocusVisible, setIsDropdownStartFocusVisible] = useState(false);
-    const [isDropdownEstimationVisible, setIsDropdownEstimationVisible] = useState(true);
+    const [isDropdownEstimationVisible, setIsDropdownEstimationVisible] = useState(false);
+
+    const dropdownStartFocusRef = useRef(null);
+    const dropdownEstimationRef = useRef(null);
 
     // TODO: Write logic
     const handleDelete = () => {
@@ -220,14 +232,14 @@ const DropdownTaskOptions: React.FC<DropdownTaskOptionsProps> = ({ isVisible, se
 
 
     return (
-        <Dropdown isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' mt-[5px] shadow-2xl border border-color-gray-200 rounded mt-[-170px] ml-[-140px]'}>
+        <Dropdown toggleRef={toggleRef} isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' mt-[5px] shadow-2xl border border-color-gray-200 rounded mt-[-170px] ml-[-180px]'}>
             <div className="w-[232px] p-1 rounded text-[13px]" onClick={(e) => e.stopPropagation()}>
                 <div className="p-1 flex items-center gap-[2px] hover:bg-color-gray-300 cursor-pointer">
                     <Icon name="add_task" customClass={"text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer"} fill={0} />
                     <div>Add Subtask</div>
                 </div>
 
-                <div className="p-1 flex justify-between items-center hover:bg-color-gray-300 cursor-pointer" onClick={() => setIsDropdownStartFocusVisible(true)}>
+                <div ref={dropdownStartFocusRef} className="p-1 flex justify-between items-center hover:bg-color-gray-300 cursor-pointer" onClick={() => setIsDropdownStartFocusVisible(!isDropdownStartFocusVisible)}>
                     <div className="flex items-center gap-[2px]">
                         <Icon name="timer" customClass={"text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer"} fill={0} />
                         <div>Start Focus</div>
@@ -237,11 +249,11 @@ const DropdownTaskOptions: React.FC<DropdownTaskOptionsProps> = ({ isVisible, se
                 </div>
 
                 {/* Side Dropdowns */}
-                <DropdownStartFocus isVisible={isDropdownStartFocusVisible} setIsVisible={setIsDropdownStartFocusVisible} setIsDropdownEstimationVisible={setIsDropdownEstimationVisible} />
+                <DropdownStartFocus toggleRef={dropdownStartFocusRef} toggleDropdownEstimationRef={dropdownEstimationRef} isVisible={isDropdownStartFocusVisible} setIsVisible={setIsDropdownStartFocusVisible} setIsDropdownEstimationVisible={setIsDropdownEstimationVisible} />
 
-                <DropdownEstimation isVisible={isDropdownEstimationVisible} setIsVisible={setIsDropdownEstimationVisible} />
+                <DropdownEstimation toggleRef={dropdownEstimationRef} isVisible={isDropdownEstimationVisible} setIsVisible={setIsDropdownEstimationVisible} />
 
-                <div className="p-1 flex items-center gap-[2px] hover:bg-color-gray-300 cursor-pointer">
+                <div className="p-1 flex items-center gap-[2px] hover:bg-color-gray-300 cursor-pointer" onClick={() => setIsModalTaskActivitiesOpen(true)}>
                     <Icon name="timeline" customClass={"text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer mb-[-2px]"} fill={0} />
                     <div>Task Activities</div>
                 </div>
@@ -255,13 +267,12 @@ const DropdownTaskOptions: React.FC<DropdownTaskOptionsProps> = ({ isVisible, se
     );
 };
 
-interface DropdownStartFocusProps {
-    isVisible: boolean;
-    setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
+interface DropdownStartFocusProps extends DropdownProps {
     setIsDropdownEstimationVisible: React.Dispatch<React.SetStateAction<boolean>>;
+    toggleDropdownEstimationRef: React.MutableRefObject<null>;
 }
 
-const DropdownStartFocus: React.FC<DropdownStartFocusProps> = ({ isVisible, setIsVisible, setIsDropdownEstimationVisible }) => {
+const DropdownStartFocus: React.FC<DropdownStartFocusProps> = ({ toggleRef, toggleDropdownEstimationRef, isVisible, setIsVisible, setIsDropdownEstimationVisible }) => {
 
     // TODO: Implement logic
     const handleStartPomo = () => {
@@ -274,7 +285,7 @@ const DropdownStartFocus: React.FC<DropdownStartFocusProps> = ({ isVisible, setI
     };
 
     return (
-        <Dropdown isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' mt-[5px] shadow-2xl border border-color-gray-200 rounded mt-[-115px] ml-[-180px]'}>
+        <Dropdown toggleRef={toggleRef} isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' mt-[5px] shadow-2xl border border-color-gray-200 rounded mt-[-115px] ml-[-180px]'}>
             <div className="w-[170px] p-1 rounded text-[13px]" onClick={(e) => e.stopPropagation()}>
                 <div className="p-2 hover:bg-color-gray-300 cursor-pointer" onClick={handleStartPomo}>
                     <div>Start Pomo</div>
@@ -284,7 +295,7 @@ const DropdownStartFocus: React.FC<DropdownStartFocusProps> = ({ isVisible, setI
                     <div>Start Stopwatch</div>
                 </div>
 
-                <div className="p-2 hover:bg-color-gray-300 cursor-pointer" onClick={() => setIsDropdownEstimationVisible(true)}>
+                <div ref={toggleDropdownEstimationRef} className="p-2 hover:bg-color-gray-300 cursor-pointer" onClick={() => setIsDropdownEstimationVisible(true)}>
                     <div>Estimation</div>
                 </div>
             </div>
@@ -292,31 +303,30 @@ const DropdownStartFocus: React.FC<DropdownStartFocusProps> = ({ isVisible, setI
     );
 };
 
-interface DropdownEstimationProps {
-    isVisible: boolean;
-    setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
-}
+interface DropdownEstimationProps extends DropdownProps { }
 
-const DropdownEstimation: React.FC<DropdownEstimationProps> = ({ isVisible, setIsVisible }) => {
+const DropdownEstimation: React.FC<DropdownEstimationProps> = ({ toggleRef, isVisible, setIsVisible }) => {
     const [isDropdownEstimationOptionsVisible, setIsDropdownEstimationOptionsVisible] = useState(false);
     const [selectedEstimationOption, setSelectedEstimationOption] = useState('Estimated Pomo');
+
+    const dropdownEstimationOptionsRef = useRef(null);
 
     const [pomos, setPomos] = useState(0);
     const [hours, setHours] = useState(0);
     const [minutes, setMinutes] = useState(0);
 
     return (
-        <Dropdown isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' mt-[5px] shadow-2xl border border-color-gray-200 rounded mt-[-130px] ml-[-210px]'}>
+        <Dropdown toggleRef={toggleRef} isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' mt-[5px] shadow-2xl border border-color-gray-200 rounded mt-[-130px] ml-[-210px]'}>
             <div className="w-[200px] p-2 rounded text-[13px]" onClick={(e) => e.stopPropagation()}>
                 <div className="flex-1">
-                    <div className="border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500 rounded-md cursor-pointer" onClick={() => {
+                    <div ref={dropdownEstimationOptionsRef} className="border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500 rounded-md cursor-pointer" onClick={() => {
                         setIsDropdownEstimationOptionsVisible(!isDropdownEstimationOptionsVisible);
                     }}>
                         <div>{selectedEstimationOption}</div>
                         <Icon name="expand_more" fill={0} customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'} />
                     </div>
 
-                    <DropdownEstimationOptions isVisible={isDropdownEstimationOptionsVisible} setIsVisible={setIsDropdownEstimationOptionsVisible} selectedEstimationOption={selectedEstimationOption} setSelectedEstimationOption={setSelectedEstimationOption} />
+                    <DropdownEstimationOptions toggleRef={dropdownEstimationOptionsRef} isVisible={isDropdownEstimationOptionsVisible} setIsVisible={setIsDropdownEstimationOptionsVisible} selectedEstimationOption={selectedEstimationOption} setSelectedEstimationOption={setSelectedEstimationOption} />
 
                     <div className="grid grid-cols-2 gap-4 my-4">
                         {selectedEstimationOption === 'Estimated Pomo' ? (
@@ -352,19 +362,17 @@ const DropdownEstimation: React.FC<DropdownEstimationProps> = ({ isVisible, setI
     );
 };
 
-interface DropdownEstimationOptionsProps {
-    isVisible: boolean;
-    setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
+interface DropdownEstimationOptionsProps extends DropdownProps {
     selectedEstimationOption: string;
     setSelectedEstimationOption: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const DropdownEstimationOptions: React.FC<DropdownEstimationOptionsProps> = ({ isVisible, setIsVisible, selectedEstimationOption, setSelectedEstimationOption }) => {
+const DropdownEstimationOptions: React.FC<DropdownEstimationOptionsProps> = ({ toggleRef, isVisible, setIsVisible, selectedEstimationOption, setSelectedEstimationOption }) => {
 
     const estimationOptions = ['Estimated Pomo', 'Estimated Duration'];
 
     return (
-        <Dropdown isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' mt-[5px] shadow-2xl border border-color-gray-200 rounded-lg'}>
+        <Dropdown toggleRef={toggleRef} isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' mt-[5px] shadow-2xl border border-color-gray-200 rounded-lg'}>
             <div className="w-[170px] p-1 rounded" onClick={(e) => e.stopPropagation()}>
                 <div className="overflow-auto gray-scrollbar text-[13px]">
                     {estimationOptions.map((estimationOption) => {
