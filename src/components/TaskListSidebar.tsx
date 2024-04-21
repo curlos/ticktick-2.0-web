@@ -1,35 +1,61 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Icon from "./Icon";
 import ModalAddList from "./Modal/ModalAddList";
+import { IProject } from "../interfaces/interfaces";
+import { arrayToObjectByKey, containsEmoji } from "../utils/helpers.utils";
 
-interface ListItemProps {
-    name: string;
-    iconName: string;
-    emoji?: string;
-    iconFill?: number;
-    numberOfTasks: number;
-    listColor?: string;
-    folder?: boolean;
+interface ProjectItemProps {
+    project: IProject;
+    projectsWithGroup?: Array<IProject>;
+    insideFolder?: boolean;
 }
 
-const ListItem: React.FC<ListItemProps> = ({ name, iconName, emoji, iconFill, numberOfTasks, listColor, folder }) => (
-    <div className={"p-2 rounded-lg flex items-center justify-between cursor-pointer hover:bg-color-gray-600 cursor-pointer" + (name === 'Hello Mobile' ? ' bg-color-gray-200' : '')}>
-        <div className="flex items-center gap-2">
-            <div className="flex items-center gap-0">
-                {folder && <Icon name={"chevron_right"} customClass={"text-white !text-[12px] ml-[-12px]"} fill={iconFill != undefined ? iconFill : 1} />}
-                {emoji ? emoji : (
-                    <Icon name={iconName} customClass={"text-white !text-[22px]"} fill={iconFill != undefined ? iconFill : 1} />
-                )}
-            </div>
-            <div className="overflow-hidden text-nowrap text-ellipsis w-[130px]">{name}</div>
-            <div className={(!listColor ? 'hidden ' : '') + ' ' + `rounded-full w-[8px] h-[8px] ${listColor ? `bg-[${listColor}]` : ''} ml-1 mr-3`}></div>
-        </div>
+const ProjectItem: React.FC<ProjectItemProps> = ({ project, projectsWithGroup, insideFolder }) => {
+    const { name, color, isFolder, projects } = project;
+    const iconFill = isFolder ? 0 : 1;
+    const iconName = isFolder ? 'folder' : 'menu';
+    const emoji = containsEmoji(name) ? name.split(' ')[0] : null;
+    const displayName = emoji ? name.split(' ')[1] : name;
+    const numberOfTasks = 20;
 
-        {numberOfTasks ? (
-            <div className="text-color-gray-100">{numberOfTasks}</div>
-        ) : ''}
-    </div>
-);
+    const formattedProjectsWithGroup = projectsWithGroup && arrayToObjectByKey(projectsWithGroup, '_id');
+    console.log(formattedProjectsWithGroup);
+    const [showChildProjects, setShowChildProjects] = useState(true);
+
+    return (
+        <div>
+            <div className={"p-2 rounded-lg flex items-center justify-between cursor-pointer hover:bg-color-gray-600 cursor-pointer" + (displayName === 'Hello Mobile' ? ' bg-color-gray-200' : '') + (insideFolder ? ' ml-3' : '')}>
+                <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-0">
+                        {isFolder && <Icon name={"chevron_right"} customClass={"text-white !text-[12px] ml-[-12px]"} fill={iconFill != undefined ? iconFill : 1} />}
+                        {emoji ? emoji : (
+                            <Icon name={iconName} customClass={"text-white !text-[22px]"} fill={iconFill != undefined ? iconFill : 1} />
+                        )}
+                    </div>
+                    <div className="overflow-hidden text-nowrap text-ellipsis w-[130px]">{displayName}</div>
+                </div>
+
+                <div className="flex justify-end ml-1 mr-3">
+                    <div className={(!color ? 'hidden ' : '') + ' ' + `rounded-full w-[8px] h-[8px]`} style={{ backgroundColor: (color && !isFolder) ? color : 'transparent' }}></div>
+                </div>
+
+                {numberOfTasks ? (
+                    <div className="text-color-gray-100">{numberOfTasks}</div>
+                ) : ''}
+            </div>
+
+            {isFolder && showChildProjects && projects && projects.map((projectId: string) => {
+                const project = formattedProjectsWithGroup[projectId];
+
+                return (
+                    project ? (
+                        <ProjectItem project={project} insideFolder={true} />
+                    ) : null
+                );
+            })}
+        </div>
+    );
+};
 
 
 const TaskListSidebar = () => {
@@ -152,16 +178,43 @@ const TaskListSidebar = () => {
     ];
 
     const [isModalAddListOpen, setIsModalAddListOpen] = useState(false);
+    const [projects, setProjects] = useState<Array<IProject>>([]);
+
+    useEffect(() => {
+        const getProjects = async () => {
+            const newProjects = await fetchData(`${import.meta.env.VITE_SERVER_URL}/projects`);
+            setProjects(newProjects);
+        };
+
+        getProjects();
+    }, []);
+
+    const fetchData = async (apiUrl: string) => {
+        try {
+            const response = await fetch(apiUrl);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return await response.json();
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    console.log(projects);
+    const projectsWithNoGroup = projects && projects.filter((project) => !project.groupId);
+    const projectsWithGroup = projects && projects.filter((project) => project.groupId);
+
 
     return (
         <div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray p-4">
-            <div>
+            {/* <div>
                 {topLists.map((listPropsAndValues, index) => (
                     <ListItem key={index} {...listPropsAndValues} />
                 ))}
             </div>
 
-            <hr className="my-3 border-color-gray-200 opacity-50" />
+            <hr className="my-3 border-color-gray-200 opacity-50" /> */}
 
             <div className="">
                 <div>
@@ -174,9 +227,14 @@ const TaskListSidebar = () => {
                         <Icon name={"add"} customClass={"text-color-gray-100 !text-[16px] hover:text-white"} onClick={() => setIsModalAddListOpen(!isModalAddListOpen)} />
                     </div>
 
-                    <div>
+                    {/* <div>
                         {generalLists.map((listPropsAndValues, index) => (
                             <ListItem key={index} {...listPropsAndValues} />
+                        ))}
+                    </div> */}
+                    <div>
+                        {projectsWithNoGroup.map((project, index) => (
+                            <ProjectItem key={index} project={project} projectsWithGroup={projectsWithGroup} />
                         ))}
                     </div>
                 </div>
@@ -192,11 +250,11 @@ const TaskListSidebar = () => {
                 </div>
             </div>
 
-            <hr className="my-4 border-color-gray-100 opacity-50" />
+            {/* <hr className="my-4 border-color-gray-100 opacity-50" />
 
             {statusLists.map((listPropsAndValues, index) => (
                 <ListItem key={index} {...listPropsAndValues} />
-            ))}
+            ))} */}
 
             <ModalAddList isModalOpen={isModalAddListOpen} setIsModalOpen={setIsModalAddListOpen} />
         </div>

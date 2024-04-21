@@ -20,8 +20,8 @@ const TaskListPage = () => {
                     </div>
 
                     <div className="flex items-center gap-2">
-                        <Icon name="swap_vert" customClass={"text-white !text-[24px]"} />
-                        <Icon name="more_horiz" customClass={"text-white !text-[24px]"} />
+                        {/* <Icon name="swap_vert" customClass={"text-white !text-[24px]"} /> */}
+                        {/* <Icon name="more_horiz" customClass={"text-white !text-[24px]"} /> */}
                     </div>
                 </div>
 

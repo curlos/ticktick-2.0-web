@@ -20,3 +20,28 @@ export interface DropdownProps {
     setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
     toggleRef: React.MutableRefObject<null>;
 }
+
+export interface IProject extends Document {
+    name: string;
+    color?: string;
+    sortOrder: number;
+    sortOption: {
+        groupBy: string;
+        orderBy: string;
+    };
+    sortType: string;
+    groupId: string | null;
+    isFolder: boolean;
+    tasks: string[]; // New field for associated tasks
+}
+
+export interface IProjectGroup extends Document {
+    name: string;
+    sortOrder: number;
+    sortOption: {
+        groupBy: string;
+        orderBy: string;
+    };
+    sortType: string;
+    projects: string[];
+}
