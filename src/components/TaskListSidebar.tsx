@@ -2,7 +2,10 @@ import { useEffect, useState } from "react";
 import Icon from "./Icon";
 import ModalAddList from "./Modal/ModalAddList";
 import { IProject } from "../interfaces/interfaces";
-import { arrayToObjectByKey, containsEmoji } from "../utils/helpers.utils";
+import { arrayToObjectByKey, containsEmoji, fetchData } from "../utils/helpers.utils";
+import { useDispatch, useSelector } from "react-redux";
+import { useGetProjectsQuery } from "../services/api";
+import { setProjectsToState } from "../slices/projectsSlice";
 
 interface ProjectItemProps {
     project: IProject;
@@ -19,7 +22,6 @@ const ProjectItem: React.FC<ProjectItemProps> = ({ project, projectsWithGroup, i
     const numberOfTasks = 20;
 
     const formattedProjectsWithGroup = projectsWithGroup && arrayToObjectByKey(projectsWithGroup, '_id');
-    console.log(formattedProjectsWithGroup);
     const [showChildProjects, setShowChildProjects] = useState(true);
 
     return (
@@ -178,30 +180,17 @@ const TaskListSidebar = () => {
     ];
 
     const [isModalAddListOpen, setIsModalAddListOpen] = useState(false);
-    const [projects, setProjects] = useState<Array<IProject>>([]);
+    const dispatch = useDispatch();
+    const { data: fetchedProjects, isLoading, error } = useGetProjectsQuery(); // Fetch tasks from the API
+    const projects = useSelector((state) => state.projects.projects);
 
+    // Update Redux state with fetched tasks
     useEffect(() => {
-        const getProjects = async () => {
-            const newProjects = await fetchData(`${import.meta.env.VITE_SERVER_URL}/projects`);
-            setProjects(newProjects);
-        };
-
-        getProjects();
-    }, []);
-
-    const fetchData = async (apiUrl: string) => {
-        try {
-            const response = await fetch(apiUrl);
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return await response.json();
-        } catch (error) {
-            console.error(error);
+        if (fetchedProjects) {
+            dispatch(setProjectsToState(fetchedProjects));
         }
-    };
+    }, [fetchedProjects, dispatch]); // Dependencies for useEffect
 
-    console.log(projects);
     const projectsWithNoGroup = projects && projects.filter((project) => !project.groupId);
     const projectsWithGroup = projects && projects.filter((project) => project.groupId);
 

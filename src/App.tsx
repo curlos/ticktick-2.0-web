@@ -4,12 +4,25 @@ import {
   Routes,
   Route,
 } from 'react-router-dom';
-import useFetchTasks from './hooks/useFetchTasks';
 import FocusPage from './pages/FocusPage';
 import HomePage from './pages/HomePage';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { arrayToObjectByKey } from './utils/helpers.utils';
+import { useGetTasksQuery } from './services/api';
+import { setTasks } from './slices/tasksSlice';
 
 function App() {
-  useFetchTasks(); // This will fetch tasks when the component mounts
+  const dispatch = useDispatch();
+  const { data: fetchedTasks, isLoading, error } = useGetTasksQuery(); // Fetch tasks from the API
+
+  // Update Redux state with fetched tasks
+  useEffect(() => {
+    if (fetchedTasks) {
+      const formattedTasksObj = arrayToObjectByKey(fetchedTasks, '_id');
+      dispatch(setTasks(formattedTasksObj));
+    }
+  }, [fetchedTasks, dispatch]); // Dependencies for useEffect
 
   return (
     <>

@@ -3,6 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     tasks: [],
+    status: 'idle',
+    error: null
 };
 
 export const tasksSlice = createSlice({
@@ -10,15 +12,13 @@ export const tasksSlice = createSlice({
     initialState,
     reducers: {
         setTasks(state, action) {
-            state.tasks = action.payload;
+            const tasks = action.payload;
+            state.tasks = tasks;
         },
-        // Action to add a single task
         addTask(state, action) {
-            const task = action.payload;
-            state.tasks[task._id] = task; // Add the new task to the tasks object
-            // Update local storage
-            localStorage.setItem('allTasks', JSON.stringify(state.tasks));
-        },
+            const newTask = action.payload;
+            state.tasks.push(newTask);
+        }
     },
 });
 

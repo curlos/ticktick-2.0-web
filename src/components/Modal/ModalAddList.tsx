@@ -1,8 +1,12 @@
 import Modal from "./Modal";
 import Icon from "../Icon";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Dropdown from "../Dropdown/Dropdown";
-import { DropdownProps } from "../../interfaces/interfaces";
+import { DropdownProps, IProject } from "../../interfaces/interfaces";
+import { fetchData } from "../../utils/helpers.utils";
+import { useAddProjectMutation } from "../../services/api";
+import { addProjectToState } from "../../slices/projectsSlice";
+import { useDispatch } from "react-redux";
 
 interface ModalAddListProps {
     isModalOpen: boolean;
@@ -13,9 +17,9 @@ const ModalAddList: React.FC<ModalAddListProps> = ({ isModalOpen, setIsModalOpen
     const [name, setName] = useState('');
     const [listColor, setListColor] = useState('');
     const [selectedView, setSelectedView] = useState('list');
-    const [selectedFolder, setSelectedFolder] = useState('None');
+    const [selectedFolder, setSelectedFolder] = useState<IProject | Object>({ name: 'None' });
     const [isDropdownFolderVisible, setIsDropdownFolderVisible] = useState(false);
-    const [isModalNewFolderOpen, setIsModalNewFolderOpen] = useState(false);
+    const [isModalNewProjectOpen, setIsModalNewProjectOpen] = useState(false);
 
     const DEFAULT_COLORS = ['#ff6161', '#FFAC37', '#FFD323', '#E6EA48', '#33D870', '#4BA1FF', '#6D75F4'];
     const DEFAULT_COLORS_LOWERCASE = DEFAULT_COLORS.map((color) => color.toLowerCase());
@@ -45,18 +49,19 @@ const ModalAddList: React.FC<ModalAddListProps> = ({ isModalOpen, setIsModalOpen
             type: 'list',
             iconName: 'list'
         },
-        {
-            type: 'kanban',
-            iconName: 'view_kanban'
-        },
-        {
-            type: 'timeline',
-            iconName: 'timeline'
-        },
+        // {
+        //     type: 'kanban',
+        //     iconName: 'view_kanban'
+        // },
+        // {
+        //     type: 'timeline',
+        //     iconName: 'timeline'
+        // },
     ];
 
     // TODO: Setup backend to add lists. Should take all the properties in an object: name, color, view, and folder.
     const handleAddList = () => {
+
         return;
     };
 
@@ -72,6 +77,7 @@ const ModalAddList: React.FC<ModalAddListProps> = ({ isModalOpen, setIsModalOpen
                     <Icon name="close" customClass={"!text-[20px] text-color-gray-100 hover:text-white cursor-pointer"} onClick={() => setIsModalOpen(false)} />
                 </div>
 
+                {/* Name */}
                 <div className={`border border-[#4c4c4c] rounded-md flex items-center ${isNameInputFocused ? 'border-blue-500' : ''}`}>
                     <Icon name="menu" customClass="!text-[16px] text-color-gray-100 hover:text-white p-[6px]" />
                     <div className="border-l border-[#4c4c4c] p-[6px] flex-1">
@@ -86,6 +92,7 @@ const ModalAddList: React.FC<ModalAddListProps> = ({ isModalOpen, setIsModalOpen
                     </div>
                 </div>
 
+                {/* Color */}
                 <div className="space-y-4 mt-3">
                     <div className="flex items-center">
                         <div className="text-color-gray-100 w-[96px]">Color</div>
@@ -104,6 +111,7 @@ const ModalAddList: React.FC<ModalAddListProps> = ({ isModalOpen, setIsModalOpen
                         </div>
                     </div>
 
+                    {/* View */}
                     <div className="flex items-center">
                         <div className="text-color-gray-100 w-[96px]">View</div>
                         <div className="flex items-center gap-1">
@@ -113,6 +121,7 @@ const ModalAddList: React.FC<ModalAddListProps> = ({ isModalOpen, setIsModalOpen
                         </div>
                     </div>
 
+                    {/* Folder */}
                     <div className="flex items-center">
                         <div className="text-color-gray-100 w-[96px]">Folder</div>
                         <div className="flex-1">
@@ -123,11 +132,11 @@ const ModalAddList: React.FC<ModalAddListProps> = ({ isModalOpen, setIsModalOpen
                                     setIsDropdownFolderVisible(!isDropdownFolderVisible);
                                 }}
                             >
-                                <div>{selectedFolder}</div>
+                                <div>{selectedFolder.name}</div>
                                 <Icon name="expand_more" fill={0} customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'} />
                             </div>
 
-                            <DropdownFolder toggleRef={dropdownFolderRef} isVisible={isDropdownFolderVisible} setIsVisible={setIsDropdownFolderVisible} selectedFolder={selectedFolder} setSelectedFolder={setSelectedFolder} isModalNewFolderOpen={isModalNewFolderOpen} setIsModalNewFolderOpen={setIsModalNewFolderOpen} />
+                            <DropdownFolder toggleRef={dropdownFolderRef} isVisible={isDropdownFolderVisible} setIsVisible={setIsDropdownFolderVisible} selectedFolder={selectedFolder} setSelectedFolder={setSelectedFolder} isModalNewProjectOpen={isModalNewProjectOpen} setIsModalNewProjectOpen={setIsModalNewProjectOpen} />
                         </div>
                     </div>
                 </div>
@@ -143,39 +152,55 @@ const ModalAddList: React.FC<ModalAddListProps> = ({ isModalOpen, setIsModalOpen
                 </div>
             </div>
 
-            <ModalNewFolder isModalOpen={isModalNewFolderOpen} setIsModalOpen={setIsModalNewFolderOpen} />
+            <ModalNewProject isModalOpen={isModalNewProjectOpen} setIsModalOpen={setIsModalNewProjectOpen} />
         </Modal>
     );
 };
 
 interface DropdownFolderProps extends DropdownProps {
-    selectedFolder: string;
-    setSelectedFolder: React.Dispatch<React.SetStateAction<string>>;
-    isModalNewFolderOpen: boolean;
-    setIsModalNewFolderOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    selectedFolder: IProject | Object;
+    setSelectedFolder: React.Dispatch<React.SetStateAction<IProject | Object>>;
+    isModalNewProjectOpen: boolean;
+    setIsModalNewProjectOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const DropdownFolder: React.FC<DropdownFolderProps> = ({ toggleRef, isVisible, setIsVisible, selectedFolder, setSelectedFolder, setIsModalNewFolderOpen }) => {
+const DropdownFolder: React.FC<DropdownFolderProps> = ({ toggleRef, isVisible, setIsVisible, selectedFolder, setSelectedFolder, setIsModalNewProjectOpen }) => {
+
+    const [folders, setFolders] = useState<Array<IProject>>([]);
+
+    useEffect(() => {
+        const getData = async () => {
+            const folders = await fetchData(`${import.meta.env.VITE_SERVER_URL}/projects?isFolder=true`);
+            setFolders(folders);
+        };
+
+        getData();
+    }, []);
 
     const foldersArray = ['None', 'GreatFrontEnd', 'Hobbies & Interests', 'Tech Interview Prep'];
+
+    const noneFolder = {
+        _id: null,
+        name: 'None'
+    };
 
     return (
         <Dropdown toggleRef={toggleRef} isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' mt-[5px] shadow-2xl border border-color-gray-200 rounded-lg'}>
             <div className="w-[232px] p-1 rounded" onClick={(e) => e.stopPropagation()}>
                 <div className="overflow-auto gray-scrollbar">
-                    {foldersArray.map((folder) => {
-                        const isFolderSelected = (selectedFolder == folder);
+                    {folders && [noneFolder, ...folders].map((folder) => {
+                        const isFolderSelected = (selectedFolder._id == folder._id);
 
                         return (
                             <div
-                                key={folder}
+                                key={folder._id}
                                 className="flex items-center justify-between hover:bg-color-gray-300 p-2 rounded-lg cursor-pointer"
                                 onClick={() => {
                                     setSelectedFolder(folder);
                                     setIsVisible(false);
                                 }}
                             >
-                                <div className={isFolderSelected ? 'text-blue-500' : ''}>{folder}</div>
+                                <div className={isFolderSelected ? 'text-blue-500' : ''}>{folder.name}</div>
                                 {isFolderSelected && <Icon name="check" fill={0} customClass={'text-blue-500 !text-[18px] hover:text-white cursor-pointer'} />}
                             </div>
                         );
@@ -183,7 +208,7 @@ const DropdownFolder: React.FC<DropdownFolderProps> = ({ toggleRef, isVisible, s
                 </div>
 
                 <div className="flex items-center gap-1 mt-2 hover:bg-color-gray-300 p-2 rounded-lg cursor-pointer" onClick={() => {
-                    setIsModalNewFolderOpen(true);
+                    setIsModalNewProjectOpen(true);
                     setIsVisible(false);
                 }}>
                     <Icon name="add" fill={0} customClass={'text-color-gray-50 !text-[20px] hover:text-white cursor-pointer'} />
@@ -194,19 +219,34 @@ const DropdownFolder: React.FC<DropdownFolderProps> = ({ toggleRef, isVisible, s
     );
 };
 
-interface ModalNewFolderProps {
+interface ModalNewProjectProps {
     isModalOpen: boolean;
     setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ModalNewFolder: React.FC<ModalNewFolderProps> = ({ isModalOpen, setIsModalOpen }) => {
+const ModalNewProject: React.FC<ModalNewProjectProps> = ({ isModalOpen, setIsModalOpen }) => {
+    const dispatch = useDispatch();
+    const [addProject, { isLoading, error }] = useAddProjectMutation(); // Mutation hook
     const [folderName, setFolderName] = useState('');
     const [isFolderNameInputFocused, setIsFolderNameInputFocused] = useState(false);
 
     // TODO: Setup backend to add new folders
-    const handleCreateNewFolder = () => {
-        setFolderName('');
-        return;
+    const handleCreateNewFolder = async () => {
+        if (folderName.trim() === '') {
+            return;
+        }
+
+        const newProject = {
+            name: folderName,
+            isFolder: true
+        };
+
+        try {
+            const result = await addProject(newProject).unwrap(); // Add the project
+            dispatch(addProjectToState(result)); // Update the Redux state with the new project
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     return (
@@ -245,4 +285,4 @@ const ModalNewFolder: React.FC<ModalNewFolderProps> = ({ isModalOpen, setIsModal
     );
 };
 
-export default ModalAddList;
+export default ModalNewProject;

@@ -102,3 +102,15 @@ export function containsEmoji(text: string) {
     // Test the input string against the emoji regex
     return emojiRegex.test(text);
 }
+
+export async function fetchData(apiUrl: string) {
+    try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error(error);
+    }
+};
