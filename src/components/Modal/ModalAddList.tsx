@@ -285,4 +285,4 @@ const ModalNewProject: React.FC<ModalNewProjectProps> = ({ isModalOpen, setIsMod
     );
 };
 
-export default ModalNewProject;
+export default ModalAddList;
