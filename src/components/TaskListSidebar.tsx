@@ -6,6 +6,7 @@ import { arrayToObjectByKey, containsEmoji, fetchData } from "../utils/helpers.u
 import { useDispatch, useSelector } from "react-redux";
 import { useGetProjectsQuery } from "../services/api";
 import { setProjectsToState } from "../slices/projectsSlice";
+import DraggableList, { SortableItem } from "./DraggableList";
 
 interface ProjectItemProps {
     project: IProject;
@@ -13,7 +14,7 @@ interface ProjectItemProps {
     insideFolder?: boolean;
 }
 
-const ProjectItem: React.FC<ProjectItemProps> = ({ project, projectsWithGroup, insideFolder }) => {
+export const ProjectItem: React.FC<ProjectItemProps> = ({ project, projectsWithGroup, insideFolder }) => {
     const { name, color, isFolder, projects } = project;
     const iconFill = isFolder ? 0 : 1;
     const iconName = isFolder ? 'folder' : 'menu';
@@ -37,16 +38,18 @@ const ProjectItem: React.FC<ProjectItemProps> = ({ project, projectsWithGroup, i
                     <div className="overflow-hidden text-nowrap text-ellipsis w-[130px]">{displayName}</div>
                 </div>
 
-                <div className="flex justify-end ml-1 mr-3">
-                    <div className={(!color ? 'hidden ' : '') + ' ' + `rounded-full w-[8px] h-[8px]`} style={{ backgroundColor: (color && !isFolder) ? color : 'transparent' }}></div>
-                </div>
+                <div className="flex items-center ml-1 gap-3">
+                    <div className="flex justify-end">
+                        <div className={(!color ? 'hidden ' : '') + ' ' + `rounded-full w-[8px] h-[8px]`} style={{ backgroundColor: (color && !isFolder) ? color : 'transparent' }}></div>
+                    </div>
 
-                {numberOfTasks ? (
-                    <div className="text-color-gray-100">{numberOfTasks}</div>
-                ) : ''}
+                    {numberOfTasks ? (
+                        <div className="text-color-gray-100">{numberOfTasks}</div>
+                    ) : ''}
+                </div>
             </div>
 
-            {isFolder && showChildProjects && projects && projects.map((projectId: string) => {
+            {/* {isFolder && showChildProjects && projects && projects.map((projectId: string) => {
                 const project = formattedProjectsWithGroup[projectId];
 
                 return (
@@ -54,7 +57,7 @@ const ProjectItem: React.FC<ProjectItemProps> = ({ project, projectsWithGroup, i
                         <ProjectItem project={project} insideFolder={true} />
                     ) : null
                 );
-            })}
+            })} */}
         </div>
     );
 };
@@ -180,6 +183,7 @@ const TaskListSidebar = () => {
     ];
 
     const [isModalAddListOpen, setIsModalAddListOpen] = useState(false);
+    const [items, setItems] = useState([]);
     const dispatch = useDispatch();
     const { data: fetchedProjects, isLoading, error } = useGetProjectsQuery(); // Fetch tasks from the API
     const projects = useSelector((state) => state.projects.projects);
@@ -187,7 +191,9 @@ const TaskListSidebar = () => {
     // Update Redux state with fetched tasks
     useEffect(() => {
         if (fetchedProjects) {
-            dispatch(setProjectsToState(fetchedProjects));
+            const projectsWithId: Array<IProject> = fetchedProjects.map((project: IProject) => ({ ...project, id: project._id }));
+            dispatch(setProjectsToState(projectsWithId));
+            setItems(fetchedProjects);
         }
     }, [fetchedProjects, dispatch]); // Dependencies for useEffect
 
@@ -221,10 +227,16 @@ const TaskListSidebar = () => {
                             <ListItem key={index} {...listPropsAndValues} />
                         ))}
                     </div> */}
-                    <div>
+                    {/* <div>
                         {projectsWithNoGroup.map((project, index) => (
                             <ProjectItem key={index} project={project} projectsWithGroup={projectsWithGroup} />
                         ))}
+                    </div> */}
+                    <div>
+
+                        <DraggableList items={items} setItems={setItems}>
+
+                        </DraggableList>
                     </div>
                 </div>
 
