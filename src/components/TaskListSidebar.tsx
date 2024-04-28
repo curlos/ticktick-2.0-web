@@ -6,61 +6,7 @@ import { arrayToObjectByKey, containsEmoji, fetchData } from "../utils/helpers.u
 import { useDispatch, useSelector } from "react-redux";
 import { useGetProjectsQuery } from "../services/api";
 import { setProjectsToState } from "../slices/projectsSlice";
-import DraggableList, { SortableItem } from "./DraggableList";
-
-interface ProjectItemProps {
-    project: IProject;
-    projectsWithGroup?: Array<IProject>;
-    insideFolder?: boolean;
-}
-
-export const ProjectItem: React.FC<ProjectItemProps> = ({ project, projectsWithGroup, insideFolder }) => {
-    const { name, color, isFolder, projects } = project;
-    const iconFill = isFolder ? 0 : 1;
-    const iconName = isFolder ? 'folder' : 'menu';
-    const emoji = containsEmoji(name) ? name.split(' ')[0] : null;
-    const displayName = emoji ? name.split(' ')[1] : name;
-    const numberOfTasks = 20;
-
-    const formattedProjectsWithGroup = projectsWithGroup && arrayToObjectByKey(projectsWithGroup, '_id');
-    const [showChildProjects, setShowChildProjects] = useState(true);
-
-    return (
-        <div>
-            <div className={"p-2 rounded-lg flex items-center justify-between cursor-pointer hover:bg-color-gray-600 cursor-pointer" + (displayName === 'Hello Mobile' ? ' bg-color-gray-200' : '') + (insideFolder ? ' ml-3' : '')}>
-                <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-0">
-                        {isFolder && <Icon name={"chevron_right"} customClass={"text-white !text-[12px] ml-[-12px]"} fill={iconFill != undefined ? iconFill : 1} />}
-                        {emoji ? emoji : (
-                            <Icon name={iconName} customClass={"text-white !text-[22px]"} fill={iconFill != undefined ? iconFill : 1} />
-                        )}
-                    </div>
-                    <div className="overflow-hidden text-nowrap text-ellipsis w-[130px]">{displayName}</div>
-                </div>
-
-                <div className="flex items-center ml-1 gap-3">
-                    <div className="flex justify-end">
-                        <div className={(!color ? 'hidden ' : '') + ' ' + `rounded-full w-[8px] h-[8px]`} style={{ backgroundColor: (color && !isFolder) ? color : 'transparent' }}></div>
-                    </div>
-
-                    {numberOfTasks ? (
-                        <div className="text-color-gray-100">{numberOfTasks}</div>
-                    ) : ''}
-                </div>
-            </div>
-
-            {/* {isFolder && showChildProjects && projects && projects.map((projectId: string) => {
-                const project = formattedProjectsWithGroup[projectId];
-
-                return (
-                    project ? (
-                        <ProjectItem project={project} insideFolder={true} />
-                    ) : null
-                );
-            })} */}
-        </div>
-    );
-};
+import Drag, { ProjectItem } from "./Drag";
 
 
 const TaskListSidebar = () => {
@@ -183,7 +129,6 @@ const TaskListSidebar = () => {
     ];
 
     const [isModalAddListOpen, setIsModalAddListOpen] = useState(false);
-    const [items, setItems] = useState([]);
     const dispatch = useDispatch();
     const { data: fetchedProjects, isLoading, error } = useGetProjectsQuery(); // Fetch tasks from the API
     const projects = useSelector((state) => state.projects.projects);
@@ -193,7 +138,6 @@ const TaskListSidebar = () => {
         if (fetchedProjects) {
             const projectsWithId: Array<IProject> = fetchedProjects.map((project: IProject) => ({ ...project, id: project._id }));
             dispatch(setProjectsToState(projectsWithId));
-            setItems(fetchedProjects);
         }
     }, [fetchedProjects, dispatch]); // Dependencies for useEffect
 
@@ -233,10 +177,7 @@ const TaskListSidebar = () => {
                         ))}
                     </div> */}
                     <div>
-
-                        <DraggableList items={items} setItems={setItems}>
-
-                        </DraggableList>
+                        <Drag projects={projects} />
                     </div>
                 </div>
 
@@ -256,6 +197,8 @@ const TaskListSidebar = () => {
             {statusLists.map((listPropsAndValues, index) => (
                 <ListItem key={index} {...listPropsAndValues} />
             ))} */}
+
+            {projects && <Drag projects={projects} />}
 
             <ModalAddList isModalOpen={isModalAddListOpen} setIsModalOpen={setIsModalAddListOpen} />
         </div>
