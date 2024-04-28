@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { TaskObj } from "../interfaces/interfaces";
 import AddTaskForm from "../components/AddTaskForm";
 import TaskListByCategory from "../components/TaskListByCategory";
+import { SortableTree } from "../components/SortableTest/SortableTree";
 
 const TaskListPage = () => {
     const allTasks = useSelector((state) => state.tasks.tasks);
@@ -27,6 +28,8 @@ const TaskListPage = () => {
                         {/* <Icon name="more_horiz" customClass={"text-white !text-[24px]"} /> */}
                     </div>
                 </div>
+
+                <SortableTree collapsible indicator removable />
 
                 <div className="mt-4 space-y-4">
                     <TaskListByCategory tasks={allTasks} />

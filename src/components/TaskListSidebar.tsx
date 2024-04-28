@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useGetProjectsQuery } from "../services/api";
 import { setProjectsToState } from "../slices/projectsSlice";
 import DraggableProjects from "./DraggableProjects";
+import { SortableTree } from "./SortableTest/SortableTree";
 
 
 const TaskListSidebar = () => {
@@ -176,7 +177,10 @@ const TaskListSidebar = () => {
                             <ProjectItem key={index} project={project} projectsWithGroup={projectsWithGroup} />
                         ))}
                     </div> */}
+
                     <DraggableProjects projects={projects} />
+
+                    {/* <SortableTree collapsible indicator removable /> */}
                 </div>
 
                 <div className="pt-3">

@@ -71,13 +71,13 @@ function SortableItem({ item, children }) {
     );
 }
 
-interface ProjectItemProps {
+export interface ProjectItemProps {
     project: IProject;
     projectsWithGroup?: Array<IProject>;
     insideFolder?: boolean;
 }
 
-const ProjectItem: React.FC<ProjectItemProps> = ({ project, projectsWithGroup, insideFolder }) => {
+export const ProjectItem: React.FC<ProjectItemProps> = ({ project, projectsWithGroup, insideFolder }) => {
     const { name, color, isFolder, projects } = project;
     const iconFill = isFolder ? 0 : 1;
     const iconName = isFolder ? 'folder' : 'menu';
