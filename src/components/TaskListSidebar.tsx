@@ -6,7 +6,7 @@ import { arrayToObjectByKey, containsEmoji, fetchData } from "../utils/helpers.u
 import { useDispatch, useSelector } from "react-redux";
 import { useGetProjectsQuery } from "../services/api";
 import { setProjectsToState } from "../slices/projectsSlice";
-import Drag, { ProjectItem } from "./Drag";
+import DraggableProjects from "./DraggableProjects";
 
 
 const TaskListSidebar = () => {
@@ -176,9 +176,7 @@ const TaskListSidebar = () => {
                             <ProjectItem key={index} project={project} projectsWithGroup={projectsWithGroup} />
                         ))}
                     </div> */}
-                    <div>
-                        <Drag projects={projects} />
-                    </div>
+                    <DraggableProjects projects={projects} />
                 </div>
 
                 <div className="pt-3">
@@ -197,8 +195,6 @@ const TaskListSidebar = () => {
             {statusLists.map((listPropsAndValues, index) => (
                 <ListItem key={index} {...listPropsAndValues} />
             ))} */}
-
-            {projects && <Drag projects={projects} />}
 
             <ModalAddList isModalOpen={isModalAddListOpen} setIsModalOpen={setIsModalAddListOpen} />
         </div>

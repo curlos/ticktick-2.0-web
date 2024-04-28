@@ -10,15 +10,18 @@ import { arrayToObjectByKey, containsEmoji } from '../utils/helpers.utils';
 import { IProject } from '../interfaces/interfaces';
 import Icon from './Icon';
 
-const Drag = ({ projects }) => {
+const DraggableProjects = ({ projects }) => {
+    console.log(projects);
     const [items, setItems] = useState([...projects]);
-
-    const projectsWithNoGroup = projects && projects.filter((project) => !project.groupId);
-    const projectsWithGroup = projects && projects.filter((project) => project.groupId);
 
     useEffect(() => {
         setItems(projects);
     }, [projects]);
+
+    // setItems={(newProjects) => {
+    //     dispatch(setProjectsToState(newProjects));
+    //     debugger;
+    // }} 
 
 
     const handleDragEnd = (event) => {
@@ -34,14 +37,11 @@ const Drag = ({ projects }) => {
         }
     };
 
-    console.log(items);
-    console.log(projects);
-
     return (
         <DndContext onDragEnd={handleDragEnd} collisionDetection={closestCenter}>
             <SortableContext items={items} strategy={verticalListSortingStrategy}>
                 {items.map((item) => (
-                    <SortableItem key={item} item={item}>
+                    <SortableItem key={item._id} item={item}>
                         <ProjectItem project={item} />
                     </SortableItem>
                 ))}
@@ -63,8 +63,6 @@ function SortableItem({ item, children }) {
         transform: CSS.Transform.toString(transform),
         transition
     };
-
-    console.log(style);
 
     return (
         <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
@@ -127,4 +125,4 @@ const ProjectItem: React.FC<ProjectItemProps> = ({ project, projectsWithGroup, i
     );
 };
 
-export default Drag;
+export default DraggableProjects;
