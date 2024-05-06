@@ -1,8 +1,10 @@
 // src/slices/tasksSlice.js
 import { createSlice } from '@reduxjs/toolkit';
+import { arrayToObjectByKey } from '../utils/helpers.utils';
 
 const initialState = {
     tasks: [],
+    tasksById: {},
     status: 'idle',
     error: null
 };
@@ -14,6 +16,7 @@ export const tasksSlice = createSlice({
         setTasks(state, action) {
             const tasks = action.payload;
             state.tasks = tasks;
+            state.tasksById = arrayToObjectByKey(tasks, '_id');
         },
         addTask(state, action) {
             const newTask = action.payload;

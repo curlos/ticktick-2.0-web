@@ -35,6 +35,9 @@ import {
 import type { FlattenedItem, SensorContext, TreeItems } from "./types";
 import { sortableTreeKeyboardCoordinates } from "./keyboardCoordinates";
 import { SortableTreeItem } from "./components";
+import { useBulkEditTasksMutation, useGetTasksQuery } from "../../services/api";
+import { useSelector } from "react-redux";
+import { deepClone, prepareForBulkEdit } from "../../utils/helpers.utils";
 
 const initialItems: TreeItems = [
   {
@@ -104,8 +107,7 @@ export function SortableTree({
   indentationWidth = 20,
   removable
 }: Props) {
-  const [items, setItems] = useState(() => defaultItems);
-  console.log({ items });
+  const [items, setItems] = useState(defaultItems);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [overId, setOverId] = useState<string | null>(null);
   const [offsetLeft, setOffsetLeft] = useState(0);
@@ -113,6 +115,9 @@ export function SortableTree({
     parentId: string | null;
     overId: string;
   } | null>(null);
+
+  const { data: { tasksById }, isLoading: getTasksLoading, error: getTasksError } = useGetTasksQuery();
+  const [bulkEditTasks, { isLoading, error }] = useBulkEditTasksMutation(); // Mutation hook
 
   const flattenedItems = useMemo(() => {
     const flattenedTree = flattenTree(items);
@@ -130,12 +135,12 @@ export function SortableTree({
   const projected =
     activeId && overId
       ? getProjection(
-          flattenedItems,
-          activeId,
-          overId,
-          offsetLeft,
-          indentationWidth
-        )
+        flattenedItems,
+        activeId,
+        overId,
+        offsetLeft,
+        indentationWidth
+      )
       : null;
   const sensorContext: SensorContext = useRef({
     items: flattenedItems,
@@ -192,22 +197,25 @@ export function SortableTree({
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
     >
+
+      {/* id, children, collapsed, depth */}
       <SortableContext items={sortedIds} strategy={verticalListSortingStrategy}>
-        {flattenedItems.map(({ id, children, collapsed, depth }) => (
+        {flattenedItems.map((item) => (
           <SortableTreeItem
-            key={id}
-            id={id}
-            value={id}
-            depth={id === activeId && projected ? projected.depth : depth}
+            key={item.id}
+            id={item.id}
+            value={item.id}
+            depth={item.id === activeId && projected ? projected.depth : item.depth}
             indentationWidth={indentationWidth}
             indicator={indicator}
-            collapsed={Boolean(collapsed && children.length)}
+            collapsed={Boolean(item.collapsed && item.children.length)}
             onCollapse={
-              collapsible && children.length
-                ? () => handleCollapse(id)
+              collapsible && item.children.length
+                ? () => handleCollapse(item.id)
                 : undefined
             }
-            onRemove={removable ? () => handleRemove(id) : undefined}
+            onRemove={removable ? () => handleRemove(item.id) : undefined}
+            item={item}
           />
         ))}
         {createPortal(
@@ -223,6 +231,7 @@ export function SortableTree({
                 childCount={getChildCount(items, activeId) + 1}
                 value={activeId}
                 indentationWidth={indentationWidth}
+                item={activeItem}
               />
             ) : null}
           </DragOverlay>,
@@ -273,6 +282,10 @@ export function SortableTree({
       const sortedItems = arrayMove(clonedItems, activeIndex, overIndex);
       const newItems = buildTree(sortedItems);
 
+      // Transform the cloned array
+      const transformedTasks = prepareForBulkEdit(newItems);
+
+      const response = bulkEditTasks(transformedTasks);
       setItems(newItems);
     }
   }

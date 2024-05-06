@@ -10,6 +10,7 @@ interface TaskListProps {
 }
 
 const TaskList: React.FC<TaskListProps> = ({ tasks, selectedFocusRecordTask, setSelectedFocusRecordTask }) => {
+
     return (
         <div>
             {Object.values(tasks).map((task) => {

@@ -41,15 +41,18 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
       style,
       value,
       wrapperRef,
+      item,
       ...props
     },
     ref
   ) => {
+
+    console.log(item);
+
     return (
       <li
         className={classNames(
           styles.Wrapper,
-          clone && styles.clone,
           ghost && styles.ghost,
           indicator && styles.indicator,
           disableSelection && styles.disableSelection,
@@ -76,7 +79,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
               {collapseIcon}
             </Action>
           )}
-          <span className={styles.Text}>{value}</span>
+          <span className={styles.Text}>{item.title}</span>
           {!clone && onRemove && <Remove onClick={onRemove} />}
           {clone && childCount && childCount > 1 ? (
             <span className={styles.Count}>{childCount}</span>

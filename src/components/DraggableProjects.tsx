@@ -11,17 +11,12 @@ import { IProject } from '../interfaces/interfaces';
 import Icon from './Icon';
 
 const DraggableProjects = ({ projects }) => {
-    console.log(projects);
+    // console.log(projects);
     const [items, setItems] = useState([...projects]);
 
     useEffect(() => {
         setItems(projects);
     }, [projects]);
-
-    // setItems={(newProjects) => {
-    //     dispatch(setProjectsToState(newProjects));
-    //     debugger;
-    // }} 
 
 
     const handleDragEnd = (event) => {

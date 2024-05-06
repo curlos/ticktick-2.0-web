@@ -16,7 +16,10 @@ const Task: React.FC<TaskProps> = ({ tasks, taskId, fromTaskDetails, selectedFoc
     let navigate = useNavigate();
     let { taskId: taskIdFromUrl } = useParams();
 
-    const { _id, title, directSubtasks, parentId, completedPomodoros, timeTaken, estimatedDuration, deadline } = tasks[taskId];
+    let task = typeof taskId == 'string' ? tasks[taskId] : taskId;
+
+    const { _id, title, directSubtasks, parentId, completedPomodoros, timeTaken, estimatedDuration, deadline } = task;
+
 
     const [completed, setCompleted] = useState(false);
     const [showSubtasks, setShowSubtasks] = useState(true);
@@ -30,7 +33,7 @@ const Task: React.FC<TaskProps> = ({ tasks, taskId, fromTaskDetails, selectedFoc
                 className={`flex p-2 hover:bg-color-gray-600 cursor-pointer rounded-lg` + (taskIdFromUrl == taskId ? ' bg-color-gray-300' : '')}
                 onClick={(e) => {
                     if (setSelectedFocusRecordTask) {
-                        setSelectedFocusRecordTask(tasks[taskId]);
+                        setSelectedFocusRecordTask(task);
                     } else {
                         navigate(`/tasks/${_id}`);
                     }
@@ -56,7 +59,7 @@ const Task: React.FC<TaskProps> = ({ tasks, taskId, fromTaskDetails, selectedFoc
                             setCompleted(!completed);
                         }}>
                             {!completed ? (
-                                directSubtasks.length >= 1 ? (
+                                directSubtasks && directSubtasks.length >= 1 ? (
                                     <Icon name="list_alt" fill={0} customClass={"text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-pointer"} />
                                 ) : (
                                     <Icon name="check_box_outline_blank" customClass={"text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-pointer"} />
@@ -83,7 +86,7 @@ const Task: React.FC<TaskProps> = ({ tasks, taskId, fromTaskDetails, selectedFoc
 
             {showSubtasks && !fromTaskDetails && (
                 <div className="flex flex-col mt-1">
-                    {directSubtasks.map((subtaskId: string) => (
+                    {directSubtasks && directSubtasks.map((subtaskId: string) => (
                         <Task key={subtaskId} tasks={tasks} taskId={subtaskId} selectedFocusRecordTask={selectedFocusRecordTask} setSelectedFocusRecordTask={setSelectedFocusRecordTask} />
                     ))}
                 </div>

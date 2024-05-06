@@ -21,7 +21,7 @@ const EmptyTask = () => (
 );
 
 const TaskDetails = () => {
-    const allTasks = useSelector((state) => state.tasks.tasks);
+    const allTasks = useSelector((state) => state.tasks.tasksById);
     const [currTitle, setCurrTitle] = useState('');
     const [currDescription, setCurrDescription] = useState('');
     const [completed, setCompleted] = useState(false);

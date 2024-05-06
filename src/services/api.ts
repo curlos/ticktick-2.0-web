@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { arrayToObjectByKey } from '../utils/helpers.utils';
 
 // Utility function to build query strings
 const buildQueryString = (params) => {
@@ -18,12 +19,24 @@ export const api = createApi({
                 return queryString ? `/tasks?${queryString}` : '/tasks'; // Use query string if provided
             },
             providesTags: ['Task'], // This endpoint provides the 'Task' tag
+            transformResponse: (response) => {
+                const tasksById = arrayToObjectByKey(response, '_id'); // Convert array to object by ID
+                return { tasks: response, tasksById }; // Return as a combined object
+            }
         }),
         addTask: builder.mutation({
             query: (newTask) => ({
                 url: '/tasks/add',
                 method: 'POST',
                 body: newTask,
+            }),
+            invalidatesTags: ['Task'], // Invalidate the cache when a task is added
+        }),
+        bulkEditTasks: builder.mutation({
+            query: (newTaskList) => ({
+                url: '/tasks/bulk-edit',
+                method: 'PUT',
+                body: newTaskList,
             }),
             invalidatesTags: ['Task'], // Invalidate the cache when a task is added
         }),
@@ -52,6 +65,7 @@ export const {
     // Tasks
     useGetTasksQuery,
     useAddTaskMutation,
+    useBulkEditTasksMutation,
 
     // Projects/Folders
     useGetProjectsQuery,

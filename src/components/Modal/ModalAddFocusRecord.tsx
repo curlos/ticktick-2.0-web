@@ -255,7 +255,7 @@ interface DropdownSetTaskProps extends DropdownProps {
 }
 
 const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({ toggleRef, isVisible, setIsVisible, selectedTask, setSelectedTask }) => {
-    const allTasks = useSelector((state) => state.tasks.tasks);
+    const allTasks = useSelector((state) => state.tasks.tasksById);
 
     const [selectedButton, setSelectedButton] = useState('Recent');
     const [selectedFocusRecordTask, setSelectedFocusRecordTask] = useState(null);

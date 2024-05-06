@@ -114,3 +114,70 @@ export async function fetchData(apiUrl: string) {
         console.error(error);
     }
 };
+
+
+// Utility function to deeply clone an object or array
+export function deepClone(data: any): any {
+    return JSON.parse(JSON.stringify(data)); // Quick deep cloning using JSON serialization
+}
+
+// Function to fill in children for each task
+export function fillInChildren(tasks: any[], tasksById): any[] {
+    // Helper function to recursively process each task
+    function processTask(task: any): any {
+        // Replace `children` with an array of their IDs
+        if (task.children && task.children.length > 0) {
+            task.children = task.children.map(child => {
+                const clonedChild = processTask(deepClone(tasksById[child]));
+                return clonedChild; // Return the ID of the cloned child
+            });
+        }
+        return task; // Return the processed task
+    }
+
+    // Create a new array of tasks with processed tasks
+    return tasks.map(task => processTask(deepClone(task)));
+}
+
+export function prepareForBulkEdit(tasks: any[]): any[] {
+    const allFoundTasks = [];
+
+    // Helper function to recursively process each task
+
+    function processTask(task: any): any {
+        // Find all the tasks even if they
+        allFoundTasks.push(task);
+        // Replace `children` with an array of their IDs
+        if (task.children && task.children.length > 0) {
+            task.children = task.children.map(child => {
+                let clonedChild = processTask(deepClone(child));
+
+                return clonedChild; // Return the ID of the cloned child
+            });
+        }
+        return task; // Return the processed task
+    }
+
+    for (let task of tasks) {
+        const newTask = processTask(deepClone(task));
+    }
+
+
+    console.log(allFoundTasks);
+
+    // After getting all the found tasks even in the children through recursion, go through all the tasks and replace their "children" with string "_ids" since that's how the backend sees it
+    const allFoundTasksWithChildIds = allFoundTasks.map((task) => {
+        return replaceChildrenWithStringIds(task);
+    });
+
+    // TODO: So this does work HOWEVER over the overarching task list - the one without children is not ordered. So anything under the children will naturally be ordered BUT if it's not under "children" and it's for example all the tasks without parents, then they will not stay in the order I put them. It seems I might still need a child_order property or something to take care of this. At least for the tasks without parents. Those are the ones that I see for sure causing trouble right now. The ordered children work though. Or at least seem to work.
+    return allFoundTasksWithChildIds;
+}
+
+function replaceChildrenWithStringIds(task: any): any {
+    // Replace `children` with an array of their IDs
+    if (task.children && task.children.length > 0) {
+        task.children = task.children.map(childObject => childObject._id);
+    }
+    return task; // Return the processed task
+}
