@@ -18,7 +18,7 @@ const Task: React.FC<TaskProps> = ({ tasks, taskId, fromTaskDetails, selectedFoc
 
     let task = typeof taskId == 'string' ? tasks[taskId] : taskId;
 
-    const { _id, title, directSubtasks, parentId, completedPomodoros, timeTaken, estimatedDuration, deadline } = task;
+    const { _id, projectId, title, directSubtasks, parentId, completedPomodoros, timeTaken, estimatedDuration, deadline } = task;
 
 
     const [completed, setCompleted] = useState(false);
@@ -35,7 +35,8 @@ const Task: React.FC<TaskProps> = ({ tasks, taskId, fromTaskDetails, selectedFoc
                     if (setSelectedFocusRecordTask) {
                         setSelectedFocusRecordTask(task);
                     } else {
-                        navigate(`/tasks/${_id}`);
+                        // TODO: Add logic for smart list
+                        navigate(`/projects/${projectId}/tasks/${_id}`);
                     }
                 }}
             >

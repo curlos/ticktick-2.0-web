@@ -47,8 +47,6 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
     ref
   ) => {
 
-    console.log(item);
-
     return (
       <li
         className={classNames(

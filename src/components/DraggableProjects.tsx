@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from "react-router";
 import { DndContext, closestCenter } from '@dnd-kit/core';
 import { arrayMove, useSortable } from '@dnd-kit/sortable';
 import {
@@ -6,12 +7,13 @@ import {
     verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { arrayToObjectByKey, containsEmoji } from '../utils/helpers.utils';
+import { arrayToObjectByKey, containsEmoji, getNumberOfTasks } from '../utils/helpers.utils';
 import { IProject } from '../interfaces/interfaces';
 import Icon from './Icon';
+import { useGetTasksQuery } from '../services/api';
+import { SMART_LISTS } from '../utils/smartLists.utils';
 
 const DraggableProjects = ({ projects }) => {
-    // console.log(projects);
     const [items, setItems] = useState([...projects]);
 
     useEffect(() => {
@@ -72,20 +74,55 @@ export interface ProjectItemProps {
     insideFolder?: boolean;
 }
 
-export const ProjectItem: React.FC<ProjectItemProps> = ({ project, projectsWithGroup, insideFolder }) => {
-    const { name, color, isFolder, projects } = project;
+export const ProjectItem: React.FC<ProjectItemProps> = ({ project, projectsWithGroup, insideFolder, isSmartList }) => {
+    const { projectId, taskId } = useParams();
+    const navigate = useNavigate();
+
+    const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
+    const { tasks, tasksById } = fetchedTasks || {};
+
+    const { name, color, isFolder, _id } = project;
     const iconFill = isFolder ? 0 : 1;
     const iconName = isFolder ? 'folder' : 'menu';
     const emoji = containsEmoji(name) ? name.split(' ')[0] : null;
     const displayName = emoji ? name.split(' ')[1] : name;
-    const numberOfTasks = 20;
+    const [numberOfTasks, setNumberOfTasks] = useState(0);
+
+    useEffect(() => {
+        if (!tasks) {
+            return;
+        }
+
+        let filteredTasks = null;
+
+        if (isSmartList) {
+            const { getTasks } = project;
+            filteredTasks = getTasks(tasks);
+        } else {
+            filteredTasks = tasks.filter((task) => task.projectId === _id);
+        }
+
+
+
+        // const newNumberOfTasks = getNumberOfTasks(filteredTasks, tasksById);
+
+        setNumberOfTasks(filteredTasks.length);
+    }, [tasks]);
 
     const formattedProjectsWithGroup = projectsWithGroup && arrayToObjectByKey(projectsWithGroup, '_id');
     const [showChildProjects, setShowChildProjects] = useState(true);
 
+    const handleClick = () => {
+        if (isSmartList) {
+            navigate(project.route);
+        } else {
+            navigate(`/projects/${_id}/tasks`);
+        }
+    };
+
     return (
-        <div>
-            <div className={"p-2 rounded-lg flex items-center justify-between cursor-pointer hover:bg-color-gray-600 cursor-pointer" + (displayName === 'Hello Mobile' ? ' bg-color-gray-200' : '') + (insideFolder ? ' ml-3' : '')}>
+        <div onClick={handleClick}>
+            <div className={"p-2 rounded-lg flex items-center justify-between cursor-pointer cursor-pointer" + (projectId === _id ? ' bg-color-gray-200' : ' hover:bg-color-gray-600') + (insideFolder ? ' ml-3' : '')}>
                 <div className="flex items-center gap-2">
                     <div className="flex items-center gap-0">
                         {isFolder && <Icon name={"chevron_right"} customClass={"text-white !text-[12px] ml-[-12px]"} fill={iconFill != undefined ? iconFill : 1} />}

@@ -1,3 +1,6 @@
+import { useParams } from "react-router-dom";
+import { SMART_LISTS } from "./smartLists.utils";
+
 export function millisecondsToHoursAndMinutes(milliseconds: number) {
     // Convert milliseconds to minutes
     const totalMinutes = milliseconds / (1000 * 60);
@@ -162,9 +165,6 @@ export function prepareForBulkEdit(tasks: any[]): any[] {
         const newTask = processTask(deepClone(task));
     }
 
-
-    console.log(allFoundTasks);
-
     // After getting all the found tasks even in the children through recursion, go through all the tasks and replace their "children" with string "_ids" since that's how the backend sees it
     const allFoundTasksWithChildIds = allFoundTasks.map((task) => {
         return replaceChildrenWithStringIds(task);
@@ -181,3 +181,53 @@ function replaceChildrenWithStringIds(task: any): any {
     }
     return task; // Return the processed task
 }
+
+/**
+ * @description Gets the number of all the tasks, including children recursively.
+ * @returns {Number}
+ */
+export const getNumberOfTasks = (tasks, tasksById) => {
+    let numberOfTasks = 0;
+
+    const recursivelyFindChildren = (tasks) => {
+        for (let task of tasks) {
+            numberOfTasks += 1;
+
+            const foundTask = typeof task === 'string' ? tasksById[task] : task;
+
+            const { children } = foundTask;
+
+            if (children) {
+                recursivelyFindChildren(children);
+            }
+        }
+    };
+
+    recursivelyFindChildren(tasks);
+
+    return numberOfTasks;
+};
+
+export const getTasksWithNoParent = (tasks, tasksById, projectId, isSmartListView) => {
+    let filteredTasksByProject = null;
+
+    if (isSmartListView) {
+        filteredTasksByProject = SMART_LISTS[projectId].getTasks(tasks);
+    } else {
+        filteredTasksByProject = tasks.filter((task) => task.projectId === projectId);
+    }
+
+    const transformedTasks = fillInChildren(filteredTasksByProject, tasksById);
+
+    // TODO: Bring this stuff below back once I figure out the problem with the "children"
+    // Create a set of task IDs that are children
+    const childTaskIds = new Set<string>();
+
+    transformedTasks.forEach(task => {
+        task.children?.forEach(child => childTaskIds.add(child._id.toString())); // Add child IDs to the set
+    });
+
+    // Filter out tasks that are in the childTaskIds set
+    const newTasksWithNoParent = transformedTasks.filter(task => !childTaskIds.has(task._id.toString()));
+    return newTasksWithNoParent;
+};

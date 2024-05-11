@@ -37,49 +37,9 @@ import { sortableTreeKeyboardCoordinates } from "./keyboardCoordinates";
 import { SortableTreeItem } from "./components";
 import { useBulkEditTasksMutation, useGetTasksQuery } from "../../services/api";
 import { useSelector } from "react-redux";
-import { deepClone, prepareForBulkEdit } from "../../utils/helpers.utils";
-
-const initialItems: TreeItems = [
-  {
-    id: "Course",
-    children: [
-      {
-        id: "Module",
-        children: [
-          { id: "Lesson", children: [{ id: "Learning Object", children: [] }] }
-        ]
-      }
-    ]
-  },
-  {
-    id: "Course 1",
-    children: [
-      {
-        id: "Module 1",
-        children: [
-          {
-            id: "Lesson 1",
-            children: [{ id: "Learning Object 1", children: [] }]
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: "Course 2",
-    children: [
-      {
-        id: "Module 2",
-        children: [
-          {
-            id: "Lesson 2",
-            children: [{ id: "Learning Object 2", children: [] }]
-          }
-        ]
-      }
-    ]
-  }
-];
+import { deepClone, getTasksWithNoParent, prepareForBulkEdit } from "../../utils/helpers.utils";
+import { SMART_LISTS } from "../../utils/smartLists.utils";
+import { useParams } from "react-router-dom";
 
 const measuring = {
   droppable: {
@@ -102,7 +62,7 @@ interface Props {
 
 export function SortableTree({
   collapsible,
-  defaultItems = initialItems,
+  defaultItems,
   indicator,
   indentationWidth = 20,
   removable
@@ -116,10 +76,29 @@ export function SortableTree({
     overId: string;
   } | null>(null);
 
-  const { data: { tasksById }, isLoading: getTasksLoading, error: getTasksError } = useGetTasksQuery();
-  const [bulkEditTasks, { isLoading, error }] = useBulkEditTasksMutation(); // Mutation hook
+  const { projectId } = useParams();
+  const { data: { tasks, tasksById }, isLoading: isTasksLoading, error } = useGetTasksQuery();
+  const [bulkEditTasks] = useBulkEditTasksMutation();
+
+  const isSmartListView = SMART_LISTS[projectId];
+
+  // TODO: Fix this. When I try to collapse a task, it does not collapse. This bug stops happening when I remove this useEffect so it has to do with this.
+  // useEffect(() => {
+  //   // debugger;
+  //   if (isTasksLoading) {
+  //     return;
+  //   }
+
+  //   const tasksWithNoParent = getTasksWithNoParent(tasks, tasksById, projectId, isSmartListView);
+
+  //   // For now the issue from above has been fixed with this piece of code. This is very unstable though as I haven't fully ran through all of the logic but we'll see.
+  //   if (tasksWithNoParent.length !== items.length) {
+  //     setItems(tasksWithNoParent);
+  //   }
+  // }, [tasks, projectId]);
 
   const flattenedItems = useMemo(() => {
+    // debugger;
     const flattenedTree = flattenTree(items);
     const collapsedItems = flattenedTree.reduce<string[]>(
       (acc, { children, collapsed, id }) =>
@@ -216,6 +195,7 @@ export function SortableTree({
             }
             onRemove={removable ? () => handleRemove(item.id) : undefined}
             item={item}
+          // onClick={() => console.log('hello world')}
           />
         ))}
         {createPortal(
@@ -308,6 +288,7 @@ export function SortableTree({
   }
 
   function handleCollapse(id: string) {
+    // debugger;
     setItems((items) =>
       setProperty(items, id, "collapsed", (value) => {
         return !value;

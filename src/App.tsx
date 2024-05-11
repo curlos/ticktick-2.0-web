@@ -13,8 +13,6 @@ function App() {
   const dispatch = useDispatch();
   const { data: fetchedTasks, isLoading, error } = useGetTasksQuery(); // Fetch tasks from the API
 
-  console.log(fetchedTasks);
-
   return (
     <>
       <div className="w-[100vw] max-w-[100%] text-white text-[14px] select-none">
@@ -25,9 +23,10 @@ function App() {
             }>
             </Route>
 
-            <Route path="/tasks/:taskId" element={
-              <HomePage />
-            }>
+            <Route path="/projects/:projectId/tasks" element={<HomePage />}>
+            </Route>
+
+            <Route path="/projects/:projectId/tasks/:taskId" element={<HomePage />}>
             </Route>
 
             <Route path="/focus" element={

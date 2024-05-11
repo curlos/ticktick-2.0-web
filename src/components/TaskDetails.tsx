@@ -10,6 +10,7 @@ import AddTaskForm from "./AddTaskForm";
 import Dropdown from "./Dropdown/Dropdown";
 import CustomInput from "./CustomInput";
 import ModalTaskActivities from "./Modal/ModalTaskActivities";
+import { useGetTasksQuery } from "../services/api";
 
 const EmptyTask = () => (
     <div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700 flex justify-center items-center text-[18px] text-color-gray-100">
@@ -21,7 +22,8 @@ const EmptyTask = () => (
 );
 
 const TaskDetails = () => {
-    const allTasks = useSelector((state) => state.tasks.tasksById);
+    const { data: fetchedTasks, isLoading: isTasksLoading, error } = useGetTasksQuery();
+    const { tasks, tasksById } = fetchedTasks || {};
     const [currTitle, setCurrTitle] = useState('');
     const [currDescription, setCurrDescription] = useState('');
     const [completed, setCompleted] = useState(false);
@@ -74,32 +76,40 @@ const TaskDetails = () => {
     let navigate = useNavigate();
 
     useEffect(() => {
-        const currTask = taskId && allTasks && allTasks[taskId];
+        if (isTasksLoading) {
+            return;
+        }
+
+        const currTask = taskId && tasksById && tasksById[taskId];
         setTask(currTask);
 
         if (currTask) {
             setCurrTitle(currTask.title);
 
-            if (currTask.parentId && allTasks[currTask.parentId]) {
-                setParentTask(allTasks[currTask.parentId]);
+            if (currTask.parentId && tasksById[currTask.parentId]) {
+                setParentTask(tasksById[currTask.parentId]);
             } else {
                 setParentTask(null);
             }
         }
-    }, [taskId, allTasks]);
+    }, [taskId, tasksById]);
 
-    if (!task) {
+    console.log('love u');
+
+    if (!task || isTasksLoading) {
         return <EmptyTask />;
     }
 
-    const { _id, directSubtasks, completedPomodoros, timeTaken, estimatedDuration, deadline } = task;
+    const { _id, children, completedPomodoros, timeTaken, estimatedDuration, deadline } = task;
+
+    console.log('fuck you');
 
     return (
         <div className="flex flex-col w-full h-full max-h-screen bg-color-gray-700">
             <div className="flex justify-between items-center p-4 border-b border-color-gray-200">
                 <div className="flex items-center gap-2">
                     {!completed ? (
-                        directSubtasks.length >= 1 ? (
+                        children.length > 0 ? (
                             <Icon name="list_alt" fill={0} customClass={"text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-pointer"} />
                         ) : (
                             <Icon name="check_box_outline_blank" customClass={"text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-pointer"} />
@@ -135,11 +145,11 @@ const TaskDetails = () => {
                     <TextareaAutosize className="text-[16px] placeholder:text-[#7C7C7C] font-bold mb-0 bg-transparent w-full outline-none resize-none" placeholder="What would you like to do?" value={currTitle} onChange={(e) => setCurrTitle(e.target.value)}></TextareaAutosize>
                     <TextareaAutosize className="text-[14px] placeholder:text-[#7C7C7C] mt-2 mb-4 bg-transparent w-full outline-none resize-none" placeholder="Description" value={currDescription} onChange={(e) => setCurrDescription(e.target.value)}></TextareaAutosize>
 
-                    {directSubtasks.map((subtaskId: string) => (
-                        <Task key={subtaskId} tasks={allTasks} taskId={subtaskId} fromTaskDetails={true} />
+                    {children.map((subtaskId: string) => (
+                        <Task key={subtaskId} tasks={tasksById} taskId={subtaskId} fromTaskDetails={true} />
                     ))}
 
-                    {directSubtasks && directSubtasks.length > 1 && (
+                    {children && children.length > 1 && (
                         <div>
                             {!showAddTaskForm && (
                                 <button className="flex items-center gap-1 my-2" onClick={() => setShowAddTaskForm(true)}>

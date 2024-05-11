@@ -1,5 +1,3 @@
-import { useState } from "react";
-import Icon from "./Icon";
 import { TaskObj } from "../interfaces/interfaces";
 import Task from "./Task";
 

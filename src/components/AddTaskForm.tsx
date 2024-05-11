@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import Icon from "./Icon";
 import DropdownCalendar from "./Dropdown/DropdownCalendar";
@@ -6,7 +6,10 @@ import TextareaAutosize from 'react-textarea-autosize';
 import DropdownPriorities from "./Dropdown/DropdownPriorities";
 import { PRIORITIES } from "../utils/priorities.utils";
 import { addTask } from "../slices/tasksSlice";
-import DropdownLists from "./Dropdown/DropdownLists";
+import DropdownProjects from "./Dropdown/DropdownProjects";
+import { useAddTaskMutation, useGetProjectsQuery } from "../services/api";
+import { SMART_LISTS } from "../utils/smartLists.utils";
+import { useParams } from "react-router";
 
 interface AddTaskFormProps {
     setShowAddTaskForm: React.Dispatch<React.SetStateAction<boolean>>;
@@ -14,6 +17,11 @@ interface AddTaskFormProps {
 
 const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm }) => {
     const dispatch = useDispatch();
+    const params = useParams();
+    const { projectId } = params;
+
+    const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
+    const [addTask, { isLoading, error }] = useAddTaskMutation();
 
     // useState
     const [title, setTitle] = useState('');
@@ -23,7 +31,7 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm }) => {
     const [isDropdownPrioritiesVisible, setIsDropdownPrioritiesVisible] = useState(false);
     const [isDropdownListsVisible, setIsDropdownListsVisible] = useState(false);
     const [tempSelectedPriority, setTempSelectedPriority] = useState('none');
-    const [selectedList, setSelectedList] = useState('Hello Mobile');
+    const [selectedProject, setSelectedProject] = useState('Hello Mobile');
     const [description, setDescription] = useState('');
 
     // useRef
@@ -32,6 +40,22 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm }) => {
     const dropdownListsRef = useRef(null);
 
     const priority = PRIORITIES[tempSelectedPriority];
+
+    useEffect(() => {
+        if (isLoadingProjects) {
+            return;
+        }
+
+        const inSmartListView = SMART_LISTS[projectId];
+
+        // If in a project that is not a smart list, then the default selected project in the add task form should be the project we're currently in.
+        if (!inSmartListView) {
+            setSelectedProject(fetchedProjects.find((project) => project._id === projectId));
+        } else {
+            setSelectedProject(fetchedProjects[0]);
+        }
+
+    }, [fetchedProjects, projectId]);
 
     const handleAddTask = async (e) => {
         e.preventDefault();
@@ -42,33 +66,21 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm }) => {
 
         const payload = {
             title,
-            priority: priority && priority.backendValue
+            priority: priority && priority.backendValue,
+            projectId: selectedProject._id
         };
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/tasks/add`, {
-                method: 'POST', // Specify the request method
-                headers: {
-                    'Content-Type': 'application/json', // Indicate the type of content expected by the server
-                },
-                body: JSON.stringify(payload), // Send the data as a JSON string
-            });
+            await addTask(payload);
 
-            if (!response.ok) {
-                // If the server response is not ok, throw an error
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const responseData = await response.json(); // Parse the JSON response
-            dispatch(addTask(responseData)); // Dispatch an action to update the Redux store
             setTitle('');
-            setPriority({
-                name: 'No Priority',
-                backendValue: 'none',
-                flagColor: '#7B7B7B'
-            });
+            // setPriority({
+            //     name: 'No Priority',
+            //     backendValue: 'none',
+            //     flagColor: '#7B7B7B'
+            // });
         } catch (error) {
-            console.error('There was a problem with the fetch operation:', error);
+            console.error(error);
         }
     };
 
@@ -122,18 +134,18 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm }) => {
                 <hr className="border-color-gray-200 my-1" />
 
                 <div className="p-2 pt-1 flex justify-between items-center">
-                    <div>
+                    {!isLoadingProjects && <div>
                         <div ref={dropdownListsRef} className="flex items-center gap-1 font-bold text-[12px] cursor-pointer" onClick={() => setIsDropdownListsVisible(!isDropdownListsVisible)}>
-                            {selectedList}
+                            {selectedProject.name}
                             <Icon name="expand_more" customClass={"!text-[16px] hover:text-white"} />
                         </div>
 
-                        <DropdownLists toggleRef={dropdownListsRef} isVisible={isDropdownListsVisible} setIsVisible={setIsDropdownListsVisible} selectedList={selectedList} setSelectedList={setSelectedList} />
-                    </div>
+                        <DropdownProjects toggleRef={dropdownListsRef} isVisible={isDropdownListsVisible} setIsVisible={setIsDropdownListsVisible} selectedProject={selectedProject} setSelectedProject={setSelectedProject} projects={fetchedProjects} />
+                    </div>}
 
                     <div className="space-x-2">
                         <button className="border border-color-gray-200 rounded-md py-1 cursor-pointer hover:bg-color-gray-200 p-3" onClick={() => setShowAddTaskForm(false)}>Cancel</button>
-                        <button className="bg-blue-500 rounded-md py-1 cursor-pointer hover:bg-blue-600 p-3">Add task</button>
+                        <button type="submit" className="bg-blue-500 rounded-md py-1 cursor-pointer hover:bg-blue-600 p-3">Add task</button>
                     </div>
                 </div>
             </form>
