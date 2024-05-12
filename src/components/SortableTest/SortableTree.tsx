@@ -164,6 +164,9 @@ export function SortableTree({
     }
   };
 
+  console.log(items);
+  console.log(flattenedItems);
+
   return (
     <DndContext
       announcements={announcements}
