@@ -2,7 +2,7 @@ export interface TaskObj {
     _id: string,
     title: string,
     completed: boolean,
-    directSubtasks: Array<string>,
+    children: Array<string>,
     parentId?: string,
     completedPomodoros: number,
     timeTaken: number,

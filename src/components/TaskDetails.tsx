@@ -94,15 +94,11 @@ const TaskDetails = () => {
         }
     }, [taskId, tasksById]);
 
-    console.log('love u');
-
     if (!task || isTasksLoading) {
         return <EmptyTask />;
     }
 
     const { _id, children, completedPomodoros, timeTaken, estimatedDuration, deadline } = task;
-
-    console.log('fuck you');
 
     return (
         <div className="flex flex-col w-full h-full max-h-screen bg-color-gray-700">
@@ -146,7 +142,7 @@ const TaskDetails = () => {
                     <TextareaAutosize className="text-[14px] placeholder:text-[#7C7C7C] mt-2 mb-4 bg-transparent w-full outline-none resize-none" placeholder="Description" value={currDescription} onChange={(e) => setCurrDescription(e.target.value)}></TextareaAutosize>
 
                     {children.map((subtaskId: string) => (
-                        <Task key={subtaskId} tasks={tasksById} taskId={subtaskId} fromTaskDetails={true} />
+                        <Task key={subtaskId} taskId={subtaskId} fromTaskDetails={true} />
                     ))}
 
                     {children && children.length > 1 && (

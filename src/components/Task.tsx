@@ -3,32 +3,39 @@ import Icon from "./Icon";
 import { TaskObj } from "../interfaces/interfaces";
 import { millisecondsToHoursAndMinutes } from "../utils/helpers.utils";
 import { useNavigate, useParams } from "react-router-dom";
+import { useGetTasksQuery } from "../services/api";
 
 interface TaskProps {
-    tasks: Array<TaskObj>;
     taskId: string;
     fromTaskDetails?: boolean;
     selectedFocusRecordTask?: TaskObj;
     setSelectedFocusRecordTask?: React.Dispatch<React.SetStateAction<TaskObj>>;
+    fromParent?: boolean;
 }
 
-const Task: React.FC<TaskProps> = ({ tasks, taskId, fromTaskDetails, selectedFocusRecordTask, setSelectedFocusRecordTask }) => {
+const Task: React.FC<TaskProps> = ({ taskId, fromTaskDetails, selectedFocusRecordTask, setSelectedFocusRecordTask, fromParent }) => {
+    const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
+    const { tasksById } = fetchedTasks || {};
     let navigate = useNavigate();
     let { taskId: taskIdFromUrl } = useParams();
-
-    let task = typeof taskId == 'string' ? tasks[taskId] : taskId;
-
-    const { _id, projectId, title, directSubtasks, parentId, completedPomodoros, timeTaken, estimatedDuration, deadline } = task;
-
-
     const [completed, setCompleted] = useState(false);
     const [showSubtasks, setShowSubtasks] = useState(true);
+
+    let task = typeof taskId == 'string' ? tasksById[taskId] : taskId;
+
+    if (!task) {
+        return null;
+    }
+
+    const { _id, projectId, title, children, completedPomodoros, timeTaken, estimatedDuration, deadline } = task;
+
+
     const formattedTimeTaken = millisecondsToHoursAndMinutes(timeTaken);
     const formattedEstimatedDuration = millisecondsToHoursAndMinutes(estimatedDuration);
-    const categoryIconClass = ' text-color-gray-100 !text-[16px] hover:text-white' + (directSubtasks?.length >= 1 ? '' : ' invisible');
+    const categoryIconClass = ' text-color-gray-100 !text-[16px] hover:text-white' + (children?.length >= 1 ? '' : ' invisible');
 
     return (
-        <div className={`${(!parentId || fromTaskDetails) ? 'ml-0' : 'ml-4'}`}>
+        <div className={`${(!fromParent || fromTaskDetails) ? 'ml-0' : 'ml-4'}`}>
             <div
                 className={`flex p-2 hover:bg-color-gray-600 cursor-pointer rounded-lg` + (taskIdFromUrl == taskId ? ' bg-color-gray-300' : '')}
                 onClick={(e) => {
@@ -60,7 +67,7 @@ const Task: React.FC<TaskProps> = ({ tasks, taskId, fromTaskDetails, selectedFoc
                             setCompleted(!completed);
                         }}>
                             {!completed ? (
-                                directSubtasks && directSubtasks.length >= 1 ? (
+                                children && children.length >= 1 ? (
                                     <Icon name="list_alt" fill={0} customClass={"text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-pointer"} />
                                 ) : (
                                     <Icon name="check_box_outline_blank" customClass={"text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-pointer"} />
@@ -87,8 +94,8 @@ const Task: React.FC<TaskProps> = ({ tasks, taskId, fromTaskDetails, selectedFoc
 
             {showSubtasks && !fromTaskDetails && (
                 <div className="flex flex-col mt-1">
-                    {directSubtasks && directSubtasks.map((subtaskId: string) => (
-                        <Task key={subtaskId} tasks={tasks} taskId={subtaskId} selectedFocusRecordTask={selectedFocusRecordTask} setSelectedFocusRecordTask={setSelectedFocusRecordTask} />
+                    {children && children.map((subtaskId: string) => (
+                        <Task key={subtaskId} taskId={subtaskId} selectedFocusRecordTask={selectedFocusRecordTask} setSelectedFocusRecordTask={setSelectedFocusRecordTask} fromParent={true} />
                     ))}
                 </div>
             )}

@@ -5,6 +5,7 @@ import { Action } from "./Action";
 import { Handle } from "./Handle";
 import { Remove } from "./Remove";
 import styles from "./TreeItem.module.css";
+import { useNavigate } from "react-router-dom";
 
 export interface Props extends HTMLAttributes<HTMLLIElement> {
   childCount?: number;
@@ -47,6 +48,8 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
     ref
   ) => {
 
+    const navigate = useNavigate();
+
     return (
       <li
         className={classNames(
@@ -63,8 +66,9 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
           } as React.CSSProperties
         }
         {...props}
+      // onClick={() => navigate(`/projects/${item.projectId}/tasks/${item._id}`)}
       >
-        <div className={styles.TreeItem} ref={ref} style={style}>
+        <div className="bg-red-500 p-2" ref={ref} style={style}>
           <Handle {...handleProps} />
           {onCollapse && (
             <Action

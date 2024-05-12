@@ -35,7 +35,7 @@ import {
 import type { FlattenedItem, SensorContext, TreeItems } from "./types";
 import { sortableTreeKeyboardCoordinates } from "./keyboardCoordinates";
 import { SortableTreeItem } from "./components";
-import { useBulkEditTasksMutation, useGetTasksQuery } from "../../services/api";
+import { useBulkEditTasksMutation, useDeleteTaskMutation, useGetTasksQuery } from "../../services/api";
 import { deepClone, getTasksWithNoParent, prepareForBulkEdit } from "../../utils/helpers.utils";
 import { SMART_LISTS } from "../../utils/smartLists.utils";
 import { useParams } from "react-router-dom";
@@ -78,6 +78,7 @@ export function SortableTree({
   const { projectId } = useParams();
   const { data: { tasks, tasksById }, isLoading: isTasksLoading, error } = useGetTasksQuery();
   const [bulkEditTasks] = useBulkEditTasksMutation();
+  const [deleteTask] = useDeleteTaskMutation();
 
   const isSmartListView = SMART_LISTS[projectId];
 
@@ -283,7 +284,15 @@ export function SortableTree({
   }
 
   function handleRemove(id: string) {
-    setItems((items) => removeItem(items, id));
+    const backendDelete = true;
+
+    if (backendDelete) {
+      console.log(id);
+      debugger;
+      deleteTask(id);
+    } else {
+      setItems((items) => removeItem(items, id));
+    }
   }
 
   function handleCollapse(id: string) {

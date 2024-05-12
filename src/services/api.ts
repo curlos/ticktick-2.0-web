@@ -40,6 +40,13 @@ export const api = createApi({
             }),
             invalidatesTags: ['Task'], // Invalidate the cache when a task is added
         }),
+        deleteTask: builder.mutation({
+            query: (taskId) => ({
+                url: `/tasks/delete/${taskId}`,
+                method: 'DELETE',
+            }),
+            invalidatesTags: (result, error, taskId) => ['Task'],
+        }),
 
         // Projects/Folders
         getProjects: builder.query({
@@ -66,6 +73,7 @@ export const {
     useGetTasksQuery,
     useAddTaskMutation,
     useBulkEditTasksMutation,
+    useDeleteTaskMutation,
 
     // Projects/Folders
     useGetProjectsQuery,

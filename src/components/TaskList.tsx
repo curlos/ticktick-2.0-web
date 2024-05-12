@@ -1,3 +1,4 @@
+import { useParams } from "react-router";
 import { TaskObj } from "../interfaces/interfaces";
 import Task from "./Task";
 
@@ -8,14 +9,13 @@ interface TaskListProps {
 }
 
 const TaskList: React.FC<TaskListProps> = ({ tasks, selectedFocusRecordTask, setSelectedFocusRecordTask }) => {
+    const { projectId } = useParams();
 
     return (
         <div>
-            {Object.values(tasks).map((task) => {
-                return (
-                    !task.parentId && <Task key={task._id} tasks={tasks} taskId={task._id} selectedFocusRecordTask={selectedFocusRecordTask} setSelectedFocusRecordTask={setSelectedFocusRecordTask} />
-                );
-            })}
+            {tasks?.map((task) => (
+                <Task key={task._id} taskId={task._id} selectedFocusRecordTask={selectedFocusRecordTask} setSelectedFocusRecordTask={setSelectedFocusRecordTask} />
+            ))}
         </div>
     );
 };

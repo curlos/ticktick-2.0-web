@@ -130,7 +130,11 @@ export function fillInChildren(tasks: any[], tasksById): any[] {
     function processTask(task: any): any {
         // Replace `children` with an array of their IDs
         if (task.children && task.children.length > 0) {
-            task.children = task.children.map(child => {
+            task.children = task.children.flatMap(child => {
+                if (!tasksById[child]) {
+                    return [];
+                }
+
                 const clonedChild = processTask(deepClone(tasksById[child]));
                 return clonedChild; // Return the ID of the cloned child
             });
@@ -139,7 +143,7 @@ export function fillInChildren(tasks: any[], tasksById): any[] {
     }
 
     // Create a new array of tasks with processed tasks
-    return tasks.map(task => processTask(deepClone(task)));
+    return tasks.flatMap(task => processTask(deepClone(task)));
 }
 
 export function prepareForBulkEdit(tasks: any[]): any[] {
@@ -195,6 +199,10 @@ export const getNumberOfTasks = (tasks, tasksById) => {
 
             const foundTask = typeof task === 'string' ? tasksById[task] : task;
 
+            if (!foundTask) {
+                continue;
+            }
+
             const { children } = foundTask;
 
             if (children) {
@@ -209,7 +217,7 @@ export const getNumberOfTasks = (tasks, tasksById) => {
 };
 
 export const getTasksWithNoParent = (tasks, tasksById, projectId, isSmartListView) => {
-    let filteredTasksByProject = null;
+    let filteredTasksByProject = tasks;
 
     if (isSmartListView) {
         filteredTasksByProject = SMART_LISTS[projectId].getTasks(tasks);
@@ -224,8 +232,14 @@ export const getTasksWithNoParent = (tasks, tasksById, projectId, isSmartListVie
     const childTaskIds = new Set<string>();
 
     transformedTasks.forEach(task => {
-        task.children?.forEach(child => childTaskIds.add(child._id.toString())); // Add child IDs to the set
+        task.children?.forEach(child => {
+            console.log(task);
+            console.log(child);
+            childTaskIds.add(child._id.toString());
+        }); // Add child IDs to the set
     });
+
+    console.log(childTaskIds);
 
     // Filter out tasks that are in the childTaskIds set
     const newTasksWithNoParent = transformedTasks.filter(task => !childTaskIds.has(task._id.toString()));

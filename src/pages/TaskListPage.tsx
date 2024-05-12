@@ -41,7 +41,7 @@ const TaskListPage = () => {
         const newTasksWithNoParent = getTasksWithNoParent(tasks, tasksById, projectId, isSmartListView);
         setTasksWithNoParent(newTasksWithNoParent);
 
-    }, [tasks, fetchedProjects, projectId]);
+    }, [fetchedTasks, fetchedProjects, projectId]);
 
     const checkIfSmartList = (projectId) => {
         const SMART_LIST_OPTIONS = ['all', 'today', 'tomorrow', 'week', 'inbox'];
@@ -52,6 +52,9 @@ const TaskListPage = () => {
     if (isLoadingOrErrors) {
         return <div>Loading...</div>; // Show loading state
     }
+
+    console.log(tasks);
+    console.log(tasksWithNoParent);
 
     return (
         <div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700">
@@ -70,9 +73,11 @@ const TaskListPage = () => {
 
                 {tasksWithNoParent && tasksWithNoParent.length > 0 && <SortableTree collapsible indicator removable defaultItems={tasksWithNoParent} />}
 
-                {/* <div className="mt-4 space-y-4">
-                    <TaskListByCategory tasks={tasksById} />
-                </div> */}
+                {tasksWithNoParent?.length > 0 && (
+                    <div className="mt-4 space-y-4">
+                        <TaskListByCategory tasks={tasksWithNoParent} />
+                    </div>
+                )}
 
                 {!showAddTaskForm && <button className="flex items-center gap-1 my-2" onClick={() => setShowAddTaskForm(true)}>
                     <Icon name="add" customClass={"text-blue-500 !text-[20px]"} />

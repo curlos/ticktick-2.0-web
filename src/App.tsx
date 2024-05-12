@@ -6,12 +6,8 @@ import {
 } from 'react-router-dom';
 import FocusPage from './pages/FocusPage';
 import HomePage from './pages/HomePage';
-import { useDispatch, useSelector } from 'react-redux';
-import { useGetTasksQuery } from './services/api';
 
 function App() {
-  const dispatch = useDispatch();
-  const { data: fetchedTasks, isLoading, error } = useGetTasksQuery(); // Fetch tasks from the API
 
   return (
     <>
