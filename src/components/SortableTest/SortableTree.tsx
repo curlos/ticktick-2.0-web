@@ -284,15 +284,8 @@ export function SortableTree({
   }
 
   function handleRemove(id: string) {
-    const backendDelete = true;
-
-    if (backendDelete) {
-      console.log(id);
-      debugger;
-      deleteTask(id);
-    } else {
-      setItems((items) => removeItem(items, id));
-    }
+    deleteTask(id);
+    setItems((items) => removeItem(items, id));
   }
 
   function handleCollapse(id: string) {

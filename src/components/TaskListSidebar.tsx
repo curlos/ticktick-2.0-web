@@ -60,7 +60,7 @@ const TaskListSidebar = () => {
         <div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray p-4">
             <div>
                 {Object.values(SMART_LISTS).map((project) => (
-                    <ProjectItem project={project} isSmartList={true} />
+                    <ProjectItem key={project.name} project={project} isSmartList={true} />
                 ))}
             </div>
 
@@ -92,7 +92,7 @@ const TaskListSidebar = () => {
                     {/* <DraggableProjects projects={projects} /> */}
 
                     {projects.map((project) => (
-                        <ProjectItem project={project} />
+                        <ProjectItem key={project._id} project={project} />
                     ))}
 
                     {/* <SortableTree collapsible indicator removable /> */}

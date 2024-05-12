@@ -233,13 +233,9 @@ export const getTasksWithNoParent = (tasks, tasksById, projectId, isSmartListVie
 
     transformedTasks.forEach(task => {
         task.children?.forEach(child => {
-            console.log(task);
-            console.log(child);
             childTaskIds.add(child._id.toString());
         }); // Add child IDs to the set
     });
-
-    console.log(childTaskIds);
 
     // Filter out tasks that are in the childTaskIds set
     const newTasksWithNoParent = transformedTasks.filter(task => !childTaskIds.has(task._id.toString()));
