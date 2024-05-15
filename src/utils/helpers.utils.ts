@@ -146,18 +146,29 @@ export function fillInChildren(tasks: any[], tasksById): any[] {
     return tasks.flatMap(task => processTask(deepClone(task)));
 }
 
+const changeProjectIdsToMatchParent = (tasks: any[]) => {
+    console.log(tasks);
+    debugger;
+};
+
 export function prepareForBulkEdit(tasks: any[]): any[] {
+    const formattedTasks = tasks;
+
     const allFoundTasks = [];
 
     // Helper function to recursively process each task
 
-    function processTask(task: any): any {
+    function processTask(task: any, parentProjectId: any): any {
+        if (parentProjectId) {
+            task.projectId = parentProjectId;
+        }
+
         // Find all the tasks even if they
         allFoundTasks.push(task);
         // Replace `children` with an array of their IDs
         if (task.children && task.children.length > 0) {
             task.children = task.children.map(child => {
-                let clonedChild = processTask(deepClone(child));
+                let clonedChild = processTask(deepClone(child), task.projectId);
 
                 return clonedChild; // Return the ID of the cloned child
             });
@@ -165,8 +176,8 @@ export function prepareForBulkEdit(tasks: any[]): any[] {
         return task; // Return the processed task
     }
 
-    for (let task of tasks) {
-        const newTask = processTask(deepClone(task));
+    for (let task of formattedTasks) {
+        processTask(deepClone(task));
     }
 
     // After getting all the found tasks even in the children through recursion, go through all the tasks and replace their "children" with string "_ids" since that's how the backend sees it
@@ -217,15 +228,7 @@ export const getNumberOfTasks = (tasks, tasksById) => {
 };
 
 export const getTasksWithNoParent = (tasks, tasksById, projectId, isSmartListView) => {
-    let filteredTasksByProject = tasks;
-
-    if (isSmartListView) {
-        filteredTasksByProject = SMART_LISTS[projectId].getTasks(tasks);
-    } else {
-        filteredTasksByProject = tasks.filter((task) => task.projectId === projectId);
-    }
-
-    const transformedTasks = fillInChildren(filteredTasksByProject, tasksById);
+    const transformedTasks = fillInChildren(tasks, tasksById);
 
     // TODO: Bring this stuff below back once I figure out the problem with the "children"
     // Create a set of task IDs that are children
@@ -238,6 +241,17 @@ export const getTasksWithNoParent = (tasks, tasksById, projectId, isSmartListVie
     });
 
     // Filter out tasks that are in the childTaskIds set
-    const newTasksWithNoParent = transformedTasks.filter(task => !childTaskIds.has(task._id.toString()));
+    let newTasksWithNoParent = transformedTasks.filter(task => !childTaskIds.has(task._id.toString()));
+    // TODO: Figure out smart lsit view filtering
+    if (isSmartListView) {
+        newTasksWithNoParent = newTasksWithNoParent.filter(SMART_LISTS[projectId].filterTasks());
+    } else {
+        newTasksWithNoParent = newTasksWithNoParent.filter((task) => task.projectId === projectId);
+        // debugger;
+    }
+
+    // console.log('CHECKING');
+    // console.log(transformedTasks.filter((task) => task.projectId === projectId));
+
     return newTasksWithNoParent;
 };

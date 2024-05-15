@@ -70,11 +70,11 @@ const TaskListPage = () => {
 
                 {tasksWithNoParent && tasksWithNoParent.length > 0 && <SortableTree collapsible indicator removable defaultItems={tasksWithNoParent} />}
 
-                {tasksWithNoParent?.length > 0 && (
+                {/* {tasksWithNoParent?.length > 0 && (
                     <div className="mt-4 space-y-4">
                         <TaskListByCategory tasks={tasksWithNoParent} />
                     </div>
-                )}
+                )} */}
 
                 {!showAddTaskForm && <button className="flex items-center gap-1 my-2" onClick={() => setShowAddTaskForm(true)}>
                     <Icon name="add" customClass={"text-blue-500 !text-[20px]"} />

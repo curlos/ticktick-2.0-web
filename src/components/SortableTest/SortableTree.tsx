@@ -92,10 +92,16 @@ export function SortableTree({
     const tasksWithNoParent = getTasksWithNoParent(tasks, tasksById, projectId, isSmartListView);
 
     // For now the issue from above has been fixed with this piece of code. This is very unstable though as I haven't fully ran through all of the logic but we'll see.
-    if (tasksWithNoParent.length !== items.length) {
-      setItems(tasksWithNoParent);
-    }
-  }, [tasks, projectId]);
+    // TODO: This causes issues when projects with the same amount of "no parent" tasks will not change in items. However, if I take this code out then for some reason when I add a task and drag it to another task and try to collapse/uncollapse the other task, the collapsing function won't work for some reason. This will take a deeper look at dnd-kit, one of the most frustrating libraries I've ever used.
+    // I think this has to do with the collapsed property.
+
+    // if (tasksWithNoParent.length !== items.length) {
+    //   setItems(tasksWithNoParent);
+    // }
+
+    setItems(tasksWithNoParent);
+
+  }, [tasks, isTasksLoading, projectId]);
 
   const flattenedItems = useMemo(() => {
     // debugger;
@@ -163,9 +169,6 @@ export function SortableTree({
       return `Moving was cancelled. ${id} was dropped in its original position.`;
     }
   };
-
-  console.log(items);
-  console.log(flattenedItems);
 
   return (
     <DndContext
@@ -267,7 +270,7 @@ export function SortableTree({
 
       // Transform the cloned array
       const transformedTasks = prepareForBulkEdit(newItems);
-      const response = bulkEditTasks(transformedTasks);
+      bulkEditTasks(transformedTasks);
 
       setItems(newItems);
     }

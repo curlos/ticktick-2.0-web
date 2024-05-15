@@ -5,7 +5,9 @@ export const SMART_LISTS = {
         name: "All",
         iconName: "mail",
         route: "/projects/all/tasks",
-        getTasks: (allTasks: Array<TaskObj>) => allTasks
+        getTasks: (allTasks: Array<TaskObj>) => allTasks,
+        // Returns all tasks
+        filterTasks: () => (task: TaskObj) => task
     },
     // {
     //     name: "Today",
