@@ -25,11 +25,14 @@ export const api = createApi({
             }
         }),
         addTask: builder.mutation({
-            query: (newTask) => ({
-                url: '/tasks/add',
-                method: 'POST',
-                body: newTask,
-            }),
+            query: ({ payload, parentId }) => {
+                const url = parentId ? `/tasks/add?parentId=${parentId}` : '/tasks/add';
+                return {
+                    url,
+                    method: 'POST',
+                    body: payload,
+                };
+            },
             invalidatesTags: ['Task'], // Invalidate the cache when a task is added
         }),
         bulkEditTasks: builder.mutation({

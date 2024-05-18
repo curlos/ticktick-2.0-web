@@ -1,4 +1,4 @@
-import ServiceMenu from "../components/ServiceMenu";
+import ActionSidebar from "../components/ActionSidebar";
 import TaskDetails from "../components/TaskDetails";
 import TaskListSidebar from "../components/TaskListSidebar";
 import TaskListPage from "./TaskListPage";
@@ -7,7 +7,7 @@ const HomePage = () => {
     return (
         <div className="flex max-w-screen">
             <div className="">
-                <ServiceMenu />
+                <ActionSidebar />
             </div>
             <div className="flex-[3]">
                 <TaskListSidebar />

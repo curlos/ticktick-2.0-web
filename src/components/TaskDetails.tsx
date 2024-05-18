@@ -11,6 +11,7 @@ import Dropdown from "./Dropdown/Dropdown";
 import CustomInput from "./CustomInput";
 import ModalTaskActivities from "./Modal/ModalTaskActivities";
 import { useGetTasksQuery } from "../services/api";
+import ModalAddTaskForm from "./Modal/ModalAddTaskForm";
 
 const EmptyTask = () => (
     <div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700 flex justify-center items-center text-[18px] text-color-gray-100">
@@ -33,6 +34,7 @@ const TaskDetails = () => {
     const [isDropdownCalendarVisible, setIsDropdownCalendarVisible] = useState(false);
     const [isDropdownTaskOptionsVisible, setIsDropdownTaskOptionsVisible] = useState(false);
     const [isModalTaskActivitiesOpen, setIsModalTaskActivitiesOpen] = useState(false);
+    const [isModalAddTaskFormOpen, setIsModalAddTaskFormOpen] = useState(false);
     const [showAddTaskForm, setShowAddTaskForm] = useState(false);
     const [showAddCommentInput, setShowAddCommentInput] = useState(false);
     const [currentComment, setCurrentComment] = useState('');
@@ -145,7 +147,7 @@ const TaskDetails = () => {
                         <Task key={subtaskId} taskId={subtaskId} fromTaskDetails={true} />
                     ))}
 
-                    {children && children.length > 1 && (
+                    {children && children.length > 0 && (
                         <div>
                             {!showAddTaskForm && (
                                 <button className="flex items-center gap-1 my-2" onClick={() => setShowAddTaskForm(true)}>
@@ -154,13 +156,14 @@ const TaskDetails = () => {
                                 </button>
                             )}
 
-                            {showAddTaskForm && <AddTaskForm setShowAddTaskForm={setShowAddTaskForm} />}
+                            {showAddTaskForm && <AddTaskForm setShowAddTaskForm={setShowAddTaskForm} parentId={_id} />}
                         </div>
                     )}
                 </div>
 
                 <div className="flex-1 flex flex-col justify-end">
-                    {comments && comments.length > 0 && (
+                    {/* TODO: Bring comments back once I add the functionality and the routes on the backend. */}
+                    {!comments && comments.length > 0 && (
                         <div className="p-4 border-t border-color-gray-200 text-[13px]">
                             <div className="mb-4 flex items-center gap-2 text-[14px]">
                                 <span>Comments</span>
@@ -210,21 +213,24 @@ const TaskDetails = () => {
                         <Icon name="comment" customClass={"text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer"} fill={0} onClick={() => setShowAddCommentInput(!showAddCommentInput)} />
                         <Icon toggleRef={dropdownTaskOptionsRef} name="more_horiz" customClass={"text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer"} fill={0} onClick={() => setIsDropdownTaskOptionsVisible(!isDropdownTaskOptionsVisible)} />
 
-                        <DropdownTaskOptions toggleRef={dropdownTaskOptionsRef} isVisible={isDropdownTaskOptionsVisible} setIsVisible={setIsDropdownTaskOptionsVisible} setIsModalTaskActivitiesOpen={setIsModalTaskActivitiesOpen} />
+                        <DropdownTaskOptions toggleRef={dropdownTaskOptionsRef} isVisible={isDropdownTaskOptionsVisible} setIsVisible={setIsDropdownTaskOptionsVisible} setIsModalTaskActivitiesOpen={setIsModalTaskActivitiesOpen} setIsModalAddTaskFormOpen={setIsModalAddTaskFormOpen} />
                     </div>
                 </div>
             </div>
 
             <ModalTaskActivities isModalOpen={isModalTaskActivitiesOpen} setIsModalOpen={setIsModalTaskActivitiesOpen} />
+
+            <ModalAddTaskForm isModalOpen={isModalAddTaskFormOpen} setIsModalOpen={setIsModalAddTaskFormOpen} parentId={_id} />
         </div>
     );
 };
 
 interface DropdownTaskOptionsProps extends DropdownProps {
     setIsModalTaskActivitiesOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    setIsModalAddTaskFormOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const DropdownTaskOptions: React.FC<DropdownTaskOptionsProps> = ({ toggleRef, isVisible, setIsVisible, setIsModalTaskActivitiesOpen }) => {
+const DropdownTaskOptions: React.FC<DropdownTaskOptionsProps> = ({ toggleRef, isVisible, setIsVisible, setIsModalTaskActivitiesOpen, setIsModalAddTaskFormOpen }) => {
     const [isDropdownStartFocusVisible, setIsDropdownStartFocusVisible] = useState(false);
     const [isDropdownEstimationVisible, setIsDropdownEstimationVisible] = useState(false);
 
@@ -238,9 +244,9 @@ const DropdownTaskOptions: React.FC<DropdownTaskOptionsProps> = ({ toggleRef, is
 
 
     return (
-        <Dropdown toggleRef={toggleRef} isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' mt-[5px] shadow-2xl border border-color-gray-200 rounded mt-[-170px] ml-[-180px]'}>
+        <Dropdown toggleRef={toggleRef} isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' mt-[5px] shadow-2xl border border-color-gray-200 rounded mt-[-190px] ml-[-180px]'}>
             <div className="w-[232px] p-1 rounded text-[13px]" onClick={(e) => e.stopPropagation()}>
-                <div className="p-1 flex items-center gap-[2px] hover:bg-color-gray-300 cursor-pointer">
+                <div className="p-1 flex items-center gap-[2px] hover:bg-color-gray-300 cursor-pointer" onClick={() => setIsModalAddTaskFormOpen(true)}>
                     <Icon name="add_task" customClass={"text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer"} fill={0} />
                     <div>Add Subtask</div>
                 </div>
@@ -291,7 +297,7 @@ const DropdownStartFocus: React.FC<DropdownStartFocusProps> = ({ toggleRef, togg
     };
 
     return (
-        <Dropdown toggleRef={toggleRef} isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' mt-[5px] shadow-2xl border border-color-gray-200 rounded mt-[-115px] ml-[-180px]'}>
+        <Dropdown toggleRef={toggleRef} isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' mt-[5px] shadow-2xl border border-color-gray-200 rounded mt-[-141px] ml-[-180px]'}>
             <div className="w-[170px] p-1 rounded text-[13px]" onClick={(e) => e.stopPropagation()}>
                 <div className="p-2 hover:bg-color-gray-300 cursor-pointer" onClick={handleStartPomo}>
                     <div>Start Pomo</div>

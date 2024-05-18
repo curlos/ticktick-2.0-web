@@ -4,7 +4,7 @@ import ModalAddTaskForm from "./Modal/ModalAddTaskForm";
 import { useState } from "react";
 
 
-const ServiceMenu = () => {
+const ActionSidebar = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const iconCustomClass = "text-white !text-[24px] cursor-pointer";
     const navigate = useNavigate();
@@ -37,4 +37,4 @@ const ServiceMenu = () => {
     );
 };
 
-export default ServiceMenu;
+export default ActionSidebar;

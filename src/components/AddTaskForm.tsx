@@ -13,9 +13,10 @@ import { useParams } from "react-router";
 
 interface AddTaskFormProps {
     setShowAddTaskForm: React.Dispatch<React.SetStateAction<boolean>>;
+    parentId: string;
 }
 
-const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm }) => {
+const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId }) => {
     const dispatch = useDispatch();
     const params = useParams();
     const { projectId } = params;
@@ -71,7 +72,7 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm }) => {
         };
 
         try {
-            await addTask(payload);
+            await addTask({ payload, parentId });
 
             setTitle('');
             // setPriority({
@@ -79,6 +80,8 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm }) => {
             //     backendValue: 'none',
             //     flagColor: '#7B7B7B'
             // });
+
+            setShowAddTaskForm(false);
         } catch (error) {
             console.error(error);
         }
