@@ -33,10 +33,11 @@ import {
   setProperty
 } from "./utilities";
 import type { FlattenedItem, SensorContext, TreeItems } from "./types";
+// TODO: Bring this back to use when I want to work on Accessbility
 import { sortableTreeKeyboardCoordinates } from "./keyboardCoordinates";
 import { SortableTreeItem } from "./components";
 import { useBulkEditTasksMutation, useDeleteTaskMutation, useGetTasksQuery } from "../../services/api";
-import { deepClone, getTasksWithNoParent, prepareForBulkEdit } from "../../utils/helpers.utils";
+import { getTasksWithNoParent, prepareForBulkEdit } from "../../utils/helpers.utils";
 import { SMART_LISTS } from "../../utils/smartLists.utils";
 import { useParams } from "react-router-dom";
 
@@ -79,12 +80,12 @@ export function SortableTree({
   const { data: { tasks, tasksById }, isLoading: isTasksLoading, error } = useGetTasksQuery();
   const [bulkEditTasks] = useBulkEditTasksMutation();
   const [deleteTask] = useDeleteTaskMutation();
+  // const [collapseAllByDefault, setCollapseAllByDefault] = useState(true)
 
   const isSmartListView = SMART_LISTS[projectId];
 
   // TODO: Fix this. When I try to collapse a task, it does not collapse. This bug stops happening when I remove this useEffect so it has to do with this.
   useEffect(() => {
-    // debugger;
     if (isTasksLoading) {
       return;
     }
@@ -96,15 +97,18 @@ export function SortableTree({
     // I think this has to do with the collapsed property.
 
     // if (tasksWithNoParent.length !== items.length) {
-    //   setItems(tasksWithNoParent);
+    // setItems(tasksWithNoParent);
     // }
 
+    // debugger; 
+    console.log(tasks == defaultItems);
     setItems(tasksWithNoParent);
+    console.log('something changed');
 
   }, [tasks, isTasksLoading, projectId]);
 
   const flattenedItems = useMemo(() => {
-    // debugger;
+    debugger;
     const flattenedTree = flattenTree(items);
     const collapsedItems = flattenedTree.reduce<string[]>(
       (acc, { children, collapsed, id }) =>
@@ -117,6 +121,9 @@ export function SortableTree({
       activeId ? [activeId, ...collapsedItems] : collapsedItems
     );
   }, [activeId, items]);
+
+  console.log(flattenedItems);
+
   const projected =
     activeId && overId
       ? getProjection(
@@ -133,9 +140,6 @@ export function SortableTree({
   });
   const sensors = useSensors(
     useSensor(PointerSensor)
-    // useSensor(KeyboardSensor, {
-    //   coordinateGetter,
-    // })
   );
 
   const sortedIds = useMemo(() => flattenedItems.map(({ id }) => id), [
@@ -295,9 +299,10 @@ export function SortableTree({
   }
 
   function handleCollapse(id: string) {
-    // debugger;
     setItems((items) =>
       setProperty(items, id, "collapsed", (value) => {
+        console.log(value);
+        debugger;
         return !value;
       })
     );

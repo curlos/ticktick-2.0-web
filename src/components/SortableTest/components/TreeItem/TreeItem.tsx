@@ -3,7 +3,6 @@ import classNames from "classnames";
 
 import { Action } from "./Action";
 import { Handle } from "./Handle";
-import { Remove } from "./Remove";
 import styles from "./TreeItem.module.css";
 import { useNavigate } from "react-router-dom";
 import Icon from "../../../Icon";
@@ -55,7 +54,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
     const { children } = item;
     const categoryIconClass = ' text-color-gray-100 !text-[16px] hover:text-white' + (children?.length >= 1 ? '' : ' invisible');
 
-    console.log(ghost);
+    // console.log(collapsed);
 
     return (
       <li
@@ -74,34 +73,35 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
         }
         {...props}
       >
-        <div className="group flex items-center p-2 hover:bg-color-gray-600 cursor-pointer rounded-lg" ref={ref} style={style}>
+        <div className={classNames(
+          styles.TreeItem,
+          "group flex items-center p-2 hover:bg-color-gray-600 cursor-pointer rounded-lg"
+        )} ref={ref} style={style}>
           <div className="flex items-center invisible group-hover:visible">
             <Handle {...handleProps} />
           </div>
 
-          {onCollapse && (
-            <Action
-              onClick={onCollapse}
-              className={classNames(
-                styles.Collapse,
-                collapsed && styles.collapsed,
-                "flex flex-column items-center"
-              )}
-            >
-              {collapsed ? (
-                <Icon name="expand_more" customClass={categoryIconClass} />
-              ) : (
-                <Icon name="chevron_right" customClass={categoryIconClass} />
-              )}
-            </Action>
-          )}
+          <Action
+            onClick={() => onCollapse ? onCollapse() : null}
+            className={classNames(
+              styles.Collapse,
+              collapsed && styles.collapsed,
+              "flex flex-column items-center"
+            )}
+          >
+            {collapsed ? (
+              <Icon name="expand_more" customClass={categoryIconClass} />
+            ) : (
+              <Icon name="chevron_right" customClass={categoryIconClass} />
+            )}
+          </Action>
 
           <div className="h-[20px]" onClick={(e) => {
             e.stopPropagation();
             setCompleted(!completed);
           }}>
             {!completed ? (
-              children && children.length >= 1 ? (
+              children && children.length > 0 ? (
                 <Icon name="list_alt" fill={0} customClass={"text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-pointer"} />
               ) : (
                 <Icon name="check_box_outline_blank" customClass={"text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-pointer"} />
@@ -111,9 +111,11 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
             )}
           </div>
 
-          <span className="text-white">{item.title}</span>
+          <span className="ml-1 text-white">{item.title}</span>
 
-          <Icon name="chevron_right" onClick={() => navigate(`/projects/${item.projectId}/tasks/${item._id}`)} customClass={"text-color-gray-100 !text-[20px] hover:text-white cursor-pointer"} />
+          <div className="flex-grow flex justify-end items-center">
+            <Icon name="chevron_right" onClick={() => navigate(`/projects/${item.projectId}/tasks/${item._id}`)} customClass={"text-color-gray-100 !text-[20px] hover:text-white cursor-pointer"} />
+          </div>
 
           {/* {!clone && onRemove && <Remove onClick={onRemove} />} */}
 

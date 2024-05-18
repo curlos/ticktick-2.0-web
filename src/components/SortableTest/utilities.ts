@@ -83,6 +83,7 @@ function flatten(
   return items.reduce<FlattenedItem[]>((acc, item, index) => {
     return [
       ...acc,
+      // TODO: If I want to make tasks collapsed by default, then it'd be through this thing
       { ...item, parentId, depth, index },
       ...flatten(item.children, item.id, depth + 1),
     ];
