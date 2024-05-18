@@ -10,7 +10,7 @@ import AddTaskForm from "./AddTaskForm";
 import Dropdown from "./Dropdown/Dropdown";
 import CustomInput from "./CustomInput";
 import ModalTaskActivities from "./Modal/ModalTaskActivities";
-import { useGetTasksQuery } from "../services/api";
+import { useDeleteTaskMutation, useGetTasksQuery } from "../services/api";
 import ModalAddTaskForm from "./Modal/ModalAddTaskForm";
 
 const EmptyTask = () => (
@@ -213,7 +213,7 @@ const TaskDetails = () => {
                         <Icon name="comment" customClass={"text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer"} fill={0} onClick={() => setShowAddCommentInput(!showAddCommentInput)} />
                         <Icon toggleRef={dropdownTaskOptionsRef} name="more_horiz" customClass={"text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer"} fill={0} onClick={() => setIsDropdownTaskOptionsVisible(!isDropdownTaskOptionsVisible)} />
 
-                        <DropdownTaskOptions toggleRef={dropdownTaskOptionsRef} isVisible={isDropdownTaskOptionsVisible} setIsVisible={setIsDropdownTaskOptionsVisible} setIsModalTaskActivitiesOpen={setIsModalTaskActivitiesOpen} setIsModalAddTaskFormOpen={setIsModalAddTaskFormOpen} />
+                        <DropdownTaskOptions toggleRef={dropdownTaskOptionsRef} isVisible={isDropdownTaskOptionsVisible} setIsVisible={setIsDropdownTaskOptionsVisible} setIsModalTaskActivitiesOpen={setIsModalTaskActivitiesOpen} setIsModalAddTaskFormOpen={setIsModalAddTaskFormOpen} task={task} />
                     </div>
                 </div>
             </div>
@@ -228,9 +228,11 @@ const TaskDetails = () => {
 interface DropdownTaskOptionsProps extends DropdownProps {
     setIsModalTaskActivitiesOpen: React.Dispatch<React.SetStateAction<boolean>>;
     setIsModalAddTaskFormOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    task: TaskObj;
 }
 
-const DropdownTaskOptions: React.FC<DropdownTaskOptionsProps> = ({ toggleRef, isVisible, setIsVisible, setIsModalTaskActivitiesOpen, setIsModalAddTaskFormOpen }) => {
+const DropdownTaskOptions: React.FC<DropdownTaskOptionsProps> = ({ toggleRef, isVisible, setIsVisible, setIsModalTaskActivitiesOpen, setIsModalAddTaskFormOpen, task }) => {
+    const [deleteTask] = useDeleteTaskMutation();
     const [isDropdownStartFocusVisible, setIsDropdownStartFocusVisible] = useState(false);
     const [isDropdownEstimationVisible, setIsDropdownEstimationVisible] = useState(false);
 
@@ -239,6 +241,8 @@ const DropdownTaskOptions: React.FC<DropdownTaskOptionsProps> = ({ toggleRef, is
 
     // TODO: Write logic
     const handleDelete = () => {
+        // Delete the task and then the redirect to the list of tasks in the project as the current task has been delete and thus the page is not accessible anymore.
+        deleteTask(task._id);
         return;
     };
 

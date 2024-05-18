@@ -55,6 +55,8 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
     const { children } = item;
     const categoryIconClass = ' text-color-gray-100 !text-[16px] hover:text-white' + (children?.length >= 1 ? '' : ' invisible');
 
+    console.log(ghost);
+
     return (
       <li
         className={classNames(
