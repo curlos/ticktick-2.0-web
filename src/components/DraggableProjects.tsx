@@ -96,8 +96,7 @@ export const ProjectItem: React.FC<ProjectItemProps> = ({ project, projectsWithG
         let filteredTasks = null;
 
         if (isSmartList) {
-            const { getTasks } = project;
-            filteredTasks = getTasks(tasks);
+            filteredTasks = project.getFilteredTasks(tasks);
         } else {
             filteredTasks = tasks.filter((task) => task.projectId === _id);
         }
@@ -120,9 +119,11 @@ export const ProjectItem: React.FC<ProjectItemProps> = ({ project, projectsWithG
         }
     };
 
+    const isSmartListView = SMART_LISTS[projectId];
+
     return (
         <div onClick={handleClick}>
-            <div className={"p-2 rounded-lg flex items-center justify-between cursor-pointer cursor-pointer" + (projectId === _id ? ' bg-color-gray-200' : ' hover:bg-color-gray-600') + (insideFolder ? ' ml-3' : '')}>
+            <div className={"p-2 rounded-lg flex items-center justify-between cursor-pointer cursor-pointer" + (projectId === _id || (isSmartListView && name.toLowerCase() === projectId) ? ' bg-color-gray-200' : ' hover:bg-color-gray-600') + (insideFolder ? ' ml-3' : '')}>
                 <div className="flex items-center gap-2">
                     <div className="flex items-center gap-0">
                         {isFolder && <Icon name={"chevron_right"} customClass={"text-white !text-[12px] ml-[-12px]"} fill={iconFill != undefined ? iconFill : 1} />}

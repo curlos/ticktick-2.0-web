@@ -57,6 +57,11 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId 
             setSelectedProject(projects.find((project) => project._id === projectId));
         } else {
             setSelectedProject(projects[0]);
+
+            console.log(projectId);
+            setCurrDueDate(SMART_LISTS[projectId].getDefaultDueDate());
+
+
         }
 
     }, [fetchedProjects, projectId]);
@@ -108,9 +113,7 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId 
                         <div className="text-[14px] flex items-center gap-1 text-color-gray-100 p-1 border border-color-gray-100 rounded-md relative">
 
                             <div ref={dropdownCalendarToggleRef} onClick={() => setIsDropdownCalendarVisible(!isDropdownCalendarVisible)}>
-                                {currDueDate ? (
-                                    <TaskDueDateText dueDate={currDueDate} showCalendarIcon={true} />
-                                ) : "Due Date"}
+                                <TaskDueDateText dueDate={currDueDate} showCalendarIcon={true} />
                             </div>
 
                             <DropdownCalendar toggleRef={dropdownCalendarToggleRef} isVisible={isDropdownCalendarVisible} setIsVisible={setIsDropdownCalendarVisible} currDueDate={currDueDate} setCurrDueDate={setCurrDueDate} />

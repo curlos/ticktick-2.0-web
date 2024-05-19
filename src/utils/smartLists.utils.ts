@@ -5,32 +5,120 @@ export const SMART_LISTS = {
         name: "All",
         iconName: "mail",
         route: "/projects/all/tasks",
-        getTasks: (allTasks: Array<TaskObj>) => allTasks,
-        // Returns all tasks
-        filterTasks: () => (task: TaskObj) => task
+        getFilteredTasks: (allTasks: Array<TaskObj>) => allTasks,
+        getDefaultDueDate: () => {
+            return null;
+        }
     },
-    // {
-    //     name: "Today",
-    //     iconName: "mail",
-    //     route: "/projects/today/tasks",
-    //     numberOfTasks: 2
-    // },
-    // {
-    //     name: "Tomorrow",
-    //     iconName: "mail",
-    //     route: "/projects/tomorrow/tasks",
-    //     numberOfTasks: 1
-    // },
-    // {
-    //     name: "Next 7 Days",
-    //     iconName: "mail",
-    //     route: "/projects/week/tasks",
-    //     numberOfTasks: 3
-    // },
+    "today": {
+        name: "Today",
+        iconName: "mail",
+        route: "/projects/today/tasks",
+        getFilteredTasks: (tasks: Array<TaskObj>) => {
+            return tasks.filter((task) => {
+                const { dueDate } = task;
+
+                if (isTodayUTC(dueDate)) {
+                    return true;
+                }
+
+                return false;
+            });
+        },
+        getDefaultDueDate: () => {
+            return new Date();
+        }
+    },
+    "tomorrow": {
+        name: "Tomorrow",
+        iconName: "mail",
+        route: "/projects/tomorrow/tasks",
+        getFilteredTasks: (tasks: Array<TaskObj>) => {
+            return tasks.filter((task) => {
+                const { dueDate } = task;
+
+                if (isTomorrowUTC(dueDate)) {
+                    return true;
+                }
+
+                return false;
+            });
+        },
+        getDefaultDueDate: () => {
+            // TODO: Add this!
+            const today = new Date();
+            const tomorrow = new Date();
+            tomorrow.setUTCDate(today.getUTCDate() + 1); // Increment the day by 1
+
+            return tomorrow;
+        }
+    },
+    "week": {
+        name: "Next 7 Days",
+        iconName: "mail",
+        route: "/projects/week/tasks",
+        getFilteredTasks: (tasks: Array<TaskObj>) => {
+            return tasks.filter((task) => {
+                const { dueDate } = task;
+
+                if (isWithinNext7DaysUTC(dueDate)) {
+                    return true;
+                }
+
+                return false;
+            });
+        },
+        getDefaultDueDate: () => {
+            // TODO: Add this!
+            const today = new Date();
+            const week = new Date();
+            week.setUTCDate(today.getUTCDate() + 7); // Increment the day by 7
+
+            console.log(week);
+
+            return week;
+        }
+    },
     // {
     //     name: "Inbox",
     //     iconName: "mail",
     //     route: "/projects/inbox/tasks",
     //     numberOfTasks: 26
     // }
+};
+
+const isTodayUTC = (date) => {
+    const today = new Date();
+    const inputDate = new Date(date);
+
+    // Convert both dates to UTC date strings and compare
+    const todayUTC = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+    const inputDateUTC = Date.UTC(inputDate.getFullYear(), inputDate.getMonth(), inputDate.getDate());
+
+    return todayUTC === inputDateUTC;
+};
+
+const isTomorrowUTC = (date) => {
+    const today = new Date();
+    const tomorrow = new Date();
+    tomorrow.setUTCDate(today.getUTCDate() + 1); // Increment the day by 1
+
+    const inputDate = new Date(date);
+    const tomorrowUTC = Date.UTC(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate());
+    const inputDateUTC = Date.UTC(inputDate.getFullYear(), inputDate.getMonth(), inputDate.getDate());
+
+    return tomorrowUTC === inputDateUTC;
+};
+
+const isWithinNext7DaysUTC = (date) => {
+    const today = new Date();
+    const nextWeek = new Date();
+    nextWeek.setUTCDate(today.getUTCDate() + 7); // Set to 7 days from today
+
+    const inputDate = new Date(date);
+    const todayUTC = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+    const nextWeekUTC = Date.UTC(nextWeek.getFullYear(), nextWeek.getMonth(), nextWeek.getDate());
+    const inputDateUTC = Date.UTC(inputDate.getFullYear(), inputDate.getMonth(), inputDate.getDate());
+
+    return inputDateUTC > todayUTC && inputDateUTC <= nextWeekUTC;
 };

@@ -12,7 +12,6 @@ import CustomInput from "./CustomInput";
 import ModalTaskActivities from "./Modal/ModalTaskActivities";
 import { useDeleteTaskMutation, useEditTaskMutation, useGetTasksQuery } from "../services/api";
 import ModalAddTaskForm from "./Modal/ModalAddTaskForm";
-import { useDebouncedCallback } from "../hooks/useDebounceCallback";
 import { getTasksWithFilledInChildren } from "../utils/helpers.utils";
 import { SortableTree } from "./SortableTest/SortableTree";
 import useDebouncedEditTask from "../hooks/useDebouncedEditTask";

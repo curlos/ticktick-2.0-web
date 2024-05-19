@@ -16,8 +16,7 @@ const getNumberOfTasks = () => {
 
 
 const TaskListSidebar = () => {
-
-
+    // TODO: Bring these boys back to life as Status Lists. They'll work extremely similarly to Smart Lists with "Trash" having more advanced capabilities than the others.
     const statusLists = [
         {
             name: "Completed",
@@ -50,10 +49,11 @@ const TaskListSidebar = () => {
             const projectsWithId: Array<IProject> = projects.map((project: IProject) => ({ ...project, id: project._id }));
             dispatch(setProjectsToState(projectsWithId));
         }
-    }, [fetchedProjects, dispatch]); // Dependencies for useEffect
+    }, [fetchedProjects, dispatch]);
 
-    const projectsWithNoGroup = projects && projects.filter((project) => !project.groupId);
-    const projectsWithGroup = projects && projects.filter((project) => project.groupId);
+    // TODO: Look into this. I had this before to drag projects and drop them into different folders.
+    // const projectsWithNoGroup = projects && projects.filter((project) => !project.groupId);
+    // const projectsWithGroup = projects && projects.filter((project) => project.groupId);
 
 
     return (

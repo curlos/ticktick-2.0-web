@@ -154,6 +154,7 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({ toggleRef, isVisi
                         if (task) {
                             editTask({ taskId: task._id, payload: { dueDate: null } });
                         }
+
                     }}>Clear</button>
                     <button className="bg-blue-500 rounded py-1 cursor-pointer hover:bg-blue-600" onClick={() => {
                         if (task) {

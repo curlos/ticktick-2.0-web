@@ -6,7 +6,7 @@ import { Handle } from "./Handle";
 import styles from "./TreeItem.module.css";
 import { useNavigate, useParams } from "react-router-dom";
 import Icon from "../../../Icon";
-import { useGetProjectsQuery } from "../../../../services/api";
+import { useEditTaskMutation, useGetProjectsQuery } from "../../../../services/api";
 import { SMART_LISTS } from "../../../../utils/smartLists.utils";
 import { PRIORITIES } from "../../../../utils/priorities.utils";
 import TaskDueDateText from "../../../TaskDueDateText";
@@ -55,12 +55,14 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
     const navigate = useNavigate();
     const params = useParams();
     const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
+    const [editTask] = useEditTaskMutation();
     const { projectsById } = fetchedProjects || {};
 
-    const [completed, setCompleted] = useState(false);
+    const { children, _id, title, projectId, dueDate, priority, completedTime } = item;
+
+    const [currCompletedTime, setCurrCompletedTime] = useState(completedTime);
     const [project, setProject] = useState(null);
 
-    const { children, _id, title, projectId, dueDate, priority } = item;
     const categoryIconClass = ' text-color-gray-100 !text-[16px] hover:text-white' + (children?.length >= 1 ? '' : ' invisible');
 
     useEffect(() => {
@@ -68,6 +70,10 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
         setProject(projectsById[projectId]);
       }
     }, [projectId, projectsById]);
+
+    useEffect(() => {
+      setCurrCompletedTime(completedTime);
+    }, [item]);
 
     const inSmartListView = params.projectId && SMART_LISTS[params.projectId];
     const priorityData = PRIORITIES[priority];
@@ -114,13 +120,18 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 
           <div className="h-[20px] mt-[2px]" onClick={(e) => {
             e.stopPropagation();
-            setCompleted(!completed);
+            let completedTime = currCompletedTime ? null : new Date().toISOString();
+
+            setCurrCompletedTime(completedTime);
+
+
+            editTask({ taskId: _id, payload: { completedTime } });
           }}>
             <span className={classNames(
               "flex items-center hover:text-white cursor-pointer",
               priorityData.textFlagColor
             )}>
-              {!completed ? (
+              {!currCompletedTime ? (
                 children.length > 0 ? (
                   <Icon name="list_alt" fill={0} customClass={"!text-[20px] "} />
                 ) : (
