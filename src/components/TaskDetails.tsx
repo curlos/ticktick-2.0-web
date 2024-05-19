@@ -20,6 +20,7 @@ import classNames from "classnames";
 import { SMART_LISTS } from "../utils/smartLists.utils";
 import { PRIORITIES } from "../utils/priorities.utils";
 import TaskDueDateText from "./TaskDueDateText";
+import DropdownPriorities from "./Dropdown/DropdownPriorities";
 
 const EmptyTask = () => (
     <div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700 flex justify-center items-center text-[18px] text-color-gray-100">
@@ -37,15 +38,22 @@ const TaskDetails = () => {
 
     const [currTitle, setCurrTitle] = useState('');
     const [currDescription, setCurrDescription] = useState('');
+    const [selectedPriority, setSelectedPriority] = useState(0);
     const [completed, setCompleted] = useState(false);
     const [task, setTask] = useState<TaskObj>();
     const [parentTask, setParentTask] = useState<TaskObj | null>();
     const [childTasks, setChildTasks] = useState([]);
     const [currDueDate, setCurrDueDate] = useState(null);
+
+    // Dropdowns
     const [isDropdownCalendarVisible, setIsDropdownCalendarVisible] = useState(false);
     const [isDropdownTaskOptionsVisible, setIsDropdownTaskOptionsVisible] = useState(false);
+    const [isDropdownPrioritiesVisible, setIsDropdownPrioritiesVisible] = useState(false);
+
+    // Modals
     const [isModalTaskActivitiesOpen, setIsModalTaskActivitiesOpen] = useState(false);
     const [isModalAddTaskFormOpen, setIsModalAddTaskFormOpen] = useState(false);
+
     const [showAddTaskForm, setShowAddTaskForm] = useState(false);
     const [showAddCommentInput, setShowAddCommentInput] = useState(false);
     const [currentComment, setCurrentComment] = useState('');
@@ -84,6 +92,7 @@ const TaskDetails = () => {
 
     const dropdownCalendarToggleRef = useRef(null);
     const dropdownTaskOptionsRef = useRef(null);
+    const dropdownPrioritiesRef = useRef(null);
 
     let { taskId, projectId: paramsProjectId } = useParams();
     let navigate = useNavigate();
@@ -164,10 +173,24 @@ const TaskDetails = () => {
                     </div>
                 </div>
 
-                <Icon name="flag" customClass={classNames(
-                    "!text-[22px] hover:text-white cursor-pointer",
-                    priorityData.textFlagColor
-                )} />
+                <div className="relative">
+                    <div ref={dropdownPrioritiesRef} onClick={() => setIsDropdownPrioritiesVisible(!isDropdownPrioritiesVisible)}>
+                        <Icon name="flag" customClass={classNames(
+                            "!text-[22px] hover:text-white cursor-pointer",
+                            priorityData.textFlagColor
+                        )} />
+                    </div>
+
+                    <DropdownPriorities
+                        toggleRef={dropdownPrioritiesRef}
+                        isVisible={isDropdownPrioritiesVisible}
+                        setIsVisible={setIsDropdownPrioritiesVisible}
+                        priority={selectedPriority}
+                        setPriority={setSelectedPriority}
+                        customClasses="!ml-[-180px]"
+                        task={task}
+                    />
+                </div>
             </div>
 
             <div className="flex-1 overflow-auto no-scrollbar">

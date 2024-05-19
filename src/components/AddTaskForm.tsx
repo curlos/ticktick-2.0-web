@@ -118,7 +118,7 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId 
 
                         <div className="text-[14px] text-color-gray-100 p-1 border border-color-gray-100 rounded-md relative">
                             <div ref={dropdownPrioritiesRef} onClick={() => setIsDropdownPrioritiesVisible(!isDropdownPrioritiesVisible)} className="cursor-pointer">
-                                {tempSelectedPriority === 'none' ? (
+                                {tempSelectedPriority === 0 ? (
                                     <div className="flex items-center gap-1">
                                         <Icon name="calendar_month" customClass={"!text-[16px] hover:text-white"} />
                                         Priority
@@ -138,8 +138,8 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId 
                                 toggleRef={dropdownPrioritiesRef}
                                 isVisible={isDropdownPrioritiesVisible}
                                 setIsVisible={setIsDropdownPrioritiesVisible}
-                                tempSelectedPriority={tempSelectedPriority}
-                                setTempSelectedPriority={setTempSelectedPriority}
+                                priority={tempSelectedPriority}
+                                setPriority={setTempSelectedPriority}
                             />
 
                         </div>
