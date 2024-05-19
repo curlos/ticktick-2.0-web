@@ -83,7 +83,9 @@ export const ProjectItem: React.FC<ProjectItemProps> = ({ project, projectsWithG
 
     const { name, color, isFolder, _id } = project;
     const iconFill = isFolder ? 0 : 1;
-    const iconName = isFolder ? 'folder' : 'menu';
+
+    const smartList = SMART_LISTS[project.urlName];
+    let iconName = isFolder ? 'folder' : (smartList ? smartList.iconName : 'menu');
     const emoji = containsEmoji(name) ? name.split(' ')[0] : null;
     const displayName = emoji ? name.split(' ')[1] : name;
     const [numberOfTasks, setNumberOfTasks] = useState(0);
@@ -127,6 +129,7 @@ export const ProjectItem: React.FC<ProjectItemProps> = ({ project, projectsWithG
                 <div className="flex items-center gap-2">
                     <div className="flex items-center gap-0">
                         {isFolder && <Icon name={"chevron_right"} customClass={"text-white !text-[12px] ml-[-12px]"} fill={iconFill != undefined ? iconFill : 1} />}
+
                         {emoji ? emoji : (
                             <Icon name={iconName} customClass={"text-white !text-[22px]"} fill={iconFill != undefined ? iconFill : 1} />
                         )}

@@ -3,7 +3,8 @@ import { TaskObj } from "../interfaces/interfaces";
 export const SMART_LISTS = {
     "all": {
         name: "All",
-        iconName: "mail",
+        urlName: "all",
+        iconName: "stacks",
         route: "/projects/all/tasks",
         getFilteredTasks: (allTasks: Array<TaskObj>) => allTasks,
         getDefaultDueDate: () => {
@@ -12,7 +13,8 @@ export const SMART_LISTS = {
     },
     "today": {
         name: "Today",
-        iconName: "mail",
+        urlName: "today",
+        iconName: "calendar_today",
         route: "/projects/today/tasks",
         getFilteredTasks: (tasks: Array<TaskObj>) => {
             return tasks.filter((task) => {
@@ -31,7 +33,8 @@ export const SMART_LISTS = {
     },
     "tomorrow": {
         name: "Tomorrow",
-        iconName: "mail",
+        urlName: "tomorrow",
+        iconName: "upcoming",
         route: "/projects/tomorrow/tasks",
         getFilteredTasks: (tasks: Array<TaskObj>) => {
             return tasks.filter((task) => {
@@ -55,7 +58,8 @@ export const SMART_LISTS = {
     },
     "week": {
         name: "Next 7 Days",
-        iconName: "mail",
+        urlName: "week",
+        iconName: "event_upcoming",
         route: "/projects/week/tasks",
         getFilteredTasks: (tasks: Array<TaskObj>) => {
             return tasks.filter((task) => {
