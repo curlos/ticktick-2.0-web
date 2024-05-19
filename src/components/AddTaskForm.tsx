@@ -11,6 +11,7 @@ import { useAddTaskMutation, useGetProjectsQuery } from "../services/api";
 import { SMART_LISTS } from "../utils/smartLists.utils";
 import { useParams } from "react-router";
 import classNames from "classnames";
+import TaskDueDateText from "./TaskDueDateText";
 
 interface AddTaskFormProps {
     setShowAddTaskForm: React.Dispatch<React.SetStateAction<boolean>>;
@@ -33,7 +34,7 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId 
     const [isDropdownCalendarVisible, setIsDropdownCalendarVisible] = useState(false);
     const [isDropdownPrioritiesVisible, setIsDropdownPrioritiesVisible] = useState(false);
     const [isDropdownListsVisible, setIsDropdownListsVisible] = useState(false);
-    const [tempSelectedPriority, setTempSelectedPriority] = useState('none');
+    const [tempSelectedPriority, setTempSelectedPriority] = useState(0);
     const [selectedProject, setSelectedProject] = useState('Hello Mobile');
     const [description, setDescription] = useState('');
 
@@ -104,40 +105,34 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId 
                     <TextareaAutosize className="text-[14px] placeholder:text-[#7C7C7C] bg-transparent w-full outline-none resize-none" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)}></TextareaAutosize>
 
                     <div className="flex gap-2 mt-3">
-                        <div
-                            ref={dropdownCalendarToggleRef}
-                            className="text-[14px] flex items-center gap-1 text-color-gray-100 p-1 border border-color-gray-100 rounded-md cursor-pointer" onClick={() => setIsDropdownCalendarVisible(!isDropdownCalendarVisible)}>
-                            <Icon name="calendar_month" customClass={classNames(
-                                "!text-[16px] hover:text-white",
-                                currDueDate ? "text-blue-500" : ""
-                            )} />
-                            {currDueDate ? (
-                                <span className="text-blue-500">
-                                    {currDueDate.toLocaleDateString('en-US', {
-                                        year: 'numeric', // Full year
-                                        month: 'long',   // Full month name
-                                        day: 'numeric'   // Day of the month
-                                    })}
-                                </span>
-                            ) : "Due Date"}
+                        <div className="text-[14px] flex items-center gap-1 text-color-gray-100 p-1 border border-color-gray-100 rounded-md relative">
+
+                            <div ref={dropdownCalendarToggleRef} onClick={() => setIsDropdownCalendarVisible(!isDropdownCalendarVisible)}>
+                                {currDueDate ? (
+                                    <TaskDueDateText dueDate={currDueDate} showCalendarIcon={true} />
+                                ) : "Due Date"}
+                            </div>
+
+                            <DropdownCalendar toggleRef={dropdownCalendarToggleRef} isVisible={isDropdownCalendarVisible} setIsVisible={setIsDropdownCalendarVisible} currDueDate={currDueDate} setCurrDueDate={setCurrDueDate} />
                         </div>
 
-                        <DropdownCalendar toggleRef={dropdownCalendarToggleRef} isVisible={isDropdownCalendarVisible} setIsVisible={setIsDropdownCalendarVisible} currDueDate={currDueDate} setCurrDueDate={setCurrDueDate} />
-
-                        <div
-                            ref={dropdownPrioritiesRef}
-                            className="text-[14px] text-color-gray-100 p-1 border border-color-gray-100 rounded-md cursor-pointer" onClick={() => setIsDropdownPrioritiesVisible(!isDropdownPrioritiesVisible)}>
-                            {tempSelectedPriority === 'none' ? (
-                                <div className="flex items-center gap-1">
-                                    <Icon name="calendar_month" customClass={"!text-[16px] hover:text-white"} />
-                                    Priority
-                                </div>
-                            ) : (
-                                <div className="flex items-center gap-1">
-                                    <Icon name="flag" customClass={`${priority.textFlagColor} !text-[22px] cursor-pointer`} />
-                                    {priority.name}
-                                </div>
-                            )}
+                        <div className="text-[14px] text-color-gray-100 p-1 border border-color-gray-100 rounded-md relative">
+                            <div ref={dropdownPrioritiesRef} onClick={() => setIsDropdownPrioritiesVisible(!isDropdownPrioritiesVisible)} className="cursor-pointer">
+                                {tempSelectedPriority === 'none' ? (
+                                    <div className="flex items-center gap-1">
+                                        <Icon name="calendar_month" customClass={"!text-[16px] hover:text-white"} />
+                                        Priority
+                                    </div>
+                                ) : (
+                                    <div className={classNames(
+                                        "flex items-center gap-1",
+                                        priority.textFlagColor
+                                    )}>
+                                        <Icon name="flag" customClass={"!text-[22px] cursor-pointer"} />
+                                        {priority.name}
+                                    </div>
+                                )}
+                            </div>
 
                             <DropdownPriorities
                                 toggleRef={dropdownPrioritiesRef}

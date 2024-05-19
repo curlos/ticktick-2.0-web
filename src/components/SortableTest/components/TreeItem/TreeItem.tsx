@@ -8,6 +8,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import Icon from "../../../Icon";
 import { useGetProjectsQuery } from "../../../../services/api";
 import { SMART_LISTS } from "../../../../utils/smartLists.utils";
+import { PRIORITIES } from "../../../../utils/priorities.utils";
+import TaskDueDateText from "../../../TaskDueDateText";
 
 export interface Props extends HTMLAttributes<HTMLLIElement> {
   childCount?: number;
@@ -58,12 +60,8 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
     const [completed, setCompleted] = useState(false);
     const [project, setProject] = useState(null);
 
-    const { children, _id, title, projectId, dueDate } = item;
+    const { children, _id, title, projectId, dueDate, priority } = item;
     const categoryIconClass = ' text-color-gray-100 !text-[16px] hover:text-white' + (children?.length >= 1 ? '' : ' invisible');
-
-    console.log(projectsById);
-    console.log(projectId);
-    console.log(projectsById[projectId]);
 
     useEffect(() => {
       if (projectsById && projectId) {
@@ -71,9 +69,8 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
       }
     }, [projectId, projectsById]);
 
-    console.log(project);
-
     const inSmartListView = params.projectId && SMART_LISTS[params.projectId];
+    const priorityData = PRIORITIES[priority];
 
     return (
       <li
@@ -119,15 +116,20 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
             e.stopPropagation();
             setCompleted(!completed);
           }}>
-            {!completed ? (
-              children && children.length > 0 ? (
-                <Icon name="list_alt" fill={0} customClass={"text-color-gray-100 text-red-500 !text-[20px]  cursor-pointer"} />
+            <span className={classNames(
+              "flex items-center hover:text-white cursor-pointer",
+              priorityData.textFlagColor
+            )}>
+              {!completed ? (
+                children.length > 0 ? (
+                  <Icon name="list_alt" fill={0} customClass={"!text-[20px] "} />
+                ) : (
+                  <Icon name="check_box_outline_blank" customClass={"!text-[20px] "} />
+                )
               ) : (
-                <Icon name="check_box_outline_blank" customClass={"text-color-gray-100 text-red-500 !text-[20px] cursor-pointer"} />
-              )
-            ) : (
-              <Icon name="check_box" customClass={"text-color-gray-100 text-red-500 !text-[20px] cursor-pointer"} />
-            )}
+                <Icon name="check_box" customClass={"!text-[20px] "} />
+              )}
+            </span>
           </div>
 
           <span className="ml-1 text-white">{title}</span>
@@ -140,13 +142,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
                   {project.name}
                 </div>
               )}
-              {dueDate && <div className="text-blue-500">
-                {new Date(dueDate).toLocaleDateString('en-US', {
-                  year: 'numeric', // Full year
-                  month: 'long',   // Full month name
-                  day: 'numeric'   // Day of the month
-                })}
-              </div>}
+              {dueDate && <TaskDueDateText dueDate={dueDate} />}
               <Icon name="chevron_right" onClick={() => navigate(`/projects/${inSmartListView ? params.projectId : projectId}/tasks/${_id}`)} customClass={"text-color-gray-100 !text-[20px] hover:text-white cursor-pointer"} />
             </div>
           </div>

@@ -19,7 +19,8 @@ const Dropdown = forwardRef<HTMLDivElement, BaseDropdownProps>(({ children, isVi
     const positionClass = positionAdjustment || '';
 
     return (
-        <div ref={dropdownRef} className={`dropdown absolute z-50 text-white bg-color-gray-600 rounded-lg text-sm ${positionClass} ${customClasses || ''}`}>
+        // TODO: "top-full and left-0" fixed the dropdown problem of them not appearing in the right spots with DropdownCqalendar. I was even able to take out the negative margin styles. This should be investigated for every other dropdown on the site since it happens eveywhere.
+        <div ref={dropdownRef} className={`absolute top-full left-0 z-50 text-white bg-color-gray-600 rounded-lg text-sm ${positionClass} ${customClasses || ''}`}>
             {children}
         </div>
     );

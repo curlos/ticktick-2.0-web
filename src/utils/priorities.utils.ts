@@ -1,6 +1,6 @@
 export interface IPriorityItem {
     name: string;
-    backendValue: string;
+    backendValue: number;
     flagColor: string;
     textFlagColor: string;
 }
@@ -10,27 +10,27 @@ export interface IPriorities {
 }
 
 export const PRIORITIES: IPriorities = {
-    'high': {
+    3: {
         name: 'High',
-        backendValue: '3',
+        backendValue: 3,
         flagColor: '#E1312F',
         textFlagColor: 'text-[#E1312F]'
     },
-    'medium': {
+    2: {
         name: 'Medium',
-        backendValue: '2',
+        backendValue: 2,
         flagColor: '#FEB003',
         textFlagColor: 'text-[#FEB003]'
     },
-    'low': {
+    1: {
         name: 'Low',
-        backendValue: '1',
+        backendValue: 1,
         flagColor: '#4773F9',
         textFlagColor: 'text-[#4773F9]'
     },
-    'none': {
+    0: {
         name: 'None',
-        backendValue: '0',
+        backendValue: 0,
         flagColor: '#7B7B7B',
         textFlagColor: 'text-[#7B7B7B]'
     }

@@ -298,3 +298,17 @@ export const getObjectOfEachTasksParent = (tasks) => {
 
     return tasksParent;
 };
+
+export const isTaskOverdue = (taskDate) => {
+    const taskDateObj = new Date(taskDate);
+    let today = new Date();
+
+    // TODO: For now, set "today's time to be at the beginning of the day: 0 hours, mins, seconds." Once time is updated on the backend properly, then this can be removed and restored.
+    today.setUTCHours(0, 0, 0, 0);
+
+    if (taskDateObj > today) {
+        return false;
+    }
+
+    return true;
+};

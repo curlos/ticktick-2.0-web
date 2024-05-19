@@ -107,61 +107,64 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({ toggleRef, isVisi
 
 
     return (
-        <div className={`${isVisible ? '' : 'hidden'}`}>
-            <Dropdown toggleRef={toggleRef} isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' ml-[-70px] shadow-2xl' + (customClasses ? ` ${customClasses}` : '')}>
-                <div className="w-[260px]">
-                    <div className="p-4">
-                        <div className="grid grid-cols-2 bg-color-gray-700 rounded-md p-1 text-center">
-                            <div className={"rounded-md p-[2px]" + (selectedView === 'date' ? ' bg-color-gray-600' : '')} onClick={() => setSelectedView('date')}>Date</div>
-                            <div className={"rounded-md p-[2px]" + (selectedView === 'duration' ? ' bg-color-gray-600' : '')} onClick={() => setSelectedView('duration')}>Duration</div>
-                        </div>
-
-                        <BigDateIconOptionList dueDate={currDueDate} setDueDate={setCurrDueDate} />
+        <Dropdown toggleRef={toggleRef} isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' shadow-2xl' + (customClasses ? ` ${customClasses}` : '')}>
+            <div className="w-[260px]">
+                <div className="p-4">
+                    <div className="grid grid-cols-2 bg-color-gray-700 rounded-md p-1 text-center">
+                        <div className={"rounded-md p-[2px]" + (selectedView === 'date' ? ' bg-color-gray-600' : '')} onClick={() => setSelectedView('date')}>Date</div>
+                        <div className={"rounded-md p-[2px]" + (selectedView === 'duration' ? ' bg-color-gray-600' : '')} onClick={() => setSelectedView('duration')}>Duration</div>
                     </div>
 
-                    <SelectCalendar dueDate={currDueDate} setDueDate={setCurrDueDate} />
-
-                    <div className="px-1 mb-4">
-                        {/* Time */}
-                        <DropdownTime toggleRef={dropdownTimeRef} isVisible={isDropdownTimeVisible} setIsVisible={setIsDropdownTimeVisible} />
-                        <TimeOption toggleRef={dropdownTimeRef} name="Time" iconName="schedule" onClick={() => {
-                            setIsDropdownTimeVisible(!isDropdownTimeVisible);
-                        }} />
-
-                        {/* Reminder */}
-                        <DropdownReminder toggleRef={dropdownReminderRef} isVisible={isDropdownReminderVisible} setIsVisible={setIsDropdownReminderVisible} reminder={reminder} setReminder={setReminder} />
-                        <TimeOption
-                            toggleRef={dropdownReminderRef}
-                            name="Reminder"
-                            iconName="alarm"
-                            onClick={() => setIsDropdownReminderVisible(!isDropdownReminderVisible)}
-                        />
-
-                        {/* Repeat */}
-                        <DropdownRepeat toggleRef={dropdownRepeatRef} isVisible={isDropdownRepeatVisible} setIsVisible={setIsDropdownRepeatVisible} repeat={repeat} setRepeat={setRepeat} />
-                        <TimeOption
-                            toggleRef={dropdownRepeatRef}
-                            name="Repeat"
-                            iconName="repeat"
-                            onClick={() => setIsDropdownRepeatVisible(!isDropdownRepeatVisible)}
-                        />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-2 px-3 pb-4">
-                        <button className="border border-color-gray-200 rounded py-1 cursor-pointer hover:bg-color-gray-200" onClick={() => {
-                            setIsVisible(false);
-                        }}>Clear</button>
-                        <button className="bg-blue-500 rounded py-1 cursor-pointer hover:bg-blue-600" onClick={() => {
-                            if (task) {
-                                editTask({ taskId: task._id, payload: { dueDate: currDueDate } });
-                            }
-
-                            setIsVisible(false);
-                        }}>Ok</button>
-                    </div>
+                    <BigDateIconOptionList dueDate={currDueDate} setDueDate={setCurrDueDate} />
                 </div>
-            </Dropdown>
-        </div>
+
+                <SelectCalendar dueDate={currDueDate} setDueDate={setCurrDueDate} />
+
+                <div className="px-1 mb-4">
+                    {/* Time */}
+                    <DropdownTime toggleRef={dropdownTimeRef} isVisible={isDropdownTimeVisible} setIsVisible={setIsDropdownTimeVisible} />
+                    <TimeOption toggleRef={dropdownTimeRef} name="Time" iconName="schedule" onClick={() => {
+                        setIsDropdownTimeVisible(!isDropdownTimeVisible);
+                    }} />
+
+                    {/* Reminder */}
+                    <DropdownReminder toggleRef={dropdownReminderRef} isVisible={isDropdownReminderVisible} setIsVisible={setIsDropdownReminderVisible} reminder={reminder} setReminder={setReminder} />
+                    <TimeOption
+                        toggleRef={dropdownReminderRef}
+                        name="Reminder"
+                        iconName="alarm"
+                        onClick={() => setIsDropdownReminderVisible(!isDropdownReminderVisible)}
+                    />
+
+                    {/* Repeat */}
+                    <DropdownRepeat toggleRef={dropdownRepeatRef} isVisible={isDropdownRepeatVisible} setIsVisible={setIsDropdownRepeatVisible} repeat={repeat} setRepeat={setRepeat} />
+                    <TimeOption
+                        toggleRef={dropdownRepeatRef}
+                        name="Repeat"
+                        iconName="repeat"
+                        onClick={() => setIsDropdownRepeatVisible(!isDropdownRepeatVisible)}
+                    />
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 px-3 pb-4">
+                    <button className="border border-color-gray-200 rounded py-1 cursor-pointer hover:bg-color-gray-200" onClick={() => {
+                        setCurrDueDate(null);
+                        setIsVisible(false);
+
+                        if (task) {
+                            editTask({ taskId: task._id, payload: { dueDate: null } });
+                        }
+                    }}>Clear</button>
+                    <button className="bg-blue-500 rounded py-1 cursor-pointer hover:bg-blue-600" onClick={() => {
+                        if (task) {
+                            editTask({ taskId: task._id, payload: { dueDate: currDueDate } });
+                        }
+
+                        setIsVisible(false);
+                    }}>Ok</button>
+                </div>
+            </div>
+        </Dropdown>
     );
 };
 

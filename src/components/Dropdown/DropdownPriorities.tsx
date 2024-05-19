@@ -21,7 +21,7 @@ const DropdownPriorities: React.FC<DropdownPrioritiesProps> = ({
 
         return (
             <div
-                className="flex items-center justify-between hover:bg-color-gray-300 p-2 rounded-lg"
+                className="flex items-center justify-between hover:bg-color-gray-300 p-2 rounded-lg cursor-pointer"
                 onClick={() => {
                     setTempSelectedPriority(backendValue);
                     setIsVisible(false);
@@ -39,7 +39,7 @@ const DropdownPriorities: React.FC<DropdownPrioritiesProps> = ({
     };
 
     return (
-        <Dropdown toggleRef={toggleRef} isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' ml-[-13px] shadow-2xl border border-color-gray-200 rounded-lg'}>
+        <Dropdown toggleRef={toggleRef} isVisible={isVisible} setIsVisible={setIsVisible} customClasses={'shadow-2xl border border-color-gray-200 rounded-lg'}>
             <div className="w-[200px]">
                 <div>
                     {Object.keys(PRIORITIES).map((key: string) => (

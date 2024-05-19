@@ -17,6 +17,9 @@ import { getTasksWithFilledInChildren } from "../utils/helpers.utils";
 import { SortableTree } from "./SortableTest/SortableTree";
 import useDebouncedEditTask from "../hooks/useDebouncedEditTask";
 import classNames from "classnames";
+import { SMART_LISTS } from "../utils/smartLists.utils";
+import { PRIORITIES } from "../utils/priorities.utils";
+import TaskDueDateText from "./TaskDueDateText";
 
 const EmptyTask = () => (
     <div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700 flex justify-center items-center text-[18px] text-color-gray-100">
@@ -82,9 +85,8 @@ const TaskDetails = () => {
     const dropdownCalendarToggleRef = useRef(null);
     const dropdownTaskOptionsRef = useRef(null);
 
-    let { taskId } = useParams();
+    let { taskId, projectId: paramsProjectId } = useParams();
     let navigate = useNavigate();
-    const { projectId } = useParams();
 
     useEffect(() => {
         if (isTasksLoading) {
@@ -93,8 +95,6 @@ const TaskDetails = () => {
 
         const currTask = taskId && tasksById && tasksById[taskId];
         setTask(currTask);
-
-        console.log('dasd');
 
         if (currTask) {
             setCurrTitle(currTask.title);
@@ -106,8 +106,6 @@ const TaskDetails = () => {
                 setCurrDueDate(null);
             }
 
-            console.log(currTask.dueDate);
-
             const parentTaskId = parentsOfTasks[currTask._id];
             const newParentTask = parentTaskId && tasksById[parentTaskId];
 
@@ -118,7 +116,7 @@ const TaskDetails = () => {
             }
 
             // TODO: There is a problem caused by this. Sortable Tree not updating with latest tasks.
-            const newChildTasks = getTasksWithFilledInChildren(currTask.children, tasksById, projectId);
+            const newChildTasks = getTasksWithFilledInChildren(currTask.children, tasksById, currTask.projectId);
             setChildTasks(newChildTasks);
             // debugger;
         }
@@ -128,50 +126,54 @@ const TaskDetails = () => {
         return <EmptyTask />;
     }
 
-    const { _id, children, completedPomodoros, timeTaken, estimatedDuration, deadline } = task;
+    const { _id, children, priority, completedPomodoros, timeTaken, estimatedDuration, deadline } = task;
+
+    const inSmartListView = paramsProjectId && SMART_LISTS[paramsProjectId];
+
+    const priorityData = PRIORITIES[priority];
 
     return (
         <div className="flex flex-col w-full h-full max-h-screen bg-color-gray-700">
             <div className="flex justify-between items-center p-4 border-b border-color-gray-200">
                 <div className="flex items-center gap-2">
-                    {!completed ? (
-                        children.length > 0 ? (
-                            <Icon name="list_alt" fill={0} customClass={"text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-pointer"} />
+                    <span className={classNames(
+                        "flex items-center hover:text-white cursor-pointer",
+                        priorityData.textFlagColor
+                    )}>
+                        {!completed ? (
+                            children.length > 0 ? (
+                                <Icon name="list_alt" fill={0} customClass={"!text-[20px] "} />
+                            ) : (
+                                <Icon name="check_box_outline_blank" customClass={"!text-[20px] "} />
+                            )
                         ) : (
-                            <Icon name="check_box_outline_blank" customClass={"text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-pointer"} />
-                        )
-                    ) : (
-                        <Icon name="check_box" customClass={"text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-pointer"} />
-                    )}
+                            <Icon name="check_box" customClass={"!text-[20px] "} />
+                        )}
+                    </span>
 
                     <div
-                        ref={dropdownCalendarToggleRef}
-                        className="flex items-center gap-1 border-l border-color-gray-200 text-color-gray-100 px-2 cursor-pointer" onClick={() => setIsDropdownCalendarVisible(!isDropdownCalendarVisible)}
+                        className="flex items-center gap-1 border-l border-color-gray-200 text-color-gray-100 px-2 relative"
                     >
-                        <Icon name="calendar_month" customClass={classNames(
-                            "!text-[20px] hover:text-white cursor-pointer",
-                            currDueDate ? "text-blue-500" : ""
-                        )} />
-                        {currDueDate ? (
-                            <span className="text-blue-500">
-                                {currDueDate.toLocaleDateString('en-US', {
-                                    year: 'numeric', // Full year
-                                    month: 'long',   // Full month name
-                                    day: 'numeric'   // Day of the month
-                                })}
-                            </span>
-                        ) : "Due Date"}
+                        <div ref={dropdownCalendarToggleRef} onClick={() => setIsDropdownCalendarVisible(!isDropdownCalendarVisible)}>
+                            {currDueDate ? (
+                                <TaskDueDateText dueDate={currDueDate} showCalendarIcon />
+                            ) : "Due Date"}
+                        </div>
+
+                        <DropdownCalendar toggleRef={dropdownCalendarToggleRef} isVisible={isDropdownCalendarVisible} setIsVisible={setIsDropdownCalendarVisible} task={task} currDueDate={currDueDate} setCurrDueDate={setCurrDueDate} customClasses=" !ml-[0px] mt-[15px]" />
                     </div>
-                    <DropdownCalendar toggleRef={dropdownCalendarToggleRef} isVisible={isDropdownCalendarVisible} setIsVisible={setIsDropdownCalendarVisible} task={task} currDueDate={currDueDate} setCurrDueDate={setCurrDueDate} customClasses=" ml-[-100px] mt-[15px]" />
                 </div>
 
-                <Icon name="flag" customClass={"text-color-gray-100 text-red-500 !text-[22px] hover:text-white cursor-pointer"} />
+                <Icon name="flag" customClass={classNames(
+                    "!text-[22px] hover:text-white cursor-pointer",
+                    priorityData.textFlagColor
+                )} />
             </div>
 
             <div className="flex-1 overflow-auto no-scrollbar">
                 <div className="p-4 flex flex-col justify-between">
                     {parentTask && (
-                        <div className="w-full flex justify-between items-center text-color-gray-100 cursor-pointer" onClick={() => navigate(`/projects/${parentTask.projectId}/tasks/${parentTask._id}`)}>
+                        <div className="w-full flex justify-between items-center text-color-gray-100 cursor-pointer" onClick={() => navigate(`/projects/${inSmartListView ? paramsProjectId : parentTask.projectId}/tasks/${parentTask._id}`)}>
                             <div className="max-w-[368px]">
                                 <div className="truncate text-[12px]">{parentTask.title}</div>
                             </div>
@@ -270,7 +272,7 @@ const TaskDetails = () => {
             <ModalTaskActivities isModalOpen={isModalTaskActivitiesOpen} setIsModalOpen={setIsModalTaskActivitiesOpen} />
 
             <ModalAddTaskForm isModalOpen={isModalAddTaskFormOpen} setIsModalOpen={setIsModalAddTaskFormOpen} parentId={_id} />
-        </div>
+        </div >
     );
 };
 
