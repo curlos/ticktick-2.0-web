@@ -152,14 +152,16 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId 
                 <hr className="border-color-gray-200 my-1" />
 
                 <div className="p-2 pt-1 flex justify-between items-center">
-                    {!isLoadingProjects && <div>
-                        <div ref={dropdownListsRef} className="flex items-center gap-1 font-bold text-[12px] cursor-pointer" onClick={() => setIsDropdownListsVisible(!isDropdownListsVisible)}>
-                            {selectedProject.name}
-                            <Icon name="expand_more" customClass={"!text-[16px] hover:text-white"} />
-                        </div>
+                    {!isLoadingProjects && (
+                        <div className="relative">
+                            <div ref={dropdownListsRef} className="flex items-center gap-1 font-bold text-[12px] cursor-pointer" onClick={() => setIsDropdownListsVisible(!isDropdownListsVisible)}>
+                                {selectedProject.name}
+                                <Icon name="expand_more" customClass={"!text-[16px] hover:text-white"} />
+                            </div>
 
-                        <DropdownProjects toggleRef={dropdownListsRef} isVisible={isDropdownListsVisible} setIsVisible={setIsDropdownListsVisible} selectedProject={selectedProject} setSelectedProject={setSelectedProject} projects={projects} />
-                    </div>}
+                            <DropdownProjects toggleRef={dropdownListsRef} isVisible={isDropdownListsVisible} setIsVisible={setIsDropdownListsVisible} selectedProject={selectedProject} setSelectedProject={setSelectedProject} projects={projects} />
+                        </div>
+                    )}
 
                     <div className="space-x-2">
                         <button className="border border-color-gray-200 rounded-md py-1 cursor-pointer hover:bg-color-gray-200 p-3" onClick={() => setShowAddTaskForm(false)}>Cancel</button>

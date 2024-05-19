@@ -37,7 +37,7 @@ const DropdownProjects: React.FC<DropdownProjectsProps> = ({
     };
 
     return (
-        <Dropdown toggleRef={toggleRef} isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' ml-[-13px] shadow-2xl border border-color-gray-200 rounded-lg'}>
+        <Dropdown toggleRef={toggleRef} isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' ml-[-13px] mt-2 mb-2 shadow-2xl border border-color-gray-200 rounded-lg'}>
             <div className="w-[200px]">
                 <div>
                     {projects.map((project) => (
