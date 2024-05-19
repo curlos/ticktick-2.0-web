@@ -146,9 +146,10 @@ export function fillInChildren(tasks: any[], tasksById): any[] {
     return tasks.flatMap(task => processTask(deepClone(task)));
 }
 
+// TODO: Something to look into?
 const changeProjectIdsToMatchParent = (tasks: any[]) => {
-    console.log(tasks);
-    debugger;
+    // console.log(tasks);
+    // debugger;
 };
 
 export function prepareForBulkEdit(tasks: any[]): any[] {

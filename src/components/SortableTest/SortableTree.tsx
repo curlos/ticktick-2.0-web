@@ -105,7 +105,6 @@ export function SortableTree({
   }, [tasks, isTasksLoading, projectId]);
 
   const flattenedItems = useMemo(() => {
-    debugger;
     const flattenedTree = flattenTree(items);
     const collapsedItems = flattenedTree.reduce<string[]>(
       (acc, { children, collapsed, id }) =>
@@ -293,11 +292,10 @@ export function SortableTree({
     setItems((items) => removeItem(items, id));
   }
 
+  // TODO: This thing was causing problems before since it was being called twice and negating the initial collapse value change. Something to look into in the future but don't waste time looking at it now since I already spent a good 1h30m on it on May 18, 2024.
   function handleCollapse(id: string) {
     setItems((items) =>
       setProperty(items, id, "collapsed", (value) => {
-        console.log(value);
-        debugger;
         return !value;
       })
     );

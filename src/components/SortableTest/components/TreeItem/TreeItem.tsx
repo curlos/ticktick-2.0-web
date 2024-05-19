@@ -75,7 +75,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
       >
         <div className={classNames(
           styles.TreeItem,
-          "group flex items-center p-2 hover:bg-color-gray-600 cursor-pointer rounded-lg"
+          "group flex p-2 hover:bg-color-gray-600 cursor-pointer rounded-lg"
         )} ref={ref} style={style}>
           <div className="flex items-center invisible group-hover:visible">
             <Handle {...handleProps} />
@@ -86,7 +86,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
             className={classNames(
               styles.Collapse,
               collapsed && styles.collapsed,
-              "flex flex-column items-center"
+              "flex flex-column mt-[4px]"
             )}
           >
             {collapsed ? (
@@ -96,24 +96,24 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
             )}
           </Action>
 
-          <div className="h-[20px]" onClick={(e) => {
+          <div className="h-[20px] mt-[2px]" onClick={(e) => {
             e.stopPropagation();
             setCompleted(!completed);
           }}>
             {!completed ? (
               children && children.length > 0 ? (
-                <Icon name="list_alt" fill={0} customClass={"text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-pointer"} />
+                <Icon name="list_alt" fill={0} customClass={"text-color-gray-100 text-red-500 !text-[20px]  cursor-pointer"} />
               ) : (
-                <Icon name="check_box_outline_blank" customClass={"text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-pointer"} />
+                <Icon name="check_box_outline_blank" customClass={"text-color-gray-100 text-red-500 !text-[20px] cursor-pointer"} />
               )
             ) : (
-              <Icon name="check_box" customClass={"text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-pointer"} />
+              <Icon name="check_box" customClass={"text-color-gray-100 text-red-500 !text-[20px] cursor-pointer"} />
             )}
           </div>
 
           <span className="ml-1 text-white">{item.title}</span>
 
-          <div className="flex-grow flex justify-end items-center">
+          <div className="flex-grow flex justify-end mt-[2px]">
             <Icon name="chevron_right" onClick={() => navigate(`/projects/${item.projectId}/tasks/${item._id}`)} customClass={"text-color-gray-100 !text-[20px] hover:text-white cursor-pointer"} />
           </div>
 

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Icon from "./Icon";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from 'react-router-dom';
@@ -10,8 +10,9 @@ import AddTaskForm from "./AddTaskForm";
 import Dropdown from "./Dropdown/Dropdown";
 import CustomInput from "./CustomInput";
 import ModalTaskActivities from "./Modal/ModalTaskActivities";
-import { useDeleteTaskMutation, useGetTasksQuery } from "../services/api";
+import { useDeleteTaskMutation, useEditTaskMutation, useGetTasksQuery } from "../services/api";
 import ModalAddTaskForm from "./Modal/ModalAddTaskForm";
+import { useDebouncedCallback } from "../hooks/useDebounceCallback";
 
 const EmptyTask = () => (
     <div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700 flex justify-center items-center text-[18px] text-color-gray-100">
@@ -24,7 +25,13 @@ const EmptyTask = () => (
 
 const TaskDetails = () => {
     const { data: fetchedTasks, isLoading: isTasksLoading, error } = useGetTasksQuery();
+    const [editTask] = useEditTaskMutation();
     const { tasksById, parentsOfTasks } = fetchedTasks || {};
+    const debouncedEditTaskApiCall = useDebouncedCallback((taskId, taskPropAndValue) => {
+        console.log(taskPropAndValue);
+        editTask({ taskId, payload: taskPropAndValue });
+    }, 2000, []);
+
     const [currTitle, setCurrTitle] = useState('');
     const [currDescription, setCurrDescription] = useState('');
     const [completed, setCompleted] = useState(false);
@@ -144,7 +151,11 @@ const TaskDetails = () => {
                         </div>
                     )}
 
-                    <TextareaAutosize className="text-[16px] placeholder:text-[#7C7C7C] font-bold mb-0 bg-transparent w-full outline-none resize-none" placeholder="What would you like to do?" value={currTitle} onChange={(e) => setCurrTitle(e.target.value)}></TextareaAutosize>
+                    <TextareaAutosize className="text-[16px] placeholder:text-[#7C7C7C] font-bold mb-0 bg-transparent w-full outline-none resize-none no-scrollbar" placeholder="What would you like to do?" value={currTitle} onChange={(e) => {
+                        setCurrTitle(e.target.value);
+                        debouncedEditTaskApiCall(_id, { title: e.target.value });
+                    }}></TextareaAutosize>
+
                     <TextareaAutosize className="text-[14px] placeholder:text-[#7C7C7C] mt-2 mb-4 bg-transparent w-full outline-none resize-none" placeholder="Description" value={currDescription} onChange={(e) => setCurrDescription(e.target.value)}></TextareaAutosize>
 
                     {children.map((subtaskId: string) => (
@@ -246,8 +257,12 @@ const DropdownTaskOptions: React.FC<DropdownTaskOptionsProps> = ({ toggleRef, is
     // TODO: Write logic
     const handleDelete = () => {
         // Delete the task and then the redirect to the list of tasks in the project as the current task has been delete and thus the page is not accessible anymore.
-        deleteTask(task._id);
-        return;
+        try {
+            deleteTask(task._id);
+            setIsVisible(false);
+        } catch (error) {
+            throw new Error(error);
+        }
     };
 
 

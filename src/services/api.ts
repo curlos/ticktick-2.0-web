@@ -38,6 +38,14 @@ export const api = createApi({
             },
             invalidatesTags: ['Task'], // Invalidate the cache when a task is added
         }),
+        editTask: builder.mutation({
+            query: ({ taskId, payload }) => ({
+                url: `/tasks/edit/${taskId}`,
+                method: 'PUT',
+                body: payload
+            }),
+            invalidatesTags: (result, error, taskId) => ['Task'],
+        }),
         bulkEditTasks: builder.mutation({
             query: (newTaskList) => ({
                 url: '/tasks/bulk-edit',
@@ -78,6 +86,7 @@ export const {
     // Tasks
     useGetTasksQuery,
     useAddTaskMutation,
+    useEditTaskMutation,
     useBulkEditTasksMutation,
     useDeleteTaskMutation,
 
