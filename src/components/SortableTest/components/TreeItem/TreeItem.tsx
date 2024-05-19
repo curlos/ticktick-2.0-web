@@ -1,11 +1,13 @@
-import React, { forwardRef, HTMLAttributes, useState } from "react";
+import React, { forwardRef, HTMLAttributes, useEffect, useState } from "react";
 import classNames from "classnames";
 
 import { Action } from "./Action";
 import { Handle } from "./Handle";
 import styles from "./TreeItem.module.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Icon from "../../../Icon";
+import { useGetProjectsQuery } from "../../../../services/api";
+import { SMART_LISTS } from "../../../../utils/smartLists.utils";
 
 export interface Props extends HTMLAttributes<HTMLLIElement> {
   childCount?: number;
@@ -49,12 +51,29 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
   ) => {
 
     const navigate = useNavigate();
-    const [completed, setCompleted] = useState(false);
+    const params = useParams();
+    const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
+    const { projectsById } = fetchedProjects || {};
 
-    const { children } = item;
+    const [completed, setCompleted] = useState(false);
+    const [project, setProject] = useState(null);
+
+    const { children, _id, title, projectId, dueDate } = item;
     const categoryIconClass = ' text-color-gray-100 !text-[16px] hover:text-white' + (children?.length >= 1 ? '' : ' invisible');
 
-    // console.log(collapsed);
+    console.log(projectsById);
+    console.log(projectId);
+    console.log(projectsById[projectId]);
+
+    useEffect(() => {
+      if (projectsById && projectId) {
+        setProject(projectsById[projectId]);
+      }
+    }, [projectId, projectsById]);
+
+    console.log(project);
+
+    const inSmartListView = params.projectId && SMART_LISTS[params.projectId];
 
     return (
       <li
@@ -111,10 +130,25 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
             )}
           </div>
 
-          <span className="ml-1 text-white">{item.title}</span>
+          <span className="ml-1 text-white">{title}</span>
 
           <div className="flex-grow flex justify-end mt-[2px]">
-            <Icon name="chevron_right" onClick={() => navigate(`/projects/${item.projectId}/tasks/${item._id}`)} customClass={"text-color-gray-100 !text-[20px] hover:text-white cursor-pointer"} />
+            <div className="flex items-center">
+              {/* Only show the project name if the user is not currently already in the project itself. */}
+              {project && params.projectId !== project._id && (
+                <div className="text-color-gray-100 mr-1">
+                  {project.name}
+                </div>
+              )}
+              {dueDate && <div className="text-blue-500">
+                {new Date(dueDate).toLocaleDateString('en-US', {
+                  year: 'numeric', // Full year
+                  month: 'long',   // Full month name
+                  day: 'numeric'   // Day of the month
+                })}
+              </div>}
+              <Icon name="chevron_right" onClick={() => navigate(`/projects/${inSmartListView ? params.projectId : projectId}/tasks/${_id}`)} customClass={"text-color-gray-100 !text-[20px] hover:text-white cursor-pointer"} />
+            </div>
           </div>
 
           {/* {!clone && onRemove && <Remove onClick={onRemove} />} */}

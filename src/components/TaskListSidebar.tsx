@@ -42,12 +42,12 @@ const TaskListSidebar = () => {
     const [isModalAddListOpen, setIsModalAddListOpen] = useState(false);
     const dispatch = useDispatch();
     const { data: fetchedProjects, isLoading, error } = useGetProjectsQuery();
-    const projects = useSelector((state) => state.projects.projects);
+    const { projects } = fetchedProjects || {};
 
     // Update Redux state with fetched tasks
     useEffect(() => {
-        if (fetchedProjects) {
-            const projectsWithId: Array<IProject> = fetchedProjects.map((project: IProject) => ({ ...project, id: project._id }));
+        if (projects) {
+            const projectsWithId: Array<IProject> = projects.map((project: IProject) => ({ ...project, id: project._id }));
             dispatch(setProjectsToState(projectsWithId));
         }
     }, [fetchedProjects, dispatch]); // Dependencies for useEffect
@@ -91,7 +91,7 @@ const TaskListSidebar = () => {
                     {/* TODO: Might have to bring this back later. */}
                     {/* <DraggableProjects projects={projects} /> */}
 
-                    {projects.map((project) => (
+                    {projects && projects.map((project) => (
                         <ProjectItem key={project._id} project={project} />
                     ))}
 

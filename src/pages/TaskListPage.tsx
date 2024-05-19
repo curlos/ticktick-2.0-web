@@ -15,6 +15,7 @@ const TaskListPage = () => {
     const { projectId } = useParams();
     const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
     const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
+    const { projects } = fetchedProjects || {};
     const { tasks, tasksById } = fetchedTasks || {};
     const [showAddTaskForm, setShowAddTaskForm] = useState(false);
     const [tasksWithNoParent, setTasksWithNoParent] = useState([]);
@@ -24,13 +25,13 @@ const TaskListPage = () => {
     const isSmartListView = SMART_LISTS[projectId];
 
     useEffect(() => {
-        if (fetchedProjects && projectId) {
+        if (projects && projectId) {
             const isSmartList = checkIfSmartList(projectId);
 
             if (isSmartList) {
                 setFoundProject(SMART_LISTS[projectId]);
             } else {
-                setFoundProject(fetchedProjects.find((project) => project._id === projectId));
+                setFoundProject(projects.find((project) => project._id === projectId));
             }
         }
 
@@ -56,7 +57,7 @@ const TaskListPage = () => {
     return (
         <div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700">
             <div className="p-4 h-full border-l border-r border-color-gray-200">
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center mb-4">
                     <div className="flex gap-1 items-center">
                         <Icon name="menu_open" customClass={"text-white !text-[24px]"} />
                         <h3 className="text-[20px] font-[600]">{foundProject?.name}</h3>

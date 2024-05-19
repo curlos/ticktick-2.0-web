@@ -10,6 +10,7 @@ import DropdownProjects from "./Dropdown/DropdownProjects";
 import { useAddTaskMutation, useGetProjectsQuery } from "../services/api";
 import { SMART_LISTS } from "../utils/smartLists.utils";
 import { useParams } from "react-router";
+import classNames from "classnames";
 
 interface AddTaskFormProps {
     setShowAddTaskForm: React.Dispatch<React.SetStateAction<boolean>>;
@@ -22,12 +23,13 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId 
     const { projectId } = params;
 
     const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
+    const { projects } = fetchedProjects || {};
     const [addTask, { isLoading, error }] = useAddTaskMutation();
 
     // useState
     const [title, setTitle] = useState('');
     const [focused, setFocused] = useState(false);
-    const [dueDate, setDueDate] = useState(null);
+    const [currDueDate, setCurrDueDate] = useState(null);
     const [isDropdownCalendarVisible, setIsDropdownCalendarVisible] = useState(false);
     const [isDropdownPrioritiesVisible, setIsDropdownPrioritiesVisible] = useState(false);
     const [isDropdownListsVisible, setIsDropdownListsVisible] = useState(false);
@@ -51,9 +53,9 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId 
 
         // If in a project that is not a smart list, then the default selected project in the add task form should be the project we're currently in.
         if (!inSmartListView) {
-            setSelectedProject(fetchedProjects.find((project) => project._id === projectId));
+            setSelectedProject(projects.find((project) => project._id === projectId));
         } else {
-            setSelectedProject(fetchedProjects[0]);
+            setSelectedProject(projects[0]);
         }
 
     }, [fetchedProjects, projectId]);
@@ -67,14 +69,18 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId 
 
         const payload = {
             title,
+            description,
             priority: priority && priority.backendValue,
-            projectId: selectedProject._id
+            projectId: selectedProject._id,
+            dueDate: currDueDate
         };
 
         try {
             await addTask({ payload, parentId });
 
             setTitle('');
+            setDescription('');
+            setCurrDueDate(null);
             // setPriority({
             //     name: 'No Priority',
             //     backendValue: 'none',
@@ -101,11 +107,22 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId 
                         <div
                             ref={dropdownCalendarToggleRef}
                             className="text-[14px] flex items-center gap-1 text-color-gray-100 p-1 border border-color-gray-100 rounded-md cursor-pointer" onClick={() => setIsDropdownCalendarVisible(!isDropdownCalendarVisible)}>
-                            <Icon name="calendar_month" customClass={"!text-[16px] hover:text-white"} />
-                            Due Date
+                            <Icon name="calendar_month" customClass={classNames(
+                                "!text-[16px] hover:text-white",
+                                currDueDate ? "text-blue-500" : ""
+                            )} />
+                            {currDueDate ? (
+                                <span className="text-blue-500">
+                                    {currDueDate.toLocaleDateString('en-US', {
+                                        year: 'numeric', // Full year
+                                        month: 'long',   // Full month name
+                                        day: 'numeric'   // Day of the month
+                                    })}
+                                </span>
+                            ) : "Due Date"}
                         </div>
 
-                        <DropdownCalendar toggleRef={dropdownCalendarToggleRef} isVisible={isDropdownCalendarVisible} setIsVisible={setIsDropdownCalendarVisible} dueDate={dueDate} setDueDate={setDueDate} />
+                        <DropdownCalendar toggleRef={dropdownCalendarToggleRef} isVisible={isDropdownCalendarVisible} setIsVisible={setIsDropdownCalendarVisible} currDueDate={currDueDate} setCurrDueDate={setCurrDueDate} />
 
                         <div
                             ref={dropdownPrioritiesRef}
@@ -143,7 +160,7 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId 
                             <Icon name="expand_more" customClass={"!text-[16px] hover:text-white"} />
                         </div>
 
-                        <DropdownProjects toggleRef={dropdownListsRef} isVisible={isDropdownListsVisible} setIsVisible={setIsDropdownListsVisible} selectedProject={selectedProject} setSelectedProject={setSelectedProject} projects={fetchedProjects} />
+                        <DropdownProjects toggleRef={dropdownListsRef} isVisible={isDropdownListsVisible} setIsVisible={setIsDropdownListsVisible} selectedProject={selectedProject} setSelectedProject={setSelectedProject} projects={projects} />
                     </div>}
 
                     <div className="space-x-2">

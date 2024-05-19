@@ -69,6 +69,10 @@ export const api = createApi({
                 return queryString ? `/projects?${queryString}` : '/projects'; // Use query string if provided
             },
             providesTags: ['Project'], // This endpoint provides the 'Task' tag
+            transformResponse: (response) => {
+                const projectsById = arrayToObjectByKey(response, '_id');
+                return { projects: response, projectsById }; // Return as a combined object
+            }
         }),
         addProject: builder.mutation({
             query: (newProject) => ({

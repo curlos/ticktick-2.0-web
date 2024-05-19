@@ -15,6 +15,8 @@ import ModalAddTaskForm from "./Modal/ModalAddTaskForm";
 import { useDebouncedCallback } from "../hooks/useDebounceCallback";
 import { getTasksWithFilledInChildren } from "../utils/helpers.utils";
 import { SortableTree } from "./SortableTest/SortableTree";
+import useDebouncedEditTask from "../hooks/useDebouncedEditTask";
+import classNames from "classnames";
 
 const EmptyTask = () => (
     <div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700 flex justify-center items-center text-[18px] text-color-gray-100">
@@ -27,12 +29,8 @@ const EmptyTask = () => (
 
 const TaskDetails = () => {
     const { data: fetchedTasks, isLoading: isTasksLoading, error } = useGetTasksQuery();
-    const [editTask] = useEditTaskMutation();
     const { tasks, tasksById, parentsOfTasks } = fetchedTasks || {};
-    const debouncedEditTaskApiCall = useDebouncedCallback((taskId, taskPropAndValue) => {
-        console.log(taskPropAndValue);
-        editTask({ taskId, payload: taskPropAndValue });
-    }, 2000, []);
+    const { debouncedEditTaskApiCall } = useDebouncedEditTask();
 
     const [currTitle, setCurrTitle] = useState('');
     const [currDescription, setCurrDescription] = useState('');
@@ -40,7 +38,7 @@ const TaskDetails = () => {
     const [task, setTask] = useState<TaskObj>();
     const [parentTask, setParentTask] = useState<TaskObj | null>();
     const [childTasks, setChildTasks] = useState([]);
-    const [dueDate, setDueDate] = useState(null);
+    const [currDueDate, setCurrDueDate] = useState(null);
     const [isDropdownCalendarVisible, setIsDropdownCalendarVisible] = useState(false);
     const [isDropdownTaskOptionsVisible, setIsDropdownTaskOptionsVisible] = useState(false);
     const [isModalTaskActivitiesOpen, setIsModalTaskActivitiesOpen] = useState(false);
@@ -86,6 +84,7 @@ const TaskDetails = () => {
 
     let { taskId } = useParams();
     let navigate = useNavigate();
+    const { projectId } = useParams();
 
     useEffect(() => {
         if (isTasksLoading) {
@@ -99,6 +98,15 @@ const TaskDetails = () => {
 
         if (currTask) {
             setCurrTitle(currTask.title);
+            setCurrDescription(currTask.description);
+
+            if (currTask.dueDate) {
+                setCurrDueDate(new Date(currTask.dueDate));
+            } else {
+                setCurrDueDate(null);
+            }
+
+            console.log(currTask.dueDate);
 
             const parentTaskId = parentsOfTasks[currTask._id];
             const newParentTask = parentTaskId && tasksById[parentTaskId];
@@ -109,9 +117,10 @@ const TaskDetails = () => {
                 setParentTask(null);
             }
 
-            const newChildTasks = getTasksWithFilledInChildren(currTask.children, tasksById);
+            // TODO: There is a problem caused by this. Sortable Tree not updating with latest tasks.
+            const newChildTasks = getTasksWithFilledInChildren(currTask.children, tasksById, projectId);
             setChildTasks(newChildTasks);
-            debugger;
+            // debugger;
         }
     }, [taskId, tasks, tasksById]);
 
@@ -139,10 +148,21 @@ const TaskDetails = () => {
                         ref={dropdownCalendarToggleRef}
                         className="flex items-center gap-1 border-l border-color-gray-200 text-color-gray-100 px-2 cursor-pointer" onClick={() => setIsDropdownCalendarVisible(!isDropdownCalendarVisible)}
                     >
-                        <Icon name="calendar_month" customClass={"!text-[20px] hover:text-white cursor-pointer"} />
-                        Due Date
+                        <Icon name="calendar_month" customClass={classNames(
+                            "!text-[20px] hover:text-white cursor-pointer",
+                            currDueDate ? "text-blue-500" : ""
+                        )} />
+                        {currDueDate ? (
+                            <span className="text-blue-500">
+                                {currDueDate.toLocaleDateString('en-US', {
+                                    year: 'numeric', // Full year
+                                    month: 'long',   // Full month name
+                                    day: 'numeric'   // Day of the month
+                                })}
+                            </span>
+                        ) : "Due Date"}
                     </div>
-                    <DropdownCalendar toggleRef={dropdownCalendarToggleRef} isVisible={isDropdownCalendarVisible} setIsVisible={setIsDropdownCalendarVisible} dueDate={dueDate} setDueDate={setDueDate} customClasses=" ml-[-100px] mt-[15px]" />
+                    <DropdownCalendar toggleRef={dropdownCalendarToggleRef} isVisible={isDropdownCalendarVisible} setIsVisible={setIsDropdownCalendarVisible} task={task} currDueDate={currDueDate} setCurrDueDate={setCurrDueDate} customClasses=" ml-[-100px] mt-[15px]" />
                 </div>
 
                 <Icon name="flag" customClass={"text-color-gray-100 text-red-500 !text-[22px] hover:text-white cursor-pointer"} />
@@ -164,13 +184,16 @@ const TaskDetails = () => {
                         debouncedEditTaskApiCall(_id, { title: e.target.value });
                     }}></TextareaAutosize>
 
-                    <TextareaAutosize className="text-[14px] placeholder:text-[#7C7C7C] mt-2 mb-4 bg-transparent w-full outline-none resize-none" placeholder="Description" value={currDescription} onChange={(e) => setCurrDescription(e.target.value)}></TextareaAutosize>
+                    <TextareaAutosize className="text-[14px] placeholder:text-[#7C7C7C] mt-2 mb-4 bg-transparent w-full outline-none resize-none" placeholder="Description" value={currDescription} onChange={(e) => {
+                        setCurrDescription(e.target.value);
+                        debouncedEditTaskApiCall(_id, { description: e.target.value });
+                    }}></TextareaAutosize>
 
                     {/* {children.map((subtaskId: string) => (
                         <Task key={subtaskId} taskId={subtaskId} fromTaskDetails={true} />
                     ))} */}
 
-                    {/* TODO: Replace the "Task" above with Sortable Tree. */}
+                    {/* TODO: There is a problem caused by this. Sortable Tree not updating with latest tasks. */}
                     {childTasks && childTasks.length > 0 && <SortableTree collapsible indicator removable defaultItems={childTasks} tasksToUse={task.children} />}
 
                     {children && children.length > 0 && (

@@ -5,7 +5,9 @@ import DropdownTime from "./DropdownTIme";
 import DropdownReminder from "./DropdownReminder";
 import DropdownRepeat from "./DropdownRepeat";
 import SelectCalendar from "../SelectCalendar";
-import { DropdownProps } from "../../interfaces/interfaces";
+import { DropdownProps, TaskObj } from "../../interfaces/interfaces";
+import useDebouncedEditTask from "../../hooks/useDebouncedEditTask";
+import { useEditTaskMutation } from "../../services/api";
 
 interface BigDateIconOptionProps {
     iconName: string;
@@ -65,12 +67,15 @@ const BigDateIconOptionList: React.FC<CalendarProps> = ({ dueDate, setDueDate })
 };
 
 interface DropdownPrioritiesProps extends DropdownProps {
-    dueDate: Date | null;
-    setDueDate: React.Dispatch<React.SetStateAction<Date | null>>;
+    task: TaskObj;
+    currDueDate: Date | null;
+    setCurrDueDate: React.Dispatch<React.SetStateAction<Date | null>>;
     customClasses?: string;
 }
 
-const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({ toggleRef, isVisible, setIsVisible, dueDate, setDueDate, customClasses }) => {
+const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({ toggleRef, isVisible, setIsVisible, task, currDueDate, setCurrDueDate, customClasses }) => {
+    const [editTask] = useEditTaskMutation();
+
     const [selectedView, setSelectedView] = useState('date');
     const [isDropdownTimeVisible, setIsDropdownTimeVisible] = useState(false);
     const [isDropdownReminderVisible, setIsDropdownReminderVisible] = useState(false);
@@ -111,10 +116,10 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({ toggleRef, isVisi
                             <div className={"rounded-md p-[2px]" + (selectedView === 'duration' ? ' bg-color-gray-600' : '')} onClick={() => setSelectedView('duration')}>Duration</div>
                         </div>
 
-                        <BigDateIconOptionList dueDate={dueDate} setDueDate={setDueDate} />
+                        <BigDateIconOptionList dueDate={currDueDate} setDueDate={setCurrDueDate} />
                     </div>
 
-                    <SelectCalendar dueDate={dueDate} setDueDate={setDueDate} />
+                    <SelectCalendar dueDate={currDueDate} setDueDate={setCurrDueDate} />
 
                     <div className="px-1 mb-4">
                         {/* Time */}
@@ -147,6 +152,10 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({ toggleRef, isVisi
                             setIsVisible(false);
                         }}>Clear</button>
                         <button className="bg-blue-500 rounded py-1 cursor-pointer hover:bg-blue-600" onClick={() => {
+                            if (task) {
+                                editTask({ taskId: task._id, payload: { dueDate: currDueDate } });
+                            }
+
                             setIsVisible(false);
                         }}>Ok</button>
                     </div>

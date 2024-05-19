@@ -16,7 +16,7 @@ const ActionSidebar = () => {
                     <img src="/prestige-9-bo2.png" alt="user-icon" className="w-[35px] h-[35px]" />
                 </div>
                 <div className="flex flex-col items-center gap-3">
-                    <Icon name="check_box" customClass={iconCustomClass} onClick={() => navigate('/')} />
+                    <Icon name="check_box" customClass={iconCustomClass} onClick={() => navigate('/projects/all/tasks')} />
                     {/* <Icon name="calendar_month" customClass={iconCustomClass} /> */}
                     {/* <Icon name="grid_view" customClass={iconCustomClass} /> */}
                     <Icon name="timer" customClass={iconCustomClass} onClick={() => navigate('/focus')} />

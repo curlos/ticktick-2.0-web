@@ -85,8 +85,6 @@ export function SortableTree({
   const [deleteTask] = useDeleteTaskMutation();
   // const [collapseAllByDefault, setCollapseAllByDefault] = useState(true)
 
-  const isSmartListView = SMART_LISTS[projectId];
-
   // TODO: Fix this. When I try to collapse a task, it does not collapse. This bug stops happening when I remove this useEffect so it has to do with this.
   useEffect(() => {
     if (isTasksLoading) {
@@ -95,7 +93,7 @@ export function SortableTree({
 
     // const tasksWithNoParent = getTasksWithNoParent(tasks, tasksById, projectId, isSmartListView);
     // setItems(tasksWithNoParent);
-    const newChildTasks = getTasksWithFilledInChildren(tasksToUse, tasksById, true);
+    const newChildTasks = getTasksWithFilledInChildren(tasksToUse, tasksById, projectId, true);
     setItems(newChildTasks);
 
     // For now the issue from above has been fixed with this piece of code. This is very unstable though as I haven't fully ran through all of the logic but we'll see.
