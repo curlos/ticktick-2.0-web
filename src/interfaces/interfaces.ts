@@ -1,5 +1,6 @@
 export interface TaskObj {
     _id: string,
+    projectId: string,
     title: string,
     completed: boolean,
     children: Array<string>,

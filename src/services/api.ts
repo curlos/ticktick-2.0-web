@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { arrayToObjectByKey } from '../utils/helpers.utils';
+import { arrayToObjectByKey, getObjectOfEachTasksParent } from '../utils/helpers.utils';
 
 // Utility function to build query strings
 const buildQueryString = (params) => {
@@ -20,8 +20,11 @@ export const api = createApi({
             },
             providesTags: ['Task'], // This endpoint provides the 'Task' tag
             transformResponse: (response) => {
-                const tasksById = arrayToObjectByKey(response, '_id'); // Convert array to object by ID
-                return { tasks: response, tasksById }; // Return as a combined object
+                const tasksById = arrayToObjectByKey(response, '_id');
+                // Tells us the parent id of a task (if it has any)
+                const parentsOfTasks = getObjectOfEachTasksParent(response);
+
+                return { tasks: response, tasksById, parentsOfTasks }; // Return as a combined object
             }
         }),
         addTask: builder.mutation({

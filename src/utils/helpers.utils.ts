@@ -255,3 +255,15 @@ export const getTasksWithNoParent = (tasks, tasksById, projectId, isSmartListVie
 
     return newTasksWithNoParent;
 };
+
+export const getObjectOfEachTasksParent = (tasks) => {
+    const tasksParent = {};
+
+    for (let task of tasks) {
+        for (let childId of task.children) {
+            tasksParent[childId] = task._id;
+        }
+    }
+
+    return tasksParent;
+};

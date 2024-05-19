@@ -24,7 +24,7 @@ const EmptyTask = () => (
 
 const TaskDetails = () => {
     const { data: fetchedTasks, isLoading: isTasksLoading, error } = useGetTasksQuery();
-    const { tasks, tasksById } = fetchedTasks || {};
+    const { tasksById, parentsOfTasks } = fetchedTasks || {};
     const [currTitle, setCurrTitle] = useState('');
     const [currDescription, setCurrDescription] = useState('');
     const [completed, setCompleted] = useState(false);
@@ -88,8 +88,12 @@ const TaskDetails = () => {
         if (currTask) {
             setCurrTitle(currTask.title);
 
-            if (currTask.parentId && tasksById[currTask.parentId]) {
-                setParentTask(tasksById[currTask.parentId]);
+            const parentTaskId = parentsOfTasks[currTask._id];
+            const newParentTask = parentTaskId && tasksById[parentTaskId];
+            console.log(newParentTask);
+
+            if (newParentTask) {
+                setParentTask(newParentTask);
             } else {
                 setParentTask(null);
             }
@@ -132,7 +136,7 @@ const TaskDetails = () => {
             <div className="flex-1 overflow-auto no-scrollbar">
                 <div className="p-4 flex flex-col justify-between">
                     {parentTask && (
-                        <div className="w-full flex justify-between items-center text-color-gray-100 cursor-pointer" onClick={() => navigate(`/tasks/${parentTask._id}`)}>
+                        <div className="w-full flex justify-between items-center text-color-gray-100 cursor-pointer" onClick={() => navigate(`/projects/${parentTask.projectId}/tasks/${parentTask._id}`)}>
                             <div className="max-w-[368px]">
                                 <div className="truncate text-[12px]">{parentTask.title}</div>
                             </div>

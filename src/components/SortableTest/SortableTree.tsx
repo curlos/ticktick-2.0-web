@@ -100,10 +100,7 @@ export function SortableTree({
     // setItems(tasksWithNoParent);
     // }
 
-    // debugger; 
-    console.log(tasks == defaultItems);
     setItems(tasksWithNoParent);
-    console.log('something changed');
 
   }, [tasks, isTasksLoading, projectId]);
 
@@ -121,8 +118,6 @@ export function SortableTree({
       activeId ? [activeId, ...collapsedItems] : collapsedItems
     );
   }, [activeId, items]);
-
-  console.log(flattenedItems);
 
   const projected =
     activeId && overId
