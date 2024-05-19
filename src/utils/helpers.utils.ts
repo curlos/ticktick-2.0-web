@@ -231,14 +231,13 @@ export const getNumberOfTasks = (tasks, tasksById) => {
 export const getTasksWithNoParent = (tasks, tasksById, projectId, isSmartListView) => {
     const transformedTasks = fillInChildren(tasks, tasksById);
 
-    // TODO: Bring this stuff below back once I figure out the problem with the "children"
     // Create a set of task IDs that are children
     const childTaskIds = new Set<string>();
 
     transformedTasks.forEach(task => {
         task.children?.forEach(child => {
             childTaskIds.add(child._id.toString());
-        }); // Add child IDs to the set
+        });
     });
 
     // Filter out tasks that are in the childTaskIds set
@@ -248,13 +247,36 @@ export const getTasksWithNoParent = (tasks, tasksById, projectId, isSmartListVie
         newTasksWithNoParent = newTasksWithNoParent.filter(SMART_LISTS[projectId].filterTasks());
     } else {
         newTasksWithNoParent = newTasksWithNoParent.filter((task) => task.projectId === projectId);
-        // debugger;
     }
 
-    // console.log('CHECKING');
-    // console.log(transformedTasks.filter((task) => task.projectId === projectId));
-
     return newTasksWithNoParent;
+};
+
+export const getTasksWithFilledInChildren = (tasks, tasksById, filterByNoParent) => {
+    const tasksObjects = tasks.map((task) => {
+        // If it's an id such as one coming from "children" array of strings, then we need to find the corresponding task using that id. If not, it can be assumed that it's already an object and thus we can just get the task as is.
+        return typeof task === 'string' ? tasksById[task] : task;
+    });
+    const transformedTasks = fillInChildren(tasksObjects, tasksById);
+
+    // Create a set of task IDs that are children
+    const childTaskIds = new Set<string>();
+
+    transformedTasks.forEach(task => {
+        task.children?.forEach(child => {
+            childTaskIds.add(child._id.toString());
+        }); // Add child IDs to the set
+    });
+
+    let finalTasks = transformedTasks;
+
+    if (filterByNoParent) {
+        // Filter out tasks that are in the childTaskIds set
+        finalTasks = finalTasks.filter(task => !childTaskIds.has(task._id.toString()));
+    }
+
+
+    return finalTasks;
 };
 
 export const getObjectOfEachTasksParent = (tasks) => {

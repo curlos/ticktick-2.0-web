@@ -68,7 +68,7 @@ const TaskListPage = () => {
                     </div>
                 </div>
 
-                {tasksWithNoParent && tasksWithNoParent.length > 0 && <SortableTree collapsible indicator removable defaultItems={tasksWithNoParent} />}
+                {tasksWithNoParent && tasksWithNoParent.length > 0 && <SortableTree collapsible indicator removable defaultItems={tasksWithNoParent} tasksToUse={tasks} />}
 
                 {/* {tasksWithNoParent?.length > 0 && (
                     <div className="mt-4 space-y-4">

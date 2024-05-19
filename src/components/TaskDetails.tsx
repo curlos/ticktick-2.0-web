@@ -13,6 +13,8 @@ import ModalTaskActivities from "./Modal/ModalTaskActivities";
 import { useDeleteTaskMutation, useEditTaskMutation, useGetTasksQuery } from "../services/api";
 import ModalAddTaskForm from "./Modal/ModalAddTaskForm";
 import { useDebouncedCallback } from "../hooks/useDebounceCallback";
+import { getTasksWithFilledInChildren } from "../utils/helpers.utils";
+import { SortableTree } from "./SortableTest/SortableTree";
 
 const EmptyTask = () => (
     <div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700 flex justify-center items-center text-[18px] text-color-gray-100">
@@ -26,7 +28,7 @@ const EmptyTask = () => (
 const TaskDetails = () => {
     const { data: fetchedTasks, isLoading: isTasksLoading, error } = useGetTasksQuery();
     const [editTask] = useEditTaskMutation();
-    const { tasksById, parentsOfTasks } = fetchedTasks || {};
+    const { tasks, tasksById, parentsOfTasks } = fetchedTasks || {};
     const debouncedEditTaskApiCall = useDebouncedCallback((taskId, taskPropAndValue) => {
         console.log(taskPropAndValue);
         editTask({ taskId, payload: taskPropAndValue });
@@ -37,6 +39,7 @@ const TaskDetails = () => {
     const [completed, setCompleted] = useState(false);
     const [task, setTask] = useState<TaskObj>();
     const [parentTask, setParentTask] = useState<TaskObj | null>();
+    const [childTasks, setChildTasks] = useState([]);
     const [dueDate, setDueDate] = useState(null);
     const [isDropdownCalendarVisible, setIsDropdownCalendarVisible] = useState(false);
     const [isDropdownTaskOptionsVisible, setIsDropdownTaskOptionsVisible] = useState(false);
@@ -92,20 +95,25 @@ const TaskDetails = () => {
         const currTask = taskId && tasksById && tasksById[taskId];
         setTask(currTask);
 
+        console.log('dasd');
+
         if (currTask) {
             setCurrTitle(currTask.title);
 
             const parentTaskId = parentsOfTasks[currTask._id];
             const newParentTask = parentTaskId && tasksById[parentTaskId];
-            console.log(newParentTask);
 
             if (newParentTask) {
                 setParentTask(newParentTask);
             } else {
                 setParentTask(null);
             }
+
+            const newChildTasks = getTasksWithFilledInChildren(currTask.children, tasksById);
+            setChildTasks(newChildTasks);
+            debugger;
         }
-    }, [taskId, tasksById]);
+    }, [taskId, tasks, tasksById]);
 
     if (!task || isTasksLoading) {
         return <EmptyTask />;
@@ -158,9 +166,12 @@ const TaskDetails = () => {
 
                     <TextareaAutosize className="text-[14px] placeholder:text-[#7C7C7C] mt-2 mb-4 bg-transparent w-full outline-none resize-none" placeholder="Description" value={currDescription} onChange={(e) => setCurrDescription(e.target.value)}></TextareaAutosize>
 
-                    {children.map((subtaskId: string) => (
+                    {/* {children.map((subtaskId: string) => (
                         <Task key={subtaskId} taskId={subtaskId} fromTaskDetails={true} />
-                    ))}
+                    ))} */}
+
+                    {/* TODO: Replace the "Task" above with Sortable Tree. */}
+                    {childTasks && childTasks.length > 0 && <SortableTree collapsible indicator removable defaultItems={childTasks} tasksToUse={task.children} />}
 
                     {children && children.length > 0 && (
                         <div>
