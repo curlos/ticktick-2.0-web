@@ -89,6 +89,16 @@ export const SMART_LISTS = {
     //     route: "/projects/inbox/tasks",
     //     numberOfTasks: 26
     // }
+    "completed": {
+        name: "Completed",
+        urlName: "completed",
+        iconName: "check_box",
+        route: "/projects/completed/tasks",
+        getFilteredTasks: (allTasks: Array<TaskObj>) => allTasks.filter((task) => task.completedTime),
+        getDefaultDueDate: () => {
+            return null;
+        }
+    }
 };
 
 const isTodayUTC = (date) => {

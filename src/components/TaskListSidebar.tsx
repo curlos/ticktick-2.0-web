@@ -55,11 +55,13 @@ const TaskListSidebar = () => {
     // const projectsWithNoGroup = projects && projects.filter((project) => !project.groupId);
     // const projectsWithGroup = projects && projects.filter((project) => project.groupId);
 
+    const topListNames = ["all", "today", "tomorrow", "week"];
+    const statusListNames = ["completed"];
 
     return (
         <div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray p-4">
             <div>
-                {Object.values(SMART_LISTS).map((project) => (
+                {topListNames.map((name) => SMART_LISTS[name]).map((project) => (
                     <ProjectItem key={project.name} project={project} isSmartList={true} />
                 ))}
             </div>
@@ -109,11 +111,13 @@ const TaskListSidebar = () => {
                 </div>
             </div>
 
-            {/* <hr className="my-4 border-color-gray-100 opacity-50" />
+            <hr className="my-4 border-color-gray-100 opacity-50" />
 
-            {statusLists.map((listPropsAndValues, index) => (
-                <ListItem key={index} {...listPropsAndValues} />
-            ))} */}
+            <div>
+                {statusListNames.map((name) => SMART_LISTS[name]).map((project) => (
+                    <ProjectItem key={project.name} project={project} isSmartList={true} />
+                ))}
+            </div>
 
             <ModalAddList isModalOpen={isModalAddListOpen} setIsModalOpen={setIsModalAddListOpen} />
         </div>
