@@ -35,7 +35,7 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId 
     const [isDropdownPrioritiesVisible, setIsDropdownPrioritiesVisible] = useState(false);
     const [isDropdownListsVisible, setIsDropdownListsVisible] = useState(false);
     const [tempSelectedPriority, setTempSelectedPriority] = useState(0);
-    const [selectedProject, setSelectedProject] = useState('Hello Mobile');
+    const [selectedProject, setSelectedProject] = useState(null);
     const [description, setDescription] = useState('');
 
     // useRef

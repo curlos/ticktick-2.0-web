@@ -274,10 +274,18 @@ const TaskDetails = () => {
                 )}
 
                 <div className="px-4 py-3 flex justify-between items-center text-color-gray-100">
-                    <div className="flex items-center gap-1">
-                        <Icon name="drive_file_move" customClass={"text-color-gray-100 !text-[18px] hover:text-white cursor-pointer"} />
-                        Hello Mobile
+                    <div className="relative">
+                        <div className="flex items-center gap-1 cursor-pointer">
+                            <Icon name="drive_file_move" customClass={"text-color-gray-100 !text-[18px] hover:text-white cursor-pointer"} />
+                            {/* TODO: Change this to function more like the button from AddTaskForm where it gets the projects from the database. */}
+                            Hello Mobile
+                        </div>
+
+                        {/* TODO: Add DropdownProjects with all the required props. */}
+                        {/* <DropdownProjects toggleRef={dropdownListsRef} isVisible={isDropdownListsVisible} setIsVisible={setIsDropdownListsVisible} selectedProject={selectedProject} setSelectedProject={setSelectedProject} projects={projects} /> */}
                     </div>
+
+
 
                     <div className="flex items-center gap-2 relative">
                         {/* <Icon name="edit_note" customClass={"text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer"} fill={0} /> */}
