@@ -22,9 +22,9 @@ export const api = createApi({
             transformResponse: (response) => {
                 const tasksById = arrayToObjectByKey(response, '_id');
                 // Tells us the parent id of a task (if it has any)
-                const parentsOfTasks = getObjectOfEachTasksParent(response);
+                const parentOfTasks = getObjectOfEachTasksParent(response);
 
-                return { tasks: response, tasksById, parentsOfTasks }; // Return as a combined object
+                return { tasks: response, tasksById, parentOfTasks }; // Return as a combined object
             }
         }),
         addTask: builder.mutation({
@@ -54,12 +54,21 @@ export const api = createApi({
             }),
             invalidatesTags: ['Task'], // Invalidate the cache when a task is added
         }),
-        deleteTask: builder.mutation({
-            query: (taskId) => ({
-                url: `/tasks/delete/${taskId}`,
+        // Mark the task's "isDeleted" property as true. This doesn't actually remove the task from the DB.
+        markTaskAsDeleted: builder.mutation({
+            query: ({ taskId, parentId }) => ({
+                url: `/tasks/mark-as-deleted/${taskId}${parentId ? `?parentId=${parentId}` : ''}`,
                 method: 'DELETE',
             }),
-            invalidatesTags: (result, error, taskId) => ['Task'],
+            invalidatesTags: ['Task'], // Invalidate the cache when a task is added
+        }),
+        // PERMANENTLY DELETE TASK FOREVER
+        permanentlyDeleteTask: builder.mutation({
+            query: ({ taskId, parentId }) => ({
+                url: `/tasks/delete/${taskId}${parentId ? `?parentId=${parentId}` : ''}`,
+                method: 'DELETE',
+            }),
+            invalidatesTags: ['Task'], // Invalidate the cache when a task is added
         }),
 
         // Projects/Folders
@@ -92,7 +101,9 @@ export const {
     useAddTaskMutation,
     useEditTaskMutation,
     useBulkEditTasksMutation,
-    useDeleteTaskMutation,
+    // TODO: Use this!
+    useMarkTaskAsDeletedMutation,
+    usePermanentlyDeleteTaskMutation,
 
     // Projects/Folders
     useGetProjectsQuery,

@@ -10,7 +10,7 @@ import AddTaskForm from "./AddTaskForm";
 import Dropdown from "./Dropdown/Dropdown";
 import CustomInput from "./CustomInput";
 import ModalTaskActivities from "./Modal/ModalTaskActivities";
-import { useDeleteTaskMutation, useEditTaskMutation, useGetTasksQuery } from "../services/api";
+import { useMarkTaskAsDeletedMutation, useEditTaskMutation, useGetTasksQuery } from "../services/api";
 import ModalAddTaskForm from "./Modal/ModalAddTaskForm";
 import { getTasksWithFilledInChildren } from "../utils/helpers.utils";
 import { SortableTree } from "./SortableTest/SortableTree";
@@ -32,7 +32,7 @@ const EmptyTask = () => (
 
 const TaskDetails = () => {
     const { data: fetchedTasks, isLoading: isTasksLoading, error } = useGetTasksQuery();
-    const { tasks, tasksById, parentsOfTasks } = fetchedTasks || {};
+    const { tasks, tasksById, parentOfTasks } = fetchedTasks || {};
     const { debouncedEditTaskApiCall } = useDebouncedEditTask();
 
     const [currTitle, setCurrTitle] = useState('');
@@ -114,7 +114,7 @@ const TaskDetails = () => {
                 setCurrDueDate(null);
             }
 
-            const parentTaskId = parentsOfTasks[currTask._id];
+            const parentTaskId = parentOfTasks[currTask._id];
             const newParentTask = parentTaskId && tasksById[parentTaskId];
 
             if (newParentTask) {
@@ -163,9 +163,7 @@ const TaskDetails = () => {
                         className="flex items-center gap-1 border-l border-color-gray-200 text-color-gray-100 px-2 relative"
                     >
                         <div ref={dropdownCalendarToggleRef} onClick={() => setIsDropdownCalendarVisible(!isDropdownCalendarVisible)}>
-                            {currDueDate ? (
-                                <TaskDueDateText dueDate={currDueDate} showCalendarIcon />
-                            ) : "Due Date"}
+                            <TaskDueDateText dueDate={currDueDate} showCalendarIcon={true} />
                         </div>
 
                         <DropdownCalendar toggleRef={dropdownCalendarToggleRef} isVisible={isDropdownCalendarVisible} setIsVisible={setIsDropdownCalendarVisible} task={task} currDueDate={currDueDate} setCurrDueDate={setCurrDueDate} customClasses=" !ml-[0px] mt-[15px]" />
@@ -281,7 +279,7 @@ const TaskDetails = () => {
                         Hello Mobile
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 relative">
                         {/* <Icon name="edit_note" customClass={"text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer"} fill={0} /> */}
                         <Icon name="comment" customClass={"text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer"} fill={0} onClick={() => setShowAddCommentInput(!showAddCommentInput)} />
                         <Icon toggleRef={dropdownTaskOptionsRef} name="more_horiz" customClass={"text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer"} fill={0} onClick={() => setIsDropdownTaskOptionsVisible(!isDropdownTaskOptionsVisible)} />
@@ -305,7 +303,11 @@ interface DropdownTaskOptionsProps extends DropdownProps {
 }
 
 const DropdownTaskOptions: React.FC<DropdownTaskOptionsProps> = ({ toggleRef, isVisible, setIsVisible, setIsModalTaskActivitiesOpen, setIsModalAddTaskFormOpen, task }) => {
-    const [deleteTask] = useDeleteTaskMutation();
+    const navigate = useNavigate();
+    const { projectId } = useParams();
+    const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
+    const { parentOfTasks } = fetchedTasks || {};
+    const [markTaskAsDeleted] = useMarkTaskAsDeletedMutation();
     const [isDropdownStartFocusVisible, setIsDropdownStartFocusVisible] = useState(false);
     const [isDropdownEstimationVisible, setIsDropdownEstimationVisible] = useState(false);
 
@@ -316,8 +318,10 @@ const DropdownTaskOptions: React.FC<DropdownTaskOptionsProps> = ({ toggleRef, is
     const handleDelete = () => {
         // Delete the task and then the redirect to the list of tasks in the project as the current task has been delete and thus the page is not accessible anymore.
         try {
-            deleteTask(task._id);
+            const parentId = parentOfTasks && parentOfTasks[task._id];
+            markTaskAsDeleted({ taskId: task._id, parentId });
             setIsVisible(false);
+            navigate(`/projects/${projectId}/tasks`);
         } catch (error) {
             throw new Error(error);
         }
@@ -325,7 +329,7 @@ const DropdownTaskOptions: React.FC<DropdownTaskOptionsProps> = ({ toggleRef, is
 
 
     return (
-        <Dropdown toggleRef={toggleRef} isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' mt-[5px] shadow-2xl border border-color-gray-200 rounded mt-[-190px] ml-[-180px]'}>
+        <Dropdown toggleRef={toggleRef} isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' shadow-2xl border border-color-gray-200 rounded mt-[-175px] ml-[-180px]'}>
             <div className="w-[232px] p-1 rounded text-[13px]" onClick={(e) => e.stopPropagation()}>
                 <div className="p-1 flex items-center gap-[2px] hover:bg-color-gray-300 cursor-pointer" onClick={() => setIsModalAddTaskFormOpen(true)}>
                     <Icon name="add_task" customClass={"text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer"} fill={0} />

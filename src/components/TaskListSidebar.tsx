@@ -56,7 +56,7 @@ const TaskListSidebar = () => {
     // const projectsWithGroup = projects && projects.filter((project) => project.groupId);
 
     const topListNames = ["all", "today", "tomorrow", "week"];
-    const statusListNames = ["completed"];
+    const statusListNames = ["completed", "trash"];
 
     return (
         <div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray p-4">

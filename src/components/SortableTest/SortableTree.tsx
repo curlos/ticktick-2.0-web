@@ -36,8 +36,8 @@ import type { FlattenedItem, SensorContext, TreeItems } from "./types";
 // TODO: Bring this back to use when I want to work on Accessbility
 import { sortableTreeKeyboardCoordinates } from "./keyboardCoordinates";
 import { SortableTreeItem } from "./components";
-import { useBulkEditTasksMutation, useDeleteTaskMutation, useGetTasksQuery } from "../../services/api";
-import { getTasksWithFilledInChildren, getTasksWithNoParent, prepareForBulkEdit } from "../../utils/helpers.utils";
+import { useBulkEditTasksMutation, useMarkTaskAsDeletedMutation, useGetTasksQuery } from "../../services/api";
+import { getTasksWithFilledInChildren, prepareForBulkEdit } from "../../utils/helpers.utils";
 import { SMART_LISTS } from "../../utils/smartLists.utils";
 import { useParams } from "react-router-dom";
 import { TaskObj } from "../../interfaces/interfaces";
@@ -82,7 +82,7 @@ export function SortableTree({
   const { projectId } = useParams();
   const { data: { tasks, tasksById }, isLoading: isTasksLoading, error } = useGetTasksQuery();
   const [bulkEditTasks] = useBulkEditTasksMutation();
-  const [deleteTask] = useDeleteTaskMutation();
+  const [markTaskAsDeleted] = useMarkTaskAsDeletedMutation();
   // const [collapseAllByDefault, setCollapseAllByDefault] = useState(true)
 
   // TODO: Fix this. When I try to collapse a task, it does not collapse. This bug stops happening when I remove this useEffect so it has to do with this.
@@ -199,7 +199,6 @@ export function SortableTree({
                 ? () => handleCollapse(item.id)
                 : undefined
             }
-            onRemove={removable ? () => handleRemove(item.id) : undefined}
             item={item}
           // onClick={() => console.log('hello world')}
           />
@@ -287,11 +286,6 @@ export function SortableTree({
     setCurrentPosition(null);
 
     document.body.style.setProperty("cursor", "");
-  }
-
-  function handleRemove(id: string) {
-    deleteTask(id);
-    setItems((items) => removeItem(items, id));
   }
 
   // TODO: This thing was causing problems before since it was being called twice and negating the initial collapse value change. Something to look into in the future but don't waste time looking at it now since I already spent a good 1h30m on it on May 18, 2024.

@@ -6,7 +6,7 @@ export const SMART_LISTS = {
         urlName: "all",
         iconName: "stacks",
         route: "/projects/all/tasks",
-        getFilteredTasks: (allTasks: Array<TaskObj>) => allTasks,
+        getFilteredTasks: (allTasks: Array<TaskObj>) => allTasks.filter((task) => !task.isDeleted),
         getDefaultDueDate: () => {
             return null;
         }
@@ -18,6 +18,8 @@ export const SMART_LISTS = {
         route: "/projects/today/tasks",
         getFilteredTasks: (tasks: Array<TaskObj>) => {
             return tasks.filter((task) => {
+                if (task.isDeleted) return false;
+
                 const { dueDate } = task;
 
                 if (isTodayUTC(dueDate)) {
@@ -38,6 +40,8 @@ export const SMART_LISTS = {
         route: "/projects/tomorrow/tasks",
         getFilteredTasks: (tasks: Array<TaskObj>) => {
             return tasks.filter((task) => {
+                if (task.isDeleted) return false;
+
                 const { dueDate } = task;
 
                 if (isTomorrowUTC(dueDate)) {
@@ -62,6 +66,8 @@ export const SMART_LISTS = {
         route: "/projects/week/tasks",
         getFilteredTasks: (tasks: Array<TaskObj>) => {
             return tasks.filter((task) => {
+                if (task.isDeleted) return false;
+
                 const { dueDate } = task;
 
                 if (isWithinNext7DaysUTC(dueDate)) {
@@ -91,6 +97,16 @@ export const SMART_LISTS = {
         iconName: "check_box",
         route: "/projects/completed/tasks",
         getFilteredTasks: (allTasks: Array<TaskObj>) => allTasks.filter((task) => task.completedTime),
+        getDefaultDueDate: () => {
+            return null;
+        }
+    },
+    "trash": {
+        name: "Trash",
+        urlName: "trash",
+        iconName: "delete",
+        route: "/projects/trash/tasks",
+        getFilteredTasks: (allTasks: Array<TaskObj>) => allTasks.filter((task) => task.isDeleted),
         getDefaultDueDate: () => {
             return null;
         }

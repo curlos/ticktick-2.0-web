@@ -143,18 +143,20 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
             </span>
           </div>
 
-          <span className="ml-1 text-white">{title}</span>
+          <span className="ml-1 text-white max-w-[450px]">{title}</span>
 
           <div className="flex-grow flex justify-end mt-[2px]">
-            <div className="flex items-center">
-              {/* Only show the project name if the user is not currently already in the project itself. */}
-              {project && params.projectId !== project._id && (
-                <div className="text-color-gray-100 mr-1">
-                  {project.name}
-                </div>
-              )}
-              {dueDate && <TaskDueDateText dueDate={dueDate} />}
-              <Icon name="chevron_right" onClick={() => navigate(`/projects/${inSmartListView ? params.projectId : projectId}/tasks/${_id}`)} customClass={"text-color-gray-100 !text-[20px] hover:text-white cursor-pointer"} />
+            <div>
+              <div className="flex items-center">
+                {/* Only show the project name if the user is not currently already in the project itself. */}
+                {project && params.projectId !== project._id && (
+                  <div className="text-color-gray-100 mr-1">
+                    {project.name}
+                  </div>
+                )}
+                {dueDate && <TaskDueDateText dueDate={dueDate} />}
+                <Icon name="chevron_right" onClick={() => navigate(`/projects/${inSmartListView ? params.projectId : projectId}/tasks/${_id}`)} customClass={"text-color-gray-100 !text-[20px] hover:text-white cursor-pointer"} />
+              </div>
             </div>
           </div>
 
