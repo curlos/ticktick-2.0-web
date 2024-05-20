@@ -52,16 +52,16 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId 
 
         const inSmartListView = SMART_LISTS[projectId];
 
-        // If in a project that is not a smart list, then the default selected project in the add task form should be the project we're currently in.
-        if (!inSmartListView) {
-            setSelectedProject(projects.find((project) => project._id === projectId));
+        if (projectId) {
+            // If in a project that is not a smart list, then the default selected project in the add task form should be the project we're currently in.
+            if (!inSmartListView) {
+                setSelectedProject(projects.find((project) => project._id === projectId));
+            } else {
+                setSelectedProject(projects[0]);
+                setCurrDueDate(SMART_LISTS[projectId].getDefaultDueDate());
+            }
         } else {
             setSelectedProject(projects[0]);
-
-            console.log(projectId);
-            setCurrDueDate(SMART_LISTS[projectId].getDefaultDueDate());
-
-
         }
 
     }, [fetchedProjects, projectId]);
@@ -155,7 +155,7 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId 
                     {!isLoadingProjects && (
                         <div className="relative">
                             <div ref={dropdownListsRef} className="flex items-center gap-1 font-bold text-[12px] cursor-pointer" onClick={() => setIsDropdownListsVisible(!isDropdownListsVisible)}>
-                                {selectedProject.name}
+                                {selectedProject?.name}
                                 <Icon name="expand_more" customClass={"!text-[16px] hover:text-white"} />
                             </div>
 

@@ -48,7 +48,6 @@ export const SMART_LISTS = {
             });
         },
         getDefaultDueDate: () => {
-            // TODO: Add this!
             const today = new Date();
             const tomorrow = new Date();
             tomorrow.setUTCDate(today.getUTCDate() + 1); // Increment the day by 1
@@ -73,12 +72,9 @@ export const SMART_LISTS = {
             });
         },
         getDefaultDueDate: () => {
-            // TODO: Add this!
             const today = new Date();
             const week = new Date();
             week.setUTCDate(today.getUTCDate() + 7); // Increment the day by 7
-
-            console.log(week);
 
             return week;
         }

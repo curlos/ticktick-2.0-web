@@ -26,9 +26,9 @@ const TaskListPage = () => {
 
     useEffect(() => {
         if (projects && projectId) {
-            const isSmartList = checkIfSmartList(projectId);
+            const inSmartListView = SMART_LISTS[projectId];
 
-            if (isSmartList) {
+            if (inSmartListView) {
                 setFoundProject(SMART_LISTS[projectId]);
             } else {
                 setFoundProject(projects.find((project) => project._id === projectId));
@@ -43,12 +43,6 @@ const TaskListPage = () => {
         setTasksWithNoParent(newTasksWithNoParent);
 
     }, [fetchedTasks, fetchedProjects, projectId]);
-
-    const checkIfSmartList = (projectId) => {
-        const SMART_LIST_OPTIONS = ['all', 'today', 'tomorrow', 'week', 'inbox'];
-
-        return SMART_LIST_OPTIONS.includes(projectId);
-    };
 
     if (isLoadingOrErrors) {
         return <div>Loading...</div>; // Show loading state
