@@ -20,7 +20,7 @@ const BigDateIconOption: React.FC<BigDateIconOptionProps> = ({ iconName, Dropdow
     const dropdownRef = useRef(null);
 
     return (
-        <div>
+        <div className="relative">
             <Icon toggleRef={dropdownRef} name={iconName} fill={0} customClass="text-color-gray-50 !text-[24px] hover:text-white hover:bg-color-gray-200 p-1 rounded cursor-pointer" onClick={onClick} onMouseOver={() => setIsDropdownVisible(true)} onMouseLeave={() => setIsDropdownVisible(false)} />
             <Dropdown toggleRef={dropdownRef} isVisible={isDropdownVisible} setIsVisible={setIsDropdownVisible} customClasses={' !bg-black'}>
                 <div className="p-2 text-[12px] text-nowrap">
