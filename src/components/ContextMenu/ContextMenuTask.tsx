@@ -4,6 +4,7 @@ import { useGetTasksQuery } from "../../services/api";
 import { useParams } from "react-router";
 import { TaskObj } from "../../interfaces/interfaces";
 import DropdownCalendar from "../Dropdown/DropdownCalendar";
+import DropdownTaskActions from "../Dropdown/DropdownTaskActions";
 
 interface IContextMenuTask {
     xPos: string;
@@ -57,11 +58,13 @@ const ContextMenuTask: React.FC<IContextMenuTask> = ({ xPos, yPos, onClose }) =>
         }
     }, [xPos]);
 
-    console.log(xPos);
+    if (!task) {
+        return null;
+    }
 
     return createPortal(
         <div>
-            <DropdownCalendar toggleRef={dropdownCalendarToggleRef} isVisible={isDropdownCalendarVisible} setIsVisible={setIsDropdownCalendarVisible} task={task} currDueDate={currDueDate} setCurrDueDate={setCurrDueDate} customClasses=" !ml-[0px] mt-[15px]" customStyling={{ position: "absolute", top: `${yPos}px`, left: `${xPos}px` }} />
+            <DropdownTaskActions toggleRef={dropdownCalendarToggleRef} isVisible={isDropdownCalendarVisible} setIsVisible={setIsDropdownCalendarVisible} task={task} currDueDate={currDueDate} setCurrDueDate={setCurrDueDate} customClasses=" !ml-[0px] mt-[15px]" customStyling={{ position: "absolute", top: `${yPos}px`, left: `${xPos}px` }} />
         </div>,
         document.body
     );
