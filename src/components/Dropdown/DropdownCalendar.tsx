@@ -73,7 +73,7 @@ interface DropdownPrioritiesProps extends DropdownProps {
     customClasses?: string;
 }
 
-const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({ toggleRef, isVisible, setIsVisible, task, currDueDate, setCurrDueDate, customClasses }) => {
+const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({ toggleRef, isVisible, setIsVisible, task, currDueDate, setCurrDueDate, customClasses, customStyling }) => {
     const [editTask] = useEditTaskMutation();
 
     const [selectedView, setSelectedView] = useState('date');
@@ -107,7 +107,7 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({ toggleRef, isVisi
 
 
     return (
-        <Dropdown toggleRef={toggleRef} isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' shadow-2xl' + (customClasses ? ` ${customClasses}` : '')}>
+        <Dropdown toggleRef={toggleRef} isVisible={isVisible} setIsVisible={setIsVisible} customClasses={' shadow-2xl' + (customClasses ? ` ${customClasses}` : '')} customStyling={customStyling ? customStyling : null}>
             <div className="w-[260px]">
                 <div className="p-4">
                     <div className="grid grid-cols-2 bg-color-gray-700 rounded-md p-1 text-center">

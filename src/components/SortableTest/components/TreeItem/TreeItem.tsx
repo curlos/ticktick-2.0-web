@@ -10,6 +10,7 @@ import { useEditTaskMutation, useGetProjectsQuery } from "../../../../services/a
 import { SMART_LISTS } from "../../../../utils/smartLists.utils";
 import { PRIORITIES } from "../../../../utils/priorities.utils";
 import TaskDueDateText from "../../../TaskDueDateText";
+import ContextMenuTask from "../../../ContextMenu/ContextMenuTask";
 
 export interface Props extends HTMLAttributes<HTMLLIElement> {
   childCount?: number;
@@ -62,6 +63,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 
     const [currCompletedTime, setCurrCompletedTime] = useState(completedTime);
     const [project, setProject] = useState(null);
+    const [taskContextMenu, setTaskContextMenu] = useState(null);
 
     const categoryIconClass = ' text-color-gray-100 !text-[16px] hover:text-white' + (children?.length >= 1 ? '' : ' invisible');
 
@@ -75,11 +77,40 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
       setCurrCompletedTime(completedTime);
     }, [item]);
 
+    const getAbsolutePosition = (element) => {
+      let left = 0;
+      let top = 0;
+      while (element) {
+        left += (element.offsetLeft - element.scrollLeft + element.clientLeft);
+        top += (element.offsetTop - element.scrollTop + element.clientTop);
+        element = element.offsetParent;
+      }
+      return { left, top };
+    };
+
+
+    const handleContextMenu = (event) => {
+      event.preventDefault(); // Prevent the default context menu
+      const { left, top } = getAbsolutePosition(event.currentTarget);
+
+      setTaskContextMenu({
+        xPos: event.pageX - left, // X coordinate of the mouse pointer
+        yPos: event.pageY - top, // Y coordinate of the mouse pointer
+      });
+    };
+
+    const handleClose = () => {
+      setTaskContextMenu(null);
+    };
+
     const inSmartListView = params.projectId && SMART_LISTS[params.projectId];
     const priorityData = PRIORITIES[priority];
 
+    console.log(taskContextMenu);
+
     return (
       <li
+        onContextMenu={handleContextMenu}
         className={classNames(
           styles.Wrapper,
           ghost && styles.ghost,
@@ -160,11 +191,9 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
             </div>
           </div>
 
-          {/* {!clone && onRemove && <Remove onClick={onRemove} />} */}
-
-          {/* {clone && childCount && childCount > 1 ? (
-            <span className={styles.Count}>{childCount}</span>
-          ) : null} */}
+          {taskContextMenu && (
+            <ContextMenuTask xPos={taskContextMenu.xPos} yPos={taskContextMenu.yPos} onClose={handleClose} />
+          )}
         </div>
       </li>
     );
