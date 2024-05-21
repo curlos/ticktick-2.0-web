@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useGetTasksQuery } from "../../services/api";
 import { useParams } from "react-router";
 import { TaskObj } from "../../interfaces/interfaces";
@@ -58,10 +59,11 @@ const ContextMenuTask: React.FC<IContextMenuTask> = ({ xPos, yPos, onClose }) =>
 
     console.log(xPos);
 
-    return (
+    return createPortal(
         <div>
             <DropdownCalendar toggleRef={dropdownCalendarToggleRef} isVisible={isDropdownCalendarVisible} setIsVisible={setIsDropdownCalendarVisible} task={task} currDueDate={currDueDate} setCurrDueDate={setCurrDueDate} customClasses=" !ml-[0px] mt-[15px]" customStyling={{ position: "absolute", top: `${yPos}px`, left: `${xPos}px` }} />
-        </div>
+        </div>,
+        document.body
     );
 };
 
