@@ -49,13 +49,10 @@ const BigDateIconOption: React.FC<BigDateIconOptionProps> = ({ iconName, Dropdow
 
 interface IDateIconOptionList {
     dueDate: Date | null;
-    setDueDate: React.Dispatch<React.SetStateAction<Date | null>>;
-    task: TaskObj;
+    handleEditDate: (dateToEdit: Date | null) => void;
 }
 
-const DateIconOptionList: React.FC<IDateIconOptionList> = ({ dueDate, setDueDate, task }) => {
-    const [editTask] = useEditTaskMutation();
-
+const DateIconOptionList: React.FC<IDateIconOptionList> = ({ dueDate, handleEditDate }) => {
     const today = new Date();
 
     const tomorrow = new Date(today);
@@ -70,43 +67,45 @@ const DateIconOptionList: React.FC<IDateIconOptionList> = ({ dueDate, setDueDate
 
     return (
         <div className="flex justify-between items-center gap-1 my-2">
-            <BigDateIconOption iconName="sunny" DropdownText="Today" selected={isDueDateToday} onClick={() => {
-                setDueDate(today);
-                editTask({ taskId: task._id, payload: { dueDate: today } });
-            }} />
-            <BigDateIconOption iconName="wb_twilight" DropdownText="Tomorrow" selected={isDueDateTomorrow} onClick={() => {
-                setDueDate(tomorrow);
-                editTask({ taskId: task._id, payload: { dueDate: tomorrow } });
-            }} />
-            <BigDateIconOption iconName="event_upcoming" DropdownText="Next Week" selected={isDueDateIn7Days} onClick={() => {
-                setDueDate(sevenDaysFromNow);
-                editTask({ taskId: task._id, payload: { dueDate: sevenDaysFromNow } });
-            }} />
+            <BigDateIconOption iconName="sunny" DropdownText="Today" selected={isDueDateToday} onClick={() => handleEditDate(today)} />
+            <BigDateIconOption
+                iconName="wb_twilight"
+                DropdownText="Tomorrow"
+                selected={isDueDateTomorrow}
+                onClick={() => handleEditDate(tomorrow)}
+            />
+            <BigDateIconOption iconName="event_upcoming" DropdownText="Next Week" selected={isDueDateIn7Days} onClick={() => handleEditDate(sevenDaysFromNow)} />
             <BigDateIconOption iconName="calendar_month" DropdownText="Custom" onClick={() => {
                 // TODO: Open the DropdownCalendar without the days
             }} />
             {dueDate && (
                 <BigDateIconOption iconName="event_busy" DropdownText="Clear" onClick={() => {
-                    // TODO: Clear the due date from here.
-                    // TODO: Only show this if the task already has a due date.
+                    handleEditDate(null);
                 }} />
             )}
         </div>
     );
 };
 
-interface DropTaskActionsProps extends DropdownProps {
+interface DropdownTaskActionsProps extends DropdownProps {
     task: TaskObj;
     currDueDate: Date | null;
     setCurrDueDate: React.Dispatch<React.SetStateAction<Date | null>>;
+    onCloseContextMenu: () => void;
 }
 
-const DropdownTaskActions: React.FC<DropTaskActionsProps> = ({ toggleRef, isVisible, setIsVisible, task, currDueDate, setCurrDueDate, customClasses, customStyling }) => {
+const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({ toggleRef, isVisible, setIsVisible, task, currDueDate, setCurrDueDate, customClasses, customStyling, onCloseContextMenu }) => {
     const [editTask] = useEditTaskMutation();
 
     if (!task) {
         return null;
     }
+
+    const handleEditDate = (newDueDate: Date | null) => {
+        setCurrDueDate(newDueDate);
+        editTask({ taskId: task._id, payload: { dueDate: newDueDate } });
+        onCloseContextMenu();
+    };
 
     interface ITaskAction {
         iconName: string;
@@ -127,7 +126,7 @@ const DropdownTaskActions: React.FC<DropTaskActionsProps> = ({ toggleRef, isVisi
             <div className="w-[200px]">
                 <div className="p-4 pb-0">
                     Date
-                    <DateIconOptionList dueDate={currDueDate} setDueDate={setCurrDueDate} task={task} />
+                    <DateIconOptionList dueDate={currDueDate} setDueDate={setCurrDueDate} handleEditDate={handleEditDate} />
                 </div>
 
                 <div className="p-4 pt-0">

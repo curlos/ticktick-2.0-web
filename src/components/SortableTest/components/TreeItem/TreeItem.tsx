@@ -179,7 +179,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
           </div>
 
           {taskContextMenu && (
-            <ContextMenuTask xPos={taskContextMenu.xPos} yPos={taskContextMenu.yPos} onClose={handleClose} />
+            <ContextMenuTask taskContextMenu={taskContextMenu} xPos={taskContextMenu.xPos} yPos={taskContextMenu.yPos} onClose={handleClose} />
           )}
         </div>
       </li>

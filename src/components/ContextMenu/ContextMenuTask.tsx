@@ -18,7 +18,7 @@ const ContextMenuTask: React.FC<IContextMenuTask> = ({ xPos, yPos, onClose }) =>
 
     const [task, setTask] = useState<TaskObj>();
     const [parentTask, setParentTask] = useState<TaskObj | null>();
-    const [isDropdownCalendarVisible, setIsDropdownCalendarVisible] = useState(true);
+    const [isDropdownTaskActionsVisible, setIsDropdownTaskActionsVisible] = useState(true);
     const [currDueDate, setCurrDueDate] = useState(null);
 
     const dropdownCalendarToggleRef = useRef(null);
@@ -53,8 +53,10 @@ const ContextMenuTask: React.FC<IContextMenuTask> = ({ xPos, yPos, onClose }) =>
     }, [taskId, tasks, tasksById]);
 
     useEffect(() => {
-        if (xPos) {
-            setIsDropdownCalendarVisible(true);
+        if (xPos !== undefined || xPos !== null) {
+            setIsDropdownTaskActionsVisible(true);
+        } else {
+            setIsDropdownTaskActionsVisible(true);
         }
     }, [xPos]);
 
@@ -64,7 +66,7 @@ const ContextMenuTask: React.FC<IContextMenuTask> = ({ xPos, yPos, onClose }) =>
 
     return createPortal(
         <div>
-            <DropdownTaskActions toggleRef={dropdownCalendarToggleRef} isVisible={isDropdownCalendarVisible} setIsVisible={setIsDropdownCalendarVisible} task={task} currDueDate={currDueDate} setCurrDueDate={setCurrDueDate} customClasses=" !ml-[0px] mt-[15px]" customStyling={{ position: "absolute", top: `${yPos}px`, left: `${xPos}px` }} />
+            <DropdownTaskActions toggleRef={dropdownCalendarToggleRef} isVisible={isDropdownTaskActionsVisible} setIsVisible={setIsDropdownTaskActionsVisible} task={task} currDueDate={currDueDate} setCurrDueDate={setCurrDueDate} customClasses=" !ml-[0px] mt-[15px]" customStyling={{ position: "absolute", top: `${yPos}px`, left: `${xPos}px` }} onCloseContextMenu={onClose} />
         </div>,
         document.body
     );
