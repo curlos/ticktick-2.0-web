@@ -84,6 +84,8 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
         xPos: event.pageX, // X coordinate of the mouse pointer
         yPos: event.pageY, // Y coordinate of the mouse pointer
       });
+
+      navigate(`/projects/${inSmartListView ? params.projectId : projectId}/tasks/${_id}`);
     };
 
     const handleClose = () => {
@@ -92,8 +94,6 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 
     const inSmartListView = params.projectId && SMART_LISTS[params.projectId];
     const priorityData = PRIORITIES[priority];
-
-    console.log(taskContextMenu);
 
     return (
       <li
