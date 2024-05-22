@@ -7,24 +7,24 @@ import { useEffect } from 'react';
  * @param {Function} onOutsideClick - The callback to execute when an outside click is detected.
  */
 const useOutsideClick = (ref, toggleRef, onOutsideClick) => {
+	useEffect(() => {
+		const handleClickOutside = (event) => {
+			if (
+				ref.current &&
+				!ref.current.contains(event.target) &&
+				(!toggleRef.current || !toggleRef.current.contains(event.target))
+			) {
+				onOutsideClick();
+			}
+		};
 
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (
-                ref.current && !ref.current.contains(event.target) &&
-                (!toggleRef.current || !toggleRef.current.contains(event.target))
-            ) {
-                onOutsideClick();
-            }
-        };
-
-        // Bind the event listener
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            // Unbind the event listener on clean up
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, [ref, onOutsideClick]); // Only re-run if ref or callback changes
+		// Bind the event listener
+		document.addEventListener('mousedown', handleClickOutside);
+		return () => {
+			// Unbind the event listener on clean up
+			document.removeEventListener('mousedown', handleClickOutside);
+		};
+	}, [ref, onOutsideClick]); // Only re-run if ref or callback changes
 };
 
 export default useOutsideClick;

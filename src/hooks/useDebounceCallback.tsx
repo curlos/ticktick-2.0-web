@@ -10,16 +10,19 @@ import { useCallback, useRef } from 'react';
  * @returns {Function} A debounced version of the passed function.
  */
 export const useDebouncedCallback = (func, delay, deps) => {
-    const timeoutRef = useRef(null);
+	const timeoutRef = useRef(null);
 
-    const debouncedFunction = useCallback((...args) => {
-        if (timeoutRef.current) {
-            clearTimeout(timeoutRef.current);
-        }
-        timeoutRef.current = setTimeout(() => {
-            func(...args);
-        }, delay);
-    }, [delay, ...deps]);  // Ensure function updates if delay or deps change
+	const debouncedFunction = useCallback(
+		(...args) => {
+			if (timeoutRef.current) {
+				clearTimeout(timeoutRef.current);
+			}
+			timeoutRef.current = setTimeout(() => {
+				func(...args);
+			}, delay);
+		},
+		[delay, ...deps]
+	); // Ensure function updates if delay or deps change
 
-    return debouncedFunction;
+	return debouncedFunction;
 };

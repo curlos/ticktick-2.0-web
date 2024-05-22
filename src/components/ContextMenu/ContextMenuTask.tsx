@@ -1,75 +1,84 @@
-import { useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
-import { useGetTasksQuery } from "../../services/api";
-import { useParams } from "react-router";
-import { TaskObj } from "../../interfaces/interfaces";
-import DropdownCalendar from "../Dropdown/DropdownCalendar";
-import DropdownTaskActions from "../Dropdown/DropdownTaskActions";
+import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { useGetTasksQuery } from '../../services/api';
+import { useParams } from 'react-router';
+import { TaskObj } from '../../interfaces/interfaces';
+import DropdownCalendar from '../Dropdown/DropdownCalendar';
+import DropdownTaskActions from '../Dropdown/DropdownTaskActions';
 
 interface IContextMenuTask {
-    xPos: string;
-    yPos: string;
-    onClose: () => void;
+	xPos: string;
+	yPos: string;
+	onClose: () => void;
 }
 
 const ContextMenuTask: React.FC<IContextMenuTask> = ({ xPos, yPos, onClose }) => {
-    const { data: fetchedTasks, isLoading: isTasksLoading, error } = useGetTasksQuery();
-    const { tasks, tasksById, parentOfTasks } = fetchedTasks || {};
+	const { data: fetchedTasks, isLoading: isTasksLoading, error } = useGetTasksQuery();
+	const { tasks, tasksById, parentOfTasks } = fetchedTasks || {};
 
-    const [task, setTask] = useState<TaskObj>();
-    const [parentTask, setParentTask] = useState<TaskObj | null>();
-    const [isDropdownTaskActionsVisible, setIsDropdownTaskActionsVisible] = useState(true);
-    const [currDueDate, setCurrDueDate] = useState(null);
+	const [task, setTask] = useState<TaskObj>();
+	const [parentTask, setParentTask] = useState<TaskObj | null>();
+	const [isDropdownTaskActionsVisible, setIsDropdownTaskActionsVisible] = useState(true);
+	const [currDueDate, setCurrDueDate] = useState(null);
 
-    const dropdownCalendarToggleRef = useRef(null);
+	const dropdownCalendarToggleRef = useRef(null);
 
-    let { taskId, projectId: paramsProjectId } = useParams();
+	let { taskId, projectId: paramsProjectId } = useParams();
 
-    useEffect(() => {
-        if (isTasksLoading) {
-            return;
-        }
+	useEffect(() => {
+		if (isTasksLoading) {
+			return;
+		}
 
-        const currTask = taskId && tasksById && tasksById[taskId];
-        setTask(currTask);
+		const currTask = taskId && tasksById && tasksById[taskId];
+		setTask(currTask);
 
-        if (currTask) {
+		if (currTask) {
+			if (currTask.dueDate) {
+				setCurrDueDate(new Date(currTask.dueDate));
+			} else {
+				setCurrDueDate(null);
+			}
 
-            if (currTask.dueDate) {
-                setCurrDueDate(new Date(currTask.dueDate));
-            } else {
-                setCurrDueDate(null);
-            }
+			const parentTaskId = parentOfTasks[currTask._id];
+			const newParentTask = parentTaskId && tasksById[parentTaskId];
 
-            const parentTaskId = parentOfTasks[currTask._id];
-            const newParentTask = parentTaskId && tasksById[parentTaskId];
+			if (newParentTask) {
+				setParentTask(newParentTask);
+			} else {
+				setParentTask(null);
+			}
+		}
+	}, [taskId, tasks, tasksById]);
 
-            if (newParentTask) {
-                setParentTask(newParentTask);
-            } else {
-                setParentTask(null);
-            }
-        }
-    }, [taskId, tasks, tasksById]);
+	useEffect(() => {
+		if (xPos !== undefined || xPos !== null) {
+			setIsDropdownTaskActionsVisible(true);
+		} else {
+			setIsDropdownTaskActionsVisible(true);
+		}
+	}, [xPos]);
 
-    useEffect(() => {
-        if (xPos !== undefined || xPos !== null) {
-            setIsDropdownTaskActionsVisible(true);
-        } else {
-            setIsDropdownTaskActionsVisible(true);
-        }
-    }, [xPos]);
+	if (!task) {
+		return null;
+	}
 
-    if (!task) {
-        return null;
-    }
-
-    return createPortal(
-        <div>
-            <DropdownTaskActions toggleRef={dropdownCalendarToggleRef} isVisible={isDropdownTaskActionsVisible} setIsVisible={setIsDropdownTaskActionsVisible} task={task} currDueDate={currDueDate} setCurrDueDate={setCurrDueDate} customClasses=" !ml-[0px] mt-[15px]" customStyling={{ position: "absolute", top: `${yPos}px`, left: `${xPos}px` }} onCloseContextMenu={onClose} />
-        </div>,
-        document.body
-    );
+	return createPortal(
+		<div>
+			<DropdownTaskActions
+				toggleRef={dropdownCalendarToggleRef}
+				isVisible={isDropdownTaskActionsVisible}
+				setIsVisible={setIsDropdownTaskActionsVisible}
+				task={task}
+				currDueDate={currDueDate}
+				setCurrDueDate={setCurrDueDate}
+				customClasses=" !ml-[0px] mt-[15px]"
+				customStyling={{ position: 'absolute', top: `${yPos}px`, left: `${xPos}px` }}
+				onCloseContextMenu={onClose}
+			/>
+		</div>,
+		document.body
+	);
 };
 
 export default ContextMenuTask;
