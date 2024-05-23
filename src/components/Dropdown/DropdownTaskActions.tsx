@@ -269,6 +269,17 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 		return null;
 	}
 
+	function copyTextToClipboard(text) {
+		navigator.clipboard
+			.writeText(text)
+			.then(() => {
+				console.log('Text copied to clipboard ' + text);
+			})
+			.catch((err) => {
+				console.error('Failed to copy text: ', err);
+			});
+	}
+
 	return (
 		<Dropdown
 			toggleRef={toggleRef}
@@ -343,7 +354,13 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 				<hr className="border-color-gray-200" />
 
 				<div className="p-1">
-					<TaskAction iconName="link" title="Copy Link" onClick={() => {}} />
+					<TaskAction
+						iconName="link"
+						title="Copy Link"
+						onClick={() => {
+							copyTextToClipboard(window.location.href);
+						}}
+					/>
 					<TaskAction
 						iconName="delete"
 						title="Delete"
