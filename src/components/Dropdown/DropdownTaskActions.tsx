@@ -2,12 +2,12 @@ import Dropdown from './Dropdown';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Icon from '../Icon';
 import { DropdownProps, TaskObj } from '../../interfaces/interfaces';
-import { useEditTaskMutation, useGetTasksQuery } from '../../services/api';
+import { useEditTaskMutation, useGetTasksQuery, useMarkTaskAsDeletedMutation } from '../../services/api';
 import { PRIORITIES } from '../../utils/priorities.utils';
 import classNames from 'classnames';
 import { isInXDaysUTC, isTodayUTC, isTomorrowUTC } from '../../utils/date.utils';
 import DropdownCalendar from './DropdownCalendar/DropdownCalendar';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { useDispatch } from 'react-redux';
 import { setModalState } from '../../slices/modalSlice';
 
@@ -196,9 +196,12 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 	onCloseContextMenu,
 }) => {
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
+	const { projectId } = useParams();
 	const { data: fetchedTasks, isLoading: isTasksLoading, error } = useGetTasksQuery();
 	const { tasks, tasksById, parentOfTasks } = fetchedTasks || {};
 	const [editTask] = useEditTaskMutation();
+	const [markTaskAsDeleted] = useMarkTaskAsDeletedMutation();
 	let { taskId } = useParams();
 
 	const [task, setTask] = useState<TaskObj>();
@@ -340,8 +343,22 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 				<hr className="border-color-gray-200" />
 
 				<div className="p-1">
-					<TaskAction iconName="link" title="Copy Link" />
-					<TaskAction iconName="delete" title="Delete" />
+					<TaskAction iconName="link" title="Copy Link" onClick={() => {}} />
+					<TaskAction
+						iconName="delete"
+						title="Delete"
+						onClick={() => {
+							const parentId = parentOfTasks && parentOfTasks[task._id];
+							markTaskAsDeleted({ taskId: task._id, parentId });
+							onCloseContextMenu();
+
+							if (!parentId) {
+								navigate(`/projects/${projectId}/tasks`);
+							} else {
+								navigate(`/projects/${projectId}/tasks/${parentId}`);
+							}
+						}}
+					/>
 				</div>
 
 				{/* <div className="grid grid-cols-2 gap-2 px-3 pb-4">
