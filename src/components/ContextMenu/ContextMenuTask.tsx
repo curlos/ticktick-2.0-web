@@ -12,43 +12,8 @@ interface IContextMenuTask {
 }
 
 const ContextMenuTask: React.FC<IContextMenuTask> = ({ xPos, yPos, onClose }) => {
-	const { data: fetchedTasks, isLoading: isTasksLoading, error } = useGetTasksQuery();
-	const { tasks, tasksById, parentOfTasks } = fetchedTasks || {};
-
-	const [task, setTask] = useState<TaskObj>();
-	const [parentTask, setParentTask] = useState<TaskObj | null>();
 	const [isDropdownTaskActionsVisible, setIsDropdownTaskActionsVisible] = useState(true);
-	const [currDueDate, setCurrDueDate] = useState(null);
-
-	const dropdownCalendarToggleRef = useRef(null);
-
-	let { taskId } = useParams();
-
-	useEffect(() => {
-		if (isTasksLoading) {
-			return;
-		}
-
-		const currTask = taskId && tasksById && tasksById[taskId];
-		setTask(currTask);
-
-		if (currTask) {
-			if (currTask.dueDate) {
-				setCurrDueDate(new Date(currTask.dueDate));
-			} else {
-				setCurrDueDate(null);
-			}
-
-			const parentTaskId = parentOfTasks[currTask._id];
-			const newParentTask = parentTaskId && tasksById[parentTaskId];
-
-			if (newParentTask) {
-				setParentTask(newParentTask);
-			} else {
-				setParentTask(null);
-			}
-		}
-	}, [taskId, tasks, tasksById]);
+	const dropdownTaskActionsToggleRef = useRef(null);
 
 	useEffect(() => {
 		if (xPos !== undefined || xPos !== null) {
@@ -58,19 +23,12 @@ const ContextMenuTask: React.FC<IContextMenuTask> = ({ xPos, yPos, onClose }) =>
 		}
 	}, [xPos]);
 
-	if (!task) {
-		return null;
-	}
-
 	return createPortal(
 		<div>
 			<DropdownTaskActions
-				toggleRef={dropdownCalendarToggleRef}
+				toggleRef={dropdownTaskActionsToggleRef}
 				isVisible={isDropdownTaskActionsVisible}
 				setIsVisible={setIsDropdownTaskActionsVisible}
-				task={task}
-				currDueDate={currDueDate}
-				setCurrDueDate={setCurrDueDate}
 				customClasses=" !ml-[0px] mt-[15px]"
 				customStyling={{ position: 'absolute', top: `${yPos}px`, left: `${xPos}px` }}
 				onCloseContextMenu={onClose}

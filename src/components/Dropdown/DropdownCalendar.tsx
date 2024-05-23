@@ -161,7 +161,7 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({
 			toggleRef={toggleRef}
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
-			customClasses={' shadow-2xl' + (customClasses ? ` ${customClasses}` : '')}
+			customClasses={' shadow-2xl select-none' + (customClasses ? ` ${customClasses}` : '')}
 			customStyling={customStyling ? customStyling : null}
 		>
 			<div className="w-[260px]">

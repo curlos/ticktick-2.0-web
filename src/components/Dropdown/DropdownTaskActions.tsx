@@ -2,11 +2,12 @@ import Dropdown from './Dropdown';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Icon from '../Icon';
 import { DropdownProps, TaskObj } from '../../interfaces/interfaces';
-import { useEditTaskMutation } from '../../services/api';
+import { useEditTaskMutation, useGetTasksQuery } from '../../services/api';
 import { PRIORITIES } from '../../utils/priorities.utils';
 import classNames from 'classnames';
 import { isInXDaysUTC, isTodayUTC, isTomorrowUTC } from '../../utils/date.utils';
 import DropdownCalendar from './DropdownCalendar';
+import { useParams } from 'react-router';
 
 interface IDateIconOption {
 	iconName: string;
@@ -181,9 +182,6 @@ const DateIconOptionList: React.FC<IDateIconOptionList> = ({
 };
 
 interface DropdownTaskActionsProps extends DropdownProps {
-	task: TaskObj;
-	currDueDate: Date | null;
-	setCurrDueDate: React.Dispatch<React.SetStateAction<Date | null>>;
 	onCloseContextMenu: () => void;
 }
 
@@ -191,18 +189,44 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 	toggleRef,
 	isVisible,
 	setIsVisible,
-	task,
-	currDueDate,
-	setCurrDueDate,
 	customClasses,
 	customStyling,
 	onCloseContextMenu,
 }) => {
+	const { data: fetchedTasks, isLoading: isTasksLoading, error } = useGetTasksQuery();
+	const { tasks, tasksById, parentOfTasks } = fetchedTasks || {};
 	const [editTask] = useEditTaskMutation();
+	let { taskId } = useParams();
 
-	if (!task) {
-		return null;
-	}
+	const [task, setTask] = useState<TaskObj>();
+	const [parentTask, setParentTask] = useState<TaskObj>();
+	const [currDueDate, setCurrDueDate] = useState(null);
+
+	useEffect(() => {
+		if (isTasksLoading) {
+			return;
+		}
+
+		const currTask = taskId && tasksById && tasksById[taskId];
+		setTask(currTask);
+
+		if (currTask) {
+			if (currTask.dueDate) {
+				setCurrDueDate(new Date(currTask.dueDate));
+			} else {
+				setCurrDueDate(null);
+			}
+
+			const parentTaskId = parentOfTasks[currTask._id];
+			const newParentTask = parentTaskId && tasksById[parentTaskId];
+
+			if (newParentTask) {
+				setParentTask(newParentTask);
+			} else {
+				setParentTask(null);
+			}
+		}
+	}, [taskId, tasks, tasksById]);
 
 	const handleEditDate = (newDueDate: Date | null) => {
 		setCurrDueDate(newDueDate);
@@ -227,6 +251,10 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 			</div>
 		);
 	};
+
+	if (!task) {
+		return null;
+	}
 
 	return (
 		<Dropdown
@@ -261,6 +289,9 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 											priority.textFlagColor,
 											task.priority === priority.backendValue ? 'bg-gray-700' : ''
 										)}
+										onClick={() => {
+											editTask({ taskId: task._id, payload: { dueDate: newDueDate } });
+										}}
 									/>
 								</span>
 							);
