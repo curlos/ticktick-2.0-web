@@ -8,6 +8,7 @@ import classNames from 'classnames';
 import { isInXDaysUTC, isTodayUTC, isTomorrowUTC } from '../../utils/date.utils';
 import DropdownCalendar from './DropdownCalendar';
 import { useParams } from 'react-router';
+import ModalAddTaskForm from '../Modal/ModalAddTaskForm';
 
 interface IDateIconOption {
 	iconName: string;
@@ -201,6 +202,10 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 	const [task, setTask] = useState<TaskObj>();
 	const [parentTask, setParentTask] = useState<TaskObj>();
 	const [currDueDate, setCurrDueDate] = useState(null);
+	const [priority, setPriority] = useState(0);
+
+	// Modals
+	const [isModalAddTaskFormOpen, setIsModalAddTaskFormOpen] = useState(false);
 
 	useEffect(() => {
 		if (isTasksLoading) {
@@ -216,6 +221,8 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 			} else {
 				setCurrDueDate(null);
 			}
+
+			setPriority(currTask.priority);
 
 			const parentTaskId = parentOfTasks[currTask._id];
 			const newParentTask = parentTaskId && tasksById[parentTaskId];
@@ -237,11 +244,15 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 	interface ITaskAction {
 		iconName: string;
 		title: string;
+		onClick: () => void;
 	}
 
-	const TaskAction: React.FC<ITaskAction> = ({ iconName, title }) => {
+	const TaskAction: React.FC<ITaskAction> = ({ iconName, title, onClick }) => {
 		return (
-			<div className="p-1 flex items-center gap-[2px] hover:bg-color-gray-300 cursor-pointer rounded text-[13px]">
+			<div
+				className="p-1 flex items-center gap-[2px] hover:bg-color-gray-300 cursor-pointer rounded text-[13px]"
+				onClick={onClick}
+			>
 				<Icon
 					name={iconName}
 					customClass={'text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer'}
@@ -279,18 +290,22 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 				<div className="p-4 pt-0">
 					Priority
 					<div className="flex justify-between items-center gap-1 mt-2">
-						{Object.values(PRIORITIES).map((priority) => {
+						{Object.values(PRIORITIES).map((priorityObj) => {
 							return (
-								<span key={priority.backendValue}>
+								<span key={priorityObj.backendValue}>
 									<Icon
 										name="flag"
 										customClass={classNames(
 											'!text-[22px] cursor-pointer p-1 rounded',
-											priority.textFlagColor,
-											task.priority === priority.backendValue ? 'bg-gray-700' : ''
+											priorityObj.textFlagColor,
+											priority === priorityObj.backendValue ? 'bg-gray-700' : ''
 										)}
 										onClick={() => {
-											editTask({ taskId: task._id, payload: { dueDate: newDueDate } });
+											editTask({
+												taskId: task._id,
+												payload: { priority: priorityObj.backendValue },
+											});
+											onCloseContextMenu();
 										}}
 									/>
 								</span>
@@ -302,7 +317,15 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 				<hr className="border-color-gray-200" />
 
 				<div className="p-1">
-					<TaskAction iconName="add_task" title="Add Subtask" />
+					<TaskAction
+						iconName="add_task"
+						title="Add Subtask"
+						onClick={() => {
+							setIsModalAddTaskFormOpen(true);
+							// TODO: Don't close the context menu for now but may need to be investigated.
+							// onCloseContextMenu();
+						}}
+					/>
 					<TaskAction iconName="disabled_by_default" title="Won't Do" />
 					<TaskAction iconName="move_to_inbox" title="Move to" />
 				</div>
@@ -332,6 +355,12 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
                         setIsVisible(false);
                     }}>Ok</button>
                 </div> */}
+
+				<ModalAddTaskForm
+					isModalOpen={isModalAddTaskFormOpen}
+					setIsModalOpen={setIsModalAddTaskFormOpen}
+					parentId={task._id}
+				/>
 			</div>
 		</Dropdown>
 	);
