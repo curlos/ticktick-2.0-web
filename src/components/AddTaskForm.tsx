@@ -92,7 +92,6 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId 
 			//     flagColor: '#7B7B7B'
 			// });
 
-			// TODO: Add dispatch after small test
 			dispatch(setModalState({ modalId: 'ModalAddTaskForm', isOpen: false }));
 		} catch (error) {
 			console.error(error);

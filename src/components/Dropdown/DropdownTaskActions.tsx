@@ -10,6 +10,7 @@ import DropdownCalendar from './DropdownCalendar/DropdownCalendar';
 import { useNavigate, useParams } from 'react-router';
 import { useDispatch } from 'react-redux';
 import { setModalState } from '../../slices/modalSlice';
+import { setAlertState } from '../../slices/alertSlice';
 
 interface IDateIconOption {
 	iconName: string;
@@ -359,6 +360,8 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 						title="Copy Link"
 						onClick={() => {
 							copyTextToClipboard(window.location.href);
+							onCloseContextMenu();
+							dispatch(setAlertState({ alertId: 'AlertCopied', isOpen: true }));
 						}}
 					/>
 					<TaskAction

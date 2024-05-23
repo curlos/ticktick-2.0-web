@@ -1,7 +1,7 @@
 import React from 'react';
-import ModalAddTaskForm from './Modal/ModalAddTaskForm';
-import ModalAddFocusRecord from './Modal/ModalAddFocusRecord';
-import ModalAddList from './Modal/ModalAddList';
+import ModalAddTaskForm from './ModalAddTaskForm';
+import ModalAddFocusRecord from './ModalAddFocusRecord';
+import ModalAddList from './ModalAddList';
 
 /**
  * @description Modals in this list can be opened from anywhere on the site. In most cases, this'll be reserved for Modals that can be opened from multiple parts in the site such as the "Add Task Form Modal".

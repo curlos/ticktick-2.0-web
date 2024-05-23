@@ -17,6 +17,7 @@
     "@headlessui/react": "^1.7.18",
     "@mdi/js": "^7.4.47",
     "@reduxjs/toolkit": "^2.2.1",
+    "framer-motion": "^11.2.6",
     "fuse.js": "^7.0.0",
     "material-symbols": "^0.16.0",
     "react": "^18.2.0",

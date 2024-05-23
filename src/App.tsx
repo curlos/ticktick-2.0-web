@@ -2,7 +2,8 @@ import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import FocusPage from './pages/FocusPage';
 import HomePage from './pages/HomePage';
-import GlobalModalList from './components/GlobalModalList';
+import GlobalModalList from './components/Modal/GlobalModalList';
+import GlobalAlertList from './components/Alert/GlobalAlertList';
 
 function App() {
 	return (
@@ -23,6 +24,9 @@ function App() {
 
 					{/* Modals */}
 					<GlobalModalList />
+
+					{/* Alerts */}
+					<GlobalAlertList />
 				</Router>
 			</div>
 		</>
