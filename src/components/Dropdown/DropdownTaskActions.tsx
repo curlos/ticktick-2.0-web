@@ -89,7 +89,7 @@ const DateIconOption: React.FC<IDateIconOption> = ({
 				toggleRef={tooltipRef}
 				isVisible={isTooltipVisible}
 				setIsVisible={setIsTooltipVisible}
-				customClasses={' !bg-black'}
+				customClasses={'!bg-black'}
 			>
 				<div className="p-2 text-[12px] text-nowrap">{tooltipText}</div>
 			</Dropdown>
@@ -286,7 +286,7 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 			toggleRef={toggleRef}
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
-			customClasses={' shadow-2xl' + (customClasses ? ` ${customClasses}` : '')}
+			customClasses={'shadow-2xl' + (customClasses ? ` ${customClasses}` : '')}
 			customStyling={customStyling ? customStyling : null}
 		>
 			<div className="w-[200px]">

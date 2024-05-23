@@ -29,7 +29,7 @@ const DropdownFixedOrFloatingTimeZone: React.FC<DropdownFixedOrFloatingTimeZoneP
 			toggleRef={toggleRef}
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
-			customClasses={' shadow-2xl border border-color-gray-200 rounded-lg'}
+			customClasses={'shadow-2xl border border-color-gray-200 rounded-lg'}
 		>
 			<div className="w-[260px] p-3 rounded" onClick={(e) => e.stopPropagation()}>
 				<CustomRadioButton

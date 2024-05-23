@@ -12,6 +12,8 @@ const ModalAddList: React.FC = () => {
 	const modal = useSelector((state) => state.modals.modals['ModalAddList']);
 	const dispatch = useDispatch();
 
+	const [addProject, { isLoading, error }] = useAddProjectMutation(); // Mutation hook
+
 	const [name, setName] = useState('');
 	const [listColor, setListColor] = useState('');
 	const [selectedView, setSelectedView] = useState('list');
@@ -58,8 +60,22 @@ const ModalAddList: React.FC = () => {
 	];
 
 	// TODO: Setup backend to add lists. Should take all the properties in an object: name, color, view, and folder.
-	const handleAddList = () => {
-		return;
+	const handleAddProject = async () => {
+		if (name.trim() === '') {
+			return;
+		}
+
+		const newProject = {
+			name: name,
+			isFolder: false,
+			color: listColor,
+		};
+
+		try {
+			await addProject(newProject);
+		} catch (error) {
+			console.error(error);
+		}
 	};
 
 	const [isNameInputFocused, setIsNameInputFocused] = useState(false);
@@ -202,7 +218,7 @@ const ModalAddList: React.FC = () => {
 						}
 						onClick={() => {
 							closeModal();
-							handleAddList();
+							handleAddProject();
 						}}
 					>
 						Save
@@ -253,7 +269,7 @@ const DropdownFolder: React.FC<DropdownFolderProps> = ({
 			toggleRef={toggleRef}
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
-			customClasses={' mt-[5px] shadow-2xl border border-color-gray-200 rounded-lg'}
+			customClasses={'mt-[5px] shadow-2xl border border-color-gray-200 rounded-lg'}
 		>
 			<div className="w-[232px] p-1 rounded" onClick={(e) => e.stopPropagation()}>
 				<div className="overflow-auto gray-scrollbar">
@@ -308,12 +324,10 @@ interface ModalNewProjectProps {
 }
 
 const ModalNewProject: React.FC<ModalNewProjectProps> = ({ isModalOpen, setIsModalOpen }) => {
-	const dispatch = useDispatch();
 	const [addProject, { isLoading, error }] = useAddProjectMutation(); // Mutation hook
 	const [folderName, setFolderName] = useState('');
 	const [isFolderNameInputFocused, setIsFolderNameInputFocused] = useState(false);
 
-	// TODO: Setup backend to add new folders
 	const handleCreateNewFolder = async () => {
 		if (folderName.trim() === '') {
 			return;

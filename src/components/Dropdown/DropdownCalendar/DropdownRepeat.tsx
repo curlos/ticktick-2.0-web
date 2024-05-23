@@ -56,7 +56,7 @@ const DropdownRepeat: React.FC<DropdownRepeatProps> = ({ toggleRef, isVisible, s
 			toggleRef={toggleRef}
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
-			customClasses={' ml-[-5px] shadow-2xl border border-color-gray-200 rounded-lg'}
+			customClasses={'ml-[-5px] shadow-2xl border border-color-gray-200 rounded-lg'}
 		>
 			<div className="w-[260px] rounded" onClick={(e) => e.stopPropagation()}>
 				<div className="p-1">
@@ -151,7 +151,7 @@ const DropdownCustomRepeat: React.FC<DropdownAdvancedReminderProps> = ({
 			toggleRef={toggleRef}
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
-			customClasses={' ml-[0px] shadow-2xl border border-color-gray-200 rounded-lg'}
+			customClasses={'ml-[0px] shadow-2xl border border-color-gray-200 rounded-lg'}
 		>
 			<div className=" w-[260px] p-3 rounded" onClick={(e) => e.stopPropagation()}>
 				<div className="relative">
@@ -236,7 +236,7 @@ const DropdownCustomRepeatByX: React.FC<IDropdownCustomRepeatByX> = ({
 			toggleRef={toggleRef}
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
-			customClasses={' w-[100%] p-1 shadow-2xl border border-color-gray-200 rounded-lg'}
+			customClasses={'w-[100%] p-1 shadow-2xl border border-color-gray-200 rounded-lg'}
 		>
 			{values.map((value) => (
 				<div

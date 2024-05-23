@@ -32,7 +32,7 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId 
 	const [currDueDate, setCurrDueDate] = useState(null);
 	const [isDropdownCalendarVisible, setIsDropdownCalendarVisible] = useState(false);
 	const [isDropdownPrioritiesVisible, setIsDropdownPrioritiesVisible] = useState(false);
-	const [isDropdownListsVisible, setIsDropdownListsVisible] = useState(false);
+	const [isDropdownProjectsVisible, setIsDropdownProjectsVisible] = useState(false);
 	const [tempSelectedPriority, setTempSelectedPriority] = useState(0);
 	const [selectedProject, setSelectedProject] = useState(null);
 	const [description, setDescription] = useState('');
@@ -40,7 +40,7 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId 
 	// useRef
 	const dropdownCalendarToggleRef = useRef(null);
 	const dropdownPrioritiesRef = useRef(null);
-	const dropdownListsRef = useRef(null);
+	const dropdownProjectsRef = useRef(null);
 
 	const priority = PRIORITIES[tempSelectedPriority];
 
@@ -176,18 +176,18 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId 
 					{!isLoadingProjects && (
 						<div className="relative">
 							<div
-								ref={dropdownListsRef}
+								ref={dropdownProjectsRef}
 								className="flex items-center gap-1 font-bold text-[12px] cursor-pointer"
-								onClick={() => setIsDropdownListsVisible(!isDropdownListsVisible)}
+								onClick={() => setIsDropdownProjectsVisible(!isDropdownProjectsVisible)}
 							>
 								{selectedProject?.name}
 								<Icon name="expand_more" customClass={'!text-[16px] hover:text-white'} />
 							</div>
 
 							<DropdownProjects
-								toggleRef={dropdownListsRef}
-								isVisible={isDropdownListsVisible}
-								setIsVisible={setIsDropdownListsVisible}
+								toggleRef={dropdownProjectsRef}
+								isVisible={isDropdownProjectsVisible}
+								setIsVisible={setIsDropdownProjectsVisible}
 								selectedProject={selectedProject}
 								setSelectedProject={setSelectedProject}
 								projects={projects}

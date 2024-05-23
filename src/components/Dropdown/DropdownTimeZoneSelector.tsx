@@ -116,7 +116,7 @@ const DropdownTimeZoneSelector: React.FC<DropdownTimeZoneSelectorProps> = ({
 			toggleRef={toggleRef}
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
-			customClasses={' shadow-2xl border border-color-gray-200 rounded-[4px]'}
+			customClasses={'shadow-2xl border border-color-gray-200 rounded-[4px]'}
 		>
 			<div className="w-[260px]">
 				<div className="flex items-center gap-1 p-1 px-2">

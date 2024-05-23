@@ -10,7 +10,12 @@ import AddTaskForm from './AddTaskForm';
 import Dropdown from './Dropdown/Dropdown';
 import CustomInput from './CustomInput';
 import ModalTaskActivities from './Modal/ModalTaskActivities';
-import { useMarkTaskAsDeletedMutation, useEditTaskMutation, useGetTasksQuery } from '../services/api';
+import {
+	useMarkTaskAsDeletedMutation,
+	useEditTaskMutation,
+	useGetTasksQuery,
+	useGetProjectsQuery,
+} from '../services/api';
 import { getTasksWithFilledInChildren } from '../utils/helpers.utils';
 import { SortableTree } from './SortableTest/SortableTree';
 import useDebouncedEditTask from '../hooks/useDebouncedEditTask';
@@ -20,6 +25,7 @@ import { PRIORITIES } from '../utils/priorities.utils';
 import TaskDueDateText from './TaskDueDateText';
 import DropdownPriorities from './Dropdown/DropdownPriorities';
 import { setModalState } from '../slices/modalSlice';
+import DropdownProjects from './Dropdown/DropdownProjects';
 
 const EmptyTask = () => (
 	<div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700 flex justify-center items-center text-[18px] text-color-gray-100">
@@ -34,9 +40,14 @@ const EmptyTask = () => (
 );
 
 const TaskDetails = () => {
+	// Tasks
 	const { data: fetchedTasks, isLoading: isTasksLoading, error } = useGetTasksQuery();
 	const { tasks, tasksById, parentOfTasks } = fetchedTasks || {};
 	const { debouncedEditTaskApiCall } = useDebouncedEditTask();
+
+	// Projects
+	const { data: fetchedProjects, isLoading: isProjectsLoading, error: errorProjects } = useGetProjectsQuery();
+	const { projects } = fetchedProjects || {};
 
 	const [currTitle, setCurrTitle] = useState('');
 	const [currDescription, setCurrDescription] = useState('');
@@ -46,11 +57,13 @@ const TaskDetails = () => {
 	const [parentTask, setParentTask] = useState<TaskObj | null>();
 	const [childTasks, setChildTasks] = useState([]);
 	const [currDueDate, setCurrDueDate] = useState(null);
+	const [selectedProject, setSelectedProject] = useState(null);
 
 	// Dropdowns
 	const [isDropdownCalendarVisible, setIsDropdownCalendarVisible] = useState(false);
 	const [isDropdownTaskOptionsVisible, setIsDropdownTaskOptionsVisible] = useState(false);
 	const [isDropdownPrioritiesVisible, setIsDropdownPrioritiesVisible] = useState(false);
+	const [isDropdownProjectsVisible, setIsDropdownProjectsVisible] = useState(false);
 
 	// Modals
 	const [isModalTaskActivitiesOpen, setIsModalTaskActivitiesOpen] = useState(false);
@@ -94,12 +107,13 @@ const TaskDetails = () => {
 	const dropdownCalendarToggleRef = useRef(null);
 	const dropdownTaskOptionsRef = useRef(null);
 	const dropdownPrioritiesRef = useRef(null);
+	const dropdownProjectsRef = useRef(null);
 
 	let { taskId, projectId: paramsProjectId } = useParams();
-	let navigate = useNavigate();
+	const navigate = useNavigate();
 
 	useEffect(() => {
-		if (isTasksLoading) {
+		if (isTasksLoading || isProjectsLoading) {
 			return;
 		}
 
@@ -115,6 +129,9 @@ const TaskDetails = () => {
 			} else {
 				setCurrDueDate(null);
 			}
+
+			// TODO: Set the project
+			setSelectedProject(currTask.projectId);
 
 			const parentTaskId = parentOfTasks[currTask._id];
 			const newParentTask = parentTaskId && tasksById[parentTaskId];
@@ -331,19 +348,32 @@ const TaskDetails = () => {
 				)}
 
 				<div className="px-4 py-3 flex justify-between items-center text-color-gray-100">
-					<div className="relative">
-						<div className="flex items-center gap-1 cursor-pointer">
-							<Icon
-								name="drive_file_move"
-								customClass={'text-color-gray-100 !text-[18px] hover:text-white cursor-pointer'}
-							/>
-							{/* TODO: Change this to function more like the button from AddTaskForm where it gets the projects from the database. */}
-							Hello Mobile
-						</div>
+					{!isProjectsLoading && (
+						<div className="relative">
+							<div
+								ref={dropdownProjectsRef}
+								className="flex items-center gap-1 cursor-pointer"
+								onClick={() => setIsDropdownProjectsVisible(!isDropdownProjectsVisible)}
+							>
+								<Icon
+									name="drive_file_move"
+									customClass={'text-color-gray-100 !text-[18px] hover:text-white cursor-pointer'}
+								/>
+								{/* TODO: Change this to function more like the button from AddTaskForm where it gets the projects from the database. */}
+								Hello Mobile
+							</div>
 
-						{/* TODO: Add DropdownProjects with all the required props. */}
-						{/* <DropdownProjects toggleRef={dropdownListsRef} isVisible={isDropdownListsVisible} setIsVisible={setIsDropdownListsVisible} selectedProject={selectedProject} setSelectedProject={setSelectedProject} projects={projects} /> */}
-					</div>
+							{/* TODO: Add DropdownProjects with all the required props. */}
+							<DropdownProjects
+								toggleRef={dropdownProjectsRef}
+								isVisible={isDropdownProjectsVisible}
+								setIsVisible={setIsDropdownProjectsVisible}
+								selectedProject={selectedProject}
+								setSelectedProject={setSelectedProject}
+								projects={projects}
+							/>
+						</div>
+					)}
 
 					<div className="flex items-center gap-2 relative">
 						{/* <Icon name="edit_note" customClass={"text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer"} fill={0} /> */}
@@ -424,7 +454,7 @@ const DropdownTaskOptions: React.FC<DropdownTaskOptionsProps> = ({
 			toggleRef={toggleRef}
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
-			customClasses={' shadow-2xl border border-color-gray-200 rounded !mt-[-175px] ml-[-180px]'}
+			customClasses={'shadow-2xl border border-color-gray-200 rounded !mt-[-175px] ml-[-180px]'}
 		>
 			<div className="w-[232px] p-1 rounded text-[13px]" onClick={(e) => e.stopPropagation()}>
 				<div
@@ -534,7 +564,7 @@ const DropdownStartFocus: React.FC<DropdownStartFocusProps> = ({ toggleRef, isVi
 				toggleRef={toggleRef}
 				isVisible={isVisible}
 				setIsVisible={setIsVisible}
-				customClasses={' shadow-2xl border border-color-gray-200 rounded mt-[-102px] ml-[-180px]'}
+				customClasses={'shadow-2xl border border-color-gray-200 rounded mt-[-102px] ml-[-180px]'}
 			>
 				<div className="w-[170px] p-1 rounded text-[13px]" onClick={(e) => e.stopPropagation()}>
 					<div className="p-2 hover:bg-color-gray-300 cursor-pointer" onClick={handleStartPomo}>
@@ -581,7 +611,7 @@ const DropdownEstimation: React.FC<DropdownEstimationProps> = ({ toggleRef, isVi
 			toggleRef={toggleRef}
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
-			customClasses={' mt-[5px] shadow-2xl border border-color-gray-200 rounded mt-[-130px] ml-[-210px]'}
+			customClasses={'mt-[5px] shadow-2xl border border-color-gray-200 rounded mt-[-130px] ml-[-210px]'}
 		>
 			<div className="w-[200px] p-2 rounded text-[13px]" onClick={(e) => e.stopPropagation()}>
 				<div className="flex-1">
@@ -671,7 +701,7 @@ const DropdownEstimationOptions: React.FC<DropdownEstimationOptionsProps> = ({
 			toggleRef={toggleRef}
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
-			customClasses={' mt-[5px] shadow-2xl border border-color-gray-200 rounded-lg'}
+			customClasses={'mt-[5px] shadow-2xl border border-color-gray-200 rounded-lg'}
 		>
 			<div className="w-[170px] p-1 rounded" onClick={(e) => e.stopPropagation()}>
 				<div className="overflow-auto gray-scrollbar text-[13px]">

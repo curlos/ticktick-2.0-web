@@ -44,7 +44,7 @@ const DropdownReminder: React.FC<DropdownReminderProps> = ({
 			toggleRef={toggleRef}
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
-			customClasses={' ml-[-5px] shadow-2xl border border-color-gray-200 rounded-lg'}
+			customClasses={'ml-[-5px] shadow-2xl border border-color-gray-200 rounded-lg'}
 		>
 			<div className="w-[260px] rounded" onClick={(e) => e.stopPropagation()}>
 				<div className="p-1">
@@ -140,7 +140,7 @@ const DropdownAdvancedReminder: React.FC<DropdownAdvancedReminderProps> = ({
 			toggleRef={toggleRef}
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
-			customClasses={' ml-[0px] shadow-2xl border border-color-gray-200 rounded-lg'}
+			customClasses={'ml-[0px] shadow-2xl border border-color-gray-200 rounded-lg'}
 		>
 			<div className="w-[260px] p-3 rounded" onClick={(e) => e.stopPropagation()}>
 				<div className="relative">
@@ -219,7 +219,7 @@ const DropdownUnitOfTime: React.FC<DropdownUnitOfTimeProps> = ({
 			toggleRef={toggleRef}
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
-			customClasses={' p-1 shadow-2xl border border-color-gray-200 rounded-lg'}
+			customClasses={'p-1 shadow-2xl border border-color-gray-200 rounded-lg'}
 		>
 			{UNITS_OF_TIME.map((unitOfTime) => (
 				<div

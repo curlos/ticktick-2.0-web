@@ -50,7 +50,7 @@ const DropdownProjects: React.FC<DropdownProjectsProps> = ({
 			toggleRef={toggleRef}
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
-			customClasses={' ml-[-13px] mt-2 mb-2 shadow-2xl border border-color-gray-200 rounded-lg'}
+			customClasses={'ml-[-13px] mt-2 mb-2 shadow-2xl border border-color-gray-200 rounded-lg'}
 		>
 			<div className="w-[200px]">
 				<div>

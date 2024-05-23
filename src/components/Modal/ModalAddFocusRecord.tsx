@@ -226,7 +226,7 @@ const DropdownSetFocusTypeAndAmount: React.FC<DropdownSetFocusTypeAndAmountProps
 			toggleRef={toggleRef}
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
-			customClasses={' w-[250px] p-1 shadow-2xl border border-color-gray-200 rounded-lg p-2'}
+			customClasses={'w-[250px] p-1 shadow-2xl border border-color-gray-200 rounded-lg p-2'}
 		>
 			<div className="flex justify-center gap-1">
 				<div
@@ -305,7 +305,7 @@ const DropdownTimeCalendar: React.FC<DropdownTimeCalendarProps> = ({
 			toggleRef={toggleRef}
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
-			customClasses={' w-[250px] p-1 shadow-2xl border border-color-gray-200 rounded-lg'}
+			customClasses={'w-[250px] p-1 shadow-2xl border border-color-gray-200 rounded-lg'}
 		>
 			<div className="pt-2">
 				<SelectCalendar dueDate={time} setDueDate={setTime} />

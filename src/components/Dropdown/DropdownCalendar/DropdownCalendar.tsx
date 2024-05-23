@@ -33,7 +33,7 @@ const BigDateIconOption: React.FC<BigDateIconOptionProps> = ({ iconName, Dropdow
 				toggleRef={dropdownRef}
 				isVisible={isDropdownVisible}
 				setIsVisible={setIsDropdownVisible}
-				customClasses={' !bg-black'}
+				customClasses={'!bg-black'}
 			>
 				<div className="p-2 text-[12px] text-nowrap">{DropdownText}</div>
 			</Dropdown>
@@ -161,7 +161,7 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({
 			toggleRef={toggleRef}
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
-			customClasses={' shadow-2xl select-none' + (customClasses ? ` ${customClasses}` : '')}
+			customClasses={'shadow-2xl select-none' + (customClasses ? ` ${customClasses}` : '')}
 			customStyling={customStyling ? customStyling : null}
 		>
 			<div className="w-[260px]">
