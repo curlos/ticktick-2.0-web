@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Icon from './Icon';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import TextareaAutosize from 'react-textarea-autosize';
 import { DropdownProps, TaskObj } from '../interfaces/interfaces';
@@ -11,7 +11,6 @@ import Dropdown from './Dropdown/Dropdown';
 import CustomInput from './CustomInput';
 import ModalTaskActivities from './Modal/ModalTaskActivities';
 import { useMarkTaskAsDeletedMutation, useEditTaskMutation, useGetTasksQuery } from '../services/api';
-import ModalAddTaskForm from './Modal/ModalAddTaskForm';
 import { getTasksWithFilledInChildren } from '../utils/helpers.utils';
 import { SortableTree } from './SortableTest/SortableTree';
 import useDebouncedEditTask from '../hooks/useDebouncedEditTask';
@@ -20,6 +19,7 @@ import { SMART_LISTS } from '../utils/smartLists.utils';
 import { PRIORITIES } from '../utils/priorities.utils';
 import TaskDueDateText from './TaskDueDateText';
 import DropdownPriorities from './Dropdown/DropdownPriorities';
+import { setModalState } from '../slices/modalSlice';
 
 const EmptyTask = () => (
 	<div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700 flex justify-center items-center text-[18px] text-color-gray-100">
@@ -54,7 +54,6 @@ const TaskDetails = () => {
 
 	// Modals
 	const [isModalTaskActivitiesOpen, setIsModalTaskActivitiesOpen] = useState(false);
-	const [isModalAddTaskFormOpen, setIsModalAddTaskFormOpen] = useState(false);
 
 	const [showAddTaskForm, setShowAddTaskForm] = useState(false);
 	const [showAddCommentInput, setShowAddCommentInput] = useState(false);
@@ -371,7 +370,6 @@ const TaskDetails = () => {
 							isVisible={isDropdownTaskOptionsVisible}
 							setIsVisible={setIsDropdownTaskOptionsVisible}
 							setIsModalTaskActivitiesOpen={setIsModalTaskActivitiesOpen}
-							setIsModalAddTaskFormOpen={setIsModalAddTaskFormOpen}
 							task={task}
 						/>
 					</div>
@@ -382,19 +380,12 @@ const TaskDetails = () => {
 				isModalOpen={isModalTaskActivitiesOpen}
 				setIsModalOpen={setIsModalTaskActivitiesOpen}
 			/>
-
-			<ModalAddTaskForm
-				isModalOpen={isModalAddTaskFormOpen}
-				setIsModalOpen={setIsModalAddTaskFormOpen}
-				parentId={_id}
-			/>
 		</div>
 	);
 };
 
 interface DropdownTaskOptionsProps extends DropdownProps {
 	setIsModalTaskActivitiesOpen: React.Dispatch<React.SetStateAction<boolean>>;
-	setIsModalAddTaskFormOpen: React.Dispatch<React.SetStateAction<boolean>>;
 	task: TaskObj;
 }
 
@@ -403,9 +394,9 @@ const DropdownTaskOptions: React.FC<DropdownTaskOptionsProps> = ({
 	isVisible,
 	setIsVisible,
 	setIsModalTaskActivitiesOpen,
-	setIsModalAddTaskFormOpen,
 	task,
 }) => {
+	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const { projectId } = useParams();
 	const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
@@ -440,7 +431,11 @@ const DropdownTaskOptions: React.FC<DropdownTaskOptionsProps> = ({
 			<div className="w-[232px] p-1 rounded text-[13px]" onClick={(e) => e.stopPropagation()}>
 				<div
 					className="p-1 flex items-center gap-[2px] hover:bg-color-gray-300 cursor-pointer"
-					onClick={() => setIsModalAddTaskFormOpen(true)}
+					onClick={() => {
+						dispatch(
+							setModalState({ modalId: 'ModalAddTaskForm', isOpen: true, props: { parentId: task._id } })
+						);
+					}}
 				>
 					<Icon
 						name="add_task"

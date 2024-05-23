@@ -1,11 +1,10 @@
 import Modal from './Modal';
 import AddTaskForm from '../AddTaskForm';
 import { useDispatch, useSelector } from 'react-redux';
-import { closeModal } from '../../slices/modalSlice';
+import { setModalState } from '../../slices/modalSlice';
 
 const ModalAddTaskForm: React.FC = () => {
-	const modalId = 'ModalAddTaskForm';
-	const modal = useSelector((state) => state.modals.modals[modalId]);
+	const modal = useSelector((state) => state.modals.modals['ModalAddTaskForm']);
 	const dispatch = useDispatch();
 
 	if (!modal) {
@@ -16,7 +15,11 @@ const ModalAddTaskForm: React.FC = () => {
 	const { parentId } = props;
 
 	return (
-		<Modal isOpen={isOpen} onClose={() => dispatch(closeModal(modalId))} position="top-center">
+		<Modal
+			isOpen={isOpen}
+			onClose={() => dispatch(setModalState({ modalId: 'ModalAddTaskForm', isOpen: false }))}
+			position="top-center"
+		>
 			<div className="rounded-xl shadow-lg">
 				<AddTaskForm parentId={parentId} />
 			</div>

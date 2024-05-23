@@ -9,6 +9,7 @@ import { setProjectsToState } from '../slices/projectsSlice';
 import DraggableProjects, { ProjectItem } from './DraggableProjects';
 import { SortableTree } from './SortableTest/SortableTree';
 import { SMART_LISTS } from '../utils/smartLists.utils';
+import { setModalState } from '../slices/modalSlice';
 
 const getNumberOfTasks = () => {};
 
@@ -35,7 +36,6 @@ const TaskListSidebar = () => {
 		},
 	];
 
-	const [isModalAddListOpen, setIsModalAddListOpen] = useState(false);
 	const dispatch = useDispatch();
 	const { data: fetchedProjects, isLoading, error } = useGetProjectsQuery();
 	const { projects } = fetchedProjects || {};
@@ -81,7 +81,9 @@ const TaskListSidebar = () => {
 						<Icon
 							name={'add'}
 							customClass={'text-color-gray-100 !text-[16px] hover:text-white'}
-							onClick={() => setIsModalAddListOpen(!isModalAddListOpen)}
+							onClick={() => {
+								dispatch(setModalState({ modalId: 'ModalAddList', isOpen: true }));
+							}}
 						/>
 					</div>
 
@@ -128,8 +130,6 @@ const TaskListSidebar = () => {
 						<ProjectItem key={project.name} project={project} isSmartList={true} />
 					))}
 			</div>
-
-			<ModalAddList isModalOpen={isModalAddListOpen} setIsModalOpen={setIsModalAddListOpen} />
 		</div>
 	);
 };

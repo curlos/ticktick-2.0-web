@@ -6,16 +6,12 @@ import Dropdown from '../Dropdown/Dropdown';
 import CustomInput from '../CustomInput';
 import SelectCalendar from '../SelectCalendar';
 import DropdownTime from '../Dropdown/DropdownTIme';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import TaskListByCategory from '../TaskListByCategory';
 import { DropdownProps } from '../../interfaces/interfaces';
+import { setModalState } from '../../slices/modalSlice';
 
-interface ModalAddFocusRecordProps {
-	isModalOpen: boolean;
-	setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-const ModalAddFocusRecord: React.FC<ModalAddFocusRecordProps> = ({ isModalOpen, setIsModalOpen }) => {
+const ModalAddFocusRecord: React.FC = () => {
 	const [isDropdownSetTaskVisible, setIsDropdownSetTaskVisible] = useState(false);
 	const [isDropdownStartTimeVisible, setIsDropdownStartTimeVisible] = useState(false);
 	const [isDropdownEndTimeVisible, setIsDropdownEndTimeVisible] = useState(false);
@@ -31,15 +27,28 @@ const ModalAddFocusRecord: React.FC<ModalAddFocusRecordProps> = ({ isModalOpen, 
 	const dropdownEndTimeCalendarRef = useRef(null);
 	const dropdownSetFocusTypeAndAmountRef = useRef(null);
 
+	const modal = useSelector((state) => state.modals.modals['ModalAddFocusRecord']);
+	const dispatch = useDispatch();
+
+	if (!modal) {
+		return null;
+	}
+
+	const { isOpen } = modal;
+
+	const closeModal = () => {
+		dispatch(setModalState({ modalId: 'ModalAddFocusRecord', isOpen: false }));
+	};
+
 	return (
-		<Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} position="top-center">
+		<Modal isOpen={isOpen} onClose={closeModal} position="top-center">
 			<div className="rounded-xl shadow-lg bg-color-gray-650 p-5">
 				<div className="flex items-center justify-between mb-4">
 					<h3 className="font-bold text-[16px]">Add Focus Record</h3>
 					<Icon
 						name="close"
 						customClass={'!text-[20px] text-color-gray-100 hover:text-white cursor-pointer'}
-						onClick={() => setIsModalOpen(false)}
+						onClick={closeModal}
 					/>
 				</div>
 
@@ -176,17 +185,13 @@ const ModalAddFocusRecord: React.FC<ModalAddFocusRecordProps> = ({ isModalOpen, 
 				<div className="flex justify-end gap-2">
 					<button
 						className="border border-color-gray-200 rounded py-1 cursor-pointer hover:bg-color-gray-200 min-w-[114px]"
-						onClick={() => {
-							setIsModalOpen(false);
-						}}
+						onClick={closeModal}
 					>
 						Close
 					</button>
 					<button
 						className="bg-blue-500 rounded py-1 cursor-pointer hover:bg-blue-600 min-w-[114px]"
-						onClick={() => {
-							setIsModalOpen(false);
-						}}
+						onClick={closeModal}
 					>
 						Ok
 					</button>
@@ -406,6 +411,7 @@ const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({
 				/>
 			</div>
 
+			{/* TODO: BROKEN!!!!! Refactor this. This was done before I even used a draggable or SortableTree from dnd-kit so very old and obviously broken. */}
 			<div className="space-y-2 h-[300px] gray-scrollbar overflow-auto">
 				<TaskListByCategory
 					tasks={allTasks}

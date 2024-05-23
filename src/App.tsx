@@ -2,7 +2,7 @@ import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import FocusPage from './pages/FocusPage';
 import HomePage from './pages/HomePage';
-import ModalAddTaskForm from './components/Modal/ModalAddTaskForm';
+import GlobalModalList from './components/GlobalModalList';
 
 function App() {
 	return (
@@ -23,11 +23,7 @@ function App() {
 				</Router>
 
 				{/* Modals */}
-				<ModalAddTaskForm
-				// isModalOpen={isModalAddTaskFormOpen}
-				// setIsModalOpen={setIsModalAddTaskFormOpen}
-				// parentId={task._id}
-				/>
+				<GlobalModalList />
 			</div>
 		</>
 	);

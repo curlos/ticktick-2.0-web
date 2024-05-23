@@ -6,14 +6,13 @@ import { DropdownProps, IProject } from '../../interfaces/interfaces';
 import { fetchData } from '../../utils/helpers.utils';
 import { useAddProjectMutation } from '../../services/api';
 import { addProjectToState } from '../../slices/projectsSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { setModalState } from '../../slices/modalSlice';
 
-interface ModalAddListProps {
-	isModalOpen: boolean;
-	setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}
+const ModalAddList: React.FC = () => {
+	const modal = useSelector((state) => state.modals.modals['ModalAddList']);
+	const dispatch = useDispatch();
 
-const ModalAddList: React.FC<ModalAddListProps> = ({ isModalOpen, setIsModalOpen }) => {
 	const [name, setName] = useState('');
 	const [listColor, setListColor] = useState('');
 	const [selectedView, setSelectedView] = useState('list');
@@ -68,20 +67,25 @@ const ModalAddList: React.FC<ModalAddListProps> = ({ isModalOpen, setIsModalOpen
 
 	const dropdownFolderRef = useRef(null);
 
+	if (!modal) {
+		return null;
+	}
+
+	const { isOpen } = modal;
+
+	const closeModal = () => {
+		dispatch(setModalState({ modalId: 'ModalAddList', isOpen: false }));
+	};
+
 	return (
-		<Modal
-			isOpen={isModalOpen}
-			onClose={() => setIsModalOpen(false)}
-			position="top-center"
-			customClasses="!w-[400px]"
-		>
+		<Modal isOpen={isOpen} onClose={closeModal} position="top-center" customClasses="!w-[400px]">
 			<div className="bg-color-gray-650 rounded-lg shadow-lg py-4 px-6">
 				<div className="flex items-center justify-between mb-4">
 					<h3 className="font-bold text-[16px]">Add List</h3>
 					<Icon
 						name="close"
 						customClass={'!text-[20px] text-color-gray-100 hover:text-white cursor-pointer'}
-						onClick={() => setIsModalOpen(false)}
+						onClick={closeModal}
 					/>
 				</div>
 
@@ -156,7 +160,7 @@ const ModalAddList: React.FC<ModalAddListProps> = ({ isModalOpen, setIsModalOpen
 					{/* Folder */}
 					<div className="flex items-center">
 						<div className="text-color-gray-100 w-[96px]">Folder</div>
-						<div className="flex-1">
+						<div className="flex-1 relative">
 							<div
 								ref={dropdownFolderRef}
 								className="border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500 rounded-md cursor-pointer"
@@ -188,9 +192,7 @@ const ModalAddList: React.FC<ModalAddListProps> = ({ isModalOpen, setIsModalOpen
 				<div className="flex items-center justify-end gap-2 mt-5">
 					<button
 						className="border border-color-gray-200 rounded py-[2px] cursor-pointer hover:bg-color-gray-200 min-w-[114px]"
-						onClick={() => {
-							setIsModalOpen(false);
-						}}
+						onClick={closeModal}
 					>
 						Close
 					</button>
@@ -200,7 +202,7 @@ const ModalAddList: React.FC<ModalAddListProps> = ({ isModalOpen, setIsModalOpen
 							(!name ? ' opacity-50' : '')
 						}
 						onClick={() => {
-							setIsModalOpen(false);
+							closeModal();
 							handleAddList();
 						}}
 					>

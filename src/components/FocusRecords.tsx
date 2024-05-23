@@ -5,6 +5,8 @@ import remarkGfm from 'remark-gfm';
 import Icon from './Icon';
 import useSticky from '../hooks/useSticky';
 import ModalAddFocusRecord from './Modal/ModalAddFocusRecord';
+import { setModalState } from '../slices/modalSlice';
+import { useDispatch } from 'react-redux';
 
 interface StatsOverviewProps {
 	overviewData: object;
@@ -52,6 +54,7 @@ const StatsOverview: React.FC<StatsOverviewProps> = ({ overviewData }) => {
 };
 
 const FocusRecords = () => {
+	const dispatch = useDispatch();
 	const [overviewData, setOverviewData] = useState({
 		todaysPomo: 3,
 		todaysFocus: 7200000,
@@ -95,8 +98,6 @@ const FocusRecords = () => {
 	const stickyRef = useRef(null); // Reference to the sticky element
 	const isSticky = useSticky(scrollableRef, stickyRef); // Pass both refs to the hook
 
-	const [isModalAddFocusRecordOpen, setIsModalAddFocusRecordOpen] = useState(true);
-
 	return (
 		<div
 			ref={scrollableRef}
@@ -115,7 +116,7 @@ const FocusRecords = () => {
 				<Icon
 					name="add"
 					customClass={'!text-[20px] text-color-gray-100 cursor-pointer rounded hover:bg-color-gray-300'}
-					onClick={() => setIsModalAddFocusRecordOpen(true)}
+					onClick={() => dispatch(setModalState({ modalId: 'ModalAddFocusRecord', isOpen: true }))}
 				/>
 			</div>
 
@@ -164,11 +165,6 @@ const FocusRecords = () => {
 						</li>
 					);
 				})}
-
-				<ModalAddFocusRecord
-					isModalOpen={isModalAddFocusRecordOpen}
-					setIsModalOpen={setIsModalAddFocusRecordOpen}
-				/>
 			</div>
 		</div>
 	);
