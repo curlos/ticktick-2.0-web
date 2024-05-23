@@ -169,7 +169,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 						</span>
 					</div>
 
-					<span className="ml-1 text-white max-w-[450px]">{title}</span>
+					<span className="ml-1 text-white max-w-[350px]">{title}</span>
 
 					<div className="flex-grow flex justify-end mt-[2px]">
 						<div>

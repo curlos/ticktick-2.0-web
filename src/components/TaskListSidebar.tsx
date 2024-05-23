@@ -5,13 +5,10 @@ import { IProject } from '../interfaces/interfaces';
 import { arrayToObjectByKey, containsEmoji, fetchData } from '../utils/helpers.utils';
 import { useDispatch, useSelector } from 'react-redux';
 import { useGetProjectsQuery } from '../services/api';
-import { setProjectsToState } from '../slices/projectsSlice';
 import DraggableProjects, { ProjectItem } from './DraggableProjects';
 import { SortableTree } from './SortableTest/SortableTree';
 import { SMART_LISTS } from '../utils/smartLists.utils';
 import { setModalState } from '../slices/modalSlice';
-
-const getNumberOfTasks = () => {};
 
 const TaskListSidebar = () => {
 	// TODO: Bring these boys back to life as Status Lists. They'll work extremely similarly to Smart Lists with "Trash" having more advanced capabilities than the others.
@@ -39,17 +36,6 @@ const TaskListSidebar = () => {
 	const dispatch = useDispatch();
 	const { data: fetchedProjects, isLoading, error } = useGetProjectsQuery();
 	const { projects } = fetchedProjects || {};
-
-	// Update Redux state with fetched tasks
-	useEffect(() => {
-		if (projects) {
-			const projectsWithId: Array<IProject> = projects.map((project: IProject) => ({
-				...project,
-				id: project._id,
-			}));
-			dispatch(setProjectsToState(projectsWithId));
-		}
-	}, [fetchedProjects, dispatch]);
 
 	// TODO: Look into this. I had this before to drag projects and drop them into different folders.
 	// const projectsWithNoGroup = projects && projects.filter((project) => !project.groupId);

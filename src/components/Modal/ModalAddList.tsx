@@ -5,7 +5,6 @@ import Dropdown from '../Dropdown/Dropdown';
 import { DropdownProps, IProject } from '../../interfaces/interfaces';
 import { fetchData } from '../../utils/helpers.utils';
 import { useAddProjectMutation } from '../../services/api';
-import { addProjectToState } from '../../slices/projectsSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { setModalState } from '../../slices/modalSlice';
 
@@ -326,8 +325,7 @@ const ModalNewProject: React.FC<ModalNewProjectProps> = ({ isModalOpen, setIsMod
 		};
 
 		try {
-			const result = await addProject(newProject).unwrap(); // Add the project
-			dispatch(addProjectToState(result)); // Update the Redux state with the new project
+			await addProject(newProject);
 		} catch (error) {
 			console.error(error);
 		}

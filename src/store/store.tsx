@@ -1,7 +1,5 @@
 // src/store.js
 import { configureStore } from '@reduxjs/toolkit';
-import tasksReducer from '../slices/tasksSlice';
-import projectsReducer from '../slices/projectsSlice';
 import modalReducer from '../slices/modalSlice';
 import { api } from '../services/api';
 import alertsReducer from '../slices/alertSlice';
@@ -9,8 +7,6 @@ import alertsReducer from '../slices/alertSlice';
 // Create and configure the store
 const store = configureStore({
 	reducer: {
-		tasks: tasksReducer,
-		projects: projectsReducer,
 		modals: modalReducer,
 		alerts: alertsReducer,
 		[api.reducerPath]: api.reducer, // RTK Query reducer for users

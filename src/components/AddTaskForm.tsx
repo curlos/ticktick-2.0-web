@@ -5,7 +5,6 @@ import DropdownCalendar from './Dropdown/DropdownCalendar/DropdownCalendar';
 import TextareaAutosize from 'react-textarea-autosize';
 import DropdownPriorities from './Dropdown/DropdownPriorities';
 import { PRIORITIES } from '../utils/priorities.utils';
-import { addTask } from '../slices/tasksSlice';
 import DropdownProjects from './Dropdown/DropdownProjects';
 import { useAddTaskMutation, useGetProjectsQuery } from '../services/api';
 import { SMART_LISTS } from '../utils/smartLists.utils';
