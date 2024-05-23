@@ -1,37 +1,62 @@
 import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface ModalProps {
-	isOpen: boolean;
-	onClose: () => void;
-	position?: string;
-	customClasses?: string;
-	children: React.ReactNode;
+    isOpen: boolean;
+    onClose: () => void;
+    position?: string;
+    customClasses?: string;
+    children: React.ReactNode;
 }
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, position, customClasses, children }) => {
-	if (!isOpen) return null;
+    const containerVariants = {
+        hidden: { opacity: 0, scale: 0.95, transition: { duration: 0.3 } },
+        visible: { opacity: 1, scale: 1, transition: { duration: 0.3 } }
+    };
 
-	let containerClasses = `z-50 relative p-3 max-w-full w-[500px]`;
+    const backdropVariants = {
+        hidden: { opacity: 0 },
+        visible: { opacity: 0.5 }
+    };
 
-	switch (position) {
-		case 'top-center':
-			containerClasses += ' mx-auto mt-[60px]';
-			break;
-		default:
-			containerClasses += ' mx-auto my-auto';
-			break;
-	}
+    let containerClasses = `z-50 relative p-3 max-w-full w-[500px]`;
 
-	if (position === 'center') {
-		containerClasses += ' mx-auto my-auto';
-	}
+    switch (position) {
+        case 'top-center':
+            containerClasses += ' mx-auto mt-[60px]';
+            break;
+        default:
+            containerClasses += ' mx-auto my-auto';
+            break;
+    }
 
-	return (
-		<div className="fixed inset-0 z-50 overflow-auto bg-smoke-light flex">
-			<div className="fixed inset-0 bg-black opacity-50" onClick={onClose}></div>
-			<div className={containerClasses + (customClasses ? ` ${customClasses}` : '')}>{children}</div>
-		</div>
-	);
+    return (
+        <AnimatePresence>
+            {isOpen && (
+                <div className="fixed inset-0 z-50 overflow-auto bg-smoke-light flex justify-center items-center">
+                    <motion.div
+                        initial="hidden"
+                        animate="visible"
+                        exit="hidden"
+                        variants={backdropVariants}
+                        className="fixed inset-0 bg-black"
+                        onClick={onClose}
+                        style={{ zIndex: 49 }}
+                    />
+                    <motion.div
+                        initial="hidden"
+                        animate="visible"
+                        exit="hidden"
+                        variants={containerVariants}
+                        className={containerClasses + (customClasses ? ` ${customClasses}` : '')}
+                    >
+                        {children}
+                    </motion.div>
+                </div>
+            )}
+        </AnimatePresence>
+    );
 };
 
 export default Modal;
