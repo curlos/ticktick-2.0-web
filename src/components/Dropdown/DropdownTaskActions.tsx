@@ -17,6 +17,7 @@ interface IDateIconOption {
 	dueDate: Date | null;
 	setDueDate: React.Dispatch<React.SetStateAction<Date | null>>;
 	showDropdownCalendar?: boolean;
+	onCloseContextMenu?: () => void;
 }
 
 const DateIconOption: React.FC<IDateIconOption> = ({
@@ -28,6 +29,7 @@ const DateIconOption: React.FC<IDateIconOption> = ({
 	dueDate,
 	setDueDate,
 	showDropdownCalendar,
+	onCloseContextMenu,
 }) => {
 	// useState
 	const [isTooltipVisible, setIsTooltipVisible] = useState(false);
@@ -98,6 +100,7 @@ const DateIconOption: React.FC<IDateIconOption> = ({
 					setCurrDueDate={setDueDate}
 					customClasses=" !ml-[0px] mt-[15px]"
 					showDateIcons={false}
+					onCloseContextMenu={onCloseContextMenu}
 				/>
 			)}
 		</div>
@@ -109,9 +112,16 @@ interface IDateIconOptionList {
 	setDueDate: React.Dispatch<React.SetStateAction<Date | null>>;
 	handleEditDate: (dateToEdit: Date | null) => void;
 	task: TaskObj;
+	onCloseContextMenu?: () => void;
 }
 
-const DateIconOptionList: React.FC<IDateIconOptionList> = ({ dueDate, setDueDate, handleEditDate, task }) => {
+const DateIconOptionList: React.FC<IDateIconOptionList> = ({
+	dueDate,
+	setDueDate,
+	handleEditDate,
+	task,
+	onCloseContextMenu,
+}) => {
 	const today = new Date();
 
 	const tomorrow = new Date(today);
@@ -154,6 +164,7 @@ const DateIconOptionList: React.FC<IDateIconOptionList> = ({ dueDate, setDueDate
 				dueDate={dueDate}
 				setDueDate={setDueDate}
 				showDropdownCalendar={true}
+				onCloseContextMenu={onCloseContextMenu}
 			/>
 			{dueDate && (
 				<DateIconOption
@@ -233,6 +244,7 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 						setDueDate={setCurrDueDate}
 						handleEditDate={handleEditDate}
 						task={task}
+						onCloseContextMenu={onCloseContextMenu}
 					/>
 				</div>
 

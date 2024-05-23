@@ -98,6 +98,7 @@ interface DropdownPrioritiesProps extends DropdownProps {
 	setCurrDueDate: React.Dispatch<React.SetStateAction<Date | null>>;
 	customClasses?: string;
 	showDateIcons?: boolean;
+	onCloseContextMenu?: () => void;
 }
 
 const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({
@@ -110,6 +111,7 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({
 	customClasses,
 	customStyling,
 	showDateIcons = true,
+	onCloseContextMenu,
 }) => {
 	const [editTask] = useEditTaskMutation();
 
@@ -241,6 +243,10 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({
 							if (task) {
 								editTask({ taskId: task._id, payload: { dueDate: null } });
 							}
+
+							if (onCloseContextMenu) {
+								onCloseContextMenu();
+							}
 						}}
 					>
 						Clear
@@ -253,6 +259,10 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({
 							}
 
 							setIsVisible(false);
+
+							if (onCloseContextMenu) {
+								onCloseContextMenu();
+							}
 						}}
 					>
 						Ok
