@@ -1,17 +1,24 @@
 import Modal from './Modal';
 import AddTaskForm from '../AddTaskForm';
+import { useDispatch, useSelector } from 'react-redux';
+import { closeModal } from '../../slices/modalSlice';
 
-interface ModalAddTaskFormProps {
-	isModalOpen: boolean;
-	setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-	parentId: string;
-}
+const ModalAddTaskForm: React.FC = () => {
+	const modalId = 'ModalAddTaskForm';
+	const modal = useSelector((state) => state.modals.modals[modalId]);
+	const dispatch = useDispatch();
 
-const ModalAddTaskForm: React.FC<ModalAddTaskFormProps> = ({ isModalOpen, setIsModalOpen, parentId }) => {
+	if (!modal) {
+		return null;
+	}
+
+	const { isOpen, props } = modal;
+	const { parentId } = props;
+
 	return (
-		<Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} position="top-center">
+		<Modal isOpen={isOpen} onClose={() => dispatch(closeModal(modalId))} position="top-center">
 			<div className="rounded-xl shadow-lg">
-				<AddTaskForm setShowAddTaskForm={setIsModalOpen} parentId={parentId} />
+				<AddTaskForm parentId={parentId} />
 			</div>
 		</Modal>
 	);

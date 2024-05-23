@@ -8,7 +8,8 @@ import classNames from 'classnames';
 import { isInXDaysUTC, isTodayUTC, isTomorrowUTC } from '../../utils/date.utils';
 import DropdownCalendar from './DropdownCalendar';
 import { useParams } from 'react-router';
-import ModalAddTaskForm from '../Modal/ModalAddTaskForm';
+import { useDispatch } from 'react-redux';
+import { setModalState } from '../../slices/modalSlice';
 
 interface IDateIconOption {
 	iconName: string;
@@ -194,6 +195,7 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 	customStyling,
 	onCloseContextMenu,
 }) => {
+	const dispatch = useDispatch();
 	const { data: fetchedTasks, isLoading: isTasksLoading, error } = useGetTasksQuery();
 	const { tasks, tasksById, parentOfTasks } = fetchedTasks || {};
 	const [editTask] = useEditTaskMutation();
@@ -203,9 +205,6 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 	const [parentTask, setParentTask] = useState<TaskObj>();
 	const [currDueDate, setCurrDueDate] = useState(null);
 	const [priority, setPriority] = useState(0);
-
-	// Modals
-	const [isModalAddTaskFormOpen, setIsModalAddTaskFormOpen] = useState(false);
 
 	useEffect(() => {
 		if (isTasksLoading) {
@@ -321,9 +320,17 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 						iconName="add_task"
 						title="Add Subtask"
 						onClick={() => {
-							setIsModalAddTaskFormOpen(true);
+							dispatch(
+								setModalState({
+									modalId: 'ModalAddTaskForm',
+									isOpen: true,
+									props: {
+										parentId: task._id,
+									},
+								})
+							);
 							// TODO: Don't close the context menu for now but may need to be investigated.
-							// onCloseContextMenu();
+							onCloseContextMenu();
 						}}
 					/>
 					<TaskAction iconName="disabled_by_default" title="Won't Do" />
@@ -355,12 +362,6 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
                         setIsVisible(false);
                     }}>Ok</button>
                 </div> */}
-
-				<ModalAddTaskForm
-					isModalOpen={isModalAddTaskFormOpen}
-					setIsModalOpen={setIsModalAddTaskFormOpen}
-					parentId={task._id}
-				/>
 			</div>
 		</Dropdown>
 	);

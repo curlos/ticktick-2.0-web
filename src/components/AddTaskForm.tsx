@@ -12,13 +12,13 @@ import { SMART_LISTS } from '../utils/smartLists.utils';
 import { useParams } from 'react-router';
 import classNames from 'classnames';
 import TaskDueDateText from './TaskDueDateText';
+import { setModalState } from '../slices/modalSlice';
 
 interface AddTaskFormProps {
-	setShowAddTaskForm: React.Dispatch<React.SetStateAction<boolean>>;
 	parentId: string;
 }
 
-const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId }) => {
+const AddTaskForm: React.FC<AddTaskFormProps> = ({ parentId }) => {
 	const dispatch = useDispatch();
 	const params = useParams();
 	const { projectId } = params;
@@ -92,7 +92,8 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId 
 			//     flagColor: '#7B7B7B'
 			// });
 
-			setShowAddTaskForm(false);
+			// TODO: Add dispatch after small test
+			dispatch(setModalState({ modalId: 'ModalAddTaskForm', isOpen: false }));
 		} catch (error) {
 			console.error(error);
 		}
@@ -172,6 +173,8 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId 
 				<hr className="border-color-gray-200 my-1" />
 
 				<div className="p-2 pt-1 flex justify-between items-center">
+					{/* TODO: If there is a parentId, probably should not give the user the option to change the project here because the project MUST be the same as its parent. If it is a subtask of another task, it wouldn't make sense to have a different projectId. */}
+					{/* TODO: For now, I won't take it out experiement with TickTick to see what it does about subtasks when you move it to a different project. One solution would be to change all the parentId's "projectId" in an upstream fashion. */}
 					{!isLoadingProjects && (
 						<div className="relative">
 							<div
@@ -194,10 +197,10 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId 
 						</div>
 					)}
 
-					<div className="space-x-2">
+					<div className="flex-1 flex justify-end space-x-2">
 						<button
 							className="border border-color-gray-200 rounded-md py-1 cursor-pointer hover:bg-color-gray-200 p-3"
-							onClick={() => setShowAddTaskForm(false)}
+							onClick={() => dispatch(setModalState({ modalId: 'ModalAddTaskForm', isOpen: false }))}
 						>
 							Cancel
 						</button>
