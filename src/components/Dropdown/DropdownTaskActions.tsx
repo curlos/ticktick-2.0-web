@@ -6,7 +6,7 @@ import { useEditTaskMutation, useGetTasksQuery } from '../../services/api';
 import { PRIORITIES } from '../../utils/priorities.utils';
 import classNames from 'classnames';
 import { isInXDaysUTC, isTodayUTC, isTomorrowUTC } from '../../utils/date.utils';
-import DropdownCalendar from './DropdownCalendar';
+import DropdownCalendar from './DropdownCalendar/DropdownCalendar';
 import { useParams } from 'react-router';
 import { useDispatch } from 'react-redux';
 import { setModalState } from '../../slices/modalSlice';

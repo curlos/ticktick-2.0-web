@@ -1,6 +1,7 @@
 import React, { forwardRef, useRef } from 'react';
 import useOutsideClick from '../../hooks/useOutsideClick';
 import { DropdownProps } from '../../interfaces/interfaces';
+import classNames from 'classnames';
 
 interface BaseDropdownProps extends DropdownProps {
 	children: React.ReactNode;
@@ -19,10 +20,13 @@ const Dropdown = forwardRef<HTMLDivElement, BaseDropdownProps>(
 		const positionClass = positionAdjustment || '';
 
 		return (
-			// TODO: "top-full and left-0" fixed the dropdown problem of them not appearing in the right spots with DropdownCqalendar. I was even able to take out the negative margin styles. This should be investigated for every other dropdown on the site since it happens eveywhere.
 			<div
 				ref={dropdownRef}
-				className={`absolute top-full left-0 z-50 text-white bg-color-gray-600 rounded-lg text-sm ${positionClass} ${customClasses || ''}`}
+				className={classNames(
+					'absolute top-full left-0 z-50 text-white bg-color-gray-600 rounded-lg text-sm mt-[4px]',
+					positionClass ? positionClass : '',
+					customClasses ? customClasses : ''
+				)}
 				style={customStyling ? customStyling : undefined}
 			>
 				{children}

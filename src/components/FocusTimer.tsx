@@ -255,7 +255,7 @@ const TopBar: React.FC<TopBarProps> = ({ selectedButton, setSelectedButton, setI
 				</div>
 			</div>
 
-			<div>
+			<div className="relative">
 				<Icon
 					toggleRef={dropdownOptionsRef}
 					name="more_horiz"

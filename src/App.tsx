@@ -20,10 +20,10 @@ function App() {
 						{/* Fallback route for 404 Not Found */}
 						<Route path="*" element={<HomePage />} />
 					</Routes>
-				</Router>
 
-				{/* Modals */}
-				<GlobalModalList />
+					{/* Modals */}
+					<GlobalModalList />
+				</Router>
 			</div>
 		</>
 	);

@@ -5,11 +5,12 @@ import TextareaAutosize from 'react-textarea-autosize';
 import Dropdown from '../Dropdown/Dropdown';
 import CustomInput from '../CustomInput';
 import SelectCalendar from '../SelectCalendar';
-import DropdownTime from '../Dropdown/DropdownTIme';
+import DropdownTime from '../Dropdown/DropdownCalendar/DropdownTime';
 import { useDispatch, useSelector } from 'react-redux';
 import TaskListByCategory from '../TaskListByCategory';
 import { DropdownProps } from '../../interfaces/interfaces';
 import { setModalState } from '../../slices/modalSlice';
+import { useGetTasksQuery } from '../../services/api';
 
 const ModalAddFocusRecord: React.FC = () => {
 	const [isDropdownSetTaskVisible, setIsDropdownSetTaskVisible] = useState(false);
@@ -56,117 +57,119 @@ const ModalAddFocusRecord: React.FC = () => {
 					{/* Task */}
 					<div className="flex items-center gap-2">
 						<div className="w-[100px]">Task</div>
-						<div
-							ref={dropdownSetTaskRef}
-							className="flex-1 border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500 cursor-pointer"
-							onClick={() => {
-								setIsDropdownSetTaskVisible(!isDropdownSetTaskVisible);
-							}}
-						>
-							<div className="text-color-gray-100">{selectedTask ? 'Task Selected' : 'Set Task'}</div>
-							<Icon
-								name="expand_more"
-								fill={0}
-								customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'}
+						<div className="relative flex-1">
+							<div
+								ref={dropdownSetTaskRef}
+								className="flex-1 border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500 cursor-pointer"
+								onClick={() => {
+									setIsDropdownSetTaskVisible(!isDropdownSetTaskVisible);
+								}}
+							>
+								<div className="text-color-gray-100">{selectedTask ? 'Task Selected' : 'Set Task'}</div>
+								<Icon
+									name="expand_more"
+									fill={0}
+									customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'}
+								/>
+							</div>
+
+							<DropdownSetTask
+								toggleRef={dropdownSetTaskRef}
+								isVisible={isDropdownSetTaskVisible}
+								setIsVisible={setIsDropdownSetTaskVisible}
+								selectedTask={selectedTask}
+								setSelectedTask={setSelectedTask}
 							/>
 						</div>
-					</div>
-
-					<div className="ml-[115px]">
-						<DropdownSetTask
-							toggleRef={dropdownSetTaskRef}
-							isVisible={isDropdownSetTaskVisible}
-							setIsVisible={setIsDropdownSetTaskVisible}
-							selectedTask={selectedTask}
-							setSelectedTask={setSelectedTask}
-						/>
 					</div>
 
 					{/* Start Time */}
 					<div className="flex items-center gap-2">
 						<div className="w-[100px]">Start Time</div>
-						<div
-							ref={dropdownStartTimeCalendarRef}
-							className="flex-1 border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500 cursor-pointer"
-							onClick={() => {
-								setIsDropdownStartTimeVisible(!isDropdownStartTimeVisible);
-							}}
-						>
-							<div className="text-color-gray-100">{selectedTask ? 'Task Selected' : '20:30'}</div>
-							<Icon
-								name="expand_more"
-								fill={0}
-								customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'}
+						<div className="relative flex-1">
+							<div
+								ref={dropdownStartTimeCalendarRef}
+								className="flex-1 border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500 cursor-pointer"
+								onClick={() => {
+									setIsDropdownStartTimeVisible(!isDropdownStartTimeVisible);
+								}}
+							>
+								<div className="text-color-gray-100">{selectedTask ? 'Task Selected' : '20:30'}</div>
+								<Icon
+									name="expand_more"
+									fill={0}
+									customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'}
+								/>
+							</div>
+
+							<DropdownTimeCalendar
+								toggleRef={dropdownStartTimeCalendarRef}
+								isVisible={isDropdownStartTimeVisible}
+								setIsVisible={setIsDropdownStartTimeVisible}
+								time={startTime}
+								setTime={setStartTime}
 							/>
 						</div>
-					</div>
-
-					<div className="ml-[115px]">
-						<DropdownTimeCalendar
-							toggleRef={dropdownStartTimeCalendarRef}
-							isVisible={isDropdownStartTimeVisible}
-							setIsVisible={setIsDropdownStartTimeVisible}
-							time={startTime}
-							setTime={setStartTime}
-						/>
 					</div>
 
 					{/* End Time */}
 					<div className="flex items-center gap-2">
 						<div className="w-[100px]">End Time</div>
-						<div
-							ref={dropdownEndTimeCalendarRef}
-							className="flex-1 border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500 cursor-pointer"
-							onClick={() => {
-								setIsDropdownEndTimeVisible(!isDropdownEndTimeVisible);
-							}}
-						>
-							<div className="text-color-gray-100">{selectedTask ? 'Task Selected' : '21:00'}</div>
-							<Icon
-								name="expand_more"
-								fill={0}
-								customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'}
+						<div className="relative flex-1">
+							<div
+								ref={dropdownEndTimeCalendarRef}
+								className="flex-1 border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500 cursor-pointer"
+								onClick={() => {
+									setIsDropdownEndTimeVisible(!isDropdownEndTimeVisible);
+								}}
+							>
+								<div className="text-color-gray-100">{selectedTask ? 'Task Selected' : '21:00'}</div>
+								<Icon
+									name="expand_more"
+									fill={0}
+									customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'}
+								/>
+							</div>
+
+							<DropdownTimeCalendar
+								toggleRef={dropdownEndTimeCalendarRef}
+								isVisible={isDropdownEndTimeVisible}
+								setIsVisible={setIsDropdownEndTimeVisible}
+								time={endTime}
+								setTime={setEndTime}
 							/>
 						</div>
-					</div>
-
-					<div className="ml-[115px]">
-						<DropdownTimeCalendar
-							toggleRef={dropdownEndTimeCalendarRef}
-							isVisible={isDropdownEndTimeVisible}
-							setIsVisible={setIsDropdownEndTimeVisible}
-							time={endTime}
-							setTime={setEndTime}
-						/>
 					</div>
 
 					{/* Type */}
 					<div className="flex items-center gap-2">
 						<div className="w-[100px]">Type</div>
-						<div
-							ref={dropdownSetFocusTypeAndAmountRef}
-							className="flex-1 border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500 cursor-pointer"
-							onClick={() => {
-								setIsDropdownSetFocusTypeAndAmountVisible(!isDropdownSetFocusTypeAndAmountVisible);
-							}}
-						>
-							<div className="text-color-gray-100">{selectedTask ? 'Task Selected' : 'Pomo: 0 Pomo'}</div>
-							<Icon
-								name="expand_more"
-								fill={0}
-								customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'}
+						<div className="relative flex-1">
+							<div
+								ref={dropdownSetFocusTypeAndAmountRef}
+								className="flex-1 border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500 cursor-pointer"
+								onClick={() => {
+									setIsDropdownSetFocusTypeAndAmountVisible(!isDropdownSetFocusTypeAndAmountVisible);
+								}}
+							>
+								<div className="text-color-gray-100">
+									{selectedTask ? 'Task Selected' : 'Pomo: 0 Pomo'}
+								</div>
+								<Icon
+									name="expand_more"
+									fill={0}
+									customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'}
+								/>
+							</div>
+
+							<DropdownSetFocusTypeAndAmount
+								toggleRef={dropdownSetFocusTypeAndAmountRef}
+								isVisible={isDropdownSetFocusTypeAndAmountVisible}
+								setIsVisible={setIsDropdownSetFocusTypeAndAmountVisible}
+								selectedTask={selectedTask}
+								setSelectedTask={setSelectedTask}
 							/>
 						</div>
-					</div>
-
-					<div className="ml-[115px]">
-						<DropdownSetFocusTypeAndAmount
-							toggleRef={dropdownSetFocusTypeAndAmountRef}
-							isVisible={isDropdownSetFocusTypeAndAmountVisible}
-							setIsVisible={setIsDropdownSetFocusTypeAndAmountVisible}
-							selectedTask={selectedTask}
-							setSelectedTask={setSelectedTask}
-						/>
 					</div>
 
 					{/* Focus Note */}
@@ -223,9 +226,7 @@ const DropdownSetFocusTypeAndAmount: React.FC<DropdownSetFocusTypeAndAmountProps
 			toggleRef={toggleRef}
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
-			customClasses={
-				' w-[250px] mb-[-155px] ml-[-10px] p-1 shadow-2xl border border-color-gray-200 rounded-lg p-2'
-			}
+			customClasses={' w-[250px] p-1 shadow-2xl border border-color-gray-200 rounded-lg p-2'}
 		>
 			<div className="flex justify-center gap-1">
 				<div
@@ -304,29 +305,31 @@ const DropdownTimeCalendar: React.FC<DropdownTimeCalendarProps> = ({
 			toggleRef={toggleRef}
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
-			customClasses={' w-[250px] mb-[-155px] ml-[-10px] p-1 shadow-2xl border border-color-gray-200 rounded-lg'}
+			customClasses={' w-[250px] p-1 shadow-2xl border border-color-gray-200 rounded-lg'}
 		>
 			<div className="pt-2">
 				<SelectCalendar dueDate={time} setDueDate={setTime} />
 			</div>
 
-			<div className="mb-2 px-2">
-				<div
-					ref={dropdownTimeRef}
-					className="text-center text-[14px] p-1 bg-color-gray-200 placeholder:text-[#7C7C7C] mb-0 w-full resize-none outline-none rounded hover:outline-blue-500 cursor-pointer"
-					onClick={() => setIsDropdownTimeVisible(!isDropdownTimeVisible)}
-				>
-					20:30
+			<div className="relative">
+				<div className="mb-2 px-2">
+					<div
+						ref={dropdownTimeRef}
+						className="text-center text-[14px] p-1 bg-color-gray-200 placeholder:text-[#7C7C7C] mb-0 w-full resize-none outline-none rounded hover:outline-blue-500 cursor-pointer"
+						onClick={() => setIsDropdownTimeVisible(!isDropdownTimeVisible)}
+					>
+						20:30
+					</div>
 				</div>
-			</div>
 
-			<DropdownTime
-				toggleRef={dropdownTimeRef}
-				isVisible={isDropdownTimeVisible}
-				setIsVisible={setIsDropdownTimeVisible}
-				showTimeZoneOption={false}
-				customClasses="mt-[-295px] !ml-[-11px]"
-			/>
+				<DropdownTime
+					toggleRef={dropdownTimeRef}
+					isVisible={isDropdownTimeVisible}
+					setIsVisible={setIsDropdownTimeVisible}
+					showTimeZoneOption={false}
+					customClasses="mt-[10px]"
+				/>
+			</div>
 
 			<div className="grid grid-cols-2 gap-2 p-2">
 				<button
@@ -362,7 +365,8 @@ const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({
 	selectedTask,
 	setSelectedTask,
 }) => {
-	const allTasks = useSelector((state) => state.tasks.tasksById);
+	const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
+	const { tasks, tasksById } = fetchedTasks || {};
 
 	const [selectedButton, setSelectedButton] = useState('Recent');
 	const [selectedFocusRecordTask, setSelectedFocusRecordTask] = useState(null);
@@ -414,7 +418,7 @@ const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({
 			{/* TODO: BROKEN!!!!! Refactor this. This was done before I even used a draggable or SortableTree from dnd-kit so very old and obviously broken. */}
 			<div className="space-y-2 h-[300px] gray-scrollbar overflow-auto">
 				<TaskListByCategory
-					tasks={allTasks}
+					tasks={tasks}
 					selectedFocusRecordTask={selectedFocusRecordTask}
 					setSelectedFocusRecordTask={setSelectedFocusRecordTask}
 				/>

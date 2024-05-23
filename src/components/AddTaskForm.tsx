@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Icon from './Icon';
-import DropdownCalendar from './Dropdown/DropdownCalendar';
+import DropdownCalendar from './Dropdown/DropdownCalendar/DropdownCalendar';
 import TextareaAutosize from 'react-textarea-autosize';
 import DropdownPriorities from './Dropdown/DropdownPriorities';
 import { PRIORITIES } from '../utils/priorities.utils';
@@ -18,7 +18,7 @@ interface AddTaskFormProps {
 	parentId: string;
 }
 
-const AddTaskForm: React.FC<AddTaskFormProps> = ({ parentId }) => {
+const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId }) => {
 	const dispatch = useDispatch();
 	const params = useParams();
 	const { projectId } = params;
@@ -200,7 +200,13 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ parentId }) => {
 					<div className="flex-1 flex justify-end space-x-2">
 						<button
 							className="border border-color-gray-200 rounded-md py-1 cursor-pointer hover:bg-color-gray-200 p-3"
-							onClick={() => dispatch(setModalState({ modalId: 'ModalAddTaskForm', isOpen: false }))}
+							onClick={() => {
+								if (setShowAddTaskForm) {
+									setShowAddTaskForm(false);
+								} else {
+									dispatch(setModalState({ modalId: 'ModalAddTaskForm', isOpen: false }));
+								}
+							}}
 						>
 							Cancel
 						</button>

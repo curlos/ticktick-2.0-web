@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import Dropdown from './Dropdown';
-import Icon from '../Icon';
-import DropdownFixedOrFloatingTimeZone from './DropdownFixedOrFloatingTimeZone';
-import { DropdownProps } from '../../interfaces/interfaces';
+import Dropdown from '../Dropdown';
+import Icon from '../../Icon';
+import DropdownFixedOrFloatingTimeZone from '../DropdownFixedOrFloatingTimeZone';
+import { DropdownProps } from '../../../interfaces/interfaces';
 
 const getTimesArray = () => {
 	let timesArray = [];
@@ -41,7 +41,7 @@ const DropdownTime: React.FC<DropdownTimeProps> = ({
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
 			customClasses={
-				' mt-[-280px] ml-[-5px] shadow-2xl border border-color-gray-200 rounded-[4px]' +
+				' ml-[-5px] shadow-2xl border border-color-gray-200 rounded-[4px]' +
 				(customClasses ? ` ${customClasses}` : '')
 			}
 		>
@@ -70,7 +70,7 @@ const DropdownTime: React.FC<DropdownTimeProps> = ({
 				</div>
 
 				{showTimeZoneOption && (
-					<div className="p-2 mt-2">
+					<div className="p-2 mt-2 relative">
 						<div
 							ref={dropdownFixedOrFloatingTimeZoneRef}
 							className="border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500"
@@ -78,12 +78,6 @@ const DropdownTime: React.FC<DropdownTimeProps> = ({
 								setIsDropdownFixedOrFloatingTimeZone(!isDropdownFixedOrFloatingTimeZone);
 							}}
 						>
-							<DropdownFixedOrFloatingTimeZone
-								toggleRef={dropdownFixedOrFloatingTimeZoneRef}
-								isVisible={isDropdownFixedOrFloatingTimeZone}
-								setIsVisible={setIsDropdownFixedOrFloatingTimeZone}
-								setTimeZone={setTimeZone}
-							/>
 							<div>{timeZone}</div>
 							<Icon
 								name="expand_more"
@@ -91,6 +85,13 @@ const DropdownTime: React.FC<DropdownTimeProps> = ({
 								customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'}
 							/>
 						</div>
+
+						<DropdownFixedOrFloatingTimeZone
+							toggleRef={dropdownFixedOrFloatingTimeZoneRef}
+							isVisible={isDropdownFixedOrFloatingTimeZone}
+							setIsVisible={setIsDropdownFixedOrFloatingTimeZone}
+							setTimeZone={setTimeZone}
+						/>
 					</div>
 				)}
 			</div>

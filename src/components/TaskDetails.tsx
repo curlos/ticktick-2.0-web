@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import TextareaAutosize from 'react-textarea-autosize';
 import { DropdownProps, TaskObj } from '../interfaces/interfaces';
 import Task from './Task';
-import DropdownCalendar from './Dropdown/DropdownCalendar';
+import DropdownCalendar from './Dropdown/DropdownCalendar/DropdownCalendar';
 import AddTaskForm from './AddTaskForm';
 import Dropdown from './Dropdown/Dropdown';
 import CustomInput from './CustomInput';
@@ -403,10 +403,8 @@ const DropdownTaskOptions: React.FC<DropdownTaskOptionsProps> = ({
 	const { parentOfTasks } = fetchedTasks || {};
 	const [markTaskAsDeleted] = useMarkTaskAsDeletedMutation();
 	const [isDropdownStartFocusVisible, setIsDropdownStartFocusVisible] = useState(false);
-	const [isDropdownEstimationVisible, setIsDropdownEstimationVisible] = useState(false);
 
 	const dropdownStartFocusRef = useRef(null);
-	const dropdownEstimationRef = useRef(null);
 
 	// TODO: Write logic
 	const handleDelete = () => {
@@ -475,21 +473,16 @@ const DropdownTaskOptions: React.FC<DropdownTaskOptionsProps> = ({
 				{/* Side Dropdowns */}
 				<DropdownStartFocus
 					toggleRef={dropdownStartFocusRef}
-					toggleDropdownEstimationRef={dropdownEstimationRef}
 					isVisible={isDropdownStartFocusVisible}
 					setIsVisible={setIsDropdownStartFocusVisible}
-					setIsDropdownEstimationVisible={setIsDropdownEstimationVisible}
-				/>
-
-				<DropdownEstimation
-					toggleRef={dropdownEstimationRef}
-					isVisible={isDropdownEstimationVisible}
-					setIsVisible={setIsDropdownEstimationVisible}
 				/>
 
 				<div
 					className="p-1 flex items-center gap-[2px] hover:bg-color-gray-300 cursor-pointer"
-					onClick={() => setIsModalTaskActivitiesOpen(true)}
+					onClick={() => {
+						setIsModalTaskActivitiesOpen(true);
+						setIsVisible(false);
+					}}
 				>
 					<Icon
 						name="timeline"
@@ -519,18 +512,12 @@ const DropdownTaskOptions: React.FC<DropdownTaskOptionsProps> = ({
 	);
 };
 
-interface DropdownStartFocusProps extends DropdownProps {
-	setIsDropdownEstimationVisible: React.Dispatch<React.SetStateAction<boolean>>;
-	toggleDropdownEstimationRef: React.MutableRefObject<null>;
-}
+interface DropdownStartFocusProps extends DropdownProps {}
 
-const DropdownStartFocus: React.FC<DropdownStartFocusProps> = ({
-	toggleRef,
-	toggleDropdownEstimationRef,
-	isVisible,
-	setIsVisible,
-	setIsDropdownEstimationVisible,
-}) => {
+const DropdownStartFocus: React.FC<DropdownStartFocusProps> = ({ toggleRef, isVisible, setIsVisible }) => {
+	const dropdownEstimationRef = useRef(null);
+	const [isDropdownEstimationVisible, setIsDropdownEstimationVisible] = useState(false);
+
 	// TODO: Implement logic
 	const handleStartPomo = () => {
 		return;
@@ -542,30 +529,38 @@ const DropdownStartFocus: React.FC<DropdownStartFocusProps> = ({
 	};
 
 	return (
-		<Dropdown
-			toggleRef={toggleRef}
-			isVisible={isVisible}
-			setIsVisible={setIsVisible}
-			customClasses={' mt-[5px] shadow-2xl border border-color-gray-200 rounded mt-[-141px] ml-[-180px]'}
-		>
-			<div className="w-[170px] p-1 rounded text-[13px]" onClick={(e) => e.stopPropagation()}>
-				<div className="p-2 hover:bg-color-gray-300 cursor-pointer" onClick={handleStartPomo}>
-					<div>Start Pomo</div>
-				</div>
+		<div className="relative">
+			<Dropdown
+				toggleRef={toggleRef}
+				isVisible={isVisible}
+				setIsVisible={setIsVisible}
+				customClasses={' shadow-2xl border border-color-gray-200 rounded mt-[-102px] ml-[-180px]'}
+			>
+				<div className="w-[170px] p-1 rounded text-[13px]" onClick={(e) => e.stopPropagation()}>
+					<div className="p-2 hover:bg-color-gray-300 cursor-pointer" onClick={handleStartPomo}>
+						<div>Start Pomo</div>
+					</div>
 
-				<div className="p-2 hover:bg-color-gray-300 cursor-pointer" onClick={handleStartStopwatch}>
-					<div>Start Stopwatch</div>
-				</div>
+					<div className="p-2 hover:bg-color-gray-300 cursor-pointer" onClick={handleStartStopwatch}>
+						<div>Start Stopwatch</div>
+					</div>
 
-				<div
-					ref={toggleDropdownEstimationRef}
-					className="p-2 hover:bg-color-gray-300 cursor-pointer"
-					onClick={() => setIsDropdownEstimationVisible(true)}
-				>
-					<div>Estimation</div>
+					<div
+						ref={dropdownEstimationRef}
+						className="p-2 hover:bg-color-gray-300 cursor-pointer"
+						onClick={() => setIsDropdownEstimationVisible(true)}
+					>
+						<div>Estimation</div>
+					</div>
 				</div>
-			</div>
-		</Dropdown>
+			</Dropdown>
+
+			<DropdownEstimation
+				toggleRef={dropdownEstimationRef}
+				isVisible={isDropdownEstimationVisible}
+				setIsVisible={setIsDropdownEstimationVisible}
+			/>
+		</div>
 	);
 };
 

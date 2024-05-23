@@ -1,12 +1,12 @@
-import Dropdown from './Dropdown';
+import Dropdown from '../Dropdown';
 import { useRef, useState } from 'react';
-import Icon from '../Icon';
-import DropdownTime from './DropdownTIme';
+import Icon from '../../Icon';
+import DropdownTime from './DropdownTime';
 import DropdownReminder from './DropdownReminder';
 import DropdownRepeat from './DropdownRepeat';
-import SelectCalendar from '../SelectCalendar';
-import { DropdownProps, TaskObj } from '../../interfaces/interfaces';
-import { useEditTaskMutation } from '../../services/api';
+import SelectCalendar from '../../SelectCalendar';
+import { DropdownProps, TaskObj } from '../../../interfaces/interfaces';
+import { useEditTaskMutation } from '../../../services/api';
 
 interface BigDateIconOptionProps {
 	iconName: string;
@@ -188,49 +188,55 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({
 
 				<div className="px-1 mb-4">
 					{/* Time */}
-					<DropdownTime
-						toggleRef={dropdownTimeRef}
-						isVisible={isDropdownTimeVisible}
-						setIsVisible={setIsDropdownTimeVisible}
-					/>
-					<TimeOption
-						toggleRef={dropdownTimeRef}
-						name="Time"
-						iconName="schedule"
-						onClick={() => {
-							setIsDropdownTimeVisible(!isDropdownTimeVisible);
-						}}
-					/>
+					<div className="relative">
+						<DropdownTime
+							toggleRef={dropdownTimeRef}
+							isVisible={isDropdownTimeVisible}
+							setIsVisible={setIsDropdownTimeVisible}
+						/>
+						<TimeOption
+							toggleRef={dropdownTimeRef}
+							name="Time"
+							iconName="schedule"
+							onClick={() => {
+								setIsDropdownTimeVisible(!isDropdownTimeVisible);
+							}}
+						/>
+					</div>
 
 					{/* Reminder */}
-					<DropdownReminder
-						toggleRef={dropdownReminderRef}
-						isVisible={isDropdownReminderVisible}
-						setIsVisible={setIsDropdownReminderVisible}
-						reminder={reminder}
-						setReminder={setReminder}
-					/>
-					<TimeOption
-						toggleRef={dropdownReminderRef}
-						name="Reminder"
-						iconName="alarm"
-						onClick={() => setIsDropdownReminderVisible(!isDropdownReminderVisible)}
-					/>
+					<div className="relative">
+						<DropdownReminder
+							toggleRef={dropdownReminderRef}
+							isVisible={isDropdownReminderVisible}
+							setIsVisible={setIsDropdownReminderVisible}
+							reminder={reminder}
+							setReminder={setReminder}
+						/>
+						<TimeOption
+							toggleRef={dropdownReminderRef}
+							name="Reminder"
+							iconName="alarm"
+							onClick={() => setIsDropdownReminderVisible(!isDropdownReminderVisible)}
+						/>
+					</div>
 
 					{/* Repeat */}
-					<DropdownRepeat
-						toggleRef={dropdownRepeatRef}
-						isVisible={isDropdownRepeatVisible}
-						setIsVisible={setIsDropdownRepeatVisible}
-						repeat={repeat}
-						setRepeat={setRepeat}
-					/>
-					<TimeOption
-						toggleRef={dropdownRepeatRef}
-						name="Repeat"
-						iconName="repeat"
-						onClick={() => setIsDropdownRepeatVisible(!isDropdownRepeatVisible)}
-					/>
+					<div className="relative">
+						<DropdownRepeat
+							toggleRef={dropdownRepeatRef}
+							isVisible={isDropdownRepeatVisible}
+							setIsVisible={setIsDropdownRepeatVisible}
+							repeat={repeat}
+							setRepeat={setRepeat}
+						/>
+						<TimeOption
+							toggleRef={dropdownRepeatRef}
+							name="Repeat"
+							iconName="repeat"
+							onClick={() => setIsDropdownRepeatVisible(!isDropdownRepeatVisible)}
+						/>
+					</div>
 				</div>
 
 				<div className="grid grid-cols-2 gap-2 px-3 pb-4">

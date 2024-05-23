@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react';
-import Dropdown from './Dropdown';
-import Icon from '../Icon';
-import { getDateWithOrdinalAndMonth } from '../../utils/helpers.utils';
-import { DropdownProps } from '../../interfaces/interfaces';
+import Dropdown from '.././Dropdown';
+import Icon from '../../Icon';
+import { getDateWithOrdinalAndMonth } from '../../../utils/helpers.utils';
+import { DropdownProps } from '../../../interfaces/interfaces';
 
 const BASIC_REMINDER_OPTIONS = {
 	Daily: {
@@ -56,7 +56,7 @@ const DropdownRepeat: React.FC<DropdownRepeatProps> = ({ toggleRef, isVisible, s
 			toggleRef={toggleRef}
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
-			customClasses={' mt-[-250px] ml-[-5px] shadow-2xl border border-color-gray-200 rounded-lg'}
+			customClasses={' ml-[-5px] shadow-2xl border border-color-gray-200 rounded-lg'}
 		>
 			<div className="w-[260px] rounded" onClick={(e) => e.stopPropagation()}>
 				<div className="p-1">
@@ -93,22 +93,24 @@ const DropdownRepeat: React.FC<DropdownRepeatProps> = ({ toggleRef, isVisible, s
 
 				<hr className="border-color-gray-200" />
 
-				<DropdownCustomRepeat
-					toggleRef={dropdownCustomRepeatRef}
-					isVisible={isDropdownCustomRepeatVisible}
-					setIsVisible={setIsDropdownCustomRepeatVisible}
-					repeat={repeat}
-					setRepeat={setRepeat}
-				/>
-
-				<div className="p-1">
-					<div
-						ref={dropdownCustomRepeatRef}
-						className="p-2 mb-2 flex items-center justify-between hover:bg-color-gray-300 p-2 rounded-lg cursor-pointer"
-						onClick={() => setIsDropdownCustomRepeatVisible(!isDropdownCustomRepeatVisible)}
-					>
-						Custom
+				<div className="relative">
+					<div className="p-1">
+						<div
+							ref={dropdownCustomRepeatRef}
+							className="p-2 mb-2 flex items-center justify-between hover:bg-color-gray-300 p-2 rounded-lg cursor-pointer"
+							onClick={() => setIsDropdownCustomRepeatVisible(!isDropdownCustomRepeatVisible)}
+						>
+							Custom
+						</div>
 					</div>
+
+					<DropdownCustomRepeat
+						toggleRef={dropdownCustomRepeatRef}
+						isVisible={isDropdownCustomRepeatVisible}
+						setIsVisible={setIsDropdownCustomRepeatVisible}
+						repeat={repeat}
+						setRepeat={setRepeat}
+					/>
 				</div>
 
 				<div className="grid grid-cols-2 gap-2 pb-4 px-3">
@@ -149,26 +151,29 @@ const DropdownCustomRepeat: React.FC<DropdownAdvancedReminderProps> = ({
 			toggleRef={toggleRef}
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
-			customClasses={' mt-[-180px] ml-[0px] shadow-2xl border border-color-gray-200 rounded-lg'}
+			customClasses={' ml-[0px] shadow-2xl border border-color-gray-200 rounded-lg'}
 		>
 			<div className=" w-[260px] p-3 rounded" onClick={(e) => e.stopPropagation()}>
-				<div
-					className="border border-color-gray-200 rounded py-1 px-[6px] flex justify-between items-center hover:border-blue-500 cursor-pointer"
-					onClick={() => {
-						setIsDropdownUnitOfTimeVisible(!isDropdownUnitOfTimeVisible);
-					}}
-				>
-					<CustomDropdown
+				<div className="relative">
+					<div
+						className="border border-color-gray-200 rounded py-1 px-[6px] flex justify-between items-center hover:border-blue-500 cursor-pointer"
+						onClick={() => {
+							setIsDropdownUnitOfTimeVisible(!isDropdownUnitOfTimeVisible);
+						}}
+					>
+						<div>{selectedUnitOfTime}</div>
+						<Icon
+							name="expand_more"
+							fill={0}
+							customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'}
+						/>
+					</div>
+
+					<DropdownCustomRepeatByX
 						isVisible={isDropdownUnitOfTimeVisible}
 						setIsVisible={setIsDropdownUnitOfTimeVisible}
 						selectedValue={selectedUnitOfTime}
 						setSelectedValue={setSelectedUnitOfTime}
-					/>
-					<div>{selectedUnitOfTime}</div>
-					<Icon
-						name="expand_more"
-						fill={0}
-						customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'}
 					/>
 				</div>
 
@@ -212,12 +217,12 @@ const DropdownCustomRepeat: React.FC<DropdownAdvancedReminderProps> = ({
 	);
 };
 
-interface CustomDropdownProps extends DropdownProps {
+interface IDropdownCustomRepeatByX extends DropdownProps {
 	selectedValue: string;
 	setSelectedValue: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const CustomDropdown: React.FC<CustomDropdownProps> = ({
+const DropdownCustomRepeatByX: React.FC<IDropdownCustomRepeatByX> = ({
 	isVisible,
 	setIsVisible,
 	selectedValue,
@@ -231,7 +236,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
 			toggleRef={toggleRef}
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
-			customClasses={' w-[100%] mb-[-150px] ml-[-10px] p-1 shadow-2xl border border-color-gray-200 rounded-lg'}
+			customClasses={' w-[100%] p-1 shadow-2xl border border-color-gray-200 rounded-lg'}
 		>
 			{values.map((value) => (
 				<div
