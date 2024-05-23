@@ -4,9 +4,7 @@ import { DropdownProps } from '../../interfaces/interfaces';
 
 interface BaseDropdownProps extends DropdownProps {
 	children: React.ReactNode;
-	customClasses?: string;
 	positionAdjustment?: string;
-	customStyling: Object;
 }
 
 // Update your component to use forwardRef

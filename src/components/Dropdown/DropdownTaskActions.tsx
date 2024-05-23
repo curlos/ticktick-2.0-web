@@ -1,60 +1,117 @@
 import Dropdown from './Dropdown';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Icon from '../Icon';
-import DropdownTime from './DropdownTIme';
-import DropdownReminder from './DropdownReminder';
-import DropdownRepeat from './DropdownRepeat';
-import SelectCalendar from '../SelectCalendar';
 import { DropdownProps, TaskObj } from '../../interfaces/interfaces';
-import useDebouncedEditTask from '../../hooks/useDebouncedEditTask';
 import { useEditTaskMutation } from '../../services/api';
 import { PRIORITIES } from '../../utils/priorities.utils';
 import classNames from 'classnames';
 import { isInXDaysUTC, isTodayUTC, isTomorrowUTC } from '../../utils/date.utils';
+import DropdownCalendar from './DropdownCalendar';
 
-interface BigDateIconOptionProps {
+interface IDateIconOption {
 	iconName: string;
-	DropdownText: string;
+	tooltipText: string;
 	selected: boolean;
 	onClick?: () => void;
+	task: TaskObj;
+	dueDate: Date | null;
+	setDueDate: React.Dispatch<React.SetStateAction<Date | null>>;
+	showDropdownCalendar?: boolean;
 }
 
-const BigDateIconOption: React.FC<BigDateIconOptionProps> = ({ iconName, DropdownText, selected, onClick }) => {
-	const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-	const dropdownRef = useRef(null);
+const DateIconOption: React.FC<IDateIconOption> = ({
+	iconName,
+	tooltipText,
+	selected,
+	onClick,
+	task,
+	dueDate,
+	setDueDate,
+	showDropdownCalendar,
+}) => {
+	// useState
+	const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+	const [isDropdownCalendarVisible, setIsDropdownCalendarVisible] = useState(false);
+
+	// useRef
+	const tooltipRef = useRef(null);
+	const dropdownCalendarToggleRef = useRef(null);
+
+	useEffect(() => {
+		setIsDropdownCalendarVisible(false);
+	}, [task]);
+
+	const handleOnClick = () => {
+		if (onClick && tooltipText !== 'Custom') {
+			onClick();
+		}
+
+		// TODO: Add functionality for "Custom" icon.
+		setIsDropdownCalendarVisible(!isDropdownCalendarVisible);
+	};
+
+	const mergeRefs = (...refs) => {
+		const filteredRefs = refs.filter(Boolean);
+		return (inst) => {
+			for (const ref of filteredRefs) {
+				if (typeof ref === 'function') {
+					ref(inst);
+				} else if (ref) {
+					ref.current = inst;
+				}
+			}
+		};
+	};
+
+	const combinedRef = useCallback(mergeRefs(tooltipRef, dropdownCalendarToggleRef), []);
 
 	return (
 		<div className={classNames('relative')}>
 			<Icon
-				toggleRef={dropdownRef}
+				toggleRef={combinedRef}
 				name={iconName}
 				fill={0}
 				customClass={classNames(
 					'text-color-gray-50 !text-[22px] hover:text-white hover:bg-color-gray-200 rounded cursor-pointer p-1',
 					selected ? 'bg-gray-700' : ''
 				)}
-				onClick={onClick}
-				onMouseOver={() => setIsDropdownVisible(true)}
-				onMouseLeave={() => setIsDropdownVisible(false)}
+				onClick={handleOnClick}
+				onMouseOver={() => setIsTooltipVisible(true)}
+				onMouseLeave={() => setIsTooltipVisible(false)}
 			/>
 			<Dropdown
-				toggleRef={dropdownRef}
-				isVisible={isDropdownVisible}
-				setIsVisible={setIsDropdownVisible}
+				toggleRef={tooltipRef}
+				isVisible={isTooltipVisible}
+				setIsVisible={setIsTooltipVisible}
 				customClasses={' !bg-black'}
 			>
-				<div className="p-2 text-[12px] text-nowrap">{DropdownText}</div>
+				<div className="p-2 text-[12px] text-nowrap">{tooltipText}</div>
 			</Dropdown>
+
+			{showDropdownCalendar && (
+				<DropdownCalendar
+					toggleRef={dropdownCalendarToggleRef}
+					isVisible={isDropdownCalendarVisible}
+					setIsVisible={setIsDropdownCalendarVisible}
+					task={task}
+					currDueDate={dueDate}
+					setCurrDueDate={setDueDate}
+					customClasses=" !ml-[0px] mt-[15px]"
+					showDateIcons={false}
+				/>
+			)}
 		</div>
 	);
 };
 
 interface IDateIconOptionList {
 	dueDate: Date | null;
+	setDueDate: React.Dispatch<React.SetStateAction<Date | null>>;
 	handleEditDate: (dateToEdit: Date | null) => void;
+	task: TaskObj;
 }
 
-const DateIconOptionList: React.FC<IDateIconOptionList> = ({ dueDate, handleEditDate }) => {
+const DateIconOptionList: React.FC<IDateIconOptionList> = ({ dueDate, setDueDate, handleEditDate, task }) => {
 	const today = new Date();
 
 	const tomorrow = new Date(today);
@@ -69,38 +126,43 @@ const DateIconOptionList: React.FC<IDateIconOptionList> = ({ dueDate, handleEdit
 
 	return (
 		<div className="flex justify-between items-center gap-1 my-2">
-			<BigDateIconOption
+			<DateIconOption
 				iconName="sunny"
-				DropdownText="Today"
+				tooltipText="Today"
 				selected={isDueDateToday}
 				onClick={() => handleEditDate(today)}
+				task={task}
 			/>
-			<BigDateIconOption
+			<DateIconOption
 				iconName="wb_twilight"
-				DropdownText="Tomorrow"
+				tooltipText="Tomorrow"
 				selected={isDueDateTomorrow}
 				onClick={() => handleEditDate(tomorrow)}
+				task={task}
 			/>
-			<BigDateIconOption
+			<DateIconOption
 				iconName="event_upcoming"
-				DropdownText="Next Week"
+				tooltipText="Next Week"
 				selected={isDueDateIn7Days}
 				onClick={() => handleEditDate(sevenDaysFromNow)}
+				task={task}
 			/>
-			<BigDateIconOption
+			<DateIconOption
 				iconName="calendar_month"
-				DropdownText="Custom"
-				onClick={() => {
-					// TODO: Open the DropdownCalendar without the days
-				}}
+				tooltipText="Custom"
+				task={task}
+				dueDate={dueDate}
+				setDueDate={setDueDate}
+				showDropdownCalendar={true}
 			/>
 			{dueDate && (
-				<BigDateIconOption
+				<DateIconOption
 					iconName="event_busy"
-					DropdownText="Clear"
+					tooltipText="Clear"
 					onClick={() => {
 						handleEditDate(null);
 					}}
+					task={task}
 				/>
 			)}
 		</div>
@@ -170,6 +232,7 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 						dueDate={currDueDate}
 						setDueDate={setCurrDueDate}
 						handleEditDate={handleEditDate}
+						task={task}
 					/>
 				</div>
 

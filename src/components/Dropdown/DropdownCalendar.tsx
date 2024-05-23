@@ -1,12 +1,11 @@
 import Dropdown from './Dropdown';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import Icon from '../Icon';
 import DropdownTime from './DropdownTIme';
 import DropdownReminder from './DropdownReminder';
 import DropdownRepeat from './DropdownRepeat';
 import SelectCalendar from '../SelectCalendar';
 import { DropdownProps, TaskObj } from '../../interfaces/interfaces';
-import useDebouncedEditTask from '../../hooks/useDebouncedEditTask';
 import { useEditTaskMutation } from '../../services/api';
 
 interface BigDateIconOptionProps {
@@ -60,7 +59,7 @@ const BigDateIconOptionList: React.FC<CalendarProps> = ({ dueDate, setDueDate })
 	nextMonth.setMonth(nextMonth.getMonth() + 1);
 
 	return (
-		<div className="my-5 flex justify-between">
+		<div className="mt-3 flex justify-between">
 			<BigDateIconOption
 				iconName="sunny"
 				DropdownText="Today"
@@ -98,6 +97,7 @@ interface DropdownPrioritiesProps extends DropdownProps {
 	currDueDate: Date | null;
 	setCurrDueDate: React.Dispatch<React.SetStateAction<Date | null>>;
 	customClasses?: string;
+	showDateIcons?: boolean;
 }
 
 const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({
@@ -109,6 +109,7 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({
 	setCurrDueDate,
 	customClasses,
 	customStyling,
+	showDateIcons = true,
 }) => {
 	const [editTask] = useEditTaskMutation();
 
@@ -162,7 +163,7 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({
 			customStyling={customStyling ? customStyling : null}
 		>
 			<div className="w-[260px]">
-				<div className="p-4">
+				<div className="p-4 pb-3">
 					<div className="grid grid-cols-2 bg-color-gray-700 rounded-md p-1 text-center">
 						<div
 							className={'rounded-md p-[2px]' + (selectedView === 'date' ? ' bg-color-gray-600' : '')}
@@ -178,7 +179,7 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({
 						</div>
 					</div>
 
-					<BigDateIconOptionList dueDate={currDueDate} setDueDate={setCurrDueDate} />
+					{showDateIcons && <BigDateIconOptionList dueDate={currDueDate} setDueDate={setCurrDueDate} />}
 				</div>
 
 				<SelectCalendar dueDate={currDueDate} setDueDate={setCurrDueDate} />

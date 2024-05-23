@@ -3,7 +3,6 @@ import { createPortal } from 'react-dom';
 import { useGetTasksQuery } from '../../services/api';
 import { useParams } from 'react-router';
 import { TaskObj } from '../../interfaces/interfaces';
-import DropdownCalendar from '../Dropdown/DropdownCalendar';
 import DropdownTaskActions from '../Dropdown/DropdownTaskActions';
 
 interface IContextMenuTask {
@@ -23,7 +22,7 @@ const ContextMenuTask: React.FC<IContextMenuTask> = ({ xPos, yPos, onClose }) =>
 
 	const dropdownCalendarToggleRef = useRef(null);
 
-	let { taskId, projectId: paramsProjectId } = useParams();
+	let { taskId } = useParams();
 
 	useEffect(() => {
 		if (isTasksLoading) {
