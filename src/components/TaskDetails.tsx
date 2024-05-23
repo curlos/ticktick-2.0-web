@@ -47,7 +47,7 @@ const TaskDetails = () => {
 
 	// Projects
 	const { data: fetchedProjects, isLoading: isProjectsLoading, error: errorProjects } = useGetProjectsQuery();
-	const { projects } = fetchedProjects || {};
+	const { projects, projectsById } = fetchedProjects || {};
 
 	const [currTitle, setCurrTitle] = useState('');
 	const [currDescription, setCurrDescription] = useState('');
@@ -130,8 +130,9 @@ const TaskDetails = () => {
 				setCurrDueDate(null);
 			}
 
-			// TODO: Set the project
-			setSelectedProject(currTask.projectId);
+			if (projectsById && currTask.projectId) {
+				setSelectedProject(projectsById[currTask.projectId]);
+			}
 
 			const parentTaskId = parentOfTasks[currTask._id];
 			const newParentTask = parentTaskId && tasksById[parentTaskId];
@@ -158,6 +159,8 @@ const TaskDetails = () => {
 	const inSmartListView = paramsProjectId && SMART_LISTS[paramsProjectId];
 
 	const priorityData = PRIORITIES[priority];
+
+	console.log(selectedProject);
 
 	return (
 		<div className="flex flex-col w-full h-full max-h-screen bg-color-gray-700">
@@ -360,7 +363,7 @@ const TaskDetails = () => {
 									customClass={'text-color-gray-100 !text-[18px] hover:text-white cursor-pointer'}
 								/>
 								{/* TODO: Change this to function more like the button from AddTaskForm where it gets the projects from the database. */}
-								Hello Mobile
+								{selectedProject.name}
 							</div>
 
 							{/* TODO: Add DropdownProjects with all the required props. */}
@@ -371,6 +374,8 @@ const TaskDetails = () => {
 								selectedProject={selectedProject}
 								setSelectedProject={setSelectedProject}
 								projects={projects}
+								task={task}
+								customClasses="!mt-[-420px]"
 							/>
 						</div>
 					)}
