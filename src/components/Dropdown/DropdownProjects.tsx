@@ -12,6 +12,7 @@ interface DropdownProjectsProps extends DropdownProps {
 	setSelectedProject: React.Dispatch<React.SetStateAction<string>>;
 	projects: Array<IProject>;
 	task: TaskObj;
+	onCloseContextMenu: () => void;
 }
 
 const DropdownProjects: React.FC<DropdownProjectsProps> = ({
@@ -23,6 +24,7 @@ const DropdownProjects: React.FC<DropdownProjectsProps> = ({
 	projects,
 	customClasses,
 	task,
+	onCloseContextMenu,
 }) => {
 	const [editTask] = useEditTaskMutation();
 	const [filteredProjects, setFilteredProjects] = useState(projects);
@@ -79,6 +81,10 @@ const DropdownProjects: React.FC<DropdownProjectsProps> = ({
 						// TODO: Edit task's project from here
 						editTask({ taskId: task._id, payload: { projectId: project._id } });
 					}
+
+					if (onCloseContextMenu) {
+						onCloseContextMenu();
+					}
 				}}
 			>
 				<div className="flex items-center gap-1">
@@ -102,7 +108,7 @@ const DropdownProjects: React.FC<DropdownProjectsProps> = ({
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
 			customClasses={classNames(
-				'ml-[-13px] mt-2 mb-2 shadow-2xl border border-color-gray-200 rounded-lg h-[389px]',
+				'ml-[-13px] mt-2 mb-2 shadow-2xl border border-color-gray-200 rounded-lg max-h-[300px]',
 				customClasses
 			)}
 		>
@@ -123,7 +129,7 @@ const DropdownProjects: React.FC<DropdownProjectsProps> = ({
 
 				<div
 					ref={scrollRef}
-					className="p-1 h-[350px] overflow-auto gray-scrollbar border-t border-color-gray-200"
+					className="p-1 h-[250px] overflow-auto gray-scrollbar border-t border-color-gray-200"
 				>
 					{filteredProjects.map((project) => (
 						<ProjectOption key={project.name} project={project} />

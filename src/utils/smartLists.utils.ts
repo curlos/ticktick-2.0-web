@@ -97,7 +97,8 @@ export const SMART_LISTS = {
 		urlName: 'completed',
 		iconName: 'check_box',
 		route: '/projects/completed/tasks',
-		getFilteredTasks: (allTasks: Array<TaskObj>) => allTasks.filter((task) => task.completedTime),
+		getFilteredTasks: (allTasks: Array<TaskObj>) =>
+			allTasks.filter((task) => task.completedTime && !task.isDeleted),
 		getDefaultDueDate: () => {
 			return null;
 		},

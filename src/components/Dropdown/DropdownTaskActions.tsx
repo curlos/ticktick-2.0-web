@@ -2,7 +2,12 @@ import Dropdown from './Dropdown';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Icon from '../Icon';
 import { DropdownProps, TaskObj } from '../../interfaces/interfaces';
-import { useEditTaskMutation, useGetTasksQuery, useMarkTaskAsDeletedMutation } from '../../services/api';
+import {
+	useEditTaskMutation,
+	useGetProjectsQuery,
+	useGetTasksQuery,
+	useMarkTaskAsDeletedMutation,
+} from '../../services/api';
 import { PRIORITIES } from '../../utils/priorities.utils';
 import classNames from 'classnames';
 import { isInXDaysUTC, isTodayUTC, isTomorrowUTC } from '../../utils/date.utils';
@@ -12,6 +17,7 @@ import { useDispatch } from 'react-redux';
 import { setModalState } from '../../slices/modalSlice';
 import { setAlertState } from '../../slices/alertSlice';
 import DropdownStartFocus from './DropdownTaskOptions/DropdownStartFocus';
+import DropdownProjects from './DropdownProjects';
 
 interface IDateIconOption {
 	iconName: string;
@@ -199,23 +205,32 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 }) => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
-	const { projectId } = useParams();
+	const { taskId, projectId } = useParams();
+
+	// RTK Query - Tasks
 	const { data: fetchedTasks, isLoading: isTasksLoading, error } = useGetTasksQuery();
 	const { tasks, tasksById, parentOfTasks } = fetchedTasks || {};
 	const [editTask] = useEditTaskMutation();
 	const [markTaskAsDeleted] = useMarkTaskAsDeletedMutation();
-	let { taskId } = useParams();
 
+	// RTK Query - Projects
+	const { data: fetchedProjects, isLoading: isProjectsLoading, error: errorProjects } = useGetProjectsQuery();
+	const { projects, projectsById } = fetchedProjects || {};
+
+	// useState
 	const [task, setTask] = useState<TaskObj>();
 	const [parentTask, setParentTask] = useState<TaskObj>();
 	const [currDueDate, setCurrDueDate] = useState(null);
 	const [priority, setPriority] = useState(0);
+	const [selectedProject, setSelectedProject] = useState(null);
 
 	// Dropdowns
 	const [isDropdownStartFocusVisible, setIsDropdownStartFocusVisible] = useState(false);
+	const [isDropdownProjectsVisible, setIsDropdownProjectsVisible] = useState(false);
 
 	// Refs
 	const dropdownStartFocusRef = useRef(null);
+	const dropdownProjectsRef = useRef(null);
 
 	useEffect(() => {
 		if (isTasksLoading) {
@@ -233,6 +248,10 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 			}
 
 			setPriority(currTask.priority);
+
+			if (projectsById && currTask.projectId) {
+				setSelectedProject(projectsById[currTask.projectId]);
+			}
 
 			const parentTaskId = parentOfTasks[currTask._id];
 			const newParentTask = parentTaskId && tasksById[parentTaskId];
@@ -370,7 +389,29 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 						}}
 					/>
 					<TaskAction iconName="disabled_by_default" title="Won't Do" />
-					<TaskAction iconName="move_to_inbox" title="Move to" />
+
+					<div className="relative">
+						<TaskAction
+							toggleRef={dropdownProjectsRef}
+							iconName="move_to_inbox"
+							title="Move to"
+							onClick={() => setIsDropdownProjectsVisible(!isDropdownProjectsVisible)}
+							hasSideDropdown={true}
+						/>
+
+						{/* Side Dropdown */}
+						<DropdownProjects
+							toggleRef={dropdownProjectsRef}
+							isVisible={isDropdownProjectsVisible}
+							setIsVisible={setIsDropdownProjectsVisible}
+							selectedProject={selectedProject}
+							setSelectedProject={setSelectedProject}
+							projects={projects}
+							task={task}
+							customClasses="ml-[200px] mt-[-30px]"
+							onCloseContextMenu={onCloseContextMenu}
+						/>
+					</div>
 				</div>
 
 				<hr className="border-color-gray-200" />

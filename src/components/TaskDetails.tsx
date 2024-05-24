@@ -353,11 +353,9 @@ const TaskDetails = () => {
 									name="drive_file_move"
 									customClass={'text-color-gray-100 !text-[18px] hover:text-white cursor-pointer'}
 								/>
-								{/* TODO: Change this to function more like the button from AddTaskForm where it gets the projects from the database. */}
 								{selectedProject.name}
 							</div>
 
-							{/* TODO: Add DropdownProjects with all the required props. */}
 							<DropdownProjects
 								toggleRef={dropdownProjectsRef}
 								isVisible={isDropdownProjectsVisible}
@@ -366,7 +364,7 @@ const TaskDetails = () => {
 								setSelectedProject={setSelectedProject}
 								projects={projects}
 								task={task}
-								customClasses="!mt-[-420px]"
+								customClasses="!mt-[-315px]"
 							/>
 						</div>
 					)}
