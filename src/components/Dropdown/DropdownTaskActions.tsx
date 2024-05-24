@@ -2,12 +2,7 @@ import Dropdown from './Dropdown';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Icon from '../Icon';
 import { DropdownProps, TaskObj } from '../../interfaces/interfaces';
-import {
-	useEditTaskMutation,
-	useGetProjectsQuery,
-	useGetTasksQuery,
-	useMarkTaskAsDeletedMutation,
-} from '../../services/api';
+import { useEditTaskMutation, useGetProjectsQuery, useGetTasksQuery, useFlagTaskMutation } from '../../services/api';
 import { PRIORITIES } from '../../utils/priorities.utils';
 import classNames from 'classnames';
 import { isInXDaysUTC, isTodayUTC, isTomorrowUTC } from '../../utils/date.utils';
@@ -211,7 +206,7 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 	const { data: fetchedTasks, isLoading: isTasksLoading, error } = useGetTasksQuery();
 	const { tasks, tasksById, parentOfTasks } = fetchedTasks || {};
 	const [editTask] = useEditTaskMutation();
-	const [markTaskAsDeleted] = useMarkTaskAsDeletedMutation();
+	const [flagTask] = useFlagTaskMutation();
 
 	// RTK Query - Projects
 	const { data: fetchedProjects, isLoading: isProjectsLoading, error: errorProjects } = useGetProjectsQuery();
@@ -452,7 +447,7 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 						title="Delete"
 						onClick={() => {
 							const parentId = parentOfTasks && parentOfTasks[task._id];
-							markTaskAsDeleted({ taskId: task._id, parentId });
+							flagTask({ taskId: task._id, parentId, property: 'isDeleted', value: true });
 							onCloseContextMenu();
 
 							if (!parentId) {

@@ -54,13 +54,17 @@ export const api = createApi({
 			}),
 			invalidatesTags: ['Task'], // Invalidate the cache when a task is added
 		}),
-		// Mark the task's "isDeleted" property as true. This doesn't actually remove the task from the DB.
-		markTaskAsDeleted: builder.mutation({
-			query: ({ taskId, parentId }) => ({
-				url: `/tasks/mark-as-deleted/${taskId}${parentId ? `?parentId=${parentId}` : ''}`,
-				method: 'DELETE',
+		flagTask: builder.mutation({
+			query: ({ taskId, parentId, property, value }) => ({
+				url: `/tasks/flag-task/${taskId}`,
+				method: 'PATCH',
+				body: {
+					property: property, // This could be 'isDeleted' or any other property
+					value: value, // This is typically true for isDeleted, but can be any value
+					parentId: parentId, // Optional: Include parentId if needed to update the parent document
+				},
 			}),
-			invalidatesTags: ['Task'], // Invalidate the cache when a task is added
+			invalidatesTags: ['Task'], // Invalidate the cache when a task is updated
 		}),
 		// PERMANENTLY DELETE TASK FOREVER
 		permanentlyDeleteTask: builder.mutation({
@@ -102,7 +106,7 @@ export const {
 	useEditTaskMutation,
 	useBulkEditTasksMutation,
 	// TODO: Use this!
-	useMarkTaskAsDeletedMutation,
+	useFlagTaskMutation,
 	usePermanentlyDeleteTaskMutation,
 
 	// Projects/Folders

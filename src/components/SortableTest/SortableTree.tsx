@@ -32,7 +32,7 @@ import type { FlattenedItem, SensorContext, TreeItems } from './types';
 // TODO: Bring this back to use when I want to work on Accessbility
 import { sortableTreeKeyboardCoordinates } from './keyboardCoordinates';
 import { SortableTreeItem } from './components';
-import { useBulkEditTasksMutation, useMarkTaskAsDeletedMutation, useGetTasksQuery } from '../../services/api';
+import { useBulkEditTasksMutation, useFlagTaskMutation, useGetTasksQuery } from '../../services/api';
 import { getTasksWithFilledInChildren, prepareForBulkEdit } from '../../utils/helpers.utils';
 import { SMART_LISTS } from '../../utils/smartLists.utils';
 import { useParams } from 'react-router-dom';
@@ -82,7 +82,7 @@ export function SortableTree({
 		error,
 	} = useGetTasksQuery();
 	const [bulkEditTasks] = useBulkEditTasksMutation();
-	const [markTaskAsDeleted] = useMarkTaskAsDeletedMutation();
+	const [flagTask] = useFlagTaskMutation();
 	// const [collapseAllByDefault, setCollapseAllByDefault] = useState(true)
 
 	// TODO: Fix this. When I try to collapse a task, it does not collapse. This bug stops happening when I remove this useEffect so it has to do with this.

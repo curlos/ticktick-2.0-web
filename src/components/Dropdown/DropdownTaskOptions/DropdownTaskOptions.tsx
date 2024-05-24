@@ -5,7 +5,7 @@ import Dropdown from '../Dropdown';
 import DropdownStartFocus from './DropdownStartFocus';
 import { useDispatch } from 'react-redux';
 import { useNavigate, useParams } from 'react-router';
-import { useGetTasksQuery, useMarkTaskAsDeletedMutation } from '../../../services/api';
+import { useGetTasksQuery, useFlagTaskMutation } from '../../../services/api';
 import { DropdownProps, TaskObj } from '../../../interfaces/interfaces';
 
 interface DropdownTaskOptionsProps extends DropdownProps {
@@ -25,7 +25,7 @@ const DropdownTaskOptions: React.FC<DropdownTaskOptionsProps> = ({
 	const { projectId } = useParams();
 	const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
 	const { parentOfTasks } = fetchedTasks || {};
-	const [markTaskAsDeleted] = useMarkTaskAsDeletedMutation();
+	const [flagTask] = useFlagTaskMutation();
 	const [isDropdownStartFocusVisible, setIsDropdownStartFocusVisible] = useState(false);
 
 	const dropdownStartFocusRef = useRef(null);
@@ -34,7 +34,7 @@ const DropdownTaskOptions: React.FC<DropdownTaskOptionsProps> = ({
 		// Delete the task and then the redirect to the list of tasks in the project as the current task has been delete and thus the page is not accessible anymore.
 		try {
 			const parentId = parentOfTasks && parentOfTasks[task._id];
-			markTaskAsDeleted({ taskId: task._id, parentId });
+			flagTask({ taskId: task._id, parentId, property: 'isDeleted', value: true });
 			setIsVisible(false);
 			navigate(`/projects/${projectId}/tasks`);
 		} catch (error) {
