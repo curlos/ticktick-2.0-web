@@ -30,7 +30,6 @@ const DropdownTaskOptions: React.FC<DropdownTaskOptionsProps> = ({
 
 	const dropdownStartFocusRef = useRef(null);
 
-	// TODO: Write logic
 	const handleDelete = () => {
 		// Delete the task and then the redirect to the list of tasks in the project as the current task has been delete and thus the page is not accessible anymore.
 		try {
@@ -94,7 +93,7 @@ const DropdownTaskOptions: React.FC<DropdownTaskOptionsProps> = ({
 					/>
 				</div>
 
-				{/* Side Dropdowns */}
+				{/* Side Dropdown */}
 				<DropdownStartFocus
 					toggleRef={dropdownStartFocusRef}
 					isVisible={isDropdownStartFocusVisible}

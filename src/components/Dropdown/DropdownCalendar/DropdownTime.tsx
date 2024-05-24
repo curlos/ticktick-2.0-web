@@ -3,6 +3,7 @@ import Dropdown from '../Dropdown';
 import Icon from '../../Icon';
 import DropdownFixedOrFloatingTimeZone from '../DropdownFixedOrFloatingTimeZone';
 import { DropdownProps } from '../../../interfaces/interfaces';
+import classNames from 'classnames';
 
 const getTimesArray = () => {
 	let timesArray = [];
@@ -40,10 +41,7 @@ const DropdownTime: React.FC<DropdownTimeProps> = ({
 			toggleRef={toggleRef}
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
-			customClasses={
-				' ml-[-5px] shadow-2xl border border-color-gray-200 rounded-[4px]' +
-				(customClasses ? ` ${customClasses}` : '')
-			}
+			customClasses={classNames('ml-[-5px] shadow-2xl border border-color-gray-200 rounded-[4px]', customClasses)}
 		>
 			<div className="w-[260px] p-1">
 				<div className="overflow-auto gray-scrollbar h-[240px]">

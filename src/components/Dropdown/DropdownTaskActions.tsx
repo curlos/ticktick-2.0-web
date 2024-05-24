@@ -11,6 +11,7 @@ import { useNavigate, useParams } from 'react-router';
 import { useDispatch } from 'react-redux';
 import { setModalState } from '../../slices/modalSlice';
 import { setAlertState } from '../../slices/alertSlice';
+import DropdownStartFocus from './DropdownTaskOptions/DropdownStartFocus';
 
 interface IDateIconOption {
 	iconName: string;
@@ -210,6 +211,12 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 	const [currDueDate, setCurrDueDate] = useState(null);
 	const [priority, setPriority] = useState(0);
 
+	// Dropdowns
+	const [isDropdownStartFocusVisible, setIsDropdownStartFocusVisible] = useState(false);
+
+	// Refs
+	const dropdownStartFocusRef = useRef(null);
+
 	useEffect(() => {
 		if (isTasksLoading) {
 			return;
@@ -245,14 +252,16 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 	};
 
 	interface ITaskAction {
+		toggleRef?: React.MutableRefObject<null>;
 		iconName: string;
 		title: string;
 		onClick: () => void;
 	}
 
-	const TaskAction: React.FC<ITaskAction> = ({ iconName, title, onClick }) => {
+	const TaskAction: React.FC<ITaskAction> = ({ toggleRef, iconName, title, onClick, hasSideDropdown }) => {
 		return (
 			<div
+				ref={toggleRef ? toggleRef : null}
 				className="p-1 flex items-center gap-[2px] hover:bg-color-gray-300 cursor-pointer rounded text-[13px]"
 				onClick={onClick}
 			>
@@ -262,6 +271,18 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 					fill={0}
 				/>
 				<div>{title}</div>
+
+				{hasSideDropdown && (
+					<div className="flex-1 flex justify-end items-center">
+						<Icon
+							name="chevron_right"
+							customClass={
+								'text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer'
+							}
+							fill={0}
+						/>
+					</div>
+				)}
 			</div>
 		);
 	};
@@ -286,7 +307,7 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 			toggleRef={toggleRef}
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
-			customClasses={'shadow-2xl' + (customClasses ? ` ${customClasses}` : '')}
+			customClasses={classNames('shadow-2xl', customClasses)}
 			customStyling={customStyling ? customStyling : null}
 		>
 			<div className="w-[200px]">
@@ -351,6 +372,27 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 					<TaskAction iconName="disabled_by_default" title="Won't Do" />
 					<TaskAction iconName="move_to_inbox" title="Move to" />
 				</div>
+
+				<hr className="border-color-gray-200" />
+
+				<div className="p-1">
+					<TaskAction
+						toggleRef={dropdownStartFocusRef}
+						iconName="timer"
+						title="Start Focus"
+						onClick={() => setIsDropdownStartFocusVisible(!isDropdownStartFocusVisible)}
+						hasSideDropdown={true}
+					/>
+				</div>
+
+				{/* Side Dropdown */}
+				<DropdownStartFocus
+					toggleRef={dropdownStartFocusRef}
+					isVisible={isDropdownStartFocusVisible}
+					setIsVisible={setIsDropdownStartFocusVisible}
+					customClasses="ml-[205px] mt-[-42px]"
+					dropdownEstimationCustomClasses="ml-[0px]"
+				/>
 
 				<hr className="border-color-gray-200" />
 

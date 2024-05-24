@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import classNames from 'classnames';
 
 interface ModalProps {
     isOpen: boolean;
@@ -49,7 +50,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, position, customClasses,
                         animate="visible"
                         exit="hidden"
                         variants={containerVariants}
-                        className={containerClasses + (customClasses ? ` ${customClasses}` : '')}
+                        className={classNames(containerClasses, customClasses)}
                     >
                         {children}
                     </motion.div>

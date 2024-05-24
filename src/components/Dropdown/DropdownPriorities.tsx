@@ -62,10 +62,7 @@ const DropdownPriorities: React.FC<DropdownPrioritiesProps> = ({
 			toggleRef={toggleRef}
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
-			customClasses={classNames(
-				'shadow-2xl border border-color-gray-200 rounded-lg',
-				customClasses ? customClasses : ''
-			)}
+			customClasses={classNames('shadow-2xl border border-color-gray-200 rounded-lg', customClasses)}
 		>
 			<div className="w-[200px]">
 				<div>

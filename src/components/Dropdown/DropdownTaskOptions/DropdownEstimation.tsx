@@ -3,10 +3,16 @@ import { DropdownProps } from '../../../interfaces/interfaces';
 import Dropdown from '../Dropdown';
 import CustomInput from '../../CustomInput';
 import Icon from '../../Icon';
+import classNames from 'classnames';
 
 interface DropdownEstimationProps extends DropdownProps {}
 
-const DropdownEstimation: React.FC<DropdownEstimationProps> = ({ toggleRef, isVisible, setIsVisible }) => {
+const DropdownEstimation: React.FC<DropdownEstimationProps> = ({
+	toggleRef,
+	isVisible,
+	setIsVisible,
+	customClasses,
+}) => {
 	const [isDropdownEstimationOptionsVisible, setIsDropdownEstimationOptionsVisible] = useState(false);
 	const [selectedEstimationOption, setSelectedEstimationOption] = useState('Estimated Pomo');
 
@@ -21,32 +27,37 @@ const DropdownEstimation: React.FC<DropdownEstimationProps> = ({ toggleRef, isVi
 			toggleRef={toggleRef}
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
-			customClasses={'mt-[5px] shadow-2xl border border-color-gray-200 rounded mt-[-130px] ml-[-210px]'}
+			customClasses={classNames(
+				'mt-[5px] shadow-2xl border border-color-gray-200 rounded mt-[-130px] ml-[-210px]',
+				customClasses
+			)}
 		>
 			<div className="w-[200px] p-2 rounded text-[13px]" onClick={(e) => e.stopPropagation()}>
 				<div className="flex-1">
-					<div
-						ref={dropdownEstimationOptionsRef}
-						className="border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500 rounded-md cursor-pointer"
-						onClick={() => {
-							setIsDropdownEstimationOptionsVisible(!isDropdownEstimationOptionsVisible);
-						}}
-					>
-						<div>{selectedEstimationOption}</div>
-						<Icon
-							name="expand_more"
-							fill={0}
-							customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'}
+					<div className="relative">
+						<div
+							ref={dropdownEstimationOptionsRef}
+							className="border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500 rounded-md cursor-pointer"
+							onClick={() => {
+								setIsDropdownEstimationOptionsVisible(!isDropdownEstimationOptionsVisible);
+							}}
+						>
+							<div>{selectedEstimationOption}</div>
+							<Icon
+								name="expand_more"
+								fill={0}
+								customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'}
+							/>
+						</div>
+
+						<DropdownEstimationOptions
+							toggleRef={dropdownEstimationOptionsRef}
+							isVisible={isDropdownEstimationOptionsVisible}
+							setIsVisible={setIsDropdownEstimationOptionsVisible}
+							selectedEstimationOption={selectedEstimationOption}
+							setSelectedEstimationOption={setSelectedEstimationOption}
 						/>
 					</div>
-
-					<DropdownEstimationOptions
-						toggleRef={dropdownEstimationOptionsRef}
-						isVisible={isDropdownEstimationOptionsVisible}
-						setIsVisible={setIsDropdownEstimationOptionsVisible}
-						selectedEstimationOption={selectedEstimationOption}
-						setSelectedEstimationOption={setSelectedEstimationOption}
-					/>
 
 					<div className="grid grid-cols-2 gap-4 my-4">
 						{selectedEstimationOption === 'Estimated Pomo' ? (
