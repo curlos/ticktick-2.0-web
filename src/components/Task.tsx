@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Icon from './Icon';
 import { TaskObj } from '../interfaces/interfaces';
 import { millisecondsToHoursAndMinutes } from '../utils/helpers.utils';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useGetTasksQuery } from '../services/api';
+import { useGetProjectsQuery, useGetTasksQuery } from '../services/api';
+import { PRIORITIES } from '../utils/priorities.utils';
+import classNames from 'classnames';
+import TaskDueDateText from './TaskDueDateText';
 
 interface TaskProps {
 	taskId: string;
@@ -11,7 +14,8 @@ interface TaskProps {
 	selectedFocusRecordTask?: TaskObj;
 	setSelectedFocusRecordTask?: React.Dispatch<React.SetStateAction<TaskObj>>;
 	fromParent?: boolean;
-	showSubtasks: boolean;
+	showSubtasks?: boolean;
+	onCloseSearchTasks?: () => void;
 }
 
 const Task: React.FC<TaskProps> = ({
@@ -21,25 +25,48 @@ const Task: React.FC<TaskProps> = ({
 	setSelectedFocusRecordTask,
 	fromParent,
 	showSubtasks = true,
+	onCloseSearchTasks,
 }) => {
 	const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
 	const { tasksById } = fetchedTasks || {};
-	let navigate = useNavigate();
+	const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
+	const { projectsById } = fetchedProjects || {};
+	const navigate = useNavigate();
 	let { taskId: taskIdFromUrl } = useParams();
-	const [completed, setCompleted] = useState(false);
+	const [project, setProject] = useState(null);
 
 	let task = typeof taskId == 'string' ? tasksById[taskId] : taskId;
+
+	useEffect(() => {
+		if (projectsById && projectId) {
+			setProject(projectsById[projectId]);
+		}
+	}, [task?.projectId, projectsById]);
 
 	if (!task) {
 		return null;
 	}
 
-	const { _id, projectId, title, children, completedPomodoros, timeTaken, estimatedDuration, deadline } = task;
+	const {
+		_id,
+		projectId,
+		title,
+		children,
+		priority,
+		completedPomodoros,
+		timeTaken,
+		estimatedDuration,
+		completedTime,
+		willNotDo,
+		dueDate,
+	} = task;
 
 	const formattedTimeTaken = millisecondsToHoursAndMinutes(timeTaken);
 	const formattedEstimatedDuration = millisecondsToHoursAndMinutes(estimatedDuration);
 	const categoryIconClass =
 		' text-color-gray-100 !text-[16px] hover:text-white' + (children?.length >= 1 ? '' : ' invisible');
+
+	const priorityData = PRIORITIES[priority];
 
 	return (
 		<div className={`${!fromParent || fromTaskDetails ? 'ml-0' : 'ml-4'}`}>
@@ -52,8 +79,11 @@ const Task: React.FC<TaskProps> = ({
 					if (setSelectedFocusRecordTask) {
 						setSelectedFocusRecordTask(task);
 					} else {
-						// TODO: Add logic for smart list
 						navigate(`/projects/${projectId}/tasks/${_id}`);
+
+						if (onCloseSearchTasks) {
+							onCloseSearchTasks();
+						}
 					}
 				}}
 			>
@@ -73,41 +103,26 @@ const Task: React.FC<TaskProps> = ({
 					</div>
 				)} */}
 
-				<div className="flex gap-1 cursor-pointer">
+				<div className="flex-1 flex gap-1 cursor-pointer">
 					{!setSelectedFocusRecordTask ? (
-						<div
-							className="h-[20px]"
-							onClick={(e) => {
-								e.stopPropagation();
-								setCompleted(!completed);
-							}}
+						<span
+							className={classNames(
+								'h-[20px] flex items-center hover:text-white cursor-pointer',
+								priorityData.textFlagColor
+							)}
 						>
-							{!completed ? (
-								children && children.length >= 1 ? (
-									<Icon
-										name="list_alt"
-										fill={0}
-										customClass={
-											'text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-pointer'
-										}
-									/>
+							{willNotDo ? (
+								<Icon name="disabled_by_default" fill={1} customClass={'!text-[20px] '} />
+							) : !completedTime ? (
+								children.length > 0 ? (
+									<Icon name="list_alt" fill={0} customClass={'!text-[20px] '} />
 								) : (
-									<Icon
-										name="check_box_outline_blank"
-										customClass={
-											'text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-pointer'
-										}
-									/>
+									<Icon name="check_box_outline_blank" customClass={'!text-[20px] '} />
 								)
 							) : (
-								<Icon
-									name="check_box"
-									customClass={
-										'text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-pointer'
-									}
-								/>
+								<Icon name="check_box" customClass={'!text-[20px] '} />
 							)}
-						</div>
+						</span>
 					) : (
 						<div className="h-[20px]">
 							{selectedFocusRecordTask && selectedFocusRecordTask._id === _id ? (
@@ -130,7 +145,19 @@ const Task: React.FC<TaskProps> = ({
 						</div>
 					)}
 
-					<div className={'break-all' + (completed ? ' line-through text-color-gray-100' : '')}>{title}</div>
+					<div
+						className={classNames(
+							'break-all max-w-[350px]',
+							completedTime ? 'line-through text-color-gray-100' : ''
+						)}
+					>
+						{title}
+					</div>
+
+					<div className="flex-1 flex justify-end items-center gap-1">
+						{project && <div className="text-color-gray-100 mr-1">{project.name}</div>}
+						{dueDate && <TaskDueDateText dueDate={dueDate} />}
+					</div>
 				</div>
 			</div>
 

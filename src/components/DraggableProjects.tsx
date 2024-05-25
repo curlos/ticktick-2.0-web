@@ -90,7 +90,7 @@ export const ProjectItem: React.FC<ProjectItemProps> = ({ project, projectsWithG
 		if (isSmartList) {
 			filteredTasks = project.getFilteredTasks(tasks);
 		} else {
-			filteredTasks = tasks.filter((task) => !task.isDeleted && task.projectId === _id);
+			filteredTasks = tasks.filter((task) => !task.isDeleted && !task.willNotDo && task.projectId === _id);
 		}
 
 		// const newNumberOfTasks = getNumberOfTasks(filteredTasks, tasksById);

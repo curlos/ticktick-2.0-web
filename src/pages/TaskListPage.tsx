@@ -68,7 +68,17 @@ const TaskListPage = () => {
 						indicator
 						removable
 						defaultItems={tasksWithNoParent}
-						tasksToUse={projectId !== 'trash' ? tasks.filter((task) => !task.isDeleted) : tasks}
+						tasksToUse={tasks.filter((task) => {
+							if (projectId !== 'trash' && task.isDeleted) {
+								return false;
+							}
+
+							if (projectId !== 'will-not-do' && task.willNotDo) {
+								return false;
+							}
+
+							return true;
+						})}
 					/>
 				)}
 

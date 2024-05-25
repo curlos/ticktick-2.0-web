@@ -26,7 +26,7 @@ const ModalSearchTasks: React.FC = () => {
 			position="top-center"
 			customClasses="!w-[700px]"
 		>
-			<div className="rounded-lg shadow-lg bg-color-gray-600 p-4">
+			<div className="rounded-lg shadow-lg bg-color-gray-600 p-4 pt-2">
 				<SearchTasks />
 			</div>
 		</Modal>
@@ -34,6 +34,7 @@ const ModalSearchTasks: React.FC = () => {
 };
 
 const SearchTasks = () => {
+	const dispatch = useDispatch();
 	const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
 	const { tasks, tasksById } = fetchedTasks || {};
 
@@ -41,7 +42,7 @@ const SearchTasks = () => {
 	const [searchText, setSearchText] = useState('');
 	const fuse = new Fuse(tasks, {
 		includeScore: true,
-		keys: ['name'],
+		keys: ['title', 'description'],
 	});
 
 	useEffect(() => {
@@ -76,6 +77,8 @@ const SearchTasks = () => {
 
 	console.log(filteredTasks);
 
+	const onCloseSearchTasks = () => dispatch(setModalState({ modalId: 'ModalSearchTasks', isOpen: false }));
+
 	return (
 		<div>
 			<div className="flex items-center gap-2">
@@ -89,11 +92,16 @@ const SearchTasks = () => {
 				/>
 			</div>
 
-			<div className="border-t border-color-gray-150 py-1">Tasks</div>
+			<div className="border-t border-color-gray-150 py-2 mt-1 font-bold">Tasks</div>
 
-			<div ref={scrollRef} className="h-[400px] overflow-auto gray-scrollbar">
+			<div ref={scrollRef} className="h-[400px] overflow-auto gray-scrollbar flex flex-col gap-1">
 				{filteredTasks.map((task) => (
-					<Task key={task._id} taskId={task._id} showSubtasks={false} />
+					<Task
+						key={task._id}
+						taskId={task._id}
+						showSubtasks={false}
+						onCloseSearchTasks={onCloseSearchTasks}
+					/>
 				))}
 			</div>
 		</div>

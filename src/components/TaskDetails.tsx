@@ -103,6 +103,8 @@ const TaskDetails = () => {
 	let { taskId, projectId: paramsProjectId } = useParams();
 	const navigate = useNavigate();
 
+	const inSmartListView = paramsProjectId && SMART_LISTS[paramsProjectId];
+
 	useEffect(() => {
 		if (isTasksLoading || isProjectsLoading) {
 			return;
@@ -137,7 +139,9 @@ const TaskDetails = () => {
 			// TODO: There is a problem caused by this. Sortable Tree not updating with latest tasks.
 			const newChildTasks = getTasksWithFilledInChildren(currTask.children, tasksById, currTask.projectId);
 			setChildTasks(newChildTasks);
-			// debugger;
+
+			// TODO: Maybe think about what should happen when a project id changes. Should we redirect to the project id list too? Maybe, maybe not.
+			// navigate(`/projects/${inSmartListView ? paramsProjectId : currTask.projectId}/tasks/${currTask._id}`);
 		}
 	}, [taskId, tasks, tasksById]);
 
@@ -146,12 +150,7 @@ const TaskDetails = () => {
 	}
 
 	const { _id, children, priority, completedPomodoros, timeTaken, estimatedDuration, deadline } = task;
-
-	const inSmartListView = paramsProjectId && SMART_LISTS[paramsProjectId];
-
 	const priorityData = PRIORITIES[priority];
-
-	console.log(selectedProject);
 
 	return (
 		<div className="flex flex-col w-full h-full max-h-screen bg-color-gray-700">
