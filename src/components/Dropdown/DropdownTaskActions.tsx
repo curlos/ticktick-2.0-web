@@ -383,7 +383,21 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 							onCloseContextMenu();
 						}}
 					/>
-					<TaskAction iconName="disabled_by_default" title="Won't Do" />
+					<TaskAction
+						iconName="disabled_by_default"
+						title="Won't Do"
+						onClick={() => {
+							const parentId = parentOfTasks && parentOfTasks[task._id];
+							flagTask({ taskId: task._id, parentId, property: 'willNotDo', value: true });
+							onCloseContextMenu();
+
+							if (!parentId) {
+								navigate(`/projects/${projectId}/tasks`);
+							} else {
+								navigate(`/projects/${projectId}/tasks/${parentId}`);
+							}
+						}}
+					/>
 
 					<div className="relative">
 						<TaskAction

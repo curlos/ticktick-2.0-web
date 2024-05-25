@@ -11,28 +11,6 @@ import { SMART_LISTS } from '../utils/smartLists.utils';
 import { setModalState } from '../slices/modalSlice';
 
 const TaskListSidebar = () => {
-	// TODO: Bring these boys back to life as Status Lists. They'll work extremely similarly to Smart Lists with "Trash" having more advanced capabilities than the others.
-	const statusLists = [
-		{
-			name: 'Completed',
-			iconName: 'check_box',
-			iconFill: 0,
-			numberOfTasks: 0,
-		},
-		{
-			name: "Won't Do",
-			iconName: 'close',
-			iconFill: 0,
-			numberOfTasks: 0,
-		},
-		{
-			name: 'Trash',
-			iconName: 'delete',
-			iconFill: 0,
-			numberOfTasks: 0,
-		},
-	];
-
 	const dispatch = useDispatch();
 	const { data: fetchedProjects, isLoading, error } = useGetProjectsQuery();
 	const { projects } = fetchedProjects || {};
@@ -42,7 +20,7 @@ const TaskListSidebar = () => {
 	// const projectsWithGroup = projects && projects.filter((project) => project.groupId);
 
 	const topListNames = ['all', 'today', 'tomorrow', 'week'];
-	const statusListNames = ['completed', 'trash'];
+	const statusListNames = ['completed', 'will-not-do', 'trash'];
 
 	return (
 		<div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray p-4">

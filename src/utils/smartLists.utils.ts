@@ -7,7 +7,7 @@ export const SMART_LISTS = {
 		urlName: 'all',
 		iconName: 'stacks',
 		route: '/projects/all/tasks',
-		getFilteredTasks: (allTasks: Array<TaskObj>) => allTasks.filter((task) => !task.isDeleted),
+		getFilteredTasks: (allTasks: Array<TaskObj>) => allTasks.filter((task) => !task.isDeleted && !task.willNotDo),
 		getDefaultDueDate: () => {
 			return null;
 		},
@@ -19,7 +19,7 @@ export const SMART_LISTS = {
 		route: '/projects/today/tasks',
 		getFilteredTasks: (tasks: Array<TaskObj>) => {
 			return tasks.filter((task) => {
-				if (task.isDeleted) return false;
+				if (task.isDeleted || task.willNotDo) return false;
 
 				const { dueDate } = task;
 
@@ -41,7 +41,7 @@ export const SMART_LISTS = {
 		route: '/projects/tomorrow/tasks',
 		getFilteredTasks: (tasks: Array<TaskObj>) => {
 			return tasks.filter((task) => {
-				if (task.isDeleted) return false;
+				if (task.isDeleted || task.willNotDo) return false;
 
 				const { dueDate } = task;
 
@@ -67,7 +67,7 @@ export const SMART_LISTS = {
 		route: '/projects/week/tasks',
 		getFilteredTasks: (tasks: Array<TaskObj>) => {
 			return tasks.filter((task) => {
-				if (task.isDeleted) return false;
+				if (task.isDeleted || task.willNotDo) return false;
 
 				const { dueDate } = task;
 
@@ -98,7 +98,17 @@ export const SMART_LISTS = {
 		iconName: 'check_box',
 		route: '/projects/completed/tasks',
 		getFilteredTasks: (allTasks: Array<TaskObj>) =>
-			allTasks.filter((task) => task.completedTime && !task.isDeleted),
+			allTasks.filter((task) => task.completedTime && !task.isDeleted && !task.willNotDo),
+		getDefaultDueDate: () => {
+			return null;
+		},
+	},
+	'will-not-do': {
+		name: "Won't Do",
+		urlName: 'will-not-do',
+		iconName: 'delete',
+		route: '/projects/will-not-do/tasks',
+		getFilteredTasks: (allTasks: Array<TaskObj>) => allTasks.filter((task) => task.willNotDo),
 		getDefaultDueDate: () => {
 			return null;
 		},
