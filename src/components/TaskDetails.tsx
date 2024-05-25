@@ -6,7 +6,7 @@ import { TaskObj } from '../interfaces/interfaces';
 import DropdownCalendar from './Dropdown/DropdownCalendar/DropdownCalendar';
 import AddTaskForm from './AddTaskForm';
 import ModalTaskActivities from './Modal/ModalTaskActivities';
-import { useGetTasksQuery, useGetProjectsQuery } from '../services/api';
+import { useGetTasksQuery, useGetProjectsQuery, useEditTaskMutation } from '../services/api';
 import { getTasksWithFilledInChildren } from '../utils/helpers.utils';
 import { SortableTree } from './SortableTest/SortableTree';
 import useDebouncedEditTask from '../hooks/useDebouncedEditTask';
@@ -35,6 +35,7 @@ const TaskDetails = () => {
 	const { data: fetchedTasks, isLoading: isTasksLoading, error } = useGetTasksQuery();
 	const { tasks, tasksById, parentOfTasks } = fetchedTasks || {};
 	const { debouncedEditTaskApiCall } = useDebouncedEditTask();
+	const [editTask] = useEditTaskMutation();
 
 	// Projects
 	const { data: fetchedProjects, isLoading: isProjectsLoading, error: errorProjects } = useGetProjectsQuery();
@@ -43,7 +44,7 @@ const TaskDetails = () => {
 	const [currTitle, setCurrTitle] = useState('');
 	const [currDescription, setCurrDescription] = useState('');
 	const [selectedPriority, setSelectedPriority] = useState(0);
-	const [completed, setCompleted] = useState(false);
+	const [currCompletedTime, setCurrCompletedTime] = useState(null);
 	const [task, setTask] = useState<TaskObj>();
 	const [parentTask, setParentTask] = useState<TaskObj | null>();
 	const [childTasks, setChildTasks] = useState([]);
@@ -116,6 +117,7 @@ const TaskDetails = () => {
 		if (currTask) {
 			setCurrTitle(currTask.title);
 			setCurrDescription(currTask.description);
+			setCurrCompletedTime(currTask.completedTime);
 
 			if (currTask.dueDate) {
 				setCurrDueDate(new Date(currTask.dueDate));
@@ -149,7 +151,7 @@ const TaskDetails = () => {
 		return <EmptyTask />;
 	}
 
-	const { _id, children, priority, completedPomodoros, timeTaken, estimatedDuration, deadline } = task;
+	const { _id, children, priority, completedPomodoros, timeTaken, estimatedDuration, deadline, willNotDo } = task;
 	const priorityData = PRIORITIES[priority];
 
 	return (
@@ -161,8 +163,17 @@ const TaskDetails = () => {
 							'flex items-center hover:text-white cursor-pointer',
 							priorityData.textFlagColor
 						)}
+						onClick={(e) => {
+							e.stopPropagation();
+							const newCompletedTime = currCompletedTime ? null : new Date().toISOString();
+							setCurrCompletedTime(newCompletedTime);
+							// TODO: Play audio when task is completed
+							editTask({ taskId: _id, payload: { completedTime: newCompletedTime } });
+						}}
 					>
-						{!completed ? (
+						{willNotDo ? (
+							<Icon name="disabled_by_default" fill={1} customClass={'!text-[20px] '} />
+						) : !currCompletedTime ? (
 							children.length > 0 ? (
 								<Icon name="list_alt" fill={0} customClass={'!text-[20px] '} />
 							) : (
