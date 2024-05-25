@@ -107,7 +107,7 @@ const DropdownProjects: React.FC<DropdownProjectsProps> = ({
 
 	const inboxProject = filteredProjects.find((project) => project.isInbox);
 
-	console.log(inboxProject);
+	// console.log(inboxProject);
 
 	return (
 		<Dropdown

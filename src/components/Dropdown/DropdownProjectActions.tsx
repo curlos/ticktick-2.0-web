@@ -1,15 +1,10 @@
 import Dropdown from './Dropdown';
-import Icon from '../Icon';
 import { DropdownProps } from '../../interfaces/interfaces';
-import { useGetProjectsQuery } from '../../services/api';
-import { PRIORITIES } from '../../utils/priorities.utils';
+import { useGetProjectsQuery, usePermanentlyDeleteProjectMutation } from '../../services/api';
 import classNames from 'classnames';
 import { useNavigate } from 'react-router';
 import { useDispatch } from 'react-redux';
 import { setModalState } from '../../slices/modalSlice';
-import { setAlertState } from '../../slices/alertSlice';
-import DropdownStartFocus from './DropdownTaskOptions/DropdownStartFocus';
-import DropdownProjects from './DropdownProjects';
 
 interface DropdownProjectActionsProps extends DropdownProps {
 	onCloseContextMenu: () => void;
@@ -31,6 +26,8 @@ const DropdownProjectActions: React.FC<DropdownProjectActionsProps> = ({
 	// RTK Query - Projects
 	const { data: fetchedProjects, isLoading: isProjectsLoading, error: errorProjects } = useGetProjectsQuery();
 	const { projects, projectsById } = fetchedProjects || {};
+
+	const [permanentlyDeleteProject] = usePermanentlyDeleteProjectMutation();
 
 	if (!project) {
 		return null;
@@ -58,7 +55,16 @@ const DropdownProjectActions: React.FC<DropdownProjectActionsProps> = ({
 						dispatch(setModalState({ modalId: 'ModalAddList', isOpen: true, props: { project } }));
 					}}
 				/>
-				<ProjectAction name="Delete" onClick={() => console.log('fag')} />
+				<ProjectAction
+					name="Delete"
+					onClick={async () => {
+						setIsVisible(false);
+						await permanentlyDeleteProject({
+							projectId: project._id,
+						});
+						navigate('/projects/665233f98d8317681ddb831a/tasks');
+					}}
+				/>
 			</div>
 		</Dropdown>
 	);

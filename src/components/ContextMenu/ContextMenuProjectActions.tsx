@@ -37,7 +37,6 @@ const ContextMenuProjectActions: React.FC<IContextMenuProjectActions> = ({ xPos,
 				setIsVisible={setIsDropdownProjectActionsVisible}
 				customClasses=" !ml-[0px] mt-[15px]"
 				customStyling={{ position: 'absolute', top: `${yPos}px`, left: `${xPos}px` }}
-				onCloseContextMenu={onClose}
 				project={project}
 			/>
 		</div>,

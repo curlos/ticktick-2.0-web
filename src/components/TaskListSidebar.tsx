@@ -24,8 +24,6 @@ const TaskListSidebar = () => {
 
 	const inboxProject = projects?.find((project) => project.isInbox);
 
-	console.log(inboxProject);
-
 	return (
 		<div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray p-4">
 			<div>
