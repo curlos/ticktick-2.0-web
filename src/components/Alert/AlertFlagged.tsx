@@ -48,8 +48,6 @@ const AlertFlagged = () => {
 					fill={0}
 					customClass={'text-color-gray-50 !text-[20px] hover:text-white cursor-pointer text-yellow-500'}
 					onClick={() => {
-						console.log('Fuck you!');
-						// TODO: Flag task as the opposite
 						flagTask({
 							taskId: task._id,
 							parentId,

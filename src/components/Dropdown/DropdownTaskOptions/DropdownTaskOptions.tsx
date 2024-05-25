@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 import { useNavigate, useParams } from 'react-router';
 import { useGetTasksQuery, useFlagTaskMutation } from '../../../services/api';
 import { DropdownProps, TaskObj } from '../../../interfaces/interfaces';
+import { setAlertState } from '../../../slices/alertSlice';
 
 interface DropdownTaskOptionsProps extends DropdownProps {
 	setIsModalTaskActivitiesOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -37,7 +38,27 @@ const DropdownTaskOptions: React.FC<DropdownTaskOptionsProps> = ({
 			const parentId = parentOfTasks && parentOfTasks[task._id];
 			flagTask({ taskId: task._id, parentId, property: 'isDeleted', value: isDeletedTime });
 			setIsVisible(false);
-			navigate(`/projects/${projectId}/tasks`);
+
+			// Only show the alert if the task is about to be deleted and we want to give the user the option to undo the deletion.
+			if (!task.isDeleted) {
+				dispatch(
+					setAlertState({
+						alertId: 'AlertFlagged',
+						isOpen: true,
+						props: {
+							task: task,
+							parentId: parentId,
+							flaggedPropertyName: 'isDeleted',
+						},
+					})
+				);
+			}
+
+			if (!parentId) {
+				navigate(`/projects/${projectId}/tasks`);
+			} else {
+				navigate(`/projects/${projectId}/tasks/${parentId}`);
+			}
 		} catch (error) {
 			throw new Error(error);
 		}

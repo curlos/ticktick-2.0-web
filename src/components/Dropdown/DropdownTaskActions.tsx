@@ -384,14 +384,40 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 						}}
 					/>
 					<TaskAction
-						iconName="disabled_by_default"
+						iconName={task?.willNotDo ? 'undo' : 'disabled_by_default'}
 						title={task?.willNotDo ? 'Reopen' : "Won't Do"}
 						onClick={() => {
 							const willNotDoTime = new Date().toISOString();
 
 							const parentId = parentOfTasks && parentOfTasks[task._id];
-							flagTask({ taskId: task._id, parentId, property: 'willNotDo', value: willNotDoTime });
+							flagTask({
+								taskId: task._id,
+								parentId,
+								property: 'willNotDo',
+								value: !task.willNotDo ? willNotDoTime : null,
+							});
 							onCloseContextMenu();
+
+							// Only show the alert if the task is about to be deleted and we want to give the user the option to undo the deletion.
+							if (!task.willNotDo) {
+								dispatch(
+									setAlertState({
+										alertId: 'AlertFlagged',
+										isOpen: true,
+										props: {
+											task: task,
+											parentId: parentId,
+											flaggedPropertyName: 'willNotDo',
+										},
+									})
+								);
+							}
+
+							if (!parentId) {
+								navigate(`/projects/${projectId}/tasks`);
+							} else {
+								navigate(`/projects/${projectId}/tasks/${parentId}`);
+							}
 
 							if (!parentId) {
 								navigate(`/projects/${projectId}/tasks`);
