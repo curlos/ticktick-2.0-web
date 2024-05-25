@@ -75,8 +75,6 @@ const SearchTasks = () => {
 		setFilteredTasks(searchedTasks.map((result) => result.item));
 	}, 1000);
 
-	console.log(filteredTasks);
-
 	const onCloseSearchTasks = () => dispatch(setModalState({ modalId: 'ModalSearchTasks', isOpen: false }));
 
 	return (

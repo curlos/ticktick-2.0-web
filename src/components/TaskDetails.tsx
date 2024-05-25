@@ -17,6 +17,8 @@ import TaskDueDateText from './TaskDueDateText';
 import DropdownPriorities from './Dropdown/DropdownPriorities';
 import DropdownProjects from './Dropdown/DropdownProjects';
 import DropdownTaskOptions from './Dropdown/DropdownTaskOptions/DropdownTaskOptions';
+import useAudio from '../hooks/useAudio';
+import amongUsCompletionSoundMP3 from '../../public/among_us_complete_task.mp3';
 
 const EmptyTask = () => (
 	<div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700 flex justify-center items-center text-[18px] text-color-gray-100">
@@ -40,6 +42,8 @@ const TaskDetails = () => {
 	// Projects
 	const { data: fetchedProjects, isLoading: isProjectsLoading, error: errorProjects } = useGetProjectsQuery();
 	const { projects, projectsById } = fetchedProjects || {};
+
+	const { play: playCompletionSound, stop: stopCompletionSound } = useAudio(amongUsCompletionSoundMP3);
 
 	const [currTitle, setCurrTitle] = useState('');
 	const [currDescription, setCurrDescription] = useState('');
@@ -167,7 +171,10 @@ const TaskDetails = () => {
 							e.stopPropagation();
 							const newCompletedTime = currCompletedTime ? null : new Date().toISOString();
 							setCurrCompletedTime(newCompletedTime);
-							// TODO: Play audio when task is completed
+
+							// Reset and play audio
+							playCompletionSound();
+
 							editTask({ taskId: _id, payload: { completedTime: newCompletedTime } });
 						}}
 					>

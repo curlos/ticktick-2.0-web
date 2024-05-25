@@ -1,5 +1,6 @@
 import React, { forwardRef, HTMLAttributes, useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
+import amongUsCompletionSoundMP3 from '../../../../../public/among_us_complete_task.mp3';
 
 import { Action } from './Action';
 import { Handle } from './Handle';
@@ -12,6 +13,7 @@ import { PRIORITIES } from '../../../../utils/priorities.utils';
 import TaskDueDateText from '../../../TaskDueDateText';
 import ContextMenuTask from '../../../ContextMenu/ContextMenuTask';
 import DropdownCalendar from '../../../Dropdown/DropdownCalendar/DropdownCalendar';
+import useAudio from '../../../../hooks/useAudio';
 
 export interface Props extends HTMLAttributes<HTMLLIElement> {
 	childCount?: number;
@@ -53,6 +55,8 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 		},
 		ref
 	) => {
+		const { play: playCompletionSound, stop: stopCompletionSound } = useAudio(amongUsCompletionSoundMP3);
+
 		const navigate = useNavigate();
 		const params = useParams();
 		const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
@@ -147,18 +151,15 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 						onClick={(e) => {
 							e.stopPropagation();
 							let completedTime = currCompletedTime ? null : new Date().toISOString();
-
 							setCurrCompletedTime(completedTime);
+
+							// Reset and play audio
+							playCompletionSound();
 
 							editTask({ taskId: _id, payload: { completedTime } });
 						}}
 					>
-						<span
-							className={classNames(
-								'flex items-center hover:text-white cursor-pointer',
-								priorityData.textFlagColor
-							)}
-						>
+						<span className={classNames('flex items-center cursor-pointer', priorityData.textFlagColor)}>
 							{willNotDo ? (
 								<Icon name="disabled_by_default" fill={1} customClass={'!text-[20px] '} />
 							) : !currCompletedTime ? (
