@@ -23,11 +23,11 @@ const Icon: React.FC<IconProps> = ({
 	onClick,
 	onMouseOver,
 	onMouseLeave,
-	key,
+	iconKey,
 }) => (
 	<span
 		ref={toggleRef}
-		key={key}
+		key={iconKey}
 		className={'material-symbols-rounded' + (customClass ? ' ' + customClass : '')}
 		style={{
 			fontVariationSettings: `'FILL' ${fill}, 'wght' ${wght}, 'GRAD' ${grad}, 'opsz' ${opsz}`,

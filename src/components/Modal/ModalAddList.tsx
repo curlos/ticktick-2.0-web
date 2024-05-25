@@ -7,10 +7,12 @@ import { fetchData } from '../../utils/helpers.utils';
 import { useAddProjectMutation } from '../../services/api';
 import { useDispatch, useSelector } from 'react-redux';
 import { setModalState } from '../../slices/modalSlice';
+import { useNavigate } from 'react-router';
 
 const ModalAddList: React.FC = () => {
 	const modal = useSelector((state) => state.modals.modals['ModalAddList']);
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 
 	const [addProject, { isLoading, error }] = useAddProjectMutation(); // Mutation hook
 
@@ -72,7 +74,11 @@ const ModalAddList: React.FC = () => {
 		};
 
 		try {
-			await addProject(newProject);
+			const {
+				data: { _id },
+			} = await addProject(newProject);
+			closeModal();
+			navigate(`/projects/${_id}/tasks`);
 		} catch (error) {
 			console.error(error);
 		}
@@ -159,15 +165,16 @@ const ModalAddList: React.FC = () => {
 						<div className="text-color-gray-100 w-[96px]">View</div>
 						<div className="flex items-center gap-1">
 							{views.map((view) => (
-								<Icon
-									key={view}
-									name={view.iconName}
-									customClass={
-										'!text-[22px] px-3 py-1 text-color-gray-100 bg-color-gray-300 rounded-md cursor-pointer border border-transparent' +
-										(selectedView === view.type ? ' !border-blue-500 !text-blue-500' : '')
-									}
-									onClick={() => setSelectedView(view.type)}
-								/>
+								<span key={view.iconName}>
+									<Icon
+										name={view.iconName}
+										customClass={
+											'!text-[22px] px-3 py-1 text-color-gray-100 bg-color-gray-300 rounded-md cursor-pointer border border-transparent' +
+											(selectedView === view.type ? ' !border-blue-500 !text-blue-500' : '')
+										}
+										onClick={() => setSelectedView(view.type)}
+									/>
+								</span>
 							))}
 						</div>
 					</div>
@@ -216,10 +223,7 @@ const ModalAddList: React.FC = () => {
 							'bg-blue-500 rounded py-[2px] cursor-pointer hover:bg-blue-600 min-w-[114px]' +
 							(!name ? ' opacity-50' : '')
 						}
-						onClick={() => {
-							closeModal();
-							handleAddProject();
-						}}
+						onClick={handleAddProject}
 					>
 						Save
 					</button>
