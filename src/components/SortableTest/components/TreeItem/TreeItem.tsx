@@ -11,7 +11,7 @@ import { useEditTaskMutation, useGetProjectsQuery } from '../../../../services/a
 import { SMART_LISTS } from '../../../../utils/smartLists.utils';
 import { PRIORITIES } from '../../../../utils/priorities.utils';
 import TaskDueDateText from '../../../TaskDueDateText';
-import ContextMenuTask from '../../../ContextMenu/ContextMenuTask';
+import ContextMenuTaskActions from '../../../ContextMenu/ContextMenuTaskActions';
 import DropdownCalendar from '../../../Dropdown/DropdownCalendar/DropdownCalendar';
 import useAudio from '../../../../hooks/useAudio';
 
@@ -225,7 +225,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 					</div>
 
 					{taskContextMenu && (
-						<ContextMenuTask
+						<ContextMenuTaskActions
 							taskContextMenu={taskContextMenu}
 							xPos={taskContextMenu.xPos}
 							yPos={taskContextMenu.yPos}

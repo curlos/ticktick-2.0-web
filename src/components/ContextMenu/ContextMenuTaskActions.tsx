@@ -1,17 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { useGetTasksQuery } from '../../services/api';
-import { useParams } from 'react-router';
-import { TaskObj } from '../../interfaces/interfaces';
 import DropdownTaskActions from '../Dropdown/DropdownTaskActions';
 
-interface IContextMenuTask {
+interface IContextMenuTaskActions {
 	xPos: string;
 	yPos: string;
 	onClose: () => void;
 }
 
-const ContextMenuTask: React.FC<IContextMenuTask> = ({ xPos, yPos, onClose }) => {
+const ContextMenuTaskActions: React.FC<IContextMenuTaskActions> = ({ xPos, yPos, onClose }) => {
 	const [isDropdownTaskActionsVisible, setIsDropdownTaskActionsVisible] = useState(true);
 	const dropdownTaskActionsToggleRef = useRef(null);
 
@@ -38,4 +35,4 @@ const ContextMenuTask: React.FC<IContextMenuTask> = ({ xPos, yPos, onClose }) =>
 	);
 };
 
-export default ContextMenuTask;
+export default ContextMenuTaskActions;

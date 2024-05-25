@@ -34,6 +34,25 @@ const AlertFlagged = () => {
 
 	const { task, parentId, flaggedPropertyName } = props;
 
+	const getMessage = () => {
+		let message = '';
+		switch (flaggedPropertyName) {
+			case 'isDeleted':
+				message += 'Deleted';
+				break;
+			case 'willNotDo':
+				message += "Won't do";
+				break;
+			default:
+				message += '';
+				break;
+		}
+
+		message += ` "${task.title}"`;
+
+		return message;
+	};
+
 	return (
 		<Alert
 			isOpen={isOpen}
@@ -42,7 +61,7 @@ const AlertFlagged = () => {
 			duration={duration}
 		>
 			<div className="flex items-center gap-3">
-				<div>Flagged "{task.title}"</div>
+				<div>{getMessage()}</div>
 				<Icon
 					name="undo"
 					fill={0}
