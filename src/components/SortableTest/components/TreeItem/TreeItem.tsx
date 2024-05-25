@@ -1,4 +1,4 @@
-import React, { forwardRef, HTMLAttributes, useEffect, useState } from 'react';
+import React, { forwardRef, HTMLAttributes, useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 
 import { Action } from './Action';
@@ -11,6 +11,7 @@ import { SMART_LISTS } from '../../../../utils/smartLists.utils';
 import { PRIORITIES } from '../../../../utils/priorities.utils';
 import TaskDueDateText from '../../../TaskDueDateText';
 import ContextMenuTask from '../../../ContextMenu/ContextMenuTask';
+import DropdownCalendar from '../../../Dropdown/DropdownCalendar/DropdownCalendar';
 
 export interface Props extends HTMLAttributes<HTMLLIElement> {
 	childCount?: number;
@@ -58,11 +59,15 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 		const [editTask] = useEditTaskMutation();
 		const { projectsById } = fetchedProjects || {};
 
-		const { children, _id, title, projectId, dueDate, priority, completedTime } = item;
+		const { children, _id, title, projectId, dueDate, priority, completedTime, willNotDo } = item;
 
 		const [currCompletedTime, setCurrCompletedTime] = useState(completedTime);
+		const [currDueDate, setCurrDueDate] = useState(dueDate ? new Date(dueDate) : null);
 		const [project, setProject] = useState(null);
 		const [taskContextMenu, setTaskContextMenu] = useState(null);
+		const [isDropdownCalendarVisible, setIsDropdownCalendarVisible] = useState(false);
+
+		const dropdownCalendarToggleRef = useRef(null);
 
 		const categoryIconClass =
 			' text-color-gray-100 !text-[16px] hover:text-white' + (children?.length >= 1 ? '' : ' invisible');
@@ -95,6 +100,8 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 		const inSmartListView = params.projectId && SMART_LISTS[params.projectId];
 		const priorityData = PRIORITIES[priority];
 
+		console.log(currDueDate);
+
 		return (
 			<li
 				onContextMenu={handleContextMenu}
@@ -114,10 +121,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 				{...props}
 			>
 				<div
-					className={classNames(
-						styles.TreeItem,
-						'group flex p-2 hover:bg-color-gray-600 cursor-pointer rounded-lg'
-					)}
+					className={classNames(styles.TreeItem, 'group flex p-2 hover:bg-color-gray-600 rounded-lg')}
 					ref={ref}
 					style={style}
 				>
@@ -157,7 +161,9 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 								priorityData.textFlagColor
 							)}
 						>
-							{!currCompletedTime ? (
+							{willNotDo ? (
+								<Icon name="disabled_by_default" fill={1} customClass={'!text-[20px] '} />
+							) : !currCompletedTime ? (
 								children.length > 0 ? (
 									<Icon name="list_alt" fill={0} customClass={'!text-[20px] '} />
 								) : (
@@ -178,7 +184,27 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 								{project && params.projectId !== project._id && (
 									<div className="text-color-gray-100 mr-1">{project.name}</div>
 								)}
-								{dueDate && <TaskDueDateText dueDate={dueDate} />}
+
+								{currDueDate && (
+									<div className="relative">
+										<div
+											ref={dropdownCalendarToggleRef}
+											onClick={() => setIsDropdownCalendarVisible(!isDropdownCalendarVisible)}
+										>
+											<TaskDueDateText dueDate={dueDate} />
+										</div>
+										<DropdownCalendar
+											toggleRef={dropdownCalendarToggleRef}
+											isVisible={isDropdownCalendarVisible}
+											setIsVisible={setIsDropdownCalendarVisible}
+											task={item}
+											currDueDate={currDueDate}
+											setCurrDueDate={setCurrDueDate}
+											customClasses=" !ml-[-155px] mt-[15px]"
+										/>
+									</div>
+								)}
+
 								<Icon
 									name="chevron_right"
 									onClick={() =>
