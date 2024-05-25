@@ -387,8 +387,10 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 						iconName="disabled_by_default"
 						title="Won't Do"
 						onClick={() => {
+							const willNotDoTime = new Date().toISOString();
+
 							const parentId = parentOfTasks && parentOfTasks[task._id];
-							flagTask({ taskId: task._id, parentId, property: 'willNotDo', value: true });
+							flagTask({ taskId: task._id, parentId, property: 'willNotDo', value: willNotDoTime });
 							onCloseContextMenu();
 
 							if (!parentId) {
@@ -460,8 +462,9 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 						iconName="delete"
 						title="Delete"
 						onClick={() => {
+							const isDeletedTime = new Date().toISOString();
 							const parentId = parentOfTasks && parentOfTasks[task._id];
-							flagTask({ taskId: task._id, parentId, property: 'isDeleted', value: true });
+							flagTask({ taskId: task._id, parentId, property: 'isDeleted', value: isDeletedTime });
 							onCloseContextMenu();
 
 							if (!parentId) {

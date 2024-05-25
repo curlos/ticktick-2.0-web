@@ -33,8 +33,9 @@ const DropdownTaskOptions: React.FC<DropdownTaskOptionsProps> = ({
 	const handleDelete = () => {
 		// Delete the task and then the redirect to the list of tasks in the project as the current task has been delete and thus the page is not accessible anymore.
 		try {
+			const isDeletedTime = new Date().toISOString();
 			const parentId = parentOfTasks && parentOfTasks[task._id];
-			flagTask({ taskId: task._id, parentId, property: 'isDeleted', value: true });
+			flagTask({ taskId: task._id, parentId, property: 'isDeleted', value: isDeletedTime });
 			setIsVisible(false);
 			navigate(`/projects/${projectId}/tasks`);
 		} catch (error) {
