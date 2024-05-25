@@ -22,6 +22,10 @@ const TaskListSidebar = () => {
 	const topListNames = ['all', 'today', 'tomorrow', 'week'];
 	const statusListNames = ['completed', 'will-not-do', 'trash'];
 
+	const inboxProject = projects?.find((project) => project.isInbox);
+
+	console.log(inboxProject);
+
 	return (
 		<div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray p-4">
 			<div>
@@ -30,6 +34,7 @@ const TaskListSidebar = () => {
 					.map((project) => (
 						<ProjectItem key={project.name} project={project} isSmartList={true} />
 					))}
+				{inboxProject && <ProjectItem key={inboxProject.name} project={inboxProject} />}
 			</div>
 
 			<hr className="my-3 border-color-gray-200 opacity-50" />
@@ -65,7 +70,11 @@ const TaskListSidebar = () => {
 					{/* TODO: Might have to bring this back later. */}
 					{/* <DraggableProjects projects={projects} /> */}
 
-					{projects && projects.map((project) => <ProjectItem key={project._id} project={project} />)}
+					{/* Show every project that is NOT the Inbox. */}
+					{projects &&
+						projects
+							.filter((project) => !project.isInbox)
+							.map((project) => <ProjectItem key={project._id} project={project} />)}
 
 					{/* <SortableTree collapsible indicator removable /> */}
 				</div>

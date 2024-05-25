@@ -68,7 +68,7 @@ const DropdownProjects: React.FC<DropdownProjectsProps> = ({
 	}
 
 	const ProjectOption: React.FC<ProjectOptionProps> = ({ project }) => {
-		const { name } = project;
+		const { name, _id } = project;
 
 		return (
 			<div
@@ -88,10 +88,13 @@ const DropdownProjects: React.FC<DropdownProjectsProps> = ({
 				}}
 			>
 				<div className="flex items-center gap-1">
-					<Icon name="menu" customClass={`!text-[22px] hover:text-white cursor-p`} />
+					<Icon
+						name={project.isInbox ? 'inbox' : 'menu'}
+						customClass={`!text-[22px] hover:text-white cursor-p`}
+					/>
 					{name}
 				</div>
-				{selectedProject.name === name && (
+				{selectedProject._id === _id && (
 					<Icon
 						name="check"
 						fill={0}
@@ -101,6 +104,10 @@ const DropdownProjects: React.FC<DropdownProjectsProps> = ({
 			</div>
 		);
 	};
+
+	const inboxProject = filteredProjects.find((project) => project.isInbox);
+
+	console.log(inboxProject);
 
 	return (
 		<Dropdown
@@ -131,9 +138,12 @@ const DropdownProjects: React.FC<DropdownProjectsProps> = ({
 					ref={scrollRef}
 					className="p-1 h-[250px] overflow-auto gray-scrollbar border-t border-color-gray-200"
 				>
-					{filteredProjects.map((project) => (
-						<ProjectOption key={project.name} project={project} />
-					))}
+					{inboxProject && <ProjectOption key={inboxProject.name} project={inboxProject} />}
+					{filteredProjects
+						.filter((project) => !project.isInbox)
+						.map((project) => (
+							<ProjectOption key={project.name} project={project} />
+						))}
 				</div>
 			</div>
 		</Dropdown>

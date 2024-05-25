@@ -76,7 +76,7 @@ export const ProjectItem: React.FC<ProjectItemProps> = ({ project, projectsWithG
 	const iconFill = isFolder ? 0 : 1;
 
 	const smartList = SMART_LISTS[project.urlName];
-	let iconName = isFolder ? 'folder' : smartList ? smartList.iconName : 'menu';
+	let iconName = isFolder ? 'folder' : smartList ? smartList.iconName : project.isInbox ? 'inbox' : 'menu';
 	const emoji = containsEmoji(name) ? name.split(' ')[0] : null;
 	const displayName = emoji ? name.split(' ')[1] : name;
 	const [numberOfTasks, setNumberOfTasks] = useState(0);
