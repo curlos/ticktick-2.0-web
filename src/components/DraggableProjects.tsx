@@ -9,6 +9,7 @@ import { IProject } from '../interfaces/interfaces';
 import Icon from './Icon';
 import { useGetTasksQuery } from '../services/api';
 import { SMART_LISTS } from '../utils/smartLists.utils';
+import ContextMenuProjectActions from './ContextMenu/ContextMenuProjectActions';
 
 const DraggableProjects = ({ projects }) => {
 	const [items, setItems] = useState([...projects]);
@@ -79,6 +80,7 @@ export const ProjectItem: React.FC<ProjectItemProps> = ({ project, projectsWithG
 	const emoji = containsEmoji(name) ? name.split(' ')[0] : null;
 	const displayName = emoji ? name.split(' ')[1] : name;
 	const [numberOfTasks, setNumberOfTasks] = useState(0);
+	const [taskContextMenu, setTaskContextMenu] = useState(null);
 
 	useEffect(() => {
 		if (!tasks) {
@@ -109,10 +111,25 @@ export const ProjectItem: React.FC<ProjectItemProps> = ({ project, projectsWithG
 		}
 	};
 
+	const handleContextMenu = (event) => {
+		event.preventDefault(); // Prevent the default context menu
+
+		setTaskContextMenu({
+			xPos: event.pageX, // X coordinate of the mouse pointer
+			yPos: event.pageY, // Y coordinate of the mouse pointer
+		});
+
+		// navigate(`/projects/${inSmartListView ? params.projectId : projectId}/tasks/${_id}`);
+	};
+
+	const handleClose = () => {
+		setTaskContextMenu(null);
+	};
+
 	const isSmartListView = SMART_LISTS[projectId];
 
 	return (
-		<div onClick={handleClick}>
+		<div onContextMenu={handleContextMenu} onClick={handleClick}>
 			<div
 				className={
 					'p-2 rounded-lg flex items-center justify-between cursor-pointer cursor-pointer' +
@@ -166,6 +183,16 @@ export const ProjectItem: React.FC<ProjectItemProps> = ({ project, projectsWithG
                     ) : null
                 );
             })} */}
+
+			{taskContextMenu && (
+				<ContextMenuProjectActions
+					taskContextMenu={taskContextMenu}
+					xPos={taskContextMenu.xPos}
+					yPos={taskContextMenu.yPos}
+					onClose={handleClose}
+					project={project}
+				/>
+			)}
 		</div>
 	);
 };

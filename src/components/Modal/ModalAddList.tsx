@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Dropdown from '../Dropdown/Dropdown';
 import { DropdownProps, IProject } from '../../interfaces/interfaces';
 import { fetchData } from '../../utils/helpers.utils';
-import { useAddProjectMutation } from '../../services/api';
+import { useAddProjectMutation, useEditProjectMutation } from '../../services/api';
 import { useDispatch, useSelector } from 'react-redux';
 import { setModalState } from '../../slices/modalSlice';
 import { useNavigate } from 'react-router';
@@ -14,10 +14,11 @@ const ModalAddList: React.FC = () => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
-	const [addProject, { isLoading, error }] = useAddProjectMutation(); // Mutation hook
+	const [addProject, { isLoading: isLoadingAddProject, error: errorAddProject }] = useAddProjectMutation(); // Mutation hook
+	const [editProject, { isLoading: isLoadingEditProject, error: errorEditProject }] = useEditProjectMutation();
 
-	const [name, setName] = useState('');
-	const [listColor, setListColor] = useState('');
+	const [name, setName] = useState(modal?.props?.project?.name || '');
+	const [listColor, setListColor] = useState(modal?.props?.project?.color || '');
 	const [selectedView, setSelectedView] = useState('list');
 	const [selectedFolder, setSelectedFolder] = useState<IProject | Object>({ name: 'None' });
 	const [isDropdownFolderVisible, setIsDropdownFolderVisible] = useState(false);
@@ -25,6 +26,19 @@ const ModalAddList: React.FC = () => {
 
 	const DEFAULT_COLORS = ['#ff6161', '#FFAC37', '#FFD323', '#E6EA48', '#33D870', '#4BA1FF', '#6D75F4'];
 	const DEFAULT_COLORS_LOWERCASE = DEFAULT_COLORS.map((color) => color.toLowerCase());
+
+	const isEditingList = modal?.props?.project ? true : false;
+
+	useEffect(() => {
+		if (modal?.props?.project) {
+			const { project } = modal.props;
+			setName(project.name);
+			setListColor(project.color);
+		} else {
+			setName('');
+			setListColor('');
+		}
+	}, [modal?.props?.project]);
 
 	interface ColorPickerProps {
 		color: string;
@@ -74,11 +88,21 @@ const ModalAddList: React.FC = () => {
 		};
 
 		try {
-			const {
-				data: { _id },
-			} = await addProject(newProject);
+			let projectId = null;
+
+			if (isEditingList) {
+				const {
+					data: { _id },
+				} = await editProject({ projectId: modal.props.project._id, payload: newProject });
+				projectId = _id;
+			} else {
+				const {
+					data: { _id },
+				} = await addProject(newProject);
+				projectId = _id;
+			}
 			closeModal();
-			navigate(`/projects/${_id}/tasks`);
+			navigate(`/projects/${projectId}/tasks`);
 		} catch (error) {
 			console.error(error);
 		}
@@ -102,7 +126,7 @@ const ModalAddList: React.FC = () => {
 		<Modal isOpen={isOpen} onClose={closeModal} position="top-center" customClasses="!w-[400px]">
 			<div className="bg-color-gray-650 rounded-lg shadow-lg py-4 px-6">
 				<div className="flex items-center justify-between mb-4">
-					<h3 className="font-bold text-[16px]">Add List</h3>
+					<h3 className="font-bold text-[16px]">{isEditingList ? 'Edit List' : 'Add List'}</h3>
 					<Icon
 						name="close"
 						customClass={'!text-[20px] text-color-gray-100 hover:text-white cursor-pointer'}
@@ -225,7 +249,7 @@ const ModalAddList: React.FC = () => {
 						}
 						onClick={handleAddProject}
 					>
-						Save
+						{isEditingList ? 'Edit' : 'Save'}
 					</button>
 				</div>
 			</div>

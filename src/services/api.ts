@@ -95,6 +95,14 @@ export const api = createApi({
 			}),
 			invalidatesTags: ['Project'], // Invalidate the cache when a task is added
 		}),
+		editProject: builder.mutation({
+			query: ({ projectId, payload }) => ({
+				url: `/projects/edit/${projectId}`,
+				method: 'PUT',
+				body: payload,
+			}),
+			invalidatesTags: (result, error, projectId) => ['Project'],
+		}),
 	}),
 });
 
@@ -112,4 +120,5 @@ export const {
 	// Projects/Folders
 	useGetProjectsQuery,
 	useAddProjectMutation,
+	useEditProjectMutation,
 } = api;

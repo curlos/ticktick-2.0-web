@@ -20,6 +20,12 @@ const ContextMenuTaskActions: React.FC<IContextMenuTaskActions> = ({ xPos, yPos,
 		}
 	}, [xPos]);
 
+	useEffect(() => {
+		if (!isDropdownTaskActionsVisible) {
+			onClose();
+		}
+	}, [isDropdownTaskActionsVisible]);
+
 	return createPortal(
 		<div>
 			<DropdownTaskActions
