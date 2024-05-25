@@ -100,8 +100,6 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 		const inSmartListView = params.projectId && SMART_LISTS[params.projectId];
 		const priorityData = PRIORITIES[priority];
 
-		console.log(currDueDate);
-
 		return (
 			<li
 				onContextMenu={handleContextMenu}

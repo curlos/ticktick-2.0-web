@@ -12,6 +12,7 @@ const MODAL_IDS = [
 	'ModalAddTaskForm',
 	'ModalFocusSettings',
 	'ModalTaskActivities',
+	'ModalSearchTasks',
 ];
 
 const initialState = {

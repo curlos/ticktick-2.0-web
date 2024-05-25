@@ -11,6 +11,7 @@ interface TaskProps {
 	selectedFocusRecordTask?: TaskObj;
 	setSelectedFocusRecordTask?: React.Dispatch<React.SetStateAction<TaskObj>>;
 	fromParent?: boolean;
+	showSubtasks: boolean;
 }
 
 const Task: React.FC<TaskProps> = ({
@@ -19,13 +20,13 @@ const Task: React.FC<TaskProps> = ({
 	selectedFocusRecordTask,
 	setSelectedFocusRecordTask,
 	fromParent,
+	showSubtasks = true,
 }) => {
 	const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
 	const { tasksById } = fetchedTasks || {};
 	let navigate = useNavigate();
 	let { taskId: taskIdFromUrl } = useParams();
 	const [completed, setCompleted] = useState(false);
-	const [showSubtasks, setShowSubtasks] = useState(true);
 
 	let task = typeof taskId == 'string' ? tasksById[taskId] : taskId;
 
@@ -44,7 +45,7 @@ const Task: React.FC<TaskProps> = ({
 		<div className={`${!fromParent || fromTaskDetails ? 'ml-0' : 'ml-4'}`}>
 			<div
 				className={
-					`flex p-2 hover:bg-color-gray-600 cursor-pointer rounded-lg` +
+					`flex py-1 hover:bg-color-gray-600 cursor-pointer rounded-lg` +
 					(taskIdFromUrl == taskId ? ' bg-color-gray-300' : '')
 				}
 				onClick={(e) => {
@@ -56,7 +57,7 @@ const Task: React.FC<TaskProps> = ({
 					}
 				}}
 			>
-				{!fromTaskDetails && (
+				{/* {!fromTaskDetails && (
 					<div
 						className="flex mt-[2px] cursor-pointer"
 						onClick={(e) => {
@@ -70,7 +71,7 @@ const Task: React.FC<TaskProps> = ({
 							<Icon name="chevron_right" customClass={categoryIconClass} />
 						)}
 					</div>
-				)}
+				)} */}
 
 				<div className="flex gap-1 cursor-pointer">
 					{!setSelectedFocusRecordTask ? (

@@ -25,7 +25,14 @@ const ActionSidebar = () => {
 					{/* <Icon name="grid_view" customClass={iconCustomClass} /> */}
 					<Icon name="timer" customClass={iconCustomClass} onClick={() => navigate('/focus')} />
 					{/* <Icon name="location_on" customClass={iconCustomClass} /> */}
-					{/* <Icon name="search" customClass={iconCustomClass} grad={200} /> */}
+					<Icon
+						name="search"
+						customClass={iconCustomClass}
+						grad={200}
+						onClick={() => {
+							dispatch(setModalState({ modalId: 'ModalSearchTasks', isOpen: true }));
+						}}
+					/>
 					<Icon
 						name="add_task"
 						customClass={iconCustomClass}
