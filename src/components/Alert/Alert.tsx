@@ -6,11 +6,12 @@ interface IAlert {
 	position?: string;
 	customClasses?: string;
 	children: React.ReactNode;
-	onClose: () => void; // Function to call when closing the alert
+	onClose?: () => void; // Function to call when closing the alert
+	duration?: Object;
 }
 
-const Alert: React.FC<IAlert> = ({ isOpen, position, customClasses, children, onClose }) => {
-	let containerClasses = `z-50 transition-all duration-1000 ease-in-out transform p-3 max-w-full w-[80px] bg-color-gray-200 rounded-lg`;
+const Alert: React.FC<IAlert> = ({ isOpen, position, customClasses, children, onClose, duration }) => {
+	let containerClasses = `z-50 transition-all duration-1000 ease-in-out transform p-3 max-w-full min-w-[80px] bg-color-gray-200 rounded-lg`;
 
 	// Animation classes based on position
 	const positionClasses = {
@@ -19,10 +20,13 @@ const Alert: React.FC<IAlert> = ({ isOpen, position, customClasses, children, on
 		center: 'mx-auto my-auto',
 	};
 
+	const openDuration = duration && duration.open !== undefined ? duration.open : 0.2;
+	const closeDuration = duration && duration.close !== undefined ? duration.close : 1;
+
 	// Define motion variants for the alert animations
 	const variants = {
-		open: { y: 0, opacity: 1, transition: { duration: 0.2 } },
-		closed: { y: 100, opacity: 0, transition: { duration: 1 } },
+		open: { y: 0, opacity: 1, transition: { duration: openDuration } },
+		closed: { y: 100, opacity: 0, transition: { duration: closeDuration } },
 	};
 
 	// Combine classes

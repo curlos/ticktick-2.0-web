@@ -5,7 +5,7 @@ const DEFAULT_ALERT_STATE = {
 	props: {},
 };
 
-const ALERT_IDS = ['AlertCopied'];
+const ALERT_IDS = ['AlertCopied', 'AlertFlagged'];
 
 const initialState = {
 	alerts: ALERT_IDS.reduce((acc, alertId) => {
