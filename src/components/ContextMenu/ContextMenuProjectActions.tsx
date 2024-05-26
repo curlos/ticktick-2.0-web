@@ -27,8 +27,6 @@ const ContextMenuProjectActions: React.FC<IContextMenuProjectActions> = ({ xPos,
 		}
 	}, [isDropdownProjectActionsVisible]);
 
-	console.log(project);
-
 	return createPortal(
 		<div>
 			<DropdownProjectActions

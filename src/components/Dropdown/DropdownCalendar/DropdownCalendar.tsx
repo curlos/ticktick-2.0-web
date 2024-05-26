@@ -147,11 +147,8 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({
 	useEffect(() => {
 		const dueDate = currDueDate ? currDueDate : new Date();
 		const newDateObject = setTimeOnDateString(dueDate, selectedTime);
-		console.log(newDateObject);
 		setCurrDueDate(newDateObject);
 	}, [selectedTime]);
-
-	console.log(currDueDate);
 
 	interface TimeOptionProps {
 		name: string;
@@ -254,8 +251,6 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({
 
 		return date;
 	};
-
-	console.log(currDueDate);
 
 	return (
 		<Dropdown
