@@ -47,6 +47,8 @@ const DropdownTime = ({
 	const timesArray = getTimesArray();
 	const timesInEST = convertTimesToTimeZone(timesArray, timeZone);
 
+	const [isDropdownFixedOrFloatingTimeZone, setIsDropdownFixedOrFloatingTimeZone] = useState(false);
+
 	timesInEST.sort((a, b) => {
 		const timePattern = /(\d+):(\d+) (\wM)/;
 		const [, hoursA, minutesA, periodA] = a.match(timePattern);
@@ -58,6 +60,7 @@ const DropdownTime = ({
 	});
 
 	const timeRefs = useRef(timesInEST.map(() => React.createRef()));
+	const dropdownFixedOrFloatingTimeZoneRef = useRef(null);
 
 	useEffect(() => {
 		if (isVisible && !selectedTime) {
@@ -110,6 +113,32 @@ const DropdownTime = ({
 						);
 					})}
 				</div>
+
+				{showTimeZoneOption && (
+					<div className="p-2 mt-2 relative">
+						<div
+							ref={dropdownFixedOrFloatingTimeZoneRef}
+							className="border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500"
+							onClick={() => {
+								setIsDropdownFixedOrFloatingTimeZone(!isDropdownFixedOrFloatingTimeZone);
+							}}
+						>
+							<div>{timeZone}</div>
+							<Icon
+								name="expand_more"
+								fill={0}
+								customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'}
+							/>
+						</div>
+
+						<DropdownFixedOrFloatingTimeZone
+							toggleRef={dropdownFixedOrFloatingTimeZoneRef}
+							isVisible={isDropdownFixedOrFloatingTimeZone}
+							setIsVisible={setIsDropdownFixedOrFloatingTimeZone}
+							setTimeZone={setTimeZone}
+						/>
+					</div>
+				)}
 			</div>
 		</Dropdown>
 	);

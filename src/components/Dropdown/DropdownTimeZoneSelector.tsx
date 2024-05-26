@@ -55,7 +55,7 @@ const DropdownTimeZoneSelector: React.FC<DropdownTimeZoneSelectorProps> = ({
 		return timeZonesWithOffset;
 	}
 
-	const recentlySelectedCityWithOffset = ['New York, EDT', 'Barbados, AST', 'Sao Tome, GMT', 'Bangkok, GMT+7'];
+	const recentlySelectedCityWithOffset = ['America/New_York', 'Barbados, AST', 'Sao Tome, GMT', 'Bangkok, GMT+7'];
 
 	useEffect(() => {
 		handleDebouncedSearch();

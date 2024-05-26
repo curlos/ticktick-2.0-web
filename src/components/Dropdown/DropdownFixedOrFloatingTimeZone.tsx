@@ -15,7 +15,7 @@ const DropdownFixedOrFloatingTimeZone: React.FC<DropdownFixedOrFloatingTimeZoneP
 	setIsVisible,
 	setTimeZone,
 }) => {
-	const [tempSelectedTimeZone, setTempSelectedTimeZone] = useState('New York, EDT');
+	const [tempSelectedTimeZone, setTempSelectedTimeZone] = useState('America/New_York');
 	const [selectedTimeTrackingType, setSelectedTimeTrackingType] = useState('Fixed Time Zone');
 	const [isTimeZoneSelectorDropdownVisible, setIsTimeZoneSelectorDropdownVisible] = useState(false);
 	const dropdownTimeZoneSelectorRef = useRef(null);

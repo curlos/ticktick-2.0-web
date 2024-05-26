@@ -255,6 +255,8 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({
 		return date;
 	};
 
+	console.log(currDueDate);
+
 	return (
 		<Dropdown
 			toggleRef={toggleRef}

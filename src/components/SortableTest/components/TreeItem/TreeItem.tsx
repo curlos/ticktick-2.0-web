@@ -84,6 +84,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 
 		useEffect(() => {
 			setCurrCompletedTime(completedTime);
+			setCurrDueDate(new Date(dueDate));
 		}, [item]);
 
 		const handleContextMenu = (event) => {
