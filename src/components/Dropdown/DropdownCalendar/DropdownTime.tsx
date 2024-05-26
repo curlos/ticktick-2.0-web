@@ -38,8 +38,6 @@ const DropdownTime = ({
 	setIsVisible,
 	selectedTime,
 	setSelectedTime,
-	currDueDate,
-	setCurrDueDate,
 	showTimeZoneOption = true,
 	customClasses,
 }) => {

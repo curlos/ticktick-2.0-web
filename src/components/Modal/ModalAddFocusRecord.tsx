@@ -297,6 +297,7 @@ const DropdownTimeCalendar: React.FC<DropdownTimeCalendarProps> = ({
 	time,
 	setTime,
 }) => {
+	const [selectedTime, setSelectedTime] = useState(null);
 	const [isDropdownTimeVisible, setIsDropdownTimeVisible] = useState(false);
 	const dropdownTimeRef = useRef(null);
 
@@ -326,6 +327,8 @@ const DropdownTimeCalendar: React.FC<DropdownTimeCalendarProps> = ({
 					toggleRef={dropdownTimeRef}
 					isVisible={isDropdownTimeVisible}
 					setIsVisible={setIsDropdownTimeVisible}
+					selectedTime={selectedTime}
+					setSelectedTime={setSelectedTime}
 					showTimeZoneOption={false}
 					customClasses="mt-[10px]"
 				/>
