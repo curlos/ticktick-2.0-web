@@ -145,12 +145,10 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({
 	const dropdownRepeatRef = useRef(null);
 
 	useEffect(() => {
-		if (selectedTime) {
-			const dueDate = currDueDate ? currDueDate : new Date();
-			const newDateObject = setTimeOnDateString(dueDate, selectedTime);
-			console.log(newDateObject);
-			setCurrDueDate(newDateObject);
-		}
+		const dueDate = currDueDate ? currDueDate : new Date();
+		const newDateObject = setTimeOnDateString(dueDate, selectedTime);
+		console.log(newDateObject);
+		setCurrDueDate(newDateObject);
 	}, [selectedTime]);
 
 	console.log(currDueDate);
@@ -222,24 +220,37 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({
 		// Parse the existing date string to get a Date object
 		const date = new Date(dateString);
 
-		// Extract hours and minutes from the time string (formatted as "HH:mm AM/PM")
-		const [time, period] = timeString.split(' ');
-		let [hours, minutes] = time.split(':');
-		hours = parseInt(hours);
-		minutes = parseInt(minutes);
+		// Function to check if the date is in DST for Eastern Time
+		const isDST = (date) => {
+			const jan = new Date(date.getFullYear(), 0, 1).getTimezoneOffset();
+			const jul = new Date(date.getFullYear(), 6, 1).getTimezoneOffset();
+			return date.getTimezoneOffset() < Math.max(jan, jul);
+		};
 
-		// Convert 12-hour format to 24-hour if necessary
-		if (period === 'PM' && hours !== 12) {
-			hours += 12;
-		} else if (period === 'AM' && hours === 12) {
-			hours = 0;
+		if (timeString) {
+			// Extract hours and minutes from the time string (formatted as "HH:mm AM/PM")
+			const [time, period] = timeString.split(' ');
+			let [hours, minutes] = time.split(':');
+			hours = parseInt(hours);
+			minutes = parseInt(minutes);
+
+			// Convert 12-hour format to 24-hour if necessary
+			if (period === 'PM' && hours !== 12) {
+				hours += 12;
+			} else if (period === 'AM' && hours === 12) {
+				hours = 0;
+			}
+
+			// Set the desired time on the existing date object
+			date.setHours(hours, minutes, 0, 0);
+		} else {
+			// Determine if DST is in effect for the date
+			const dstActive = isDST(date);
+			const utcOffset = dstActive ? 4 : 5; // DST: UTC-4, otherwise UTC-5
+
+			// Set time to 12:00 AM EST/EDT, adjusted for DST
+			date.setUTCHours(0 + utcOffset, 0, 0, 0); // Sets to 12:00 AM EST
 		}
-
-		// Set the desired time on the existing date object
-		date.setHours(hours);
-		date.setMinutes(minutes);
-		date.setSeconds(0);
-		date.setMilliseconds(0);
 
 		return date;
 	};
