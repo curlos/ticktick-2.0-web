@@ -84,7 +84,10 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 
 		useEffect(() => {
 			setCurrCompletedTime(completedTime);
-			setCurrDueDate(new Date(dueDate));
+
+			if (dueDate) {
+				setCurrDueDate(new Date(dueDate));
+			}
 		}, [item]);
 
 		const handleContextMenu = (event) => {
@@ -104,6 +107,8 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 
 		const inSmartListView = params.projectId && SMART_LISTS[params.projectId];
 		const priorityData = PRIORITIES[priority];
+
+		console.log(currDueDate);
 
 		return (
 			<li
