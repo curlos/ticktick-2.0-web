@@ -4,6 +4,7 @@ import Icon from '../../Icon';
 import DropdownFixedOrFloatingTimeZone from '../DropdownFixedOrFloatingTimeZone';
 import { DropdownProps } from '../../../interfaces/interfaces';
 import classNames from 'classnames';
+import InfiniteScrollSelector from '../../InfiniteScrollSelector';
 
 const getTimesArray = () => {
 	let timesArray = [];
@@ -45,38 +46,37 @@ const DropdownTime = ({
 	const timesArray = getTimesArray();
 	const timesInEST = convertTimesToTimeZone(timesArray, timeZone);
 
-	const [isDropdownFixedOrFloatingTimeZone, setIsDropdownFixedOrFloatingTimeZone] = useState(false);
+	// useEffect(() => {
+	// 	if (isVisible && !selectedTime) {
+	// 		const currentESTTime = getCurrentTimeInESTInterval();
+	// 		setSelectedTime(currentESTTime);
+	// 	}
+	// }, [isVisible]);
 
-	timesInEST.sort((a, b) => {
-		const timePattern = /(\d+):(\d+) (\wM)/;
-		const [, hoursA, minutesA, periodA] = a.match(timePattern);
-		const [, hoursB, minutesB, periodB] = b.match(timePattern);
-		const adjustHours = (hours, period) => (period === 'PM' ? (parseInt(hours) % 12) + 12 : parseInt(hours) % 12);
-		const adjustedHoursA = adjustHours(hoursA, periodA);
-		const adjustedHoursB = adjustHours(hoursB, periodB);
-		return adjustedHoursA - adjustedHoursB || parseInt(minutesA) - parseInt(minutesB);
-	});
+	// useEffect(() => {
+	// 	// Ensure that the selected time is scrolled into view when component updates
+	// 	const index = timesInEST.indexOf(selectedTime);
+	// 	if (index !== -1 && timeRefs.current[index] && timeRefs.current[index].current) {
+	// 		timeRefs.current[index].current.scrollIntoView({
+	// 			behavior: 'smooth',
+	// 			block: 'start',
+	// 		});
+	// 	}
+	// }, [selectedTime, isVisible]);
 
-	const timeRefs = useRef(timesInEST.map(() => React.createRef()));
-	const dropdownFixedOrFloatingTimeZoneRef = useRef(null);
+	const hours = Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, '0'));
+	const minutes = Array.from({ length: 60 }, (_, i) => (i + 1).toString().padStart(2, '0'));
+	const periods = ['AM', 'PM'];
 
-	useEffect(() => {
-		if (isVisible && !selectedTime) {
-			const currentESTTime = getCurrentTimeInESTInterval();
-			setSelectedTime(currentESTTime);
-		}
-	}, [isVisible]);
+	const [selectedHour, setSelectedHour] = useState('12');
+	const [selectedMinute, setSelectedMinute] = useState('00');
+	const [selectedPeriod, setSelectedPeriod] = useState('AM');
 
-	useEffect(() => {
-		// Ensure that the selected time is scrolled into view when component updates
-		const index = timesInEST.indexOf(selectedTime);
-		if (index !== -1 && timeRefs.current[index] && timeRefs.current[index].current) {
-			timeRefs.current[index].current.scrollIntoView({
-				behavior: 'smooth',
-				block: 'start',
-			});
-		}
-	}, [selectedTime, isVisible]);
+	const handleTimeSelection = () => {
+		const time = `${selectedHour}:${selectedMinute} ${selectedPeriod}`;
+		setSelectedTime(time);
+		setIsVisible(false);
+	};
 
 	return (
 		<Dropdown
@@ -86,57 +86,33 @@ const DropdownTime = ({
 			customClasses={classNames('ml-[-5px] shadow-2xl border border-color-gray-200 rounded-[4px]', customClasses)}
 		>
 			<div className="w-[260px] p-1">
-				<div className="overflow-auto gray-scrollbar h-[240px]">
-					{timesInEST.map((time, index) => {
-						const isTimeSelected = selectedTime === time;
-						return (
-							<div
-								key={time}
-								ref={timeRefs.current[index]}
-								className="flex items-center justify-between hover:bg-color-gray-300 p-2 rounded-lg cursor-pointer"
-								onClick={() => {
-									setSelectedTime(time);
-									setIsVisible(false);
-								}}
-							>
-								<div className={isTimeSelected ? 'text-blue-500' : ''}>{time}</div>
-								{isTimeSelected && (
-									<Icon
-										name="check"
-										fill={0}
-										customClass={'text-blue-500 !text-[18px] hover:text-white cursor-pointer'}
-									/>
-								)}
-							</div>
-						);
-					})}
-				</div>
+				{/* <div className="overflow-auto gray-scrollbar h-[240px]">
+					
+				</div> */}
 
-				{showTimeZoneOption && (
-					<div className="p-2 mt-2 relative">
+				<div className="grid grid-cols-3">
+					<InfiniteScrollSelector items={hours} unit="hour" setSelected={setSelectedHour} />
+					<InfiniteScrollSelector items={minutes} unit="minute" setSelected={setSelectedMinute} />
+					<div className="flex flex-col">
 						<div
-							ref={dropdownFixedOrFloatingTimeZoneRef}
-							className="border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500"
-							onClick={() => {
-								setIsDropdownFixedOrFloatingTimeZone(!isDropdownFixedOrFloatingTimeZone);
-							}}
+							className="text-center py-2 cursor-pointer hover:bg-gray-200"
+							onClick={() => setSelectedPeriod('AM')}
+							style={{ backgroundColor: selectedPeriod === 'AM' ? 'lightblue' : 'transparent' }}
 						>
-							<div>{timeZone}</div>
-							<Icon
-								name="expand_more"
-								fill={0}
-								customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'}
-							/>
+							AM
 						</div>
-
-						<DropdownFixedOrFloatingTimeZone
-							toggleRef={dropdownFixedOrFloatingTimeZoneRef}
-							isVisible={isDropdownFixedOrFloatingTimeZone}
-							setIsVisible={setIsDropdownFixedOrFloatingTimeZone}
-							setTimeZone={setTimeZone}
-						/>
+						<div
+							className="text-center py-2 cursor-pointer hover:bg-gray-200"
+							onClick={() => setSelectedPeriod('PM')}
+							style={{ backgroundColor: selectedPeriod === 'PM' ? 'lightblue' : 'transparent' }}
+						>
+							PM
+						</div>
 					</div>
-				)}
+				</div>
+				{/* <button className="mt-4 bg-green-500 text-white px-4 py-2 rounded" onClick={handleTimeSelection}>
+					Set Time
+				</button> */}
 			</div>
 		</Dropdown>
 	);
