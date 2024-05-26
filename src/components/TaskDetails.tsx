@@ -18,7 +18,7 @@ import DropdownPriorities from './Dropdown/DropdownPriorities';
 import DropdownProjects from './Dropdown/DropdownProjects';
 import DropdownTaskOptions from './Dropdown/DropdownTaskOptions/DropdownTaskOptions';
 import useAudio from '../hooks/useAudio';
-import amongUsCompletionSoundMP3 from '../../public/among_us_complete_task.mp3';
+import amongUsCompletionSoundMP3 from '/among_us_complete_task.mp3';
 
 const EmptyTask = () => (
 	<div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700 flex justify-center items-center text-[18px] text-color-gray-100">

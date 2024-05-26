@@ -1,5 +1,5 @@
 import Dropdown from '../Dropdown';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Icon from '../../Icon';
 import DropdownTime from './DropdownTime';
 import DropdownReminder from './DropdownReminder';
@@ -93,6 +93,21 @@ const BigDateIconOptionList: React.FC<CalendarProps> = ({ dueDate, setDueDate })
 	);
 };
 
+const getInitialTime = (currDueDate) => {
+	if (currDueDate) {
+		const parsedDate = new Date(currDueDate);
+		const formattedTime = parsedDate.toLocaleTimeString('en-US', {
+			hour: '2-digit',
+			minute: '2-digit',
+			hour12: true,
+		});
+
+		return formattedTime;
+	}
+
+	return null;
+};
+
 interface DropdownPrioritiesProps extends DropdownProps {
 	task: TaskObj;
 	currDueDate: Date | null;
@@ -117,6 +132,8 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({
 	const [editTask] = useEditTaskMutation();
 
 	const [selectedView, setSelectedView] = useState('date');
+	// TODO: Get time from curr due Date - Don't use useEffect
+	const [selectedTime, setSelectedTime] = useState(getInitialTime(currDueDate));
 	const [isDropdownTimeVisible, setIsDropdownTimeVisible] = useState(false);
 	const [isDropdownReminderVisible, setIsDropdownReminderVisible] = useState(false);
 	const [isDropdownRepeatVisible, setIsDropdownRepeatVisible] = useState(false);
@@ -127,35 +144,105 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({
 	const dropdownReminderRef = useRef(null);
 	const dropdownRepeatRef = useRef(null);
 
+	useEffect(() => {
+		if (selectedTime) {
+			const dueDate = currDueDate ? currDueDate : new Date();
+			const newDateObject = setTimeOnDateString(dueDate, selectedTime);
+			console.log(newDateObject);
+			setCurrDueDate(newDateObject);
+		}
+	}, [selectedTime]);
+
+	console.log(currDueDate);
+
 	interface TimeOptionProps {
 		name: string;
 		iconName: string;
 		onClick?: () => void;
 		toggleRef: React.MutableRefObject<null>;
+		selectedValue: any;
+		setSelectedValue: any;
 	}
 
-	const TimeOption: React.FC<TimeOptionProps> = ({ name, iconName, onClick, toggleRef }) => (
-		<div
-			ref={toggleRef}
-			className="flex items-center justify-between h-[40px] px-2 text-[13px] text-color-gray-25 hover:bg-color-gray-200 rounded cursor-pointer"
-			onClick={onClick}
-		>
-			<div className="flex items-center gap-1">
-				<Icon
-					name={iconName}
-					fill={0}
-					customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'}
-				/>
-				<div>{name}</div>
-			</div>
+	const TimeOption: React.FC<TimeOptionProps> = ({
+		name,
+		iconName,
+		onClick,
+		toggleRef,
+		selectedValue,
+		setSelectedValue,
+	}) => {
+		const [isHovering, setIsHovering] = useState(false);
 
-			<Icon
-				name="chevron_right"
-				fill={0}
-				customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'}
-			/>
-		</div>
-	);
+		return (
+			<div
+				ref={toggleRef}
+				className={classNames(
+					'flex items-center justify-between h-[40px] px-2 text-[13px] hover:bg-color-gray-200 rounded cursor-pointer',
+					selectedValue ? 'text-blue-500' : 'text-color-gray-25'
+				)}
+				onClick={onClick}
+				onMouseEnter={() => setIsHovering(true)}
+				onMouseLeave={() => setIsHovering(false)}
+			>
+				<div className="flex items-center gap-1">
+					<Icon
+						name={iconName}
+						fill={0}
+						customClass={classNames(
+							'!text-[18px] cursor-pointer',
+							selectedValue ? 'text-blue-500' : 'text-color-gray-50'
+						)}
+					/>
+					<div>{name}</div>
+				</div>
+
+				{isHovering && selectedValue ? (
+					<Icon
+						name="close"
+						fill={0}
+						customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'}
+						onClick={(e) => {
+							e.stopPropagation();
+							setSelectedValue(null);
+						}}
+					/>
+				) : (
+					<Icon
+						name="chevron_right"
+						fill={0}
+						customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'}
+					/>
+				)}
+			</div>
+		);
+	};
+
+	const setTimeOnDateString = (dateString, timeString) => {
+		// Parse the existing date string to get a Date object
+		const date = new Date(dateString);
+
+		// Extract hours and minutes from the time string (formatted as "HH:mm AM/PM")
+		const [time, period] = timeString.split(' ');
+		let [hours, minutes] = time.split(':');
+		hours = parseInt(hours);
+		minutes = parseInt(minutes);
+
+		// Convert 12-hour format to 24-hour if necessary
+		if (period === 'PM' && hours !== 12) {
+			hours += 12;
+		} else if (period === 'AM' && hours === 12) {
+			hours = 0;
+		}
+
+		// Set the desired time on the existing date object
+		date.setHours(hours);
+		date.setMinutes(minutes);
+		date.setSeconds(0);
+		date.setMilliseconds(0);
+
+		return date;
+	};
 
 	return (
 		<Dropdown
@@ -194,11 +281,17 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({
 							toggleRef={dropdownTimeRef}
 							isVisible={isDropdownTimeVisible}
 							setIsVisible={setIsDropdownTimeVisible}
+							selectedTime={selectedTime}
+							setSelectedTime={setSelectedTime}
+							currDueDate={currDueDate}
+							setCurrDueDate={setCurrDueDate}
 						/>
 						<TimeOption
 							toggleRef={dropdownTimeRef}
-							name="Time"
+							name={selectedTime ? selectedTime : 'Time'}
 							iconName="schedule"
+							selectedValue={selectedTime}
+							setSelectedValue={setSelectedTime}
 							onClick={() => {
 								setIsDropdownTimeVisible(!isDropdownTimeVisible);
 							}}
@@ -245,6 +338,7 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({
 						className="border border-color-gray-200 rounded py-1 cursor-pointer hover:bg-color-gray-200"
 						onClick={() => {
 							setCurrDueDate(null);
+							setSelectedTime(null);
 							setIsVisible(false);
 
 							if (task) {

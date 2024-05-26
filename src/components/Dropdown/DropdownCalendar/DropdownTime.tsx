@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Dropdown from '../Dropdown';
 import Icon from '../../Icon';
 import DropdownFixedOrFloatingTimeZone from '../DropdownFixedOrFloatingTimeZone';
@@ -13,28 +13,69 @@ const getTimesArray = () => {
 			timesArray.push(time);
 		}
 	}
-
 	return timesArray;
 };
 
-interface DropdownTimeProps extends DropdownProps {
-	showTimeZoneOption?: boolean;
-	customClasses?: string;
-}
+const convertTimesToTimeZone = (timesArray, timeZone) => {
+	return timesArray.map((time) => {
+		let [hour, minute] = time.split(':');
+		let date = new Date(
+			Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate(), hour, minute)
+		);
+		let formatter = new Intl.DateTimeFormat('en-US', {
+			hour: '2-digit',
+			minute: '2-digit',
+			timeZone: timeZone,
+			hour12: true,
+		});
+		return formatter.format(date);
+	});
+};
 
-const DropdownTime: React.FC<DropdownTimeProps> = ({
+const DropdownTime = ({
 	toggleRef,
 	isVisible,
 	setIsVisible,
+	selectedTime,
+	setSelectedTime,
+	currDueDate,
+	setCurrDueDate,
 	showTimeZoneOption = true,
 	customClasses,
 }) => {
+	const [timeZone, setTimeZone] = useState('America/New_York');
 	const timesArray = getTimesArray();
-	const [selectedTime, setSelectedTime] = useState('14:00');
-	const [isDropdownFixedOrFloatingTimeZone, setIsDropdownFixedOrFloatingTimeZone] = useState(false);
-	const [timeZone, setTimeZone] = useState('New York, EDT');
+	const timesInEST = convertTimesToTimeZone(timesArray, timeZone);
 
-	const dropdownFixedOrFloatingTimeZoneRef = useRef(null);
+	timesInEST.sort((a, b) => {
+		const timePattern = /(\d+):(\d+) (\wM)/;
+		const [, hoursA, minutesA, periodA] = a.match(timePattern);
+		const [, hoursB, minutesB, periodB] = b.match(timePattern);
+		const adjustHours = (hours, period) => (period === 'PM' ? (parseInt(hours) % 12) + 12 : parseInt(hours) % 12);
+		const adjustedHoursA = adjustHours(hoursA, periodA);
+		const adjustedHoursB = adjustHours(hoursB, periodB);
+		return adjustedHoursA - adjustedHoursB || parseInt(minutesA) - parseInt(minutesB);
+	});
+
+	const timeRefs = useRef(timesInEST.map(() => React.createRef()));
+
+	useEffect(() => {
+		if (isVisible && !selectedTime) {
+			const currentESTTime = getCurrentTimeInESTInterval();
+			setSelectedTime(currentESTTime);
+		}
+	}, [isVisible]);
+
+	useEffect(() => {
+		// Ensure that the selected time is scrolled into view when component updates
+		const index = timesInEST.indexOf(selectedTime);
+		if (index !== -1 && timeRefs.current[index] && timeRefs.current[index].current) {
+			timeRefs.current[index].current.scrollIntoView({
+				behavior: 'smooth',
+				block: 'start',
+			});
+		}
+	}, [selectedTime, isVisible]);
 
 	return (
 		<Dropdown
@@ -45,14 +86,17 @@ const DropdownTime: React.FC<DropdownTimeProps> = ({
 		>
 			<div className="w-[260px] p-1">
 				<div className="overflow-auto gray-scrollbar h-[240px]">
-					{timesArray.map((time) => {
-						const isTimeSelected = selectedTime == time;
-
+					{timesInEST.map((time, index) => {
+						const isTimeSelected = selectedTime === time;
 						return (
 							<div
 								key={time}
-								className="flex items-center justify-between hover:bg-color-gray-300 p-2 rounded-lg"
-								onClick={() => setSelectedTime(time)}
+								ref={timeRefs.current[index]}
+								className="flex items-center justify-between hover:bg-color-gray-300 p-2 rounded-lg cursor-pointer"
+								onClick={() => {
+									setSelectedTime(time);
+									setIsVisible(false);
+								}}
 							>
 								<div className={isTimeSelected ? 'text-blue-500' : ''}>{time}</div>
 								{isTimeSelected && (
@@ -66,35 +110,24 @@ const DropdownTime: React.FC<DropdownTimeProps> = ({
 						);
 					})}
 				</div>
-
-				{showTimeZoneOption && (
-					<div className="p-2 mt-2 relative">
-						<div
-							ref={dropdownFixedOrFloatingTimeZoneRef}
-							className="border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500"
-							onClick={() => {
-								setIsDropdownFixedOrFloatingTimeZone(!isDropdownFixedOrFloatingTimeZone);
-							}}
-						>
-							<div>{timeZone}</div>
-							<Icon
-								name="expand_more"
-								fill={0}
-								customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'}
-							/>
-						</div>
-
-						<DropdownFixedOrFloatingTimeZone
-							toggleRef={dropdownFixedOrFloatingTimeZoneRef}
-							isVisible={isDropdownFixedOrFloatingTimeZone}
-							setIsVisible={setIsDropdownFixedOrFloatingTimeZone}
-							setTimeZone={setTimeZone}
-						/>
-					</div>
-				)}
 			</div>
 		</Dropdown>
 	);
 };
 
 export default DropdownTime;
+
+const getCurrentTimeInESTInterval = () => {
+	const now = new Date();
+	const estTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+	const minutes = estTime.getMinutes();
+	const nearest30 = minutes >= 30 ? 30 : 0;
+	estTime.setMinutes(nearest30, 0, 0);
+	const formatter = new Intl.DateTimeFormat('en-US', {
+		hour: '2-digit',
+		minute: '2-digit',
+		timeZone: 'America/New_York',
+		hour12: true,
+	});
+	return formatter.format(estTime);
+};

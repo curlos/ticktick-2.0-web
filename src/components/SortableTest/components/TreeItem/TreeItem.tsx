@@ -1,6 +1,6 @@
 import React, { forwardRef, HTMLAttributes, useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
-import amongUsCompletionSoundMP3 from '../../../../../public/among_us_complete_task.mp3';
+import amongUsCompletionSoundMP3 from '/among_us_complete_task.mp3';
 
 import { Action } from './Action';
 import { Handle } from './Handle';

@@ -19,10 +19,13 @@ const TaskDueDateText = ({ dueDate, showCalendarIcon = false }) => {
 
 			{dueDate ? (
 				<div className={isOverdue ? 'text-red-500' : 'text-blue-500'}>
-					{new Date(dueDate).toLocaleDateString('en-US', {
+					{new Date(dueDate).toLocaleString('en-US', {
 						year: 'numeric', // Full year
 						month: 'long', // Full month name
 						day: 'numeric', // Day of the month
+						hour: 'numeric', // Hour (in 12-hour AM/PM format)
+						minute: '2-digit', // Minute with leading zeros
+						hour12: true, // Use AM/PM
 					})}
 				</div>
 			) : (
