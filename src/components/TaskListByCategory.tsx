@@ -77,8 +77,9 @@ const TaskListByCategory: React.FC<TaskListByCategoryProps> = ({
 					) : (
 						<Icon name="chevron_right" customClass={categoryIconClass} />
 					)}
-					<span className="mr-[6px]">{categoryName}</span>
-					<span className="text-color-gray-100">{tasks.length}</span> {/* Updated to show actual count */}
+					<span className="mr-[6px] font-bold">{categoryName}</span>
+					<span className="text-color-gray-100 font-bold">{tasks.length}</span>{' '}
+					{/* Updated to show actual count */}
 				</div>
 
 				<AnimatePresence>

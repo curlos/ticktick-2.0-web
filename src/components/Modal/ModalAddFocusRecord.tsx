@@ -42,6 +42,8 @@ const ModalAddFocusRecord: React.FC = () => {
 		setIsDropdownSetTaskVisible(false);
 	}, [selectedTask]);
 
+	console.log(startTime);
+
 	return (
 		<Modal isOpen={isOpen} onClose={closeModal} position="top-center">
 			<div className="rounded-xl shadow-lg bg-color-gray-650 p-5">
@@ -102,7 +104,18 @@ const ModalAddFocusRecord: React.FC = () => {
 									setIsDropdownStartTimeVisible(!isDropdownStartTimeVisible);
 								}}
 							>
-								<div className="text-color-gray-100">{selectedTask ? 'Task Selected' : '20:30'}</div>
+								<div className={classNames(startTime ? 'text-white' : 'text-color-gray-100')}>
+									{startTime
+										? startTime.toLocaleString('en-US', {
+												year: 'numeric', // Full year
+												month: 'long', // Full month name
+												day: 'numeric', // Day of the month
+												hour: 'numeric', // Hour (in 12-hour AM/PM format)
+												minute: '2-digit', // Minute with leading zeros
+												hour12: true, // Use AM/PM
+											})
+										: 'Select time'}
+								</div>
 								<Icon
 									name="expand_more"
 									fill={0}
@@ -114,8 +127,8 @@ const ModalAddFocusRecord: React.FC = () => {
 								toggleRef={dropdownStartTimeCalendarRef}
 								isVisible={isDropdownStartTimeVisible}
 								setIsVisible={setIsDropdownStartTimeVisible}
-								time={startTime}
-								setTime={setStartTime}
+								date={startTime}
+								setDate={setStartTime}
 							/>
 						</div>
 					</div>
@@ -131,7 +144,18 @@ const ModalAddFocusRecord: React.FC = () => {
 									setIsDropdownEndTimeVisible(!isDropdownEndTimeVisible);
 								}}
 							>
-								<div className="text-color-gray-100">{selectedTask ? 'Task Selected' : '21:00'}</div>
+								<div className={classNames(endTime ? 'text-white' : 'text-color-gray-100')}>
+									{endTime
+										? endTime.toLocaleString('en-US', {
+												year: 'numeric', // Full year
+												month: 'long', // Full month name
+												day: 'numeric', // Day of the month
+												hour: 'numeric', // Hour (in 12-hour AM/PM format)
+												minute: '2-digit', // Minute with leading zeros
+												hour12: true, // Use AM/PM
+											})
+										: 'Select time'}
+								</div>
 								<Icon
 									name="expand_more"
 									fill={0}
@@ -143,8 +167,8 @@ const ModalAddFocusRecord: React.FC = () => {
 								toggleRef={dropdownEndTimeCalendarRef}
 								isVisible={isDropdownEndTimeVisible}
 								setIsVisible={setIsDropdownEndTimeVisible}
-								time={endTime}
-								setTime={setEndTime}
+								date={endTime}
+								setDate={setEndTime}
 							/>
 						</div>
 					</div>

@@ -128,9 +128,7 @@ const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({
 			toggleRef={toggleRef}
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
-			customClasses={
-				' w-[300px] mb-[-155px] ml-[-10px] p-1 shadow-2xl border border-color-gray-200 rounded-lg p-3'
-			}
+			customClasses={'w-[300px] mb-[-155px] p-1 shadow-2xl border border-color-gray-200 rounded-lg p-3'}
 		>
 			<div className="bg-color-gray-200 rounded flex items-center gap-2 p-[6px] mb-2">
 				<Icon name="search" customClass={'!text-[20px] text-color-gray-100 hover:text-white cursor-pointer'} />

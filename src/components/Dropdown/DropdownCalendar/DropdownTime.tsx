@@ -1,37 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Dropdown from '../Dropdown';
-import Icon from '../../Icon';
-import DropdownFixedOrFloatingTimeZone from '../DropdownFixedOrFloatingTimeZone';
-import { DropdownProps } from '../../../interfaces/interfaces';
 import classNames from 'classnames';
 import InfiniteScrollSelector from '../../InfiniteScrollSelector';
-
-const getTimesArray = () => {
-	let timesArray = [];
-	for (let hour = 0; hour < 24; hour++) {
-		for (let min = 0; min < 60; min += 30) {
-			let time = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
-			timesArray.push(time);
-		}
-	}
-	return timesArray;
-};
-
-const convertTimesToTimeZone = (timesArray, timeZone) => {
-	return timesArray.map((time) => {
-		let [hour, minute] = time.split(':');
-		let date = new Date(
-			Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate(), hour, minute)
-		);
-		let formatter = new Intl.DateTimeFormat('en-US', {
-			hour: '2-digit',
-			minute: '2-digit',
-			timeZone: timeZone,
-			hour12: true,
-		});
-		return formatter.format(date);
-	});
-};
 
 function extractTimeDetails(timeStr) {
 	if (!timeStr) {

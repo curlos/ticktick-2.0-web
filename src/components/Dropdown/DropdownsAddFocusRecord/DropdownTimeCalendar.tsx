@@ -1,24 +1,39 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { DropdownProps } from '../../../interfaces/interfaces';
 import SelectCalendar from '../../SelectCalendar';
 import Dropdown from '../Dropdown';
 import DropdownTime from '../DropdownCalendar/DropdownTime';
+import { getCurrentTimeString, setTimeOnDateString } from '../../../utils/date.utils';
 
 interface DropdownTimeCalendarProps extends DropdownProps {
-	time: Date | null;
-	setTime: React.Dispatch<React.SetStateAction<Date | null>>;
+	date: Date | null;
+	setDate: React.Dispatch<React.SetStateAction<Date | null>>;
 }
 
 const DropdownTimeCalendar: React.FC<DropdownTimeCalendarProps> = ({
 	toggleRef,
 	isVisible,
 	setIsVisible,
-	time,
-	setTime,
+	date,
+	setDate,
 }) => {
-	const [selectedTime, setSelectedTime] = useState(null);
+	// TODO: Get default date of today
+	const [selectedTime, setSelectedTime] = useState(getCurrentTimeString());
 	const [isDropdownTimeVisible, setIsDropdownTimeVisible] = useState(false);
 	const dropdownTimeRef = useRef(null);
+
+	useEffect(() => {
+		let newDueDate = date ? date : new Date();
+
+		if (selectedTime) {
+			const newDateObject = setTimeOnDateString(newDueDate, selectedTime);
+			newDueDate = newDateObject;
+		}
+
+		console.log(newDueDate);
+
+		setDate(newDueDate);
+	}, [selectedTime]);
 
 	return (
 		<Dropdown
@@ -28,7 +43,7 @@ const DropdownTimeCalendar: React.FC<DropdownTimeCalendarProps> = ({
 			customClasses={'w-[250px] p-1 shadow-2xl border border-color-gray-200 rounded-lg'}
 		>
 			<div className="pt-2">
-				<SelectCalendar dueDate={time} setDueDate={setTime} />
+				<SelectCalendar dueDate={date} setDueDate={setDate} time={selectedTime} />
 			</div>
 
 			<div className="relative">
@@ -38,7 +53,7 @@ const DropdownTimeCalendar: React.FC<DropdownTimeCalendarProps> = ({
 						className="text-center text-[14px] p-1 bg-color-gray-200 placeholder:text-[#7C7C7C] mb-0 w-full resize-none outline-none rounded hover:outline-blue-500 cursor-pointer"
 						onClick={() => setIsDropdownTimeVisible(!isDropdownTimeVisible)}
 					>
-						20:30
+						{selectedTime}
 					</div>
 				</div>
 

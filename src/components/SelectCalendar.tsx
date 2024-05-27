@@ -1,18 +1,27 @@
 import { useEffect, useState } from 'react';
 import Icon from './Icon';
 import { areDatesEqual } from '../utils/helpers.utils';
+import { setTimeOnDateString } from '../utils/date.utils';
 
 interface CalendarProps {
 	dueDate: Date | null;
 	setDueDate: React.Dispatch<React.SetStateAction<Date | null>>;
 }
 
-const SelectCalendar: React.FC<CalendarProps> = ({ dueDate, setDueDate }) => {
+const SelectCalendar: React.FC<CalendarProps> = ({ dueDate, setDueDate, time }) => {
 	const [currentDate, setCurrentDate] = useState(new Date());
 
 	useEffect(() => {
 		if (dueDate) {
-			setCurrentDate(dueDate);
+			let newDueDate = dueDate;
+
+			if (time) {
+				newDueDate = dueDate ? dueDate : new Date();
+				const newDateObject = setTimeOnDateString(newDueDate, time);
+				newDueDate = newDateObject;
+			}
+
+			setCurrentDate(newDueDate);
 		}
 	}, [dueDate]);
 
@@ -112,7 +121,16 @@ const SelectCalendar: React.FC<CalendarProps> = ({ dueDate, setDueDate }) => {
 									setCurrentDate(new Date(day.getFullYear(), day.getMonth(), 1));
 									console.log(day);
 
-									setDueDate(day);
+									let newDueDate = day ? day : new Date();
+
+									if (time) {
+										const newDateObject = setTimeOnDateString(newDueDate, time);
+										newDueDate = newDateObject;
+									}
+
+									console.log(newDueDate);
+
+									setDueDate(newDueDate);
 								};
 
 								return (
