@@ -145,10 +145,10 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({
 	const dropdownRepeatRef = useRef(null);
 
 	useEffect(() => {
-		const dueDate = currDueDate ? currDueDate : new Date();
-		const newDateObject = setTimeOnDateString(dueDate, selectedTime);
-		setCurrDueDate(newDateObject);
-	}, [selectedTime]);
+		if (task) {
+			setSelectedTime(getInitialTime(task.dueDate));
+		}
+	}, [task]);
 
 	interface TimeOptionProps {
 		name: string;
@@ -363,8 +363,16 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({
 					<button
 						className="bg-blue-500 rounded py-1 cursor-pointer hover:bg-blue-600"
 						onClick={() => {
+							let finalDueDate = currDueDate;
+
+							if (selectedTime) {
+								const dueDate = currDueDate ? currDueDate : new Date();
+								const newDateObject = setTimeOnDateString(dueDate, selectedTime);
+								finalDueDate = newDateObject;
+							}
+
 							if (task) {
-								editTask({ taskId: task._id, payload: { dueDate: currDueDate } });
+								editTask({ taskId: task._id, payload: { dueDate: finalDueDate } });
 							}
 
 							setIsVisible(false);

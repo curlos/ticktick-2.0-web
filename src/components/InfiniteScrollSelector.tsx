@@ -1,6 +1,7 @@
+import classNames from 'classnames';
 import React, { useEffect, useRef } from 'react';
 
-const InfiniteScrollSelector = ({ items, unit, setSelected }) => {
+const InfiniteScrollSelector = ({ items, unit, selectedValue, setSelectedValue }) => {
 	const scrollRef = useRef(null);
 
 	useEffect(() => {
@@ -8,10 +9,10 @@ const InfiniteScrollSelector = ({ items, unit, setSelected }) => {
 
 		const handleScroll = () => {
 			const { scrollTop, scrollHeight, clientHeight } = scrollElement;
-			if (scrollTop + clientHeight === scrollHeight) {
+			if (scrollTop + clientHeight >= scrollHeight) {
 				// At bottom, reset to the middle
 				scrollElement.scrollTop = scrollHeight / 3;
-			} else if (scrollTop === 0) {
+			} else if (scrollTop <= 0) {
 				// At top, reset to the middle
 				scrollElement.scrollTop = scrollHeight / 3 - clientHeight;
 			}
@@ -20,9 +21,17 @@ const InfiniteScrollSelector = ({ items, unit, setSelected }) => {
 		// Add event listener
 		scrollElement.addEventListener('scroll', handleScroll);
 
-		// Reset scroll position to middle on initial load
-		const middle = scrollElement.scrollHeight / 3;
-		scrollElement.scrollTop = middle - scrollElement.clientHeight / 2;
+		// Calculate the middle and the index of the selected item in the middle third
+		const itemsCopy = [...items, ...items, ...items]; // Triple the items
+		const middleThirdStart = items.length; // Start of the middle third
+		const selectedIndex = itemsCopy.indexOf(selectedValue, middleThirdStart); // Find index in the middle third
+		const itemHeight = scrollElement.firstChild.firstChild.offsetHeight; // Assuming each item has the same height
+
+		// Scroll to the selected item
+		if (selectedIndex >= 0) {
+			const scrollTarget = itemHeight * selectedIndex;
+			scrollElement.scrollTop = scrollTarget - scrollElement.clientHeight / 2 + itemHeight / 2;
+		}
 
 		// Remove event listener on cleanup
 		return () => {
@@ -30,7 +39,7 @@ const InfiniteScrollSelector = ({ items, unit, setSelected }) => {
 				scrollElement.removeEventListener('scroll', handleScroll);
 			}
 		};
-	}, []); // Empty dependency array ensures this effect runs only once after initial render
+	}, [items, selectedValue]); // Depend on items and selectedValue to update scroll position when they change
 
 	return (
 		<div className="overflow-auto gray-scrollbar h-40" ref={scrollRef}>
@@ -38,8 +47,11 @@ const InfiniteScrollSelector = ({ items, unit, setSelected }) => {
 				{[...items, ...items, ...items].map((item, index) => (
 					<div
 						key={`${unit}-${index}`}
-						className="text-center py-2 cursor-pointer hover:bg-gray-200"
-						onClick={() => setSelected(item)}
+						className={classNames(
+							'text-center py-2 rounded cursor-pointer',
+							selectedValue === item ? 'bg-blue-500' : 'bg-transparent hover:bg-color-gray-200'
+						)}
+						onClick={() => setSelectedValue(item)}
 					>
 						{item}
 					</div>

@@ -33,49 +33,67 @@ const convertTimesToTimeZone = (timesArray, timeZone) => {
 	});
 };
 
-const DropdownTime = ({
-	toggleRef,
-	isVisible,
-	setIsVisible,
-	selectedTime,
-	setSelectedTime,
-	showTimeZoneOption = true,
-	customClasses,
-}) => {
-	const [timeZone, setTimeZone] = useState('America/New_York');
-	const timesArray = getTimesArray();
-	const timesInEST = convertTimesToTimeZone(timesArray, timeZone);
+function extractTimeDetails(timeStr) {
+	if (!timeStr) {
+		return {
+			hours: '',
+			minutes: '',
+			period: '',
+		};
+	}
 
-	// useEffect(() => {
-	// 	if (isVisible && !selectedTime) {
-	// 		const currentESTTime = getCurrentTimeInESTInterval();
-	// 		setSelectedTime(currentESTTime);
-	// 	}
-	// }, [isVisible]);
+	const [time, period] = timeStr.split(' ');
+	const [hours, minutes] = time.split(':');
 
-	// useEffect(() => {
-	// 	// Ensure that the selected time is scrolled into view when component updates
-	// 	const index = timesInEST.indexOf(selectedTime);
-	// 	if (index !== -1 && timeRefs.current[index] && timeRefs.current[index].current) {
-	// 		timeRefs.current[index].current.scrollIntoView({
-	// 			behavior: 'smooth',
-	// 			block: 'start',
-	// 		});
-	// 	}
-	// }, [selectedTime, isVisible]);
+	return {
+		hours: String(hours),
+		minutes: minutes ? String(minutes).padStart(2, '0') : '',
+		period: period,
+	};
+}
 
-	const hours = Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, '0'));
-	const minutes = Array.from({ length: 60 }, (_, i) => (i + 1).toString().padStart(2, '0'));
+const DropdownTime = ({ toggleRef, isVisible, setIsVisible, selectedTime, setSelectedTime, customClasses }) => {
+	const defaultTime = extractTimeDetails(selectedTime);
+
+	const hours = Array.from({ length: 12 }, (_, i) => (i + 1).toString());
+	const minutes = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0'));
 	const periods = ['AM', 'PM'];
 
-	const [selectedHour, setSelectedHour] = useState('12');
-	const [selectedMinute, setSelectedMinute] = useState('00');
-	const [selectedPeriod, setSelectedPeriod] = useState('AM');
+	const [selectedHour, setSelectedHour] = useState(defaultTime.hours);
+	const [selectedMinute, setSelectedMinute] = useState(defaultTime.minutes);
+	const [selectedPeriod, setSelectedPeriod] = useState(defaultTime.period);
+
+	useEffect(() => {
+		handleTimeSelection();
+	}, [selectedHour, selectedMinute, selectedPeriod]);
+
+	// useEffect(() => {
+	// 	const time = extractTimeDetails(selectedTime);
+	// 	setSelectedHour(time.hours);
+	// 	setSelectedMinute(time.minutes);
+	// 	setSelectedPeriod(time.period);
+	// }, [selectedTime, isVisible]);
 
 	const handleTimeSelection = () => {
-		const time = `${selectedHour}:${selectedMinute} ${selectedPeriod}`;
+		let time = `${selectedHour}:${selectedMinute} ${selectedPeriod}`;
+
+		if (!selectedHour || !selectedMinute || !selectedPeriod) {
+			time = '';
+		}
+
+		console.log();
+		console.log(time);
+
+		// TODO: Fix
+		// if (time === '12:00 AM') {
+		// 	setSelectedHour('');
+		// 	setSelectedMinute('');
+		// 	setSelectedPeriod('');
+		// } else {
+		// 	setSelectedTime(time);
+		// }
+
 		setSelectedTime(time);
-		setIsVisible(false);
 	};
 
 	return (
@@ -91,23 +109,31 @@ const DropdownTime = ({
 				</div> */}
 
 				<div className="grid grid-cols-3">
-					<InfiniteScrollSelector items={hours} unit="hour" setSelected={setSelectedHour} />
-					<InfiniteScrollSelector items={minutes} unit="minute" setSelected={setSelectedMinute} />
+					<InfiniteScrollSelector
+						items={hours}
+						unit="hour"
+						selectedValue={selectedHour}
+						setSelectedValue={setSelectedHour}
+					/>
+					<InfiniteScrollSelector
+						items={minutes}
+						unit="minute"
+						selectedValue={selectedMinute}
+						setSelectedValue={setSelectedMinute}
+					/>
 					<div className="flex flex-col">
-						<div
-							className="text-center py-2 cursor-pointer hover:bg-gray-200"
-							onClick={() => setSelectedPeriod('AM')}
-							style={{ backgroundColor: selectedPeriod === 'AM' ? 'lightblue' : 'transparent' }}
-						>
-							AM
-						</div>
-						<div
-							className="text-center py-2 cursor-pointer hover:bg-gray-200"
-							onClick={() => setSelectedPeriod('PM')}
-							style={{ backgroundColor: selectedPeriod === 'PM' ? 'lightblue' : 'transparent' }}
-						>
-							PM
-						</div>
+						{periods.map((period) => (
+							<div
+								key={period}
+								className={classNames(
+									'text-center py-2 rounded cursor-pointer',
+									selectedPeriod === period ? 'bg-blue-500' : 'bg-transparent hover:bg-color-gray-200'
+								)}
+								onClick={() => setSelectedPeriod(period)}
+							>
+								{period}
+							</div>
+						))}
 					</div>
 				</div>
 				{/* <button className="mt-4 bg-green-500 text-white px-4 py-2 rounded" onClick={handleTimeSelection}>

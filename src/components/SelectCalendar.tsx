@@ -110,6 +110,8 @@ const SelectCalendar: React.FC<CalendarProps> = ({ dueDate, setDueDate }) => {
 
 								const handleClick = () => {
 									setCurrentDate(new Date(day.getFullYear(), day.getMonth(), 1));
+									console.log(day);
+
 									setDueDate(day);
 								};
 

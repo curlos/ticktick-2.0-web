@@ -155,7 +155,8 @@ const TaskDetails = () => {
 		return <EmptyTask />;
 	}
 
-	const { _id, children, priority, completedPomodoros, timeTaken, estimatedDuration, deadline, willNotDo } = task;
+	const { _id, children, priority, completedPomodoros, timeTaken, estimatedDuration, deadline, willNotDo, dueDate } =
+		task;
 	const priorityData = PRIORITIES[priority];
 
 	return (
@@ -196,7 +197,7 @@ const TaskDetails = () => {
 							ref={dropdownCalendarToggleRef}
 							onClick={() => setIsDropdownCalendarVisible(!isDropdownCalendarVisible)}
 						>
-							<TaskDueDateText dueDate={currDueDate} showCalendarIcon={true} />
+							<TaskDueDateText dueDate={dueDate} showCalendarIcon={true} />
 						</div>
 
 						<DropdownCalendar
