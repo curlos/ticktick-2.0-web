@@ -42,8 +42,6 @@ const ModalAddFocusRecord: React.FC = () => {
 		setIsDropdownSetTaskVisible(false);
 	}, [selectedTask]);
 
-	console.log(startTime);
-
 	return (
 		<Modal isOpen={isOpen} onClose={closeModal} position="top-center">
 			<div className="rounded-xl shadow-lg bg-color-gray-650 p-5">
@@ -94,84 +92,22 @@ const ModalAddFocusRecord: React.FC = () => {
 					</div>
 
 					{/* Start Time */}
-					<div className="flex items-center gap-2">
-						<div className="w-[100px]">Start Time</div>
-						<div className="relative flex-1">
-							<div
-								ref={dropdownStartTimeCalendarRef}
-								className="flex-1 border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500 cursor-pointer"
-								onClick={() => {
-									setIsDropdownStartTimeVisible(!isDropdownStartTimeVisible);
-								}}
-							>
-								<div className={classNames(startTime ? 'text-white' : 'text-color-gray-100')}>
-									{startTime
-										? startTime.toLocaleString('en-US', {
-												year: 'numeric', // Full year
-												month: 'long', // Full month name
-												day: 'numeric', // Day of the month
-												hour: 'numeric', // Hour (in 12-hour AM/PM format)
-												minute: '2-digit', // Minute with leading zeros
-												hour12: true, // Use AM/PM
-											})
-										: 'Select time'}
-								</div>
-								<Icon
-									name="expand_more"
-									fill={0}
-									customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'}
-								/>
-							</div>
-
-							<DropdownTimeCalendar
-								toggleRef={dropdownStartTimeCalendarRef}
-								isVisible={isDropdownStartTimeVisible}
-								setIsVisible={setIsDropdownStartTimeVisible}
-								date={startTime}
-								setDate={setStartTime}
-							/>
-						</div>
-					</div>
+					<TimeOption
+						dropdownRef={dropdownStartTimeCalendarRef}
+						isDropdownVisible={isDropdownStartTimeVisible}
+						setIsDropdownVisible={setIsDropdownStartTimeVisible}
+						time={startTime}
+						setTime={setStartTime}
+					/>
 
 					{/* End Time */}
-					<div className="flex items-center gap-2">
-						<div className="w-[100px]">End Time</div>
-						<div className="relative flex-1">
-							<div
-								ref={dropdownEndTimeCalendarRef}
-								className="flex-1 border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500 cursor-pointer"
-								onClick={() => {
-									setIsDropdownEndTimeVisible(!isDropdownEndTimeVisible);
-								}}
-							>
-								<div className={classNames(endTime ? 'text-white' : 'text-color-gray-100')}>
-									{endTime
-										? endTime.toLocaleString('en-US', {
-												year: 'numeric', // Full year
-												month: 'long', // Full month name
-												day: 'numeric', // Day of the month
-												hour: 'numeric', // Hour (in 12-hour AM/PM format)
-												minute: '2-digit', // Minute with leading zeros
-												hour12: true, // Use AM/PM
-											})
-										: 'Select time'}
-								</div>
-								<Icon
-									name="expand_more"
-									fill={0}
-									customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'}
-								/>
-							</div>
-
-							<DropdownTimeCalendar
-								toggleRef={dropdownEndTimeCalendarRef}
-								isVisible={isDropdownEndTimeVisible}
-								setIsVisible={setIsDropdownEndTimeVisible}
-								date={endTime}
-								setDate={setEndTime}
-							/>
-						</div>
-					</div>
+					<TimeOption
+						dropdownRef={dropdownEndTimeCalendarRef}
+						isDropdownVisible={isDropdownEndTimeVisible}
+						setIsDropdownVisible={setIsDropdownEndTimeVisible}
+						time={endTime}
+						setTime={setEndTime}
+					/>
 
 					{/* Type */}
 					<div className="flex items-center gap-2">
@@ -233,6 +169,49 @@ const ModalAddFocusRecord: React.FC = () => {
 				</div>
 			</div>
 		</Modal>
+	);
+};
+
+const TimeOption = ({ dropdownRef, isDropdownVisible, setIsDropdownVisible, time, setTime }) => {
+	return (
+		<div className="flex items-center gap-2">
+			<div className="w-[100px]">Start Time</div>
+			<div className="relative flex-1">
+				<div
+					ref={dropdownRef}
+					className="flex-1 border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500 cursor-pointer"
+					onClick={() => {
+						setIsDropdownVisible(!isDropdownVisible);
+					}}
+				>
+					<div className={classNames(time ? 'text-white' : 'text-color-gray-100')}>
+						{time
+							? time.toLocaleString('en-US', {
+									year: 'numeric', // Full year
+									month: 'long', // Full month name
+									day: 'numeric', // Day of the month
+									hour: 'numeric', // Hour (in 12-hour AM/PM format)
+									minute: '2-digit', // Minute with leading zeros
+									hour12: true, // Use AM/PM
+								})
+							: 'Select time'}
+					</div>
+					<Icon
+						name="expand_more"
+						fill={0}
+						customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'}
+					/>
+				</div>
+
+				<DropdownTimeCalendar
+					toggleRef={dropdownRef}
+					isVisible={isDropdownVisible}
+					setIsVisible={setIsDropdownVisible}
+					date={time}
+					setDate={setTime}
+				/>
+			</div>
+		</div>
 	);
 };
 
