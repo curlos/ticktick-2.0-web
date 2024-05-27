@@ -131,9 +131,6 @@ const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({
 		);
 	};
 
-	console.log(searchText);
-	console.log(filteredTasks);
-
 	return (
 		<Dropdown
 			toggleRef={toggleRef}
@@ -200,7 +197,6 @@ const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({
 						setSelectedFocusRecordTask={setSelectedTask}
 					/>
 				) : (
-					// TODO: FINISH THIS!!!!
 					<div>
 						{filteredTasks?.map((task) => (
 							<Task
