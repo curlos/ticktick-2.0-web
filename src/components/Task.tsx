@@ -129,17 +129,19 @@ const Task: React.FC<TaskProps> = ({
 								<Icon
 									name="radio_button_checked"
 									fill={0}
-									customClass={
-										'text-color-gray-100 text-red-500 !text-[20px] hover:text-white cursor-pointer'
-									}
+									customClass={classNames(
+										'!text-[20px] hover:text-white cursor-pointer',
+										priorityData.textFlagColor
+									)}
 								/>
 							) : (
 								<Icon
 									name="radio_button_unchecked"
 									fill={0}
-									customClass={
-										'text-color-gray-100 text-red-500 !text-[18px] hover:text-white cursor-pointer'
-									}
+									customClass={classNames(
+										'!text-[18px] hover:text-white cursor-pointer',
+										priorityData.textFlagColor
+									)}
 								/>
 							)}
 						</div>
@@ -147,7 +149,9 @@ const Task: React.FC<TaskProps> = ({
 
 					<div
 						className={classNames(
-							'break-all max-w-[350px]',
+							setSelectedFocusRecordTask
+								? 'max-w-[150px] text-ellipsis text-nowrap overflow-hidden'
+								: 'break-all max-w-[350px]',
 							completedTime ? 'line-through text-color-gray-100' : ''
 						)}
 					>
@@ -155,8 +159,15 @@ const Task: React.FC<TaskProps> = ({
 					</div>
 
 					<div className="flex-1 flex justify-end items-center gap-1">
-						{project && <div className="text-color-gray-100 mr-1">{project.name}</div>}
-						{dueDate && <TaskDueDateText dueDate={dueDate} />}
+						{project && !setSelectedFocusRecordTask && (
+							<div className="text-color-gray-100 mr-1">{project.name}</div>
+						)}
+						{dueDate && (
+							<TaskDueDateText
+								dueDate={dueDate}
+								showShortVersion={setSelectedFocusRecordTask ? true : false}
+							/>
+						)}
 					</div>
 				</div>
 			</div>

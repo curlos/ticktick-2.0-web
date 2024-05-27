@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { isTaskOverdue } from '../utils/helpers.utils';
 import Icon from './Icon';
 
-const TaskDueDateText = ({ dueDate, showCalendarIcon = false }) => {
+const TaskDueDateText = ({ dueDate, showCalendarIcon = false, showShortVersion }) => {
 	const isOverdue = dueDate && isTaskOverdue(dueDate);
 
 	function formatDueDate(dueDate) {
@@ -12,20 +12,25 @@ const TaskDueDateText = ({ dueDate, showCalendarIcon = false }) => {
 		// and you want to show only the date if it is midnight, check this condition:
 		const isMidnight = date.getHours() === 0 && date.getMinutes() === 0 && date.getSeconds() === 0;
 
-		const options = isMidnight
+		const options = showShortVersion
 			? {
-					year: 'numeric', // Full year
-					month: 'long', // Full month name
+					month: 'short', // Full month name
 					day: 'numeric', // Day of the month
 				}
-			: {
-					year: 'numeric', // Full year
-					month: 'long', // Full month name
-					day: 'numeric', // Day of the month
-					hour: 'numeric', // Hour (in 12-hour AM/PM format)
-					minute: '2-digit', // Minute with leading zeros
-					hour12: true, // Use AM/PM
-				};
+			: isMidnight
+				? {
+						year: 'numeric', // Full year
+						month: 'long', // Full month name
+						day: 'numeric', // Day of the month
+					}
+				: {
+						year: 'numeric', // Full year
+						month: 'long', // Full month name
+						day: 'numeric', // Day of the month
+						hour: 'numeric', // Hour (in 12-hour AM/PM format)
+						minute: '2-digit', // Minute with leading zeros
+						hour12: true, // Use AM/PM
+					};
 
 		return date.toLocaleString('en-US', options);
 	}

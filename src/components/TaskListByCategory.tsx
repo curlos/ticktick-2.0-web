@@ -20,7 +20,8 @@ const TaskListByCategory: React.FC<TaskListByCategoryProps> = ({
 
 	return (
 		<div>
-			{category && (
+			{/* TODO: Bring back soon! */}
+			{/* {category && (
 				<div
 					className="flex items-center text-[12px] cursor-pointer mb-2"
 					onClick={() => setShowTasks(!showTasks)}
@@ -34,7 +35,7 @@ const TaskListByCategory: React.FC<TaskListByCategoryProps> = ({
 					<span className="mr-[6px]">High</span>
 					<span className="text-color-gray-100">3</span>
 				</div>
-			)}
+			)} */}
 
 			{showTasks && (
 				<TaskList
