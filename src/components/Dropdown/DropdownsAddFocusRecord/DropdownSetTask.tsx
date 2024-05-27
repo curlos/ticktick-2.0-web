@@ -5,7 +5,6 @@ import Icon from '../../Icon';
 import TaskListByCategory from '../../TaskListByCategory';
 import Dropdown from '../Dropdown';
 import { SMART_LISTS } from '../../../utils/smartLists.utils';
-import { useParams } from 'react-router';
 import { debounce, getTasksWithNoParent } from '../../../utils/helpers.utils';
 import DropdownProjects from '../DropdownProjects';
 import Fuse from 'fuse.js';
@@ -31,8 +30,6 @@ const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({
 	const { data: fetchedProjects, isLoading: isProjectsLoading, error: errorProjects } = useGetProjectsQuery();
 	const { projects, projectsById } = fetchedProjects || {};
 
-	// const { projectId } = useParams();
-
 	const defaultTodayProject = SMART_LISTS['today'];
 
 	const [isDropdownProjectsVisible, setIsDropdownProjectsVisible] = useState(false);
@@ -41,7 +38,6 @@ const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({
 	const [searchText, setSearchText] = useState('');
 	const [filteredTasks, setFilteredTasks] = useState([]);
 	const [isSearchFocused, setIsSearchFocused] = useState(false);
-	// const [selectedButton, setSelectedButton] = useState('Recent');
 
 	const dropdownProjectsRef = useRef(null);
 
@@ -49,10 +45,6 @@ const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({
 		includeScore: true,
 		keys: ['title'],
 	});
-
-	const sharedButtonStyle = `text-[12px] py-1 px-3 rounded-3xl cursor-pointer`;
-	// const selectedButtonStyle = `${sharedButtonStyle} bg-[#222735] text-[#4671F7] font-semibold`;
-	// const unselectedButtonStyle = `${sharedButtonStyle} text-[#666666] bg-color-gray-300`;
 
 	useEffect(() => {
 		if (!tasks) {
@@ -140,22 +132,6 @@ const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({
 				' w-[300px] mb-[-155px] ml-[-10px] p-1 shadow-2xl border border-color-gray-200 rounded-lg p-3'
 			}
 		>
-			{/* TODO: Maybe bring back later. I don't know what qualifies as "Recent". I might have to keep track of the user's interactions with the task somewhere I suppose. */}
-			{/* <div className="flex justify-center gap-1">
-				<div
-					className={selectedButton === 'Recent' ? selectedButtonStyle : unselectedButtonStyle}
-					onClick={() => setSelectedButton('Recent')}
-				>
-					Recent
-				</div>
-				<div
-					className={selectedButton === 'Task' ? selectedButtonStyle : unselectedButtonStyle}
-					onClick={() => setSelectedButton('Task')}
-				>
-					Task
-				</div>
-			</div> */}
-
 			<div className="bg-color-gray-200 rounded flex items-center gap-2 p-[6px] mb-2">
 				<Icon name="search" customClass={'!text-[20px] text-color-gray-100 hover:text-white cursor-pointer'} />
 
