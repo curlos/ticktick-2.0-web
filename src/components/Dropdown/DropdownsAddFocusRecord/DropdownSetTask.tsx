@@ -6,8 +6,10 @@ import TaskListByCategory from '../../TaskListByCategory';
 import Dropdown from '../Dropdown';
 import { SMART_LISTS } from '../../../utils/smartLists.utils';
 import { useParams } from 'react-router';
-import { getTasksWithNoParent } from '../../../utils/helpers.utils';
+import { debounce, getTasksWithNoParent } from '../../../utils/helpers.utils';
 import DropdownProjects from '../DropdownProjects';
+import Fuse from 'fuse.js';
+import Task from '../../Task';
 
 interface DropdownSetTaskProps extends DropdownProps {
 	selectedTask: Object | null;
@@ -29,19 +31,28 @@ const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({
 	const { data: fetchedProjects, isLoading: isProjectsLoading, error: errorProjects } = useGetProjectsQuery();
 	const { projects, projectsById } = fetchedProjects || {};
 
-	const { projectId } = useParams();
+	// const { projectId } = useParams();
+
+	const defaultTodayProject = SMART_LISTS['today'];
+
+	const [isDropdownProjectsVisible, setIsDropdownProjectsVisible] = useState(false);
+	const [selectedProject, setSelectedProject] = useState(defaultTodayProject);
 	const [tasksWithNoParent, setTasksWithNoParent] = useState([]);
+	const [searchText, setSearchText] = useState('');
+	const [filteredTasks, setFilteredTasks] = useState([]);
+	const [isSearchFocused, setIsSearchFocused] = useState(false);
 	// const [selectedButton, setSelectedButton] = useState('Recent');
+
+	const dropdownProjectsRef = useRef(null);
+
+	const fuse = new Fuse(tasks, {
+		includeScore: true,
+		keys: ['title'],
+	});
 
 	const sharedButtonStyle = `text-[12px] py-1 px-3 rounded-3xl cursor-pointer`;
 	// const selectedButtonStyle = `${sharedButtonStyle} bg-[#222735] text-[#4671F7] font-semibold`;
 	// const unselectedButtonStyle = `${sharedButtonStyle} text-[#666666] bg-color-gray-300`;
-
-	const [isDropdownProjectsVisible, setIsDropdownProjectsVisible] = useState(false);
-	// TODO: Make today the default project.
-	const defaultTodayProject = SMART_LISTS['today'];
-	const [selectedProject, setSelectedProject] = useState(defaultTodayProject);
-	const dropdownProjectsRef = useRef(null);
 
 	useEffect(() => {
 		if (!tasks) {
@@ -55,7 +66,31 @@ const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({
 		setTasksWithNoParent(newTasksWithNoParent);
 	}, [fetchedTasks, selectedProject]);
 
-	console.log(tasksWithNoParent);
+	useEffect(() => {
+		handleDebouncedSearch();
+
+		return () => {
+			handleDebouncedSearch.cancel();
+		};
+	}, [searchText]);
+
+	const handleDebouncedSearch = debounce(() => {
+		if (!tasks) {
+			return null;
+		}
+
+		let searchedTasks;
+
+		if (searchText.trim() === '') {
+			// If searchText is empty, consider all projects as the searched result.
+			searchedTasks = [];
+		} else {
+			// When searchText is not empty, perform the search using Fuse.js
+			searchedTasks = fuse.search(searchText);
+		}
+
+		setFilteredTasks(searchedTasks.map((result) => result.item));
+	}, 1000);
 
 	const ProjectSelector = () => {
 		if (!selectedProject) {
@@ -96,6 +131,9 @@ const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({
 		);
 	};
 
+	console.log(searchText);
+	console.log(filteredTasks);
+
 	return (
 		<Dropdown
 			toggleRef={toggleRef}
@@ -124,27 +162,57 @@ const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({
 			<div className="bg-color-gray-200 rounded flex items-center gap-2 p-[6px] mb-2">
 				<Icon name="search" customClass={'!text-[20px] text-color-gray-100 hover:text-white cursor-pointer'} />
 
-				<input placeholder="Search" className="bg-transparent outline-none" />
+				<input
+					placeholder="Search"
+					value={searchText}
+					onChange={(e) => setSearchText(e.target.value)}
+					onFocus={() => setIsSearchFocused(true)}
+					onBlur={() => setIsSearchFocused(false)}
+					className="bg-transparent outline-none flex-1"
+				/>
+
+				{searchText && (
+					<Icon
+						name="close"
+						customClass={'!text-[20px] text-color-gray-100 hover:text-white cursor-pointer'}
+						onClick={() => setSearchText('')}
+					/>
+				)}
 			</div>
 
-			<ProjectSelector />
+			{!isSearchFocused && !searchText && <ProjectSelector />}
 
 			<div className="space-y-2 h-[300px] gray-scrollbar overflow-auto">
-				<TaskListByCategory
-					tasks={tasksWithNoParent.filter((task) => {
-						if (task.isDeleted) {
-							return false;
-						}
+				{!isSearchFocused && !searchText ? (
+					<TaskListByCategory
+						tasks={tasksWithNoParent.filter((task) => {
+							if (task.isDeleted) {
+								return false;
+							}
 
-						if (task.willNotDo) {
-							return false;
-						}
+							if (task.willNotDo) {
+								return false;
+							}
 
-						return true;
-					})}
-					selectedFocusRecordTask={selectedTask}
-					setSelectedFocusRecordTask={setSelectedTask}
-				/>
+							return true;
+						})}
+						selectedFocusRecordTask={selectedTask}
+						setSelectedFocusRecordTask={setSelectedTask}
+					/>
+				) : (
+					// TODO: FINISH THIS!!!!
+					<div>
+						{filteredTasks?.map((task) => (
+							<Task
+								key={task._id}
+								taskId={task._id}
+								selectedFocusRecordTask={selectedTask}
+								setSelectedFocusRecordTask={setSelectedTask}
+								showSubtasks={false}
+							/>
+						))}
+					</div>
+				)}
 			</div>
 		</Dropdown>
 	);

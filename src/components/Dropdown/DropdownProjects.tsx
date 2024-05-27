@@ -34,8 +34,6 @@ const DropdownProjects: React.FC<DropdownProjectsProps> = ({
 
 	const defaultProjects = [...projects, ...topListProjects];
 
-	console.log(defaultProjects);
-
 	const [editTask] = useEditTaskMutation();
 	const [filteredProjects, setFilteredProjects] = useState(defaultProjects);
 	const [searchText, setSearchText] = useState('');
@@ -134,10 +132,6 @@ const DropdownProjects: React.FC<DropdownProjectsProps> = ({
 		},
 		{ nonSmartListProjects: [], smartListProjects: [] }
 	);
-
-	// console.log(inboxProject);
-	console.log(smartListProjects);
-	console.log(nonSmartListProjects);
 
 	return (
 		<Dropdown

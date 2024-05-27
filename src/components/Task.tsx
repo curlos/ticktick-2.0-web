@@ -152,7 +152,7 @@ const Task: React.FC<TaskProps> = ({
 					<div
 						className={classNames(
 							setSelectedFocusRecordTask
-								? `${hasParentTask ? 'max-w-[150px]' : 'max-w-[200px]'} text-ellipsis text-nowrap overflow-hidden`
+								? `${hasParentTask ? 'max-w-[150px]' : 'max-w-[190px]'} text-ellipsis text-nowrap overflow-hidden`
 								: 'break-all max-w-[350px]',
 							completedTime ? 'line-through text-color-gray-100' : ''
 						)}
