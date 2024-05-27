@@ -1,12 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { DropdownProps } from '../../../interfaces/interfaces';
-import { useGetTasksQuery } from '../../../services/api';
+import { useGetProjectsQuery, useGetTasksQuery } from '../../../services/api';
 import Icon from '../../Icon';
 import TaskListByCategory from '../../TaskListByCategory';
 import Dropdown from '../Dropdown';
 import { SMART_LISTS } from '../../../utils/smartLists.utils';
 import { useParams } from 'react-router';
 import { getTasksWithNoParent } from '../../../utils/helpers.utils';
+import DropdownProjects from '../DropdownProjects';
 
 interface DropdownSetTaskProps extends DropdownProps {
 	selectedTask: Object | null;
@@ -20,18 +21,27 @@ const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({
 	selectedTask,
 	setSelectedTask,
 }) => {
+	// Tasks
 	const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
 	const { tasks, tasksById } = fetchedTasks || {};
 
+	// Projects
+	const { data: fetchedProjects, isLoading: isProjectsLoading, error: errorProjects } = useGetProjectsQuery();
+	const { projects, projectsById } = fetchedProjects || {};
+
 	const { projectId } = useParams();
 	const [tasksWithNoParent, setTasksWithNoParent] = useState([]);
-	const [selectedButton, setSelectedButton] = useState('Recent');
-	const [selectedFocusRecordTask, setSelectedFocusRecordTask] = useState(null);
-	const [isDropdownTimeVisible, setIsDropdownTimeVisible] = useState(false);
+	// const [selectedButton, setSelectedButton] = useState('Recent');
 
 	const sharedButtonStyle = `text-[12px] py-1 px-3 rounded-3xl cursor-pointer`;
-	const selectedButtonStyle = `${sharedButtonStyle} bg-[#222735] text-[#4671F7] font-semibold`;
-	const unselectedButtonStyle = `${sharedButtonStyle} text-[#666666] bg-color-gray-300`;
+	// const selectedButtonStyle = `${sharedButtonStyle} bg-[#222735] text-[#4671F7] font-semibold`;
+	// const unselectedButtonStyle = `${sharedButtonStyle} text-[#666666] bg-color-gray-300`;
+
+	const [isDropdownProjectsVisible, setIsDropdownProjectsVisible] = useState(false);
+	// TODO: Make today the default project.
+	const defaultTodayProject = SMART_LISTS['today'];
+	const [selectedProject, setSelectedProject] = useState(defaultTodayProject);
+	const dropdownProjectsRef = useRef(null);
 
 	useEffect(() => {
 		if (!tasks) {
@@ -43,6 +53,45 @@ const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({
 	}, [fetchedTasks]);
 
 	console.log(tasksWithNoParent);
+
+	const ProjectSelector = () => {
+		if (!selectedProject) {
+			return null;
+		}
+
+		const smartList = SMART_LISTS[selectedProject.urlName];
+		let iconName = selectedProject.isFolder
+			? 'folder'
+			: smartList
+				? smartList.iconName
+				: selectedProject.isInbox
+					? 'inbox'
+					: 'menu';
+
+		return (
+			<div className="relative">
+				<div
+					ref={dropdownProjectsRef}
+					onClick={() => setIsDropdownProjectsVisible(!isDropdownProjectsVisible)}
+					className="flex items-center gap-[2px] mt-4 mb-3 cursor-pointer"
+				>
+					<Icon name={iconName} customClass={'!text-[20px] text-color-gray-100 hover:text-white'} />
+					<div>{selectedProject.name}</div>
+					<Icon name="chevron_right" customClass={'!text-[20px] text-color-gray-100'} />
+				</div>
+
+				<DropdownProjects
+					toggleRef={dropdownProjectsRef}
+					isVisible={isDropdownProjectsVisible}
+					setIsVisible={setIsDropdownProjectsVisible}
+					selectedProject={selectedProject}
+					setSelectedProject={setSelectedProject}
+					projects={projects}
+					showSmartLists={true}
+				/>
+			</div>
+		);
+	};
 
 	return (
 		<Dropdown
@@ -75,15 +124,7 @@ const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({
 				<input placeholder="Search" className="bg-transparent outline-none" />
 			</div>
 
-			{/* TODO: Bring back soon! */}
-			{/* <div className="flex items-center gap-[2px] mt-4 mb-3">
-				<Icon name="today" customClass={'!text-[20px] text-color-gray-100 hover:text-white cursor-pointer'} />
-				<div>Today</div>
-				<Icon
-					name="chevron_right"
-					customClass={'!text-[20px] text-color-gray-100 hover:text-white cursor-pointer'}
-				/>
-			</div> */}
+			<ProjectSelector />
 
 			<div className="space-y-2 h-[300px] gray-scrollbar overflow-auto">
 				<TaskListByCategory
@@ -98,8 +139,8 @@ const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({
 
 						return true;
 					})}
-					selectedFocusRecordTask={selectedFocusRecordTask}
-					setSelectedFocusRecordTask={setSelectedFocusRecordTask}
+					selectedFocusRecordTask={selectedTask}
+					setSelectedFocusRecordTask={setSelectedTask}
 				/>
 			</div>
 		</Dropdown>

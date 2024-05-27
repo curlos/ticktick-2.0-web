@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Icon from '../Icon';
 import Modal from './Modal';
 import TextareaAutosize from 'react-textarea-autosize';
@@ -7,6 +7,7 @@ import { setModalState } from '../../slices/modalSlice';
 import DropdownSetFocusTypeAndAmount from '../Dropdown/DropdownsAddFocusRecord/DropdownSetFocusTypeAndAmount';
 import DropdownTimeCalendar from '../Dropdown/DropdownsAddFocusRecord/DropdownTimeCalendar';
 import DropdownSetTask from '../Dropdown/DropdownsAddFocusRecord/DropdownSetTask';
+import classNames from 'classnames';
 
 const ModalAddFocusRecord: React.FC = () => {
 	const [isDropdownSetTaskVisible, setIsDropdownSetTaskVisible] = useState(false);
@@ -37,6 +38,10 @@ const ModalAddFocusRecord: React.FC = () => {
 		dispatch(setModalState({ modalId: 'ModalAddFocusRecord', isOpen: false }));
 	};
 
+	useEffect(() => {
+		setIsDropdownSetTaskVisible(false);
+	}, [selectedTask]);
+
 	return (
 		<Modal isOpen={isOpen} onClose={closeModal} position="top-center">
 			<div className="rounded-xl shadow-lg bg-color-gray-650 p-5">
@@ -61,7 +66,14 @@ const ModalAddFocusRecord: React.FC = () => {
 									setIsDropdownSetTaskVisible(!isDropdownSetTaskVisible);
 								}}
 							>
-								<div className="text-color-gray-100">{selectedTask ? 'Task Selected' : 'Set Task'}</div>
+								<div
+									className={classNames(
+										selectedTask ? 'text-white' : 'text-color-gray-100',
+										'max-w-[260px] text-ellipsis text-nowrap overflow-hidden'
+									)}
+								>
+									{selectedTask ? selectedTask.title : 'Set Task'}
+								</div>
 								<Icon
 									name="expand_more"
 									fill={0}

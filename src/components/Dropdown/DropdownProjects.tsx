@@ -6,6 +6,7 @@ import { DropdownProps, IProject, TaskObj } from '../../interfaces/interfaces';
 import classNames from 'classnames';
 import { useEffect, useRef, useState } from 'react';
 import { useEditTaskMutation } from '../../services/api';
+import { SMART_LISTS } from '../../utils/smartLists.utils';
 
 interface DropdownProjectsProps extends DropdownProps {
 	selectedProject: string;
@@ -13,6 +14,7 @@ interface DropdownProjectsProps extends DropdownProps {
 	projects: Array<IProject>;
 	task: TaskObj;
 	onCloseContextMenu: () => void;
+	showSmartLists: boolean;
 }
 
 const DropdownProjects: React.FC<DropdownProjectsProps> = ({
@@ -25,11 +27,19 @@ const DropdownProjects: React.FC<DropdownProjectsProps> = ({
 	customClasses,
 	task,
 	onCloseContextMenu,
+	showSmartLists = false,
 }) => {
+	const TOP_LIST_NAMES = ['all', 'today', 'tomorrow', 'week'];
+	const topListProjects = TOP_LIST_NAMES.map((name) => SMART_LISTS[name]);
+
+	const defaultProjects = [...projects, ...topListProjects];
+
+	console.log(defaultProjects);
+
 	const [editTask] = useEditTaskMutation();
-	const [filteredProjects, setFilteredProjects] = useState(projects);
+	const [filteredProjects, setFilteredProjects] = useState(defaultProjects);
 	const [searchText, setSearchText] = useState('');
-	const fuse = new Fuse(projects, {
+	const fuse = new Fuse(defaultProjects, {
 		includeScore: true,
 		keys: ['name'],
 	});
@@ -68,11 +78,15 @@ const DropdownProjects: React.FC<DropdownProjectsProps> = ({
 	}
 
 	const ProjectOption: React.FC<ProjectOptionProps> = ({ project }) => {
-		const { name, _id } = project;
+		const { name, _id, isFolder } = project;
+		const smartList = SMART_LISTS[project.urlName];
+
+		let iconName = isFolder ? 'folder' : smartList ? smartList.iconName : project.isInbox ? 'inbox' : 'menu';
+		let isProjectSelected = smartList ? selectedProject.urlName === project.urlName : selectedProject._id === _id;
 
 		return (
 			<div
-				className="flex items-center justify-between cursor-pointer hover:bg-color-gray-300 p-2 rounded-lg"
+				className="flex items-center justify-between cursor-pointer hover:bg-color-gray-300 px-2 py-[6px] rounded-lg"
 				onClick={() => {
 					setSelectedProject(project);
 					setIsVisible(false);
@@ -87,14 +101,17 @@ const DropdownProjects: React.FC<DropdownProjectsProps> = ({
 					}
 				}}
 			>
-				<div className="flex items-center gap-1">
+				<div className={classNames('flex items-center gap-1', isProjectSelected ? 'text-blue-500' : '')}>
 					<Icon
-						name={project.isInbox ? 'inbox' : 'menu'}
-						customClass={`!text-[22px] hover:text-white cursor-p`}
+						name={iconName}
+						customClass={classNames(
+							`!text-[22px] hover:text-white cursor-p`,
+							isProjectSelected ? 'text-blue-500' : 'text-color-gray-100'
+						)}
 					/>
 					{name}
 				</div>
-				{selectedProject._id === _id && (
+				{isProjectSelected && (
 					<Icon
 						name="check"
 						fill={0}
@@ -106,8 +123,21 @@ const DropdownProjects: React.FC<DropdownProjectsProps> = ({
 	};
 
 	const inboxProject = filteredProjects.find((project) => project.isInbox);
+	const { nonSmartListProjects, smartListProjects } = filteredProjects.reduce(
+		(acc, project) => {
+			if (!project.isInbox && !SMART_LISTS[project.urlName]) {
+				acc.nonSmartListProjects.push(project);
+			} else {
+				acc.smartListProjects.push(project);
+			}
+			return acc;
+		},
+		{ nonSmartListProjects: [], smartListProjects: [] }
+	);
 
 	// console.log(inboxProject);
+	console.log(smartListProjects);
+	console.log(nonSmartListProjects);
 
 	return (
 		<Dropdown
@@ -138,12 +168,22 @@ const DropdownProjects: React.FC<DropdownProjectsProps> = ({
 					ref={scrollRef}
 					className="p-1 h-[250px] overflow-auto gray-scrollbar border-t border-color-gray-200"
 				>
-					{inboxProject && <ProjectOption key={inboxProject.name} project={inboxProject} />}
-					{filteredProjects
-						.filter((project) => !project.isInbox)
-						.map((project) => (
-							<ProjectOption key={project.name} project={project} />
-						))}
+					{showSmartLists ? (
+						<div>
+							{topListProjects.map((project) => (
+								<ProjectOption key={project.name} project={project} />
+							))}
+							{inboxProject && <ProjectOption key={inboxProject.name} project={inboxProject} />}
+						</div>
+					) : (
+						inboxProject && <ProjectOption key={inboxProject.name} project={inboxProject} />
+					)}
+
+					{showSmartLists && <div className="px-2 mt-2 text-color-gray-100">Lists</div>}
+
+					{nonSmartListProjects.map((project) => (
+						<ProjectOption key={project.name} project={project} />
+					))}
 				</div>
 			</div>
 		</Dropdown>
