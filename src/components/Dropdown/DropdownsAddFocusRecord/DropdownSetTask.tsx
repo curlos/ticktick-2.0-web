@@ -48,9 +48,12 @@ const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({
 			return;
 		}
 
-		const newTasksWithNoParent = getTasksWithNoParent(tasks, tasksById, 'all', true);
+		const smartList = SMART_LISTS[selectedProject.urlName];
+		let projectId = smartList ? selectedProject.urlName : selectedProject._id;
+
+		const newTasksWithNoParent = getTasksWithNoParent(tasks, tasksById, projectId, smartList);
 		setTasksWithNoParent(newTasksWithNoParent);
-	}, [fetchedTasks]);
+	}, [fetchedTasks, selectedProject]);
 
 	console.log(tasksWithNoParent);
 

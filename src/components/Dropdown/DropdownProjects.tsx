@@ -57,7 +57,7 @@ const DropdownProjects: React.FC<DropdownProjectsProps> = ({
 
 		if (searchText.trim() === '') {
 			// If searchText is empty, consider all projects as the searched result.
-			searchedProjects = projects.map((project) => ({ item: project }));
+			searchedProjects = defaultProjects.map((project) => ({ item: project }));
 		} else {
 			// When searchText is not empty, perform the search using Fuse.js
 			searchedProjects = fuse.search(searchText);
@@ -170,16 +170,20 @@ const DropdownProjects: React.FC<DropdownProjectsProps> = ({
 				>
 					{showSmartLists ? (
 						<div>
-							{topListProjects.map((project) => (
-								<ProjectOption key={project.name} project={project} />
-							))}
+							{smartListProjects
+								.filter((project) => !project.isInbox)
+								.map((project) => (
+									<ProjectOption key={project.name} project={project} />
+								))}
 							{inboxProject && <ProjectOption key={inboxProject.name} project={inboxProject} />}
 						</div>
 					) : (
 						inboxProject && <ProjectOption key={inboxProject.name} project={inboxProject} />
 					)}
 
-					{showSmartLists && <div className="px-2 mt-2 text-color-gray-100">Lists</div>}
+					{showSmartLists && nonSmartListProjects.length > 0 && (
+						<div className="px-2 mt-2 text-color-gray-100">Lists</div>
+					)}
 
 					{nonSmartListProjects.map((project) => (
 						<ProjectOption key={project.name} project={project} />

@@ -28,7 +28,7 @@ const Task: React.FC<TaskProps> = ({
 	onCloseSearchTasks,
 }) => {
 	const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
-	const { tasksById } = fetchedTasks || {};
+	const { tasksById, parentOfTasks } = fetchedTasks || {};
 	const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
 	const { projectsById } = fetchedProjects || {};
 	const navigate = useNavigate();
@@ -67,6 +67,8 @@ const Task: React.FC<TaskProps> = ({
 		' text-color-gray-100 !text-[16px] hover:text-white' + (children?.length >= 1 ? '' : ' invisible');
 
 	const priorityData = PRIORITIES[priority];
+
+	const hasParentTask = parentOfTasks[_id];
 
 	return (
 		<div className={`${!fromParent || fromTaskDetails ? 'ml-0' : 'ml-4'}`}>
@@ -150,7 +152,7 @@ const Task: React.FC<TaskProps> = ({
 					<div
 						className={classNames(
 							setSelectedFocusRecordTask
-								? 'max-w-[150px] text-ellipsis text-nowrap overflow-hidden'
+								? `${hasParentTask ? 'max-w-[150px]' : 'max-w-[200px]'} text-ellipsis text-nowrap overflow-hidden`
 								: 'break-all max-w-[350px]',
 							completedTime ? 'line-through text-color-gray-100' : ''
 						)}
