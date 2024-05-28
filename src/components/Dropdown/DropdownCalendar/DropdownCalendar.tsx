@@ -253,8 +253,6 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({
 							setIsVisible={setIsDropdownTimeVisible}
 							selectedTime={selectedTime}
 							setSelectedTime={setSelectedTime}
-							currDueDate={currDueDate}
-							setCurrDueDate={setCurrDueDate}
 						/>
 						<TimeOption
 							toggleRef={dropdownTimeRef}

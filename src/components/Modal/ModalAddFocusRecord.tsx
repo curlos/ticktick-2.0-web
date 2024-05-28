@@ -98,6 +98,7 @@ const ModalAddFocusRecord: React.FC = () => {
 						setIsDropdownVisible={setIsDropdownStartTimeVisible}
 						time={startTime}
 						setTime={setStartTime}
+						name="Start Time"
 					/>
 
 					{/* End Time */}
@@ -107,6 +108,7 @@ const ModalAddFocusRecord: React.FC = () => {
 						setIsDropdownVisible={setIsDropdownEndTimeVisible}
 						time={endTime}
 						setTime={setEndTime}
+						name="End Time"
 					/>
 
 					{/* Type */}
@@ -172,10 +174,10 @@ const ModalAddFocusRecord: React.FC = () => {
 	);
 };
 
-const TimeOption = ({ dropdownRef, isDropdownVisible, setIsDropdownVisible, time, setTime }) => {
+const TimeOption = ({ dropdownRef, isDropdownVisible, setIsDropdownVisible, time, setTime, name }) => {
 	return (
 		<div className="flex items-center gap-2">
-			<div className="w-[100px]">Start Time</div>
+			<div className="w-[100px]">{name}</div>
 			<div className="relative flex-1">
 				<div
 					ref={dropdownRef}

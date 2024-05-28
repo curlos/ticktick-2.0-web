@@ -19,21 +19,9 @@ const DropdownTimeCalendar: React.FC<DropdownTimeCalendarProps> = ({
 }) => {
 	// TODO: Get default date of today
 	const [selectedTime, setSelectedTime] = useState(getCurrentTimeString());
+	const [selectedDate, setSelectedDate] = useState(null);
 	const [isDropdownTimeVisible, setIsDropdownTimeVisible] = useState(false);
 	const dropdownTimeRef = useRef(null);
-
-	useEffect(() => {
-		let newDueDate = date ? date : new Date();
-
-		if (selectedTime) {
-			const newDateObject = setTimeOnDateString(newDueDate, selectedTime);
-			newDueDate = newDateObject;
-		}
-
-		console.log(newDueDate);
-
-		setDate(newDueDate);
-	}, [selectedTime]);
 
 	return (
 		<Dropdown
@@ -43,7 +31,7 @@ const DropdownTimeCalendar: React.FC<DropdownTimeCalendarProps> = ({
 			customClasses={'w-[250px] p-1 shadow-2xl border border-color-gray-200 rounded-lg'}
 		>
 			<div className="pt-2">
-				<SelectCalendar dueDate={date} setDueDate={setDate} time={selectedTime} />
+				<SelectCalendar dueDate={selectedDate} setDueDate={setSelectedDate} time={selectedTime} />
 			</div>
 
 			<div className="relative">
@@ -80,6 +68,14 @@ const DropdownTimeCalendar: React.FC<DropdownTimeCalendarProps> = ({
 				<button
 					className="bg-blue-500 rounded py-1 cursor-pointer hover:bg-blue-600"
 					onClick={() => {
+						let newDueDate = selectedDate ? selectedDate : new Date();
+
+						if (selectedTime) {
+							const newDateObject = setTimeOnDateString(newDueDate, selectedTime);
+							newDueDate = newDateObject;
+						}
+
+						setDate(newDueDate);
 						setIsVisible(false);
 					}}
 				>
