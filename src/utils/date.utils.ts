@@ -128,3 +128,44 @@ export const getCurrentTimeString = () => {
 	// Format the time in AM/PM notation
 	return `${hours}:${minutesStr} ${ampm}`;
 };
+
+export const formatDateTime = (dateTimeStr) => {
+	const date = new Date(dateTimeStr);
+
+	// Extracting hours and minutes for the time
+	const optionsTime = { hour: '2-digit', minute: '2-digit', hour12: true };
+	const time = date.toLocaleTimeString('en-US', optionsTime);
+
+	// Extracting the day and month for the date
+	const optionsDate = { month: 'long', day: 'numeric' };
+	const day = date.toLocaleDateString('en-US', optionsDate);
+
+	return { time, day };
+};
+
+export const groupByEndTimeDay = (records) => {
+	const grouped = {};
+
+	records.forEach((record) => {
+		// Extract the date part of the endTime
+		const endTime = new Date(record.endTime);
+		const day = endTime.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+		// Initialize the array if it does not already exist
+		if (!grouped[day]) {
+			grouped[day] = [];
+		}
+
+		// Push the current record into the correct day array
+		grouped[day].push(record);
+	});
+
+	// Create an array from the grouped object and sort it by date
+	const sortedKeys = Object.keys(grouped).sort((a, b) => new Date(b) - new Date(a));
+	const sortedGrouped = {};
+	sortedKeys.forEach((key) => {
+		sortedGrouped[key] = grouped[key];
+	});
+
+	return sortedGrouped;
+};

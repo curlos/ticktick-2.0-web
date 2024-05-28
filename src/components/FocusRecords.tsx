@@ -1,5 +1,5 @@
-import { useRef, useState } from 'react';
-import { formatTimeToHoursAndMinutes } from '../utils/helpers.utils';
+import { useEffect, useRef, useState } from 'react';
+import { formatDuration, formatTimeToHoursAndMinutes } from '../utils/helpers.utils';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import Icon from './Icon';
@@ -7,6 +7,8 @@ import useSticky from '../hooks/useSticky';
 import ModalAddFocusRecord from './Modal/ModalAddFocusRecord';
 import { setModalState } from '../slices/modalSlice';
 import { useDispatch } from 'react-redux';
+import { useGetFocusRecordsQuery, useGetTasksQuery } from '../services/api';
+import { formatDateTime, groupByEndTimeDay } from '../utils/date.utils';
 
 interface StatsOverviewProps {
 	overviewData: object;
@@ -53,50 +55,49 @@ const StatsOverview: React.FC<StatsOverviewProps> = ({ overviewData }) => {
 	);
 };
 
-const FocusRecords = () => {
+const FocusRecordList = () => {
 	const dispatch = useDispatch();
+	const {
+		data: fetchedFocusRecords,
+		isLoading: isLoadingFocusRecords,
+		error: errorFocusRecords,
+	} = useGetFocusRecordsQuery();
+	const { focusRecords } = fetchedFocusRecords || {};
+
+	const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
+	const { tasksById } = fetchedTasks || {};
+
+	console.log(focusRecords);
+
 	const [overviewData, setOverviewData] = useState({
 		todaysPomo: 3,
 		todaysFocus: 7200000,
 		totalPomo: 1143,
 		totalFocusDuration: 50000000000,
 	});
-	const [focusRecordList, setFocusRecordList] = useState([
-		{
-			_id: 1,
-			name: 'TickTick 2.0 (Web)',
-			description: `# Honestly didn’t get too much done here. I did finish the rest of the UI for the focus settings modal but the CSS sliding animation for the checkboxes had me fussing over how the state is controlled for these checkboxes. They need to remain uncontrolled to have the animation.\n\nWill leave for this later after I finish more UI components. Want to finish as much Frontend as I can and then dive deep into backend.`,
-			timeFocused: 2700000,
-		},
-		{
-			_id: 2,
-			name: 'TickTick 2.0 (Web)',
-			description: `# Honestly didn’t get too much done here. I did finish the rest of the UI for the focus settings modal but the CSS sliding animation for the checkboxes had me fussing over how the state is controlled for these checkboxes. They need to remain uncontrolled to have the animation.`,
-			timeFocused: 2700000,
-		},
-		{
-			_id: 3,
-			name: 'TickTick 2.0 (Web)',
-			description: `# Honestly didn’t get too much done here. I did finish the rest of the UI for the focus settings modal but the CSS sliding animation for the checkboxes had me fussing over how the state is controlled for these checkboxes. They need to remain uncontrolled to have the animation.`,
-			timeFocused: 2700000,
-		},
-		{
-			_id: 4,
-			name: 'TickTick 2.0 (Web)',
-			description: `# Honestly didn’t get too much done here. I did finish the rest of the UI for the focus settings modal but the CSS sliding animation for the checkboxes had me fussing over how the state is controlled for these checkboxes. They need to remain uncontrolled to have the animation.`,
-			timeFocused: 2700000,
-		},
-		{
-			_id: 5,
-			name: 'TickTick 2.0 (Web)',
-			description: `# Honestly didn’t get too much done here. I did finish the rest of the UI for the focus settings modal but the CSS sliding animation for the checkboxes had me fussing over how the state is controlled for these checkboxes. They need to remain uncontrolled to have the animation.`,
-			timeFocused: 2700000,
-		},
-	]);
 
 	const scrollableRef = useRef(null); // Reference to the scrollable container
 	const stickyRef = useRef(null); // Reference to the sticky element
 	const isSticky = useSticky(scrollableRef, stickyRef); // Pass both refs to the hook
+
+	function sortArrayByEndTime(array) {
+		// Create a deep copy of the array to avoid modifying the original
+		const arrayCopy = array.map((item) => ({ ...item }));
+
+		return arrayCopy.sort((a, b) => new Date(b.endTime) - new Date(a.endTime));
+	}
+
+	const [groupedRecords, setGroupedRecords] = useState();
+
+	useEffect(() => {
+		if (focusRecords) {
+			const newGroupedRecords = groupByEndTimeDay(focusRecords);
+			console.log(newGroupedRecords);
+			setGroupedRecords(newGroupedRecords);
+		}
+	}, [focusRecords]);
+
+	console.log(groupedRecords);
 
 	return (
 		<div
@@ -120,54 +121,70 @@ const FocusRecords = () => {
 				/>
 			</div>
 
-			<div className="text-[13px] px-5">
-				<div className="text-color-gray-100 text-[13px] mb-3">April 7</div>
-
-				{focusRecordList.map((focusRecord) => {
-					const { _id, name, description, timeFocused } = focusRecord;
+			{groupedRecords &&
+				Object.keys(groupedRecords).map((day) => {
+					const focusRecordsForTheDay = groupedRecords[day];
 
 					return (
-						<li
-							key={_id}
-							className="relative m-0 list-none last:mb-[4px] mt-[24px]"
-							style={{ minHeight: '54px' }}
-						>
-							<div
-								className="absolute top-[28px] left-[11px] h-full border-solid border-l-[1px] border-blue-900"
-								style={{ height: 'calc(100% - 16px)' }}
-							></div>
+						<div className="text-[13px] px-5 mt-5">
+							<div className="text-color-gray-100 text-[13px] mb-3">{day}</div>
 
-							<div className="relative m-0 ml-[40px] break-words" style={{ marginTop: 'unset' }}>
-								<div className="absolute left-[-40px] w-[24px] h-[24px] bg-primary-10 rounded-full flex items-center justify-center">
-									<Icon
-										name="nutrition"
-										customClass={'!text-[20px] text-blue-500 cursor-pointer'}
-										fill={1}
-									/>
-								</div>
-
-								<div
-									className="absolute left-[-33px] w-[10px] h-[10px] border-solid rounded-full border-[2px] bg-color-gray-600 border-blue-500"
-									style={{ top: '34px' }}
-								></div>
-
-								<div>
-									<div className="flex justify-between text-color-gray-100 text-[12px] mb-[6px]">
-										<div>20:30 - 21:30</div>
-										<div>45m</div>
-									</div>
-									<div className="font-medium">{name}</div>
-									<div className="text-color-gray-100 mt-1">
-										<ReactMarkdown remarkPlugins={[remarkGfm]}>{description}</ReactMarkdown>
-									</div>
-								</div>
-							</div>
-						</li>
+							{focusRecords &&
+								tasksById &&
+								sortArrayByEndTime(focusRecordsForTheDay).map((focusRecord) => (
+									<FocusRecord focusRecord={focusRecord} tasksById={tasksById} />
+								))}
+						</div>
 					);
 				})}
-			</div>
 		</div>
 	);
 };
 
-export default FocusRecords;
+const FocusRecord = ({ focusRecord, tasksById }) => {
+	const { _id, taskId, note, duration, startTime, endTime } = focusRecord;
+
+	const task = tasksById[taskId];
+
+	console.log(task);
+
+	const startTimeObj = formatDateTime(startTime);
+	const endTimeObj = formatDateTime(endTime);
+
+	return (
+		<li key={_id} className="relative m-0 list-none last:mb-[4px] mt-[24px]" style={{ minHeight: '54px' }}>
+			<div
+				className="absolute top-[28px] left-[11px] h-full border-solid border-l-[1px] border-blue-900"
+				style={{ height: 'calc(100% - 16px)' }}
+			></div>
+
+			<div className="relative m-0 ml-[40px] break-words" style={{ marginTop: 'unset' }}>
+				<div className="absolute left-[-40px] w-[24px] h-[24px] bg-primary-10 rounded-full flex items-center justify-center">
+					<Icon name="nutrition" customClass={'!text-[20px] text-blue-500 cursor-pointer'} fill={1} />
+				</div>
+
+				<div
+					className="absolute left-[-33px] w-[10px] h-[10px] border-solid rounded-full border-[2px] bg-color-gray-600 border-blue-500"
+					style={{ top: '34px' }}
+				></div>
+
+				<div>
+					<div className="flex justify-between text-color-gray-100 text-[12px] mb-[6px]">
+						<div>
+							{startTimeObj.time} - {endTimeObj.time}
+						</div>
+						<div>{formatDuration(duration)}</div>
+					</div>
+
+					{task && <div className="font-medium">{task.title}</div>}
+
+					<div className="text-color-gray-100 mt-1">
+						<ReactMarkdown remarkPlugins={[remarkGfm]}>{note}</ReactMarkdown>
+					</div>
+				</div>
+			</div>
+		</li>
+	);
+};
+
+export default FocusRecordList;

@@ -18,7 +18,7 @@ interface PomodoroTimerProps {
 }
 
 const PomodoroTimer: React.FC<PomodoroTimerProps> = () => {
-	const [initialSeconds, _] = useState(5); // Assuming you want to start with a 5 seconds timer for testing
+	const [initialSeconds, _] = useState(2700); // Assuming you want to start with a 5 seconds timer for testing
 	const [seconds, setSeconds] = useState(initialSeconds);
 	const [isActive, setIsActive] = useState(false);
 	const [isOvertime, setIsOvertime] = useState(false);

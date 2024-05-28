@@ -10,7 +10,7 @@ const buildQueryString = (params) => {
 export const api = createApi({
 	reducerPath: 'tasksApi', // Unique identifier for the reducer
 	baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:8888' }), // Base URL for API calls
-	tagTypes: ['Task', 'Project'], // Define tag type for cache invalidation
+	tagTypes: ['Task', 'Project', 'FocusRecord'], // Define tag type for cache invalidation
 	endpoints: (builder) => ({
 		// Tasks
 		getTasks: builder.query({
@@ -110,6 +110,18 @@ export const api = createApi({
 			}),
 			invalidatesTags: ['Project', 'Task'],
 		}),
+
+		// Focus Records
+		getFocusRecords: builder.query({
+			query: (queryParams) => {
+				const queryString = buildQueryString(queryParams);
+				return queryString ? `/focus-records?${queryString}` : '/focus-records'; // Use query string if provided
+			},
+			providesTags: ['FocusRecord'], // This endpoint provides the 'Task' tag
+			transformResponse: (response) => {
+				return { focusRecords: response }; // Return as a combined object
+			},
+		}),
 	}),
 });
 
@@ -129,4 +141,7 @@ export const {
 	useAddProjectMutation,
 	useEditProjectMutation,
 	usePermanentlyDeleteProjectMutation,
+
+	// Focus Records
+	useGetFocusRecordsQuery,
 } = api;

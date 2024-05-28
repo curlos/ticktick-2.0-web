@@ -311,3 +311,19 @@ export const isTaskOverdue = (taskDate) => {
 
 	return true;
 };
+
+export const formatDuration = (seconds) => {
+	const hours = Math.floor(seconds / 3600);
+	const minutes = Math.floor((seconds % 3600) / 60);
+
+	let formattedDuration = '';
+	if (hours > 0) {
+		formattedDuration += `${hours}h`;
+	}
+	if (minutes > 0 || hours > 0) {
+		// Include minutes even if it's zero when there are hours
+		formattedDuration += `${minutes}m`;
+	}
+
+	return formattedDuration.trim();
+};
