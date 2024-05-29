@@ -67,8 +67,6 @@ const FocusRecordList = () => {
 	const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
 	const { tasksById } = fetchedTasks || {};
 
-	console.log(focusRecords);
-
 	const [overviewData, setOverviewData] = useState({
 		todaysPomo: 3,
 		todaysFocus: 7200000,
@@ -92,12 +90,9 @@ const FocusRecordList = () => {
 	useEffect(() => {
 		if (focusRecords) {
 			const newGroupedRecords = groupByEndTimeDay(focusRecords);
-			console.log(newGroupedRecords);
 			setGroupedRecords(newGroupedRecords);
 		}
 	}, [focusRecords]);
-
-	console.log(groupedRecords);
 
 	return (
 		<div
@@ -142,11 +137,10 @@ const FocusRecordList = () => {
 };
 
 const FocusRecord = ({ focusRecord, tasksById }) => {
+	const dispatch = useDispatch();
 	const { _id, taskId, note, duration, startTime, endTime } = focusRecord;
 
 	const task = tasksById[taskId];
-
-	console.log(task);
 
 	const startTimeObj = formatDateTime(startTime);
 	const endTimeObj = formatDateTime(endTime);
@@ -156,6 +150,11 @@ const FocusRecord = ({ focusRecord, tasksById }) => {
 			key={_id}
 			className="relative m-0 list-none last:mb-[4px] mt-[24px] cursor-pointer"
 			style={{ minHeight: '54px' }}
+			onClick={() =>
+				dispatch(
+					setModalState({ modalId: 'ModalAddFocusRecord', isOpen: true, props: { focusRecord: focusRecord } })
+				)
+			}
 		>
 			<div
 				className="absolute top-[28px] left-[11px] h-full border-solid border-l-[1px] border-blue-900"

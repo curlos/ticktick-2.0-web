@@ -131,7 +131,15 @@ export const api = createApi({
 					body: payload,
 				};
 			},
-			invalidatesTags: ['FocusRecord', 'Task'], // Invalidate the cache when a task is added
+			invalidatesTags: ['FocusRecord'],
+		}),
+		editFocusRecord: builder.mutation({
+			query: ({ focusRecordId, payload }) => ({
+				url: `/focus-records/edit/${focusRecordId}`,
+				method: 'PUT',
+				body: payload,
+			}),
+			invalidatesTags: (result, error, focusRecordId) => ['FocusRecord'],
 		}),
 	}),
 });
@@ -156,4 +164,5 @@ export const {
 	// Focus Records
 	useGetFocusRecordsQuery,
 	useAddFocusRecordMutation,
+	useEditFocusRecordMutation,
 } = api;

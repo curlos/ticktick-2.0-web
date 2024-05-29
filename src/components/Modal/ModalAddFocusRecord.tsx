@@ -8,11 +8,23 @@ import DropdownSetFocusTypeAndAmount from '../Dropdown/DropdownsAddFocusRecord/D
 import DropdownTimeCalendar from '../Dropdown/DropdownsAddFocusRecord/DropdownTimeCalendar';
 import DropdownSetTask from '../Dropdown/DropdownsAddFocusRecord/DropdownSetTask';
 import classNames from 'classnames';
-import { useAddFocusRecordMutation } from '../../services/api';
+import { useAddFocusRecordMutation, useEditFocusRecordMutation, useGetTasksQuery } from '../../services/api';
+import { secondsToHoursAndMinutes } from '../../utils/helpers.utils';
 
 const ModalAddFocusRecord: React.FC = () => {
+	const modal = useSelector((state) => state.modals.modals['ModalAddFocusRecord']);
+	const {
+		isOpen,
+		props: { focusRecord },
+	} = modal;
+
+	const dispatch = useDispatch();
+
+	const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
+	const { tasks, tasksById } = fetchedTasks || {};
 	const [addFocusRecord, { isLoading: isLoadingAddFocusRecord, error: errorAddFocusRecord }] =
 		useAddFocusRecordMutation();
+	const [editFocusRecord] = useEditFocusRecordMutation();
 
 	const [selectedTask, setSelectedTask] = useState<Object | null>(null);
 	const [focusNote, setFocusNote] = useState('');
@@ -35,15 +47,6 @@ const ModalAddFocusRecord: React.FC = () => {
 	const dropdownEndTimeCalendarRef = useRef(null);
 	const dropdownSetFocusTypeAndAmountRef = useRef(null);
 
-	const modal = useSelector((state) => state.modals.modals['ModalAddFocusRecord']);
-	const dispatch = useDispatch();
-
-	if (!modal) {
-		return null;
-	}
-
-	const { isOpen } = modal;
-
 	const closeModal = () => {
 		dispatch(setModalState({ modalId: 'ModalAddFocusRecord', isOpen: false }));
 	};
@@ -51,6 +54,31 @@ const ModalAddFocusRecord: React.FC = () => {
 	useEffect(() => {
 		setIsDropdownSetTaskVisible(false);
 	}, [selectedTask]);
+
+	useEffect(() => {
+		if (focusRecord) {
+			const duration = secondsToHoursAndMinutes(focusRecord?.duration) || { hours: 0, minutes: 0 };
+			const task = tasksById[focusRecord.taskId];
+
+			setSelectedTask(task);
+			setFocusNote(focusRecord.note);
+			setStartTime(new Date(focusRecord.startTime));
+			setEndTime(new Date(focusRecord.endTime));
+			setPomos(focusRecord.pomos);
+			setHours(duration.hours);
+			setMinutes(duration.minutes);
+			setFocusType(focusRecord.focusType);
+		} else {
+			setSelectedTask(null);
+			setFocusNote('');
+			setStartTime(null);
+			setEndTime(null);
+			setPomos(0);
+			setHours(0);
+			setMinutes(0);
+			setFocusType('pomo');
+		}
+	}, [focusRecord]);
 
 	const getDuration = () => {
 		if (focusType === 'pomo') {
@@ -72,15 +100,19 @@ const ModalAddFocusRecord: React.FC = () => {
 			note: focusNote,
 		};
 
-		if (payload.duration <= 300) {
-			console.log('Duration must be longer than 300 seconds (5 minutes)');
+		if (payload.duration < 300) {
+			console.log('Duration must be longer or equal to 300 seconds (5 minutes)');
 			return;
 		}
 
-		console.log(payload);
-
-		debugger;
-		await addFocusRecord(payload);
+		if (focusRecord) {
+			await editFocusRecord({
+				focusRecordId: focusRecord._id,
+				payload: payload,
+			});
+		} else {
+			await addFocusRecord(payload);
+		}
 	};
 
 	return (
@@ -203,7 +235,7 @@ const ModalAddFocusRecord: React.FC = () => {
 						<div className="w-[100px] mt-3">Focus Note</div>
 
 						<TextareaAutosize
-							className="flex-1 text-[13px] placeholder:text-[#7C7C7C] mt-2 mb-4 bg-transparent outline-none resize-none border border-color-gray-200 rounded p-2 hover:border-blue-500 min-h-[120px]"
+							className="flex-1 text-[13px] placeholder:text-[#7C7C7C] mt-2 mb-4 bg-transparent outline-none resize-none border border-color-gray-200 rounded p-2 hover:border-blue-500 min-h-[120px] max-h-[300px] overflow-auto gray-scrollbar"
 							placeholder="What do you have in mind?"
 							value={focusNote}
 							onChange={(e) => setFocusNote(e.target.value)}
@@ -223,7 +255,7 @@ const ModalAddFocusRecord: React.FC = () => {
 						onClick={async () => {
 							try {
 								await handleAddFocusRecord();
-								// closeModal();
+								closeModal();
 							} catch (error) {
 								console.log(error);
 							}

@@ -15,6 +15,20 @@ export function millisecondsToHoursAndMinutes(milliseconds: number) {
 	};
 }
 
+export function secondsToHoursAndMinutes(seconds: number) {
+	// Convert seconds to minutes
+	const totalMinutes = Math.floor(seconds / 60);
+
+	// Calculate hours and minutes
+	const hours = Math.floor(totalMinutes / 60);
+	const minutes = totalMinutes % 60;
+
+	return {
+		hours: hours,
+		minutes: minutes,
+	};
+}
+
 /**
  * Transforms an array of objects into an object with keys based on a specified property.
  * @param {Object[]} array - The array of objects to transform.
