@@ -5,9 +5,10 @@ interface CustomInputProps {
 	value: any;
 	setValue: React.Dispatch<React.SetStateAction<any>>;
 	customClasses?: string;
+	onChange?: any;
 }
 
-const CustomInput: React.FC<CustomInputProps> = ({ type, value, setValue, customClasses }) => (
+const CustomInput: React.FC<CustomInputProps> = ({ type, value, setValue, onChange, customClasses }) => (
 	<input
 		type={type || 'text'}
 		className={classNames(
@@ -15,7 +16,7 @@ const CustomInput: React.FC<CustomInputProps> = ({ type, value, setValue, custom
 			customClasses
 		)}
 		value={value}
-		onChange={(e) => setValue(Number(e.target.value))}
+		onChange={onChange ? onChange : (e) => setValue(Number(e.target.value))}
 	/>
 );
 

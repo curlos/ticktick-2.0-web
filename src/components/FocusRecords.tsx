@@ -152,7 +152,11 @@ const FocusRecord = ({ focusRecord, tasksById }) => {
 	const endTimeObj = formatDateTime(endTime);
 
 	return (
-		<li key={_id} className="relative m-0 list-none last:mb-[4px] mt-[24px]" style={{ minHeight: '54px' }}>
+		<li
+			key={_id}
+			className="relative m-0 list-none last:mb-[4px] mt-[24px] cursor-pointer"
+			style={{ minHeight: '54px' }}
+		>
 			<div
 				className="absolute top-[28px] left-[11px] h-full border-solid border-l-[1px] border-blue-900"
 				style={{ height: 'calc(100% - 16px)' }}

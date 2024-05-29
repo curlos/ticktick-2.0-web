@@ -8,18 +8,28 @@ import DropdownSetFocusTypeAndAmount from '../Dropdown/DropdownsAddFocusRecord/D
 import DropdownTimeCalendar from '../Dropdown/DropdownsAddFocusRecord/DropdownTimeCalendar';
 import DropdownSetTask from '../Dropdown/DropdownsAddFocusRecord/DropdownSetTask';
 import classNames from 'classnames';
+import { useAddFocusRecordMutation } from '../../services/api';
 
 const ModalAddFocusRecord: React.FC = () => {
+	const [addFocusRecord, { isLoading: isLoadingAddFocusRecord, error: errorAddFocusRecord }] =
+		useAddFocusRecordMutation();
+
+	const [selectedTask, setSelectedTask] = useState<Object | null>(null);
+	const [focusNote, setFocusNote] = useState('');
+	const [startTime, setStartTime] = useState(null);
+	const [endTime, setEndTime] = useState(null);
+	const [pomos, setPomos] = useState(0);
+	const [hours, setHours] = useState(0);
+	const [minutes, setMinutes] = useState(0);
+	const [focusType, setFocusType] = useState('pomo');
+
+	// useState - Dropdown
 	const [isDropdownSetTaskVisible, setIsDropdownSetTaskVisible] = useState(false);
 	const [isDropdownStartTimeVisible, setIsDropdownStartTimeVisible] = useState(false);
 	const [isDropdownEndTimeVisible, setIsDropdownEndTimeVisible] = useState(false);
 	const [isDropdownSetFocusTypeAndAmountVisible, setIsDropdownSetFocusTypeAndAmountVisible] = useState(false);
-	const [selectedTask, setSelectedTask] = useState<Object | null>(null);
-	const [focusNote, setFocusNote] = useState('');
 
-	const [startTime, setStartTime] = useState(null);
-	const [endTime, setEndTime] = useState(null);
-
+	// useRef
 	const dropdownSetTaskRef = useRef(null);
 	const dropdownStartTimeCalendarRef = useRef(null);
 	const dropdownEndTimeCalendarRef = useRef(null);
@@ -41,6 +51,37 @@ const ModalAddFocusRecord: React.FC = () => {
 	useEffect(() => {
 		setIsDropdownSetTaskVisible(false);
 	}, [selectedTask]);
+
+	const getDuration = () => {
+		if (focusType === 'pomo') {
+			// TODO: Change later when focus settings is worked on but for now keep it at 45 minutes as the default
+			const defaultPomoLength = 2700; // 2700 seconds = 45 minutes
+			return pomos * defaultPomoLength;
+		} else {
+			// Duration is in seconds so multiply the hours and minutes by 60.
+			return (hours * 60 + minutes) * 60;
+		}
+	};
+
+	const handleAddFocusRecord = async () => {
+		const payload = {
+			taskId: selectedTask ? selectedTask._id : null,
+			startTime: startTime,
+			endTime: endTime,
+			duration: getDuration(),
+			note: focusNote,
+		};
+
+		if (payload.duration <= 300) {
+			console.log('Duration must be longer than 300 seconds (5 minutes)');
+			return;
+		}
+
+		console.log(payload);
+
+		debugger;
+		await addFocusRecord(payload);
+	};
 
 	return (
 		<Modal isOpen={isOpen} onClose={closeModal} position="top-center">
@@ -122,8 +163,17 @@ const ModalAddFocusRecord: React.FC = () => {
 									setIsDropdownSetFocusTypeAndAmountVisible(!isDropdownSetFocusTypeAndAmountVisible);
 								}}
 							>
-								<div className="text-color-gray-100">
-									{selectedTask ? 'Task Selected' : 'Pomo: 0 Pomo'}
+								<div
+									className={classNames(
+										(focusType === 'pomo' && pomos > 0) ||
+											(focusType === 'stopwatch' && (hours > 0 || minutes > 0))
+											? 'text-white'
+											: 'text-color-gray-100'
+									)}
+								>
+									{focusType === 'pomo'
+										? `Pomo: ${pomos} Pomo${pomos > 1 ? 's' : ''}`
+										: `Stopwatch: ${hours > 0 ? `${hours} Hour${hours !== 1 ? 's' : ''}` : ''} ${minutes} Minute${minutes !== 1 ? 's' : ''}`}
 								</div>
 								<Icon
 									name="expand_more"
@@ -136,8 +186,14 @@ const ModalAddFocusRecord: React.FC = () => {
 								toggleRef={dropdownSetFocusTypeAndAmountRef}
 								isVisible={isDropdownSetFocusTypeAndAmountVisible}
 								setIsVisible={setIsDropdownSetFocusTypeAndAmountVisible}
-								selectedTask={selectedTask}
-								setSelectedTask={setSelectedTask}
+								focusType={focusType}
+								setFocusType={setFocusType}
+								pomos={pomos}
+								setPomos={setPomos}
+								hours={hours}
+								setHours={setHours}
+								minutes={minutes}
+								setMinutes={setMinutes}
 							/>
 						</div>
 					</div>
@@ -164,7 +220,14 @@ const ModalAddFocusRecord: React.FC = () => {
 					</button>
 					<button
 						className="bg-blue-500 rounded py-1 cursor-pointer hover:bg-blue-600 min-w-[114px]"
-						onClick={closeModal}
+						onClick={async () => {
+							try {
+								await handleAddFocusRecord();
+								// closeModal();
+							} catch (error) {
+								console.log(error);
+							}
+						}}
 					>
 						Ok
 					</button>

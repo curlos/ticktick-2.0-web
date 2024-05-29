@@ -122,6 +122,17 @@ export const api = createApi({
 				return { focusRecords: response }; // Return as a combined object
 			},
 		}),
+		addFocusRecord: builder.mutation({
+			query: (payload) => {
+				const url = '/focus-records/add';
+				return {
+					url,
+					method: 'POST',
+					body: payload,
+				};
+			},
+			invalidatesTags: ['FocusRecord', 'Task'], // Invalidate the cache when a task is added
+		}),
 	}),
 });
 
@@ -144,4 +155,5 @@ export const {
 
 	// Focus Records
 	useGetFocusRecordsQuery,
+	useAddFocusRecordMutation,
 } = api;

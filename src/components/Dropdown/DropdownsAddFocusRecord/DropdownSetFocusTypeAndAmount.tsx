@@ -6,16 +6,29 @@ import CustomInput from '../../CustomInput';
 interface DropdownSetFocusTypeAndAmountProps extends DropdownProps {
 	selectedTask: Object | null;
 	setSelectedTask: React.Dispatch<React.SetStateAction<Object | null>>;
+	focusType: string;
+	setFocusType: React.Dispatch<React.SetStateAction<string>>;
+	pomos: number;
+	setPomos: React.Dispatch<React.SetStateAction<number>>;
+	hours: number;
+	setHours: React.Dispatch<React.SetStateAction<number>>;
+	minutes: number;
+	setMinutes: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const DropdownSetFocusTypeAndAmount: React.FC<DropdownSetFocusTypeAndAmountProps> = ({
 	toggleRef,
 	isVisible,
 	setIsVisible,
-	selectedTask,
-	setSelectedTask,
+	focusType,
+	setFocusType,
+	pomos,
+	setPomos,
+	hours,
+	setHours,
+	minutes,
+	setMinutes,
 }) => {
-	const [selectedButton, setSelectedButton] = useState('pomo');
 	const sharedButtonStyle = `text-[12px] py-1 px-3 rounded-3xl cursor-pointer`;
 	const selectedButtonStyle = `${sharedButtonStyle} bg-[#222735] text-[#4671F7] font-semibold`;
 	const unselectedButtonStyle = `${sharedButtonStyle} text-[#666666] bg-color-gray-300`;
@@ -29,33 +42,63 @@ const DropdownSetFocusTypeAndAmount: React.FC<DropdownSetFocusTypeAndAmountProps
 		>
 			<div className="flex justify-center gap-1">
 				<div
-					className={selectedButton === 'pomo' ? selectedButtonStyle : unselectedButtonStyle}
-					onClick={() => setSelectedButton('pomo')}
+					className={focusType === 'pomo' ? selectedButtonStyle : unselectedButtonStyle}
+					onClick={() => setFocusType('pomo')}
 				>
 					Pomo
 				</div>
 				<div
-					className={selectedButton === 'stopwatch' ? selectedButtonStyle : unselectedButtonStyle}
-					onClick={() => setSelectedButton('stopwatch')}
+					className={focusType === 'stopwatch' ? selectedButtonStyle : unselectedButtonStyle}
+					onClick={() => setFocusType('stopwatch')}
 				>
 					Stopwatch
 				</div>
 			</div>
 
 			<div className="grid grid-cols-2 gap-4 my-4">
-				{selectedButton === 'pomo' ? (
+				{focusType === 'pomo' ? (
 					<div className="flex items-end gap-2">
-						<CustomInput value={0} customClasses="w-[60px]" />
+						<CustomInput value={pomos} setValue={setPomos} customClasses="w-[60px]" />
 						<div>pomos</div>
 					</div>
 				) : (
 					<>
 						<div className="flex items-end gap-2">
-							<CustomInput value={0} customClasses="w-[60px]" />
+							<CustomInput
+								type="number"
+								value={hours}
+								onChange={(e) => {
+									console.log(e.target.value);
+									let newHours = Number(e.target.value);
+
+									if (newHours < 0) {
+										newHours = 0;
+									}
+
+									setHours(newHours);
+								}}
+								customClasses="w-[60px]"
+							/>
 							<div>hours</div>
 						</div>
 						<div className="flex items-end gap-2">
-							<CustomInput value={0} customClasses="w-[60px]" />
+							<CustomInput
+								type="number"
+								value={minutes}
+								onChange={(e) => {
+									console.log(e.target.value);
+									let newMinutes = Number(e.target.value);
+
+									if (newMinutes > 59) {
+										newMinutes = 59;
+									} else if (newMinutes < 0) {
+										newMinutes = 0;
+									}
+
+									setMinutes(newMinutes);
+								}}
+								customClasses="w-[60px]"
+							/>
 							<div>mins</div>
 						</div>
 					</>
