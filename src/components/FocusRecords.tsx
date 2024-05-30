@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { formatDuration, formatTimeToHoursAndMinutes } from '../utils/helpers.utils';
+import { areDatesEqual, formatDuration, formatTimeToHoursAndMinutes } from '../utils/helpers.utils';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import Icon from './Icon';
@@ -14,8 +14,44 @@ interface StatsOverviewProps {
 	overviewData: object;
 }
 
-const StatsOverview: React.FC<StatsOverviewProps> = ({ overviewData }) => {
+const StatsOverview: React.FC<StatsOverviewProps> = ({ focusRecords }) => {
+	const [overviewData, setOverviewData] = useState({
+		todaysPomo: 0,
+		todaysFocus: 0,
+		totalPomo: 0,
+		totalFocusDuration: 0,
+	});
 	const { todaysPomo, todaysFocus, totalPomo, totalFocusDuration } = overviewData;
+
+	useEffect(() => {
+		if (focusRecords) {
+			let todaysPomo = 0;
+			let todaysFocus = 0;
+			let totalPomo = 0;
+			let totalFocusDuration = 0;
+
+			focusRecords.forEach((focusRecord) => {
+				const { pomos, duration, startTime } = focusRecord;
+
+				totalPomo += pomos;
+				totalFocusDuration += duration;
+
+				const today = new Date();
+
+				if (areDatesEqual(new Date(startTime), today)) {
+					todaysPomo += pomos;
+					todaysFocus += duration;
+				}
+			});
+
+			setOverviewData({
+				todaysPomo,
+				todaysFocus,
+				totalPomo,
+				totalFocusDuration,
+			});
+		}
+	}, [focusRecords]);
 
 	interface OverviewStatProps {
 		title: string;
@@ -40,6 +76,8 @@ const StatsOverview: React.FC<StatsOverviewProps> = ({ overviewData }) => {
 			</div>
 		);
 	};
+
+	console.log(totalFocusDuration);
 
 	return (
 		<div className="p-5">
@@ -67,13 +105,6 @@ const FocusRecordList = () => {
 	const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
 	const { tasksById } = fetchedTasks || {};
 
-	const [overviewData, setOverviewData] = useState({
-		todaysPomo: 3,
-		todaysFocus: 7200000,
-		totalPomo: 1143,
-		totalFocusDuration: 50000000000,
-	});
-
 	const scrollableRef = useRef(null); // Reference to the scrollable container
 	const stickyRef = useRef(null); // Reference to the sticky element
 	const isSticky = useSticky(scrollableRef, stickyRef); // Pass both refs to the hook
@@ -99,7 +130,7 @@ const FocusRecordList = () => {
 			ref={scrollableRef}
 			className="flex flex-col w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700"
 		>
-			<StatsOverview overviewData={overviewData} />
+			<StatsOverview focusRecords={focusRecords} />
 
 			<div
 				ref={stickyRef}
@@ -145,6 +176,9 @@ const FocusRecord = ({ focusRecord, tasksById }) => {
 	const startTimeObj = formatDateTime(startTime);
 	const endTimeObj = formatDateTime(endTime);
 
+	const { hours, minutes } = formatTimeToHoursAndMinutes(duration);
+	const formattedDuration = `${hours.toLocaleString()}h${minutes}m`;
+
 	return (
 		<li
 			key={_id}
@@ -176,7 +210,7 @@ const FocusRecord = ({ focusRecord, tasksById }) => {
 						<div>
 							{startTimeObj.time} - {endTimeObj.time}
 						</div>
-						<div>{formatDuration(duration)}</div>
+						<div>{formattedDuration}</div>
 					</div>
 
 					{task && <div className="font-medium">{task.title}</div>}

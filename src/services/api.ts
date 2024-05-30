@@ -141,6 +141,14 @@ export const api = createApi({
 			}),
 			invalidatesTags: (result, error, focusRecordId) => ['FocusRecord'],
 		}),
+		// PERMANENTLY DELETE FOCUS RECORD FOREVER
+		permanentlyDeleteFocusRecord: builder.mutation({
+			query: (focusRecordId) => ({
+				url: `/focus-records/delete/${focusRecordId}`,
+				method: 'DELETE',
+			}),
+			invalidatesTags: ['FocusRecord'], // Invalidate the cache when a task is added
+		}),
 	}),
 });
 
@@ -165,4 +173,5 @@ export const {
 	useGetFocusRecordsQuery,
 	useAddFocusRecordMutation,
 	useEditFocusRecordMutation,
+	usePermanentlyDeleteFocusRecordMutation,
 } = api;

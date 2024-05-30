@@ -8,7 +8,12 @@ import DropdownSetFocusTypeAndAmount from '../Dropdown/DropdownsAddFocusRecord/D
 import DropdownTimeCalendar from '../Dropdown/DropdownsAddFocusRecord/DropdownTimeCalendar';
 import DropdownSetTask from '../Dropdown/DropdownsAddFocusRecord/DropdownSetTask';
 import classNames from 'classnames';
-import { useAddFocusRecordMutation, useEditFocusRecordMutation, useGetTasksQuery } from '../../services/api';
+import {
+	useAddFocusRecordMutation,
+	useEditFocusRecordMutation,
+	useGetTasksQuery,
+	usePermanentlyDeleteFocusRecordMutation,
+} from '../../services/api';
 import { secondsToHoursAndMinutes } from '../../utils/helpers.utils';
 
 const ModalAddFocusRecord: React.FC = () => {
@@ -25,6 +30,7 @@ const ModalAddFocusRecord: React.FC = () => {
 	const [addFocusRecord, { isLoading: isLoadingAddFocusRecord, error: errorAddFocusRecord }] =
 		useAddFocusRecordMutation();
 	const [editFocusRecord] = useEditFocusRecordMutation();
+	const [permanentlyDeleteFocusRecord] = usePermanentlyDeleteFocusRecordMutation();
 
 	const [selectedTask, setSelectedTask] = useState<Object | null>(null);
 	const [focusNote, setFocusNote] = useState('');
@@ -83,11 +89,12 @@ const ModalAddFocusRecord: React.FC = () => {
 	const getDuration = () => {
 		if (focusType === 'pomo') {
 			// TODO: Change later when focus settings is worked on but for now keep it at 45 minutes as the default
-			const defaultPomoLength = 2700; // 2700 seconds = 45 minutes
+			const defaultPomoLength = 2700000; // 27000000 milliseconds = 45 minutes
 			return pomos * defaultPomoLength;
 		} else {
-			// Duration is in seconds so multiply the hours and minutes by 60.
-			return (hours * 60 + minutes) * 60;
+			// Duration is in milliseconds so multiply the hours and minutes by 60.
+			// I originally made it in seconds but milliseconds is even more precise and is what JS uses to measure dates so it'll be better to match that.
+			return (hours * 60 + minutes) * 60 * 1000;
 		}
 	};
 
@@ -100,8 +107,8 @@ const ModalAddFocusRecord: React.FC = () => {
 			note: focusNote,
 		};
 
-		if (payload.duration < 300) {
-			console.log('Duration must be longer or equal to 300 seconds (5 minutes)');
+		if (payload.duration < 300000) {
+			console.log('Duration must be longer or equal to 300000 seconds (5 minutes)');
 			return;
 		}
 
@@ -117,153 +124,173 @@ const ModalAddFocusRecord: React.FC = () => {
 
 	return (
 		<Modal isOpen={isOpen} onClose={closeModal} position="top-center">
-			<div className="rounded-xl shadow-lg bg-color-gray-650 p-5">
-				<div className="flex items-center justify-between mb-4">
-					<h3 className="font-bold text-[16px]">Add Focus Record</h3>
-					<Icon
-						name="close"
-						customClass={'!text-[20px] text-color-gray-100 hover:text-white cursor-pointer'}
-						onClick={closeModal}
-					/>
-				</div>
+			<div className="rounded-xl shadow-lg bg-color-gray-650">
+				<div className={classNames('p-5', focusRecord ? 'pb-2' : '')}>
+					<div className="flex items-center justify-between mb-4">
+						<h3 className="font-bold text-[16px]">{focusRecord ? 'Edit' : 'Add'} Focus Record</h3>
+						<Icon
+							name="close"
+							customClass={'!text-[20px] text-color-gray-100 hover:text-white cursor-pointer'}
+							onClick={closeModal}
+						/>
+					</div>
 
-				<div className="space-y-2">
-					{/* Task */}
-					<div className="flex items-center gap-2">
-						<div className="w-[100px]">Task</div>
-						<div className="relative flex-1">
-							<div
-								ref={dropdownSetTaskRef}
-								className="flex-1 border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500 cursor-pointer"
-								onClick={() => {
-									setIsDropdownSetTaskVisible(!isDropdownSetTaskVisible);
-								}}
-							>
+					<div className="space-y-2">
+						{/* Task */}
+						<div className="flex items-center gap-2">
+							<div className="w-[100px]">Task</div>
+							<div className="relative flex-1">
 								<div
-									className={classNames(
-										selectedTask ? 'text-white' : 'text-color-gray-100',
-										'max-w-[260px] text-ellipsis text-nowrap overflow-hidden'
-									)}
+									ref={dropdownSetTaskRef}
+									className="flex-1 border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500 cursor-pointer"
+									onClick={() => {
+										setIsDropdownSetTaskVisible(!isDropdownSetTaskVisible);
+									}}
 								>
-									{selectedTask ? selectedTask.title : 'Set Task'}
+									<div
+										className={classNames(
+											selectedTask ? 'text-white' : 'text-color-gray-100',
+											'max-w-[260px] text-ellipsis text-nowrap overflow-hidden'
+										)}
+									>
+										{selectedTask ? selectedTask.title : 'Set Task'}
+									</div>
+									<Icon
+										name="expand_more"
+										fill={0}
+										customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'}
+									/>
 								</div>
-								<Icon
-									name="expand_more"
-									fill={0}
-									customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'}
+
+								<DropdownSetTask
+									toggleRef={dropdownSetTaskRef}
+									isVisible={isDropdownSetTaskVisible}
+									setIsVisible={setIsDropdownSetTaskVisible}
+									selectedTask={selectedTask}
+									setSelectedTask={setSelectedTask}
 								/>
 							</div>
+						</div>
 
-							<DropdownSetTask
-								toggleRef={dropdownSetTaskRef}
-								isVisible={isDropdownSetTaskVisible}
-								setIsVisible={setIsDropdownSetTaskVisible}
-								selectedTask={selectedTask}
-								setSelectedTask={setSelectedTask}
-							/>
+						{/* Start Time */}
+						<TimeOption
+							dropdownRef={dropdownStartTimeCalendarRef}
+							isDropdownVisible={isDropdownStartTimeVisible}
+							setIsDropdownVisible={setIsDropdownStartTimeVisible}
+							time={startTime}
+							setTime={setStartTime}
+							name="Start Time"
+						/>
+
+						{/* End Time */}
+						<TimeOption
+							dropdownRef={dropdownEndTimeCalendarRef}
+							isDropdownVisible={isDropdownEndTimeVisible}
+							setIsDropdownVisible={setIsDropdownEndTimeVisible}
+							time={endTime}
+							setTime={setEndTime}
+							name="End Time"
+						/>
+
+						{/* Type */}
+						<div className="flex items-center gap-2">
+							<div className="w-[100px]">Type</div>
+							<div className="relative flex-1">
+								<div
+									ref={dropdownSetFocusTypeAndAmountRef}
+									className="flex-1 border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500 cursor-pointer"
+									onClick={() => {
+										setIsDropdownSetFocusTypeAndAmountVisible(
+											!isDropdownSetFocusTypeAndAmountVisible
+										);
+									}}
+								>
+									<div
+										className={classNames(
+											(focusType === 'pomo' && pomos > 0) ||
+												(focusType === 'stopwatch' && (hours > 0 || minutes > 0))
+												? 'text-white'
+												: 'text-color-gray-100'
+										)}
+									>
+										{focusType === 'pomo'
+											? `Pomo: ${pomos} Pomo${pomos > 1 ? 's' : ''}`
+											: `Stopwatch: ${hours > 0 ? `${hours} Hour${hours !== 1 ? 's' : ''}` : ''} ${minutes} Minute${minutes !== 1 ? 's' : ''}`}
+									</div>
+									<Icon
+										name="expand_more"
+										fill={0}
+										customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'}
+									/>
+								</div>
+
+								<DropdownSetFocusTypeAndAmount
+									toggleRef={dropdownSetFocusTypeAndAmountRef}
+									isVisible={isDropdownSetFocusTypeAndAmountVisible}
+									setIsVisible={setIsDropdownSetFocusTypeAndAmountVisible}
+									focusType={focusType}
+									setFocusType={setFocusType}
+									pomos={pomos}
+									setPomos={setPomos}
+									hours={hours}
+									setHours={setHours}
+									minutes={minutes}
+									setMinutes={setMinutes}
+								/>
+							</div>
+						</div>
+
+						{/* Focus Note */}
+						<div className="flex gap-2">
+							<div className="w-[100px] mt-3">Focus Note</div>
+
+							<TextareaAutosize
+								className="flex-1 text-[13px] placeholder:text-[#7C7C7C] mt-2 mb-4 bg-transparent outline-none resize-none border border-color-gray-200 rounded p-2 hover:border-blue-500 min-h-[120px] max-h-[300px] overflow-auto gray-scrollbar"
+								placeholder="What do you have in mind?"
+								value={focusNote}
+								onChange={(e) => setFocusNote(e.target.value)}
+							></TextareaAutosize>
 						</div>
 					</div>
 
-					{/* Start Time */}
-					<TimeOption
-						dropdownRef={dropdownStartTimeCalendarRef}
-						isDropdownVisible={isDropdownStartTimeVisible}
-						setIsDropdownVisible={setIsDropdownStartTimeVisible}
-						time={startTime}
-						setTime={setStartTime}
-						name="Start Time"
-					/>
-
-					{/* End Time */}
-					<TimeOption
-						dropdownRef={dropdownEndTimeCalendarRef}
-						isDropdownVisible={isDropdownEndTimeVisible}
-						setIsDropdownVisible={setIsDropdownEndTimeVisible}
-						time={endTime}
-						setTime={setEndTime}
-						name="End Time"
-					/>
-
-					{/* Type */}
-					<div className="flex items-center gap-2">
-						<div className="w-[100px]">Type</div>
-						<div className="relative flex-1">
-							<div
-								ref={dropdownSetFocusTypeAndAmountRef}
-								className="flex-1 border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500 cursor-pointer"
-								onClick={() => {
-									setIsDropdownSetFocusTypeAndAmountVisible(!isDropdownSetFocusTypeAndAmountVisible);
-								}}
-							>
-								<div
-									className={classNames(
-										(focusType === 'pomo' && pomos > 0) ||
-											(focusType === 'stopwatch' && (hours > 0 || minutes > 0))
-											? 'text-white'
-											: 'text-color-gray-100'
-									)}
-								>
-									{focusType === 'pomo'
-										? `Pomo: ${pomos} Pomo${pomos > 1 ? 's' : ''}`
-										: `Stopwatch: ${hours > 0 ? `${hours} Hour${hours !== 1 ? 's' : ''}` : ''} ${minutes} Minute${minutes !== 1 ? 's' : ''}`}
-								</div>
-								<Icon
-									name="expand_more"
-									fill={0}
-									customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'}
-								/>
-							</div>
-
-							<DropdownSetFocusTypeAndAmount
-								toggleRef={dropdownSetFocusTypeAndAmountRef}
-								isVisible={isDropdownSetFocusTypeAndAmountVisible}
-								setIsVisible={setIsDropdownSetFocusTypeAndAmountVisible}
-								focusType={focusType}
-								setFocusType={setFocusType}
-								pomos={pomos}
-								setPomos={setPomos}
-								hours={hours}
-								setHours={setHours}
-								minutes={minutes}
-								setMinutes={setMinutes}
-							/>
-						</div>
-					</div>
-
-					{/* Focus Note */}
-					<div className="flex gap-2">
-						<div className="w-[100px] mt-3">Focus Note</div>
-
-						<TextareaAutosize
-							className="flex-1 text-[13px] placeholder:text-[#7C7C7C] mt-2 mb-4 bg-transparent outline-none resize-none border border-color-gray-200 rounded p-2 hover:border-blue-500 min-h-[120px] max-h-[300px] overflow-auto gray-scrollbar"
-							placeholder="What do you have in mind?"
-							value={focusNote}
-							onChange={(e) => setFocusNote(e.target.value)}
-						></TextareaAutosize>
+					<div className="flex justify-end gap-2">
+						<button
+							className="border border-color-gray-200 rounded py-1 cursor-pointer hover:bg-color-gray-200 min-w-[114px]"
+							onClick={closeModal}
+						>
+							Close
+						</button>
+						<button
+							className="bg-blue-500 rounded py-1 cursor-pointer hover:bg-blue-600 min-w-[114px]"
+							onClick={async () => {
+								try {
+									await handleAddFocusRecord();
+									closeModal();
+								} catch (error) {
+									console.log(error);
+								}
+							}}
+						>
+							Ok
+						</button>
 					</div>
 				</div>
 
-				<div className="flex justify-end gap-2">
-					<button
-						className="border border-color-gray-200 rounded py-1 cursor-pointer hover:bg-color-gray-200 min-w-[114px]"
-						onClick={closeModal}
-					>
-						Close
-					</button>
-					<button
-						className="bg-blue-500 rounded py-1 cursor-pointer hover:bg-blue-600 min-w-[114px]"
-						onClick={async () => {
-							try {
-								await handleAddFocusRecord();
-								closeModal();
-							} catch (error) {
-								console.log(error);
+				{focusRecord && (
+					<div className="flex justify-end mt-3 border-t border-color-gray-200 px-5 py-2">
+						<Icon
+							name="delete"
+							fill={1}
+							customClass={
+								'!text-[20px] text-color-gray-100 cursor-pointer p-1 rounded hover:bg-color-gray-600'
 							}
-						}}
-					>
-						Ok
-					</button>
-				</div>
+							onClick={async () => {
+								await permanentlyDeleteFocusRecord(focusRecord._id);
+								closeModal();
+							}}
+						/>
+					</div>
+				)}
 			</div>
 		</Modal>
 	);
