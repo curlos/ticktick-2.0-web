@@ -45,6 +45,25 @@ export function arrayToObjectByKey(array: any[], keyProperty: string) {
 	}, {});
 }
 
+/**
+ * Transforms an array of objects into an object with keys based on a specified property,
+ * where each key holds an array of objects that have that key value.
+ * @param {Object[]} array - The array of objects to transform.
+ * @param {string} keyProperty - The property of the objects to use as keys in the resulting object.
+ * @returns {Object} An object with keys derived from each object's specified property and values as arrays of objects.
+ */
+export function arrayToObjectArrayByKey(array: any[], keyProperty: string) {
+	return array.reduce((acc, obj) => {
+		const key = obj[keyProperty];
+		// Check if the key already exists, append to it, or create a new array with the object
+		if (!acc[key]) {
+			acc[key] = []; // Initialize the key with an empty array if it doesn't exist
+		}
+		acc[key].push(obj); // Push the current object into the array corresponding to the key
+		return acc;
+	}, {});
+}
+
 export function areDatesEqual(date1: Date | null, date2: Date | null) {
 	if (!date1 || !date2) {
 		return false;
@@ -324,4 +343,25 @@ export const isTaskOverdue = (taskDate) => {
 	}
 
 	return true;
+};
+
+/**
+ * Sums up a specified property from each object in the array.
+ * @param {Object[]} array - The array of objects.
+ * @param {string} propertyName - The name of the property to sum.
+ * @returns {number} The sum of the specified property from all objects in the array.
+ */
+export const sumProperty = (array, propertyName) => {
+	return array.reduce((acc, obj) => {
+		// Check if the property exists and is a number to avoid NaN results
+		const value = typeof obj[propertyName] === 'number' ? obj[propertyName] : 0;
+		return acc + value;
+	}, 0);
+};
+
+export const getFormattedDuration = (duration) => {
+	const { hours, minutes } = formatTimeToHoursAndMinutes(duration);
+	const formattedDuration = `${hours.toLocaleString()}h${minutes}m`;
+
+	return formattedDuration;
 };

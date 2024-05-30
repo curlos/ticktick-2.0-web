@@ -1,5 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { areDatesEqual, formatDuration, formatTimeToHoursAndMinutes } from '../utils/helpers.utils';
+import {
+	areDatesEqual,
+	formatDuration,
+	formatTimeToHoursAndMinutes,
+	getFormattedDuration,
+} from '../utils/helpers.utils';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import Icon from './Icon';
@@ -176,9 +181,6 @@ const FocusRecord = ({ focusRecord, tasksById }) => {
 	const startTimeObj = formatDateTime(startTime);
 	const endTimeObj = formatDateTime(endTime);
 
-	const { hours, minutes } = formatTimeToHoursAndMinutes(duration);
-	const formattedDuration = `${hours.toLocaleString()}h${minutes}m`;
-
 	return (
 		<li
 			key={_id}
@@ -210,12 +212,12 @@ const FocusRecord = ({ focusRecord, tasksById }) => {
 						<div>
 							{startTimeObj.time} - {endTimeObj.time}
 						</div>
-						<div>{formattedDuration}</div>
+						<div>{getFormattedDuration(duration)}</div>
 					</div>
 
 					{task && <div className="font-medium">{task.title}</div>}
 
-					<div className="text-color-gray-100 mt-1">
+					<div className="text-color-gray-100 mt-1 max-w-[350px] break-words">
 						<ReactMarkdown remarkPlugins={[remarkGfm]}>{note}</ReactMarkdown>
 					</div>
 				</div>

@@ -6,8 +6,8 @@ import { TaskObj } from '../interfaces/interfaces';
 import DropdownCalendar from './Dropdown/DropdownCalendar/DropdownCalendar';
 import AddTaskForm from './AddTaskForm';
 import ModalTaskActivities from './Modal/ModalTaskActivities';
-import { useGetTasksQuery, useGetProjectsQuery, useEditTaskMutation } from '../services/api';
-import { getTasksWithFilledInChildren } from '../utils/helpers.utils';
+import { useGetTasksQuery, useGetProjectsQuery, useEditTaskMutation, useGetFocusRecordsQuery } from '../services/api';
+import { getFormattedDuration, getTasksWithFilledInChildren, sumProperty } from '../utils/helpers.utils';
 import { SortableTree } from './SortableTest/SortableTree';
 import useDebouncedEditTask from '../hooks/useDebouncedEditTask';
 import classNames from 'classnames';
@@ -43,6 +43,14 @@ const TaskDetails = () => {
 	const { data: fetchedProjects, isLoading: isProjectsLoading, error: errorProjects } = useGetProjectsQuery();
 	const { projects, projectsById } = fetchedProjects || {};
 
+	// Focus Records
+	const {
+		data: fetchedFocusRecords,
+		isLoading: isLoadingFocusRecords,
+		error: errorFocusRecords,
+	} = useGetFocusRecordsQuery();
+	const { focusRecords, focusRecordsByTaskId } = fetchedFocusRecords || {};
+
 	const { play: playCompletionSound, stop: stopCompletionSound } = useAudio(amongUsCompletionSoundMP3);
 
 	const [currTitle, setCurrTitle] = useState('');
@@ -54,6 +62,8 @@ const TaskDetails = () => {
 	const [childTasks, setChildTasks] = useState([]);
 	const [currDueDate, setCurrDueDate] = useState(null);
 	const [selectedProject, setSelectedProject] = useState(null);
+	const [pomos, setPomos] = useState(0);
+	const [duration, setDuration] = useState(0);
 
 	// Dropdowns
 	const [isDropdownCalendarVisible, setIsDropdownCalendarVisible] = useState(false);
@@ -111,7 +121,7 @@ const TaskDetails = () => {
 	const inSmartListView = paramsProjectId && SMART_LISTS[paramsProjectId];
 
 	useEffect(() => {
-		if (isTasksLoading || isProjectsLoading) {
+		if (isTasksLoading || isProjectsLoading || isLoadingFocusRecords) {
 			return;
 		}
 
@@ -145,6 +155,16 @@ const TaskDetails = () => {
 			// TODO: There is a problem caused by this. Sortable Tree not updating with latest tasks.
 			const newChildTasks = getTasksWithFilledInChildren(currTask.children, tasksById, currTask.projectId);
 			setChildTasks(newChildTasks);
+
+			const taskFocusRecords = focusRecordsByTaskId[currTask._id];
+
+			if (taskFocusRecords) {
+				setPomos(sumProperty(taskFocusRecords, 'pomos'));
+				setDuration(sumProperty(taskFocusRecords, 'duration'));
+			} else {
+				setPomos(0);
+				setDuration(0);
+			}
 
 			// TODO: Maybe think about what should happen when a project id changes. Should we redirect to the project id list too? Maybe, maybe not.
 			// navigate(`/projects/${inSmartListView ? paramsProjectId : currTask.projectId}/tasks/${currTask._id}`);
@@ -256,6 +276,31 @@ const TaskDetails = () => {
 								name="chevron_right"
 								customClass={'text-color-gray-100 !text-[16px] hover:text-white'}
 							/>
+						</div>
+					)}
+
+					{/* TODO: Focused for... */}
+					{(pomos > 0 || duration > 0) && (
+						<div className="flex items-center gap-1 text-blue-500">
+							<div className="text-color-gray-100">Focused for</div>
+
+							{pomos > 0 && (
+								<Icon
+									name="nutrition"
+									customClass={'!text-[20px] text-blue-500 cursor-pointer mt-[2px]'}
+									fill={1}
+								/>
+							)}
+							{pomos > 0 && pomos}
+
+							{duration > 0 && (
+								<Icon
+									name="timer"
+									customClass={'!text-[20px] text-blue-500 cursor-pointer mt-[2px]'}
+									fill={1}
+								/>
+							)}
+							{duration > 0 && getFormattedDuration(duration)}
 						</div>
 					)}
 

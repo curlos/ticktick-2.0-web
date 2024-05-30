@@ -14,7 +14,7 @@ import {
 	useGetTasksQuery,
 	usePermanentlyDeleteFocusRecordMutation,
 } from '../../services/api';
-import { secondsToHoursAndMinutes } from '../../utils/helpers.utils';
+import { formatTimeToHoursAndMinutes, secondsToHoursAndMinutes } from '../../utils/helpers.utils';
 
 const ModalAddFocusRecord: React.FC = () => {
 	const modal = useSelector((state) => state.modals.modals['ModalAddFocusRecord']);
@@ -86,6 +86,16 @@ const ModalAddFocusRecord: React.FC = () => {
 		}
 	}, [focusRecord]);
 
+	useEffect(() => {
+		if (focusType === 'pomo') {
+			const duration = getDuration();
+			const { hours, minutes } = formatTimeToHoursAndMinutes(duration);
+
+			setHours(hours);
+			setMinutes(minutes);
+		}
+	}, [pomos]);
+
 	const getDuration = () => {
 		if (focusType === 'pomo') {
 			// TODO: Change later when focus settings is worked on but for now keep it at 45 minutes as the default
@@ -104,6 +114,8 @@ const ModalAddFocusRecord: React.FC = () => {
 			startTime: startTime,
 			endTime: endTime,
 			duration: getDuration(),
+			pomos: focusType === 'pomo' ? pomos : 0,
+			focusType,
 			note: focusNote,
 		};
 
