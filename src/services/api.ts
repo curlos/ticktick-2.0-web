@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { arrayToObjectArrayByKey, arrayToObjectByKey, getObjectOfEachTasksParent } from '../utils/helpers.utils';
+import { loginUserSuccess } from '../slices/userSlice';
 
 // Utility function to build query strings
 const buildQueryString = (params) => {
@@ -8,10 +9,65 @@ const buildQueryString = (params) => {
 
 // Define the API with tasks endpoints
 export const api = createApi({
-	reducerPath: 'tasksApi', // Unique identifier for the reducer
-	baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:8888' }), // Base URL for API calls
+	reducerPath: 'api', // Unique identifier for the reducer
+	baseQuery: fetchBaseQuery({
+		baseUrl: 'http://localhost:8888',
+		prepareHeaders: (headers, { getState }) => {
+			const token = getState().user.token; // Assuming you store your token in auth slice
+			if (token) {
+				headers.set('authorization', `Bearer ${token}`);
+			}
+			return headers;
+		},
+	}),
 	tagTypes: ['Task', 'Project', 'FocusRecord'], // Define tag type for cache invalidation
 	endpoints: (builder) => ({
+		// Users
+		registerUser: builder.mutation({
+			query: (userDetails) => ({
+				url: '/users/register',
+				method: 'POST',
+				body: userDetails,
+			}),
+			transformResponse: (response, meta, arg) => {
+				// Optionally, you can handle the response transformation here
+				return response;
+			},
+			// Handle side effects or update the cache after successful registration
+			onQueryStarted: async (arg, { queryFulfilled, dispatch }) => {
+				try {
+					const { data } = await queryFulfilled;
+					// Example: Store the received token or user details after successful registration
+					localStorage.setItem('token', data.token); // Assuming token is part of the response
+					// You could dispatch other actions, e.g., for updating user state in Redux
+				} catch (error) {
+					console.error('Registration failed:', error);
+				}
+			},
+		}),
+
+		loginUser: builder.mutation({
+			query: (credentials) => ({
+				url: '/users/login',
+				method: 'POST',
+				body: credentials,
+			}),
+			transformResponse: (response, meta, arg) => {
+				// Optionally, you can handle the response transformation here
+				return response;
+			},
+			// Optional: You can use this to update the cache or invalidate tags if needed
+			onQueryStarted: async (arg, { queryFulfilled, dispatch }) => {
+				try {
+					const { data } = await queryFulfilled;
+					dispatch(loginUserSuccess(data)); // Update user slice state on successful login
+				} catch (error) {
+					console.error('Login failed:', error);
+				}
+			},
+			invalidatesTags: ['Task', 'Project', 'FocusRecord'],
+		}),
+
 		// Tasks
 		getTasks: builder.query({
 			query: (queryParams) => {
@@ -119,10 +175,10 @@ export const api = createApi({
 			},
 			providesTags: ['FocusRecord'], // This endpoint provides the 'Task' tag
 			transformResponse: (response) => {
-				const focusRecords = response
+				const focusRecords = response;
 				const focusRecordsByTaskId = arrayToObjectArrayByKey(focusRecords, 'taskId');
 
-				console.log(focusRecordsByTaskId)
+				console.log(focusRecordsByTaskId);
 
 				return { focusRecords, focusRecordsByTaskId }; // Return as a combined object
 			},
@@ -159,6 +215,9 @@ export const api = createApi({
 
 // Export hooks to use in React components
 export const {
+	// Users
+	useLoginUserMutation,
+
 	// Tasks
 	useGetTasksQuery,
 	useAddTaskMutation,

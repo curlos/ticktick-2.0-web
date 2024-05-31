@@ -4,6 +4,7 @@ import FocusPage from './pages/FocusPage';
 import HomePage from './pages/HomePage';
 import GlobalModalList from './components/Modal/GlobalModalList';
 import GlobalAlertList from './components/Alert/GlobalAlertList';
+import LoginForm from './components/LoginForm';
 
 function App() {
 	return (
@@ -11,6 +12,7 @@ function App() {
 			<div className="w-[100vw] max-w-[100%] text-white text-[14px] select-none">
 				<Router>
 					<Routes>
+						<Route path="/login" element={<LoginForm />}></Route>
 						<Route path="/" element={<HomePage />}></Route>
 
 						<Route path="/projects/:projectId/tasks" element={<HomePage />}></Route>
