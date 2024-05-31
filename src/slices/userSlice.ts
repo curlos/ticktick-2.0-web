@@ -1,4 +1,3 @@
-// src/features/user/userSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
@@ -25,6 +24,9 @@ const userSlice = createSlice({
 		},
 	},
 });
+
+// Selector to access the user object
+export const selectUserToken = (state) => state.user.token;
 
 export const { loginUserSuccess, logoutUser } = userSlice.actions;
 export default userSlice.reducer;

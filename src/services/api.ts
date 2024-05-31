@@ -216,6 +216,7 @@ export const api = createApi({
 // Export hooks to use in React components
 export const {
 	// Users
+	useRegisterUserMutation,
 	useLoginUserMutation,
 
 	// Tasks
