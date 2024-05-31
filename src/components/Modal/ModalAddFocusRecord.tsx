@@ -63,7 +63,7 @@ const ModalAddFocusRecord: React.FC = () => {
 
 	useEffect(() => {
 		if (focusRecord) {
-			const duration = secondsToHoursAndMinutes(focusRecord?.duration) || { hours: 0, minutes: 0 };
+			const duration = formatTimeToHoursAndMinutes(focusRecord?.duration) || { hours: 0, minutes: 0 };
 			const task = tasksById[focusRecord.taskId];
 
 			setSelectedTask(task);
