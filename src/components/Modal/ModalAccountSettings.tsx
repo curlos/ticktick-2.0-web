@@ -2,9 +2,11 @@ import Modal from './Modal';
 import { useDispatch, useSelector } from 'react-redux';
 import { setModalState } from '../../slices/modalSlice';
 import Icon from '../Icon';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import classNames from 'classnames';
 import ModalChangePassword from './ModalChangePassword';
+import Dropdown from '../Dropdown/Dropdown';
+import ModalChangeEmail from './ModalChangeEmail';
 
 const ModalAccountSettings: React.FC = () => {
 	const modal = useSelector((state) => state.modals.modals['ModalAccountSettings']);
@@ -12,9 +14,13 @@ const ModalAccountSettings: React.FC = () => {
 
 	const [selectedOption, setSelectedOption] = useState('Account');
 
+	const dropdownChangeEmailRef = useRef(null);
+
 	// useState - Dropdowns
+	const [isDropdownChangeEmailVisible, setIsDropdownChangeEmailVisible] = useState(false);
 
 	// useState - Modals
+	const [isModalChangeEmailOpen, setIsModalChangeEmailOpen] = useState(false);
 	const [isModalChangePasswordOpen, setIsModalChangePasswordOpen] = useState(false);
 
 	if (!modal) {
@@ -72,7 +78,22 @@ const ModalAccountSettings: React.FC = () => {
 					<div className="bg-color-gray-300 rounded p-2 px-3 space-y-3">
 						<div className="flex justify-between items-center">
 							<div>Email</div>
-							<div className="cursor-pointer hover:bg-color-gray-200 p-1 rounded">test@gmail.com</div>
+							<div className="relative">
+								<div
+									ref={dropdownChangeEmailRef}
+									onClick={() => setIsDropdownChangeEmailVisible(!isDropdownChangeEmailVisible)}
+									className="cursor-pointer hover:bg-color-gray-200 p-1 rounded"
+								>
+									test@gmail.com
+								</div>
+
+								<DropdownChangeEmail
+									toggleRef={dropdownChangeEmailRef}
+									isVisible={isDropdownChangeEmailVisible}
+									setIsVisible={setIsDropdownChangeEmailVisible}
+									setIsModalChangeEmailOpen={setIsModalChangeEmailOpen}
+								/>
+							</div>
 						</div>
 
 						<div className="flex justify-between items-center">
@@ -95,11 +116,33 @@ const ModalAccountSettings: React.FC = () => {
 				</div> */}
 			</div>
 
+			<ModalChangeEmail isModalOpen={isModalChangeEmailOpen} setIsModalOpen={setIsModalChangeEmailOpen} />
+
 			<ModalChangePassword
 				isModalOpen={isModalChangePasswordOpen}
 				setIsModalOpen={setIsModalChangePasswordOpen}
 			/>
 		</Modal>
+	);
+};
+
+const DropdownChangeEmail = ({ toggleRef, isVisible, setIsVisible, setIsModalChangeEmailOpen }) => {
+	return (
+		<Dropdown
+			toggleRef={toggleRef}
+			isVisible={isVisible}
+			setIsVisible={setIsVisible}
+			customClasses={classNames('shadow-2xl border border-color-gray-200 rounded')}
+		>
+			<div className="w-[150px] p-1">
+				<div
+					className="p-1 hover:bg-color-gray-300 cursor-pointer rounded"
+					onClick={() => setIsModalChangeEmailOpen(true)}
+				>
+					Change Email
+				</div>
+			</div>
+		</Dropdown>
 	);
 };
 
