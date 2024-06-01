@@ -65,7 +65,7 @@ export const api = createApi({
 					console.error('Login failed:', error);
 				}
 			},
-			invalidatesTags: ['Task', 'Project', 'FocusRecord'],
+			invalidatesTags: (result, error) => (error ? [] : ['Task', 'Project', 'FocusRecord']),
 		}),
 
 		// Tasks

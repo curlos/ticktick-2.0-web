@@ -43,7 +43,7 @@ const DropdownAccountDetails: React.FC<DropdownAccountDetailsProps> = ({
 					onClick={async () => {
 						setIsVisible(false);
 						try {
-							await logoutUser();
+							dispatch(logoutUser());
 							navigate('/login');
 						} catch (error) {
 							console.log(error);
