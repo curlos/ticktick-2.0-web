@@ -2,11 +2,6 @@ import Modal from './Modal';
 import { useDispatch, useSelector } from 'react-redux';
 import { setModalState } from '../../slices/modalSlice';
 import Icon from '../Icon';
-import Fuse from 'fuse.js';
-import { useEffect, useRef, useState } from 'react';
-import { useGetTasksQuery } from '../../services/api';
-import { debounce } from '../../utils/helpers.utils';
-import Task from '../Task';
 
 const ModalErrorMessenger: React.FC = () => {
 	const modal = useSelector((state) => state.modals.modals['ModalErrorMessenger']);
