@@ -7,12 +7,14 @@ const DEFAULT_MODAL_STATE = {
 };
 
 const MODAL_IDS = [
+	'ModalErrorMessenger',
 	'ModalAddFocusRecord',
 	'ModalAddList',
 	'ModalAddTaskForm',
 	'ModalFocusSettings',
 	'ModalTaskActivities',
 	'ModalSearchTasks',
+	'ModalAccountSettings',
 ];
 
 const initialState = {

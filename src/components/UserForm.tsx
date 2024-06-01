@@ -3,8 +3,11 @@ import { useLoginUserMutation, useRegisterUserMutation } from '../services/api';
 import Icon from './Icon';
 import { Link, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { setModalState } from '../slices/modalSlice';
 
 const UserForm = ({ mode }) => {
+	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
 	const {
@@ -20,16 +23,18 @@ const UserForm = ({ mode }) => {
 	const isLoading = mode === 'login' ? isLoginLoading : isRegisterLoading;
 
 	const onSubmit = async (data) => {
-		if (mode === 'login') {
-			try {
+		try {
+			if (mode === 'login') {
 				await loginUser(data).unwrap();
-				navigate('/projects/all/tasks');
-			} catch (error) {
-				// TODO: Show an ErrorMessenger modal or something detailing the error from the API.
-				console.log(error);
+			} else {
+				await registerUser(data).unwrap();
 			}
-		} else {
-			await registerUser(data);
+
+			navigate('/projects/all/tasks');
+		} catch (error) {
+			// TODO: Show an ErrorMessenger modal or something detailing the error from the API.
+			console.log(error);
+			dispatch(setModalState({ modalId: 'ModalErrorMessenger', isOpen: true, props: { error } }));
 		}
 	};
 
@@ -50,7 +55,7 @@ const UserForm = ({ mode }) => {
 							className="w-full text-[14px] p-1 bg-transparent placeholder:text-color-gray-100 mb-0 w-full resize-none outline-none rounded"
 						/>
 					</div>
-					{errors.nickname && <p>{errors.nickname.message}</p>}
+					{errors.nickname && <p className="text-red-500">{errors.nickname.message}</p>}
 				</div>
 			)}
 			<div>
@@ -64,7 +69,7 @@ const UserForm = ({ mode }) => {
 						className="w-full text-[14px] p-1 bg-transparent placeholder:text-color-gray-100 mb-0 w-full resize-none outline-none rounded"
 					/>
 				</div>
-				{errors.email && <p>{errors.email.message}</p>}
+				{errors.email && <p className="text-red-500">{errors.email.message}</p>}
 			</div>
 			<div>
 				<div className="flex items-center gap-2 border-b border-color-gray-100 py-2">
@@ -77,7 +82,7 @@ const UserForm = ({ mode }) => {
 						className="w-full text-[14px] p-1 bg-transparent placeholder:text-color-gray-100 mb-0 w-full resize-none outline-none rounded"
 					/>
 				</div>
-				{errors.password && <p>{errors.password.message}</p>}
+				{errors.password && <p className="text-red-500">{errors.password.message}</p>}
 			</div>
 			<button type="submit" disabled={isLoading} className="bg-blue-500 w-full rounded p-2 mt-4">
 				{mode === 'login' ? 'Login' : 'Sign Up'}
