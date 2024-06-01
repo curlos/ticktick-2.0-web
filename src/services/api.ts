@@ -23,6 +23,9 @@ export const api = createApi({
 	tagTypes: ['Task', 'Project', 'FocusRecord'], // Define tag type for cache invalidation
 	endpoints: (builder) => ({
 		// Users
+		getLoggedInUser: builder.query({
+			query: () => '/users/logged-in/details',
+		}),
 		registerUser: builder.mutation({
 			query: (userDetails) => ({
 				url: '/users/register',
@@ -216,6 +219,7 @@ export const api = createApi({
 // Export hooks to use in React components
 export const {
 	// Users
+	useGetLoggedInUserQuery,
 	useRegisterUserMutation,
 	useLoginUserMutation,
 

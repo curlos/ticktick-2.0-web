@@ -7,8 +7,10 @@ import classNames from 'classnames';
 import ModalChangePassword from './ModalChangePassword';
 import Dropdown from '../Dropdown/Dropdown';
 import ModalChangeEmail from './ModalChangeEmail';
+import { useGetLoggedInUserQuery } from '../../services/api';
 
 const ModalAccountSettings: React.FC = () => {
+	const { data: loggedInUser, error, isLoading } = useGetLoggedInUserQuery();
 	const modal = useSelector((state) => state.modals.modals['ModalAccountSettings']);
 	const dispatch = useDispatch();
 
@@ -34,7 +36,7 @@ const ModalAccountSettings: React.FC = () => {
 	const SettingsOption = ({ iconName, optionName }) => (
 		<div
 			className={classNames(
-				'flex items-center gap-1 rounded p-2 cursor-pointer',
+				'flex items-center gap-1 rounded-lg p-2 cursor-pointer',
 				selectedOption === optionName ? 'bg-color-gray-300' : ''
 			)}
 			onClick={() => setSelectedOption(optionName)}
@@ -47,6 +49,8 @@ const ModalAccountSettings: React.FC = () => {
 			<div>{optionName}</div>
 		</div>
 	);
+
+	console.log(loggedInUser);
 
 	return (
 		<Modal isOpen={isOpen} onClose={closeModal} position="top-center" customClasses="!w-[722px]">
@@ -71,11 +75,13 @@ const ModalAccountSettings: React.FC = () => {
 								<img src="/prestige-9-bo2.png" alt="user-icon" className="w-[65px] h-[65px]" />
 							</div>
 
-							<div className="font-bold">curlos</div>
+							<div className="font-bold">
+								{loggedInUser?.nickname ? loggedInUser?.nickname : loggedInUser?.email}
+							</div>
 						</div>
 					</div>
 
-					<div className="bg-color-gray-300 rounded p-2 px-3 space-y-3">
+					<div className="bg-color-gray-300 rounded-lg p-2 px-3 space-y-3 mt-6">
 						<div className="flex justify-between items-center">
 							<div>Email</div>
 							<div className="relative">
@@ -84,7 +90,7 @@ const ModalAccountSettings: React.FC = () => {
 									onClick={() => setIsDropdownChangeEmailVisible(!isDropdownChangeEmailVisible)}
 									className="cursor-pointer hover:bg-color-gray-200 p-1 rounded"
 								>
-									test@gmail.com
+									{loggedInUser?.email}
 								</div>
 
 								<DropdownChangeEmail
@@ -107,13 +113,6 @@ const ModalAccountSettings: React.FC = () => {
 						</div>
 					</div>
 				</div>
-				{/* <div className="flex justify-end">
-					<Icon
-						name="close"
-						customClass={'!text-[22px] cursor-pointer text-color-gray-100 hover:text-white'}
-						onClick={closeModal}
-					/>
-				</div> */}
 			</div>
 
 			<ModalChangeEmail isModalOpen={isModalChangeEmailOpen} setIsModalOpen={setIsModalChangeEmailOpen} />
@@ -137,7 +136,10 @@ const DropdownChangeEmail = ({ toggleRef, isVisible, setIsVisible, setIsModalCha
 			<div className="w-[150px] p-1">
 				<div
 					className="p-1 hover:bg-color-gray-300 cursor-pointer rounded"
-					onClick={() => setIsModalChangeEmailOpen(true)}
+					onClick={() => {
+						setIsVisible(false);
+						setIsModalChangeEmailOpen(true);
+					}}
 				>
 					Change Email
 				</div>
