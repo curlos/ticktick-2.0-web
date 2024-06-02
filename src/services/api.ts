@@ -239,6 +239,17 @@ export const api = createApi({
 				return { comments, commentsByTaskId }; // Return as a combined object
 			},
 		}),
+		addComment: builder.mutation({
+			query: (payload) => {
+				const url = '/comments/add';
+				return {
+					url,
+					method: 'POST',
+					body: payload,
+				};
+			},
+			invalidatesTags: ['Comment'],
+		}),
 	}),
 });
 
@@ -273,4 +284,5 @@ export const {
 
 	// Comments
 	useGetCommentsQuery,
+	useAddCommentMutation,
 } = api;

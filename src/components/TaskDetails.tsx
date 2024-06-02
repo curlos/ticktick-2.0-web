@@ -13,6 +13,8 @@ import {
 	useGetFocusRecordsQuery,
 	useGetUsersQuery,
 	useGetCommentsQuery,
+	useAddCommentMutation,
+	useGetLoggedInUserQuery,
 } from '../services/api';
 import { getFormattedDuration, getTasksWithFilledInChildren, sumProperty } from '../utils/helpers.utils';
 import { SortableTree } from './SortableTest/SortableTree';
@@ -41,6 +43,12 @@ const EmptyTask = () => (
 
 const TaskDetails = () => {
 	// Users
+	const {
+		data: loggedInUser,
+		error: errorLoggedInUser,
+		isLoading: isLoadingLoggedInUser,
+	} = useGetLoggedInUserQuery();
+
 	const { data: fetchedUsers, isLoading: isLoadingGetUsers, error: errorGetUsers } = useGetUsersQuery();
 	const { users, usersById } = fetchedUsers || {};
 
@@ -65,6 +73,8 @@ const TaskDetails = () => {
 	// Comments
 	const { data: fetchedComments, isLoading: isLoadingGetComments, error: errorGetComments } = useGetCommentsQuery();
 	const { comments, commentsByTaskId } = fetchedComments || {};
+
+	const [addComment] = useAddCommentMutation();
 
 	const { play: playCompletionSound, stop: stopCompletionSound } = useAudio(amongUsCompletionSoundMP3);
 
@@ -170,17 +180,28 @@ const TaskDetails = () => {
 
 		const Comment = ({ comment }) => {
 			const author = usersById[comment.authorId];
+			const options = {
+				year: 'numeric', // Full year
+				month: 'long', // Full month name
+				day: 'numeric', // Day of the month
+				hour: 'numeric', // Hour (in 12-hour AM/PM format)
+				minute: '2-digit', // Minute with leading zeros
+				hour12: true, // Use AM/PM
+			};
+			const timeUpdated = new Date(comment.updatedAt).toLocaleString('en-US', options);
 
 			return (
 				<div className="flex">
-					<div className="rounded-full bg-black p-1 mb-3">
-						<img src="/prestige-9-bo2.png" alt="user-icon" className="w-[32px] h-[32px]" />
+					<div>
+						<div className="rounded-full bg-black p-1 mb-3">
+							<img src="/prestige-9-bo2.png" alt="user-icon" className="w-[32px] h-[32px] max-w-[none]" />
+						</div>
 					</div>
 
 					<div className="ml-2">
 						<div className="flex items-center gap-4 text-color-gray-100">
 							<div>{author.nickname}</div>
-							<div>{comment.timePosted}</div>
+							<div>{timeUpdated}</div>
 						</div>
 
 						<div className="mt-2">{comment.content}</div>
@@ -190,8 +211,8 @@ const TaskDetails = () => {
 		};
 
 		return (
-			<div className="flex-1 flex flex-col justify-end">
-				<div className="p-4 border-t border-color-gray-200 text-[13px]">
+			<div className="flex flex-col justify-end">
+				<div className="p-4 border-t border-color-gray-200 text-[13px] max-h-[200px] overflow-auto gray-scrollbar">
 					<div className="mb-4 flex items-center gap-2 text-[14px]">
 						<span>Comments</span>
 						<span>{taskComments.length}</span>
@@ -286,8 +307,8 @@ const TaskDetails = () => {
 				</div>
 			</div>
 
-			<div className="flex-1 overflow-auto no-scrollbar">
-				<div className="p-4 flex flex-col justify-between">
+			<div className="flex-1 overflow-auto no-scrollbar flex flex-col">
+				<div className="p-4 flex-1 flex flex-col">
 					{parentTask && (
 						<div
 							className="w-full flex justify-between items-center text-color-gray-100 cursor-pointer"
@@ -389,14 +410,40 @@ const TaskDetails = () => {
 
 			<div>
 				{showAddCommentInput && (
-					<div className="p-4 border-t border-b border-color-gray-200">
+					<form
+						onSubmit={(e) => {
+							e.preventDefault();
+
+							if (loggedInUser) {
+								const payload = {
+									taskId: _id,
+									authorId: loggedInUser._id,
+									content: currentComment,
+								};
+
+								addComment(payload);
+								setCurrentComment('');
+							}
+						}}
+						className="p-4 border-t border-b border-color-gray-200"
+					>
 						<TextareaAutosize
-							className="placeholder-color-gray-100 bg-color-gray-300 p-[10px] rounded-md w-full outline-none border border-transparent focus:border-blue-500 resize-none"
+							className="placeholder-color-gray-100 bg-color-gray-300 p-[10px] rounded-md w-full outline-none border border-transparent focus:border-blue-500 resize-none max-h-[300px] gray-scrollbar overflow-auto"
 							placeholder="Write a comment"
 							value={currentComment}
 							onChange={(e) => setCurrentComment(e.target.value)}
 						></TextareaAutosize>
-					</div>
+
+						<div className="flex justify-end">
+							<button
+								type="submit"
+								disabled={!currentComment || !loggedInUser}
+								className="border border-transparent bg-blue-500 px-4 py-1 mt-2 rounded hover:bg-blue-500 disabled:opacity-50"
+							>
+								Save
+							</button>
+						</div>
+					</form>
 				)}
 
 				<div className="px-4 py-3 flex justify-between items-center text-color-gray-100">
