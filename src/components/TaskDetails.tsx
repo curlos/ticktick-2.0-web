@@ -6,7 +6,14 @@ import { TaskObj } from '../interfaces/interfaces';
 import DropdownCalendar from './Dropdown/DropdownCalendar/DropdownCalendar';
 import AddTaskForm from './AddTaskForm';
 import ModalTaskActivities from './Modal/ModalTaskActivities';
-import { useGetTasksQuery, useGetProjectsQuery, useEditTaskMutation, useGetFocusRecordsQuery } from '../services/api';
+import {
+	useGetTasksQuery,
+	useGetProjectsQuery,
+	useEditTaskMutation,
+	useGetFocusRecordsQuery,
+	useGetUsersQuery,
+	useGetCommentsQuery,
+} from '../services/api';
 import { getFormattedDuration, getTasksWithFilledInChildren, sumProperty } from '../utils/helpers.utils';
 import { SortableTree } from './SortableTest/SortableTree';
 import useDebouncedEditTask from '../hooks/useDebouncedEditTask';
@@ -33,6 +40,10 @@ const EmptyTask = () => (
 );
 
 const TaskDetails = () => {
+	// Users
+	const { data: fetchedUsers, isLoading: isLoadingGetUsers, error: errorGetUsers } = useGetUsersQuery();
+	const { users, usersById } = fetchedUsers || {};
+
 	// Tasks
 	const { data: fetchedTasks, isLoading: isTasksLoading, error } = useGetTasksQuery();
 	const { tasks, tasksById, parentOfTasks } = fetchedTasks || {};
@@ -50,6 +61,10 @@ const TaskDetails = () => {
 		error: errorFocusRecords,
 	} = useGetFocusRecordsQuery();
 	const { focusRecords, focusRecordsByTaskId } = fetchedFocusRecords || {};
+
+	// Comments
+	const { data: fetchedComments, isLoading: isLoadingGetComments, error: errorGetComments } = useGetCommentsQuery();
+	const { comments, commentsByTaskId } = fetchedComments || {};
 
 	const { play: playCompletionSound, stop: stopCompletionSound } = useAudio(amongUsCompletionSoundMP3);
 
@@ -77,38 +92,6 @@ const TaskDetails = () => {
 	const [showAddTaskForm, setShowAddTaskForm] = useState(false);
 	const [showAddCommentInput, setShowAddCommentInput] = useState(false);
 	const [currentComment, setCurrentComment] = useState('');
-	const [comments, setComments] = useState([
-		{
-			id: 1,
-			username: 'curlos',
-			timePosted: 'just now',
-			content: 'Lakers VS. Pelicans',
-		},
-		{
-			id: 2,
-			username: 'curlos',
-			timePosted: 'just now',
-			content: 'Lakers VS. Pelicans',
-		},
-		{
-			id: 3,
-			username: 'curlos',
-			timePosted: 'just now',
-			content: 'Lakers VS. Pelicans',
-		},
-		{
-			id: 4,
-			username: 'curlos',
-			timePosted: 'just now',
-			content: 'Lakers VS. Pelicans',
-		},
-		{
-			id: 5,
-			username: 'curlos',
-			timePosted: 'just now',
-			content: 'Lakers VS. Pelicans',
-		},
-	]);
 
 	const dropdownCalendarToggleRef = useRef(null);
 	const dropdownTaskOptionsRef = useRef(null);
@@ -178,6 +161,51 @@ const TaskDetails = () => {
 	const { _id, children, priority, completedPomodoros, timeTaken, estimatedDuration, deadline, willNotDo, dueDate } =
 		task;
 	const priorityData = PRIORITIES[priority];
+	const taskComments = Object.values(commentsByTaskId[_id]);
+
+	const CommentList = () => {
+		if (!usersById || !taskComments || taskComments.length === 0) {
+			return null;
+		}
+
+		const Comment = ({ comment }) => {
+			const author = usersById[comment.authorId];
+
+			return (
+				<div className="flex">
+					<div className="rounded-full bg-black p-1 mb-3">
+						<img src="/prestige-9-bo2.png" alt="user-icon" className="w-[32px] h-[32px]" />
+					</div>
+
+					<div className="ml-2">
+						<div className="flex items-center gap-4 text-color-gray-100">
+							<div>{author.nickname}</div>
+							<div>{comment.timePosted}</div>
+						</div>
+
+						<div className="mt-2">{comment.content}</div>
+					</div>
+				</div>
+			);
+		};
+
+		return (
+			<div className="flex-1 flex flex-col justify-end">
+				<div className="p-4 border-t border-color-gray-200 text-[13px]">
+					<div className="mb-4 flex items-center gap-2 text-[14px]">
+						<span>Comments</span>
+						<span>{taskComments.length}</span>
+					</div>
+
+					<div className="space-y-6">
+						{taskComments.map((comment) => (
+							<Comment key={comment._id} comment={comment} />
+						))}
+					</div>
+				</div>
+			</div>
+		);
+	};
 
 	return (
 		<div className="flex flex-col w-full h-full max-h-screen bg-color-gray-700">
@@ -356,40 +384,7 @@ const TaskDetails = () => {
 					)}
 				</div>
 
-				<div className="flex-1 flex flex-col justify-end">
-					{/* TODO: Bring comments back once I add the functionality and the routes on the backend. */}
-					{!comments && comments.length > 0 && (
-						<div className="p-4 border-t border-color-gray-200 text-[13px]">
-							<div className="mb-4 flex items-center gap-2 text-[14px]">
-								<span>Comments</span>
-								<span>{comments.length}</span>
-							</div>
-
-							<div className="space-y-6">
-								{comments.map((comment) => (
-									<div key={comment.id} className="flex">
-										<div className="rounded-full bg-black p-1 mb-3">
-											<img
-												src="/prestige-9-bo2.png"
-												alt="user-icon"
-												className="w-[32px] h-[32px]"
-											/>
-										</div>
-
-										<div className="ml-2">
-											<div className="flex items-center gap-4 text-color-gray-100">
-												<div>{comment.username}</div>
-												<div>{comment.timePosted}</div>
-											</div>
-
-											<div className="mt-2">{comment.content}</div>
-										</div>
-									</div>
-								))}
-							</div>
-						</div>
-					)}
-				</div>
+				<CommentList />
 			</div>
 
 			<div>

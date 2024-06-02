@@ -50,8 +50,6 @@ const ModalAccountSettings: React.FC = () => {
 		</div>
 	);
 
-	console.log(loggedInUser);
-
 	return (
 		<Modal isOpen={isOpen} onClose={closeModal} position="top-center" customClasses="!w-[722px]">
 			<div className="rounded-lg shadow-lg flex w-full border border-color-gray-200">

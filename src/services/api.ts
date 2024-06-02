@@ -20,11 +20,23 @@ export const api = createApi({
 			return headers;
 		},
 	}),
-	tagTypes: ['Task', 'Project', 'FocusRecord'], // Define tag type for cache invalidation
+	tagTypes: ['Task', 'Project', 'FocusRecord', 'User', 'Comment'], // Define tag type for cache invalidation
 	endpoints: (builder) => ({
 		// Users
+		getUsers: builder.query({
+			query: (queryParams) => {
+				const queryString = buildQueryString(queryParams);
+				return queryString ? `/users?${queryString}` : '/users'; // Use query string if provided
+			},
+			providesTags: ['User'], // This endpoint provides the 'User' tag
+			transformResponse: (response) => {
+				const usersById = arrayToObjectByKey(response, '_id');
+
+				return { users: response, usersById }; // Return as a combined object
+			},
+		}),
 		getLoggedInUser: builder.query({
-			query: () => '/users/logged-in/details',
+			query: () => '/users/logged-in',
 		}),
 		registerUser: builder.mutation({
 			query: (userDetails) => ({
@@ -47,6 +59,7 @@ export const api = createApi({
 					console.error('Registration failed:', error);
 				}
 			},
+			invalidatesTags: ['User'],
 		}),
 
 		loginUser: builder.mutation({
@@ -125,7 +138,6 @@ export const api = createApi({
 			}),
 			invalidatesTags: ['Task'], // Invalidate the cache when a task is updated
 		}),
-		// PERMANENTLY DELETE TASK FOREVER
 		permanentlyDeleteTask: builder.mutation({
 			query: ({ taskId, parentId }) => ({
 				url: `/tasks/delete/${taskId}${parentId ? `?parentId=${parentId}` : ''}`,
@@ -205,7 +217,6 @@ export const api = createApi({
 			}),
 			invalidatesTags: (result, error, focusRecordId) => ['FocusRecord'],
 		}),
-		// PERMANENTLY DELETE FOCUS RECORD FOREVER
 		permanentlyDeleteFocusRecord: builder.mutation({
 			query: (focusRecordId) => ({
 				url: `/focus-records/delete/${focusRecordId}`,
@@ -213,12 +224,28 @@ export const api = createApi({
 			}),
 			invalidatesTags: ['FocusRecord'], // Invalidate the cache when a task is added
 		}),
+
+		// Comments
+		getComments: builder.query({
+			query: (queryParams) => {
+				const queryString = buildQueryString(queryParams);
+				return queryString ? `/comments?${queryString}` : '/comments'; // Use query string if provided
+			},
+			providesTags: ['Comment'], // This endpoint provides the 'Task' tag
+			transformResponse: (response) => {
+				const comments = response;
+				const commentsByTaskId = arrayToObjectArrayByKey(comments, 'taskId');
+
+				return { comments, commentsByTaskId }; // Return as a combined object
+			},
+		}),
 	}),
 });
 
 // Export hooks to use in React components
 export const {
 	// Users
+	useGetUsersQuery,
 	useGetLoggedInUserQuery,
 	useRegisterUserMutation,
 	useLoginUserMutation,
@@ -243,4 +270,7 @@ export const {
 	useAddFocusRecordMutation,
 	useEditFocusRecordMutation,
 	usePermanentlyDeleteFocusRecordMutation,
+
+	// Comments
+	useGetCommentsQuery,
 } = api;
