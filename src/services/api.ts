@@ -250,6 +250,14 @@ export const api = createApi({
 			},
 			invalidatesTags: ['Comment'],
 		}),
+		editComment: builder.mutation({
+			query: ({ commentId, payload }) => ({
+				url: `/comments/edit/${commentId}`,
+				method: 'PUT',
+				body: payload,
+			}),
+			invalidatesTags: (result, error, commentId) => ['Comment'],
+		}),
 	}),
 });
 
@@ -285,4 +293,5 @@ export const {
 	// Comments
 	useGetCommentsQuery,
 	useAddCommentMutation,
+	useEditCommentMutation,
 } = api;

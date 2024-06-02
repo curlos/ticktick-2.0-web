@@ -15,6 +15,7 @@ import {
 	useGetCommentsQuery,
 	useAddCommentMutation,
 	useGetLoggedInUserQuery,
+	useEditCommentMutation,
 } from '../services/api';
 import { getFormattedDuration, getTasksWithFilledInChildren, sumProperty } from '../utils/helpers.utils';
 import { SortableTree } from './SortableTest/SortableTree';
@@ -43,12 +44,6 @@ const EmptyTask = () => (
 
 const TaskDetails = () => {
 	// Users
-	const {
-		data: loggedInUser,
-		error: errorLoggedInUser,
-		isLoading: isLoadingLoggedInUser,
-	} = useGetLoggedInUserQuery();
-
 	const { data: fetchedUsers, isLoading: isLoadingGetUsers, error: errorGetUsers } = useGetUsersQuery();
 	const { users, usersById } = fetchedUsers || {};
 
@@ -73,8 +68,6 @@ const TaskDetails = () => {
 	// Comments
 	const { data: fetchedComments, isLoading: isLoadingGetComments, error: errorGetComments } = useGetCommentsQuery();
 	const { comments, commentsByTaskId } = fetchedComments || {};
-
-	const [addComment] = useAddCommentMutation();
 
 	const { play: playCompletionSound, stop: stopCompletionSound } = useAudio(amongUsCompletionSoundMP3);
 
@@ -102,6 +95,7 @@ const TaskDetails = () => {
 	const [showAddTaskForm, setShowAddTaskForm] = useState(false);
 	const [showAddCommentInput, setShowAddCommentInput] = useState(false);
 	const [currentComment, setCurrentComment] = useState('');
+	const [commentToEdit, setCommentToEdit] = useState(null);
 
 	const dropdownCalendarToggleRef = useRef(null);
 	const dropdownTaskOptionsRef = useRef(null);
@@ -171,7 +165,7 @@ const TaskDetails = () => {
 	const { _id, children, priority, completedPomodoros, timeTaken, estimatedDuration, deadline, willNotDo, dueDate } =
 		task;
 	const priorityData = PRIORITIES[priority];
-	const taskComments = Object.values(commentsByTaskId[_id]);
+	const taskComments = _id && commentsByTaskId && Object.values(commentsByTaskId[_id]);
 
 	const CommentList = () => {
 		if (!usersById || !taskComments || taskComments.length === 0) {
@@ -198,10 +192,34 @@ const TaskDetails = () => {
 						</div>
 					</div>
 
-					<div className="ml-2">
-						<div className="flex items-center gap-4 text-color-gray-100">
-							<div>{author.nickname}</div>
-							<div>{timeUpdated}</div>
+					<div className="ml-2 flex-1">
+						<div className="flex justify-between items-center w-full">
+							<div className="flex items-center gap-4 text-color-gray-100">
+								<div>{author.nickname}</div>
+								<div>{timeUpdated}</div>
+							</div>
+
+							<div>
+								<Icon
+									name="edit"
+									customClass={
+										'text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer'
+									}
+									fill={0}
+									onClick={() => {
+										setCommentToEdit(comment);
+										setShowAddCommentInput(true);
+										setCurrentComment(comment.content);
+									}}
+								/>
+								<Icon
+									name="delete"
+									customClass={
+										'text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer'
+									}
+									fill={0}
+								/>
+							</div>
 						</div>
 
 						<div className="mt-2">{comment.content}</div>
@@ -409,42 +427,15 @@ const TaskDetails = () => {
 			</div>
 
 			<div>
-				{showAddCommentInput && (
-					<form
-						onSubmit={(e) => {
-							e.preventDefault();
-
-							if (loggedInUser) {
-								const payload = {
-									taskId: _id,
-									authorId: loggedInUser._id,
-									content: currentComment,
-								};
-
-								addComment(payload);
-								setCurrentComment('');
-							}
-						}}
-						className="p-4 border-t border-b border-color-gray-200"
-					>
-						<TextareaAutosize
-							className="placeholder-color-gray-100 bg-color-gray-300 p-[10px] rounded-md w-full outline-none border border-transparent focus:border-blue-500 resize-none max-h-[300px] gray-scrollbar overflow-auto"
-							placeholder="Write a comment"
-							value={currentComment}
-							onChange={(e) => setCurrentComment(e.target.value)}
-						></TextareaAutosize>
-
-						<div className="flex justify-end">
-							<button
-								type="submit"
-								disabled={!currentComment || !loggedInUser}
-								className="border border-transparent bg-blue-500 px-4 py-1 mt-2 rounded hover:bg-blue-500 disabled:opacity-50"
-							>
-								Save
-							</button>
-						</div>
-					</form>
-				)}
+				<AddCommentForm
+					showAddCommentInput={showAddCommentInput}
+					setShowAddCommentInput={setShowAddCommentInput}
+					currentComment={currentComment}
+					setCurrentComment={setCurrentComment}
+					taskId={taskId}
+					commentToEdit={commentToEdit}
+					setCommentToEdit={setCommentToEdit}
+				/>
 
 				<div className="px-4 py-3 flex justify-between items-center text-color-gray-100">
 					{!isProjectsLoading && (
@@ -510,6 +501,78 @@ const TaskDetails = () => {
 				setIsModalOpen={setIsModalTaskActivitiesOpen}
 			/>
 		</div>
+	);
+};
+
+const AddCommentForm = ({
+	showAddCommentInput,
+	setShowAddCommentInput,
+	currentComment,
+	setCurrentComment,
+	taskId,
+	commentToEdit,
+	setCommentToEdit,
+}) => {
+	const {
+		data: loggedInUser,
+		error: errorLoggedInUser,
+		isLoading: isLoadingLoggedInUser,
+	} = useGetLoggedInUserQuery();
+
+	const [addComment] = useAddCommentMutation();
+	const [editComment] = useEditCommentMutation();
+
+	return (
+		showAddCommentInput && (
+			<div className="p-4 border-t border-b border-color-gray-200">
+				<TextareaAutosize
+					className="placeholder-color-gray-100 bg-color-gray-300 p-[10px] rounded-md w-full outline-none border border-transparent focus:border-blue-500 resize-none max-h-[300px] gray-scrollbar overflow-auto"
+					placeholder="Write a comment"
+					value={currentComment}
+					onChange={(e) => setCurrentComment(e.target.value)}
+				></TextareaAutosize>
+
+				<div className="flex justify-end items-center gap-2">
+					<button
+						onClick={(e) => {
+							e.stopPropagation();
+							setShowAddCommentInput(false);
+						}}
+						className="border border-color-gray-200 px-4 py-1 mt-2 rounded hover:bg-color-gray-200 disabled:opacity-50 cursor-pointer"
+					>
+						Cancel
+					</button>
+
+					<button
+						type="submit"
+						disabled={!currentComment || !loggedInUser}
+						onClick={() => {
+							if (loggedInUser) {
+								const payload = {
+									taskId,
+									authorId: loggedInUser._id,
+									content: currentComment,
+								};
+
+								if (commentToEdit) {
+									// Edit comment
+									editComment({ commentId: commentToEdit._id, payload });
+								} else {
+									// Add comment
+									addComment(payload);
+								}
+
+								setCurrentComment('');
+								setCommentToEdit(null);
+							}
+						}}
+						className="border border-transparent bg-blue-500 px-4 py-1 mt-2 rounded hover:bg-blue-500 disabled:opacity-50 cursor-pointer"
+					>
+						{commentToEdit ? 'Edit' : 'Add'}
+					</button>
+				</div>
+			</div>
+		)
 	);
 };
 
