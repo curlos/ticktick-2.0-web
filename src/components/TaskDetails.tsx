@@ -16,6 +16,7 @@ import {
 	useAddCommentMutation,
 	useGetLoggedInUserQuery,
 	useEditCommentMutation,
+	usePermanentlyDeleteCommentMutation,
 } from '../services/api';
 import { getFormattedDuration, getTasksWithFilledInChildren, sumProperty } from '../utils/helpers.utils';
 import { SortableTree } from './SortableTest/SortableTree';
@@ -165,9 +166,11 @@ const TaskDetails = () => {
 	const { _id, children, priority, completedPomodoros, timeTaken, estimatedDuration, deadline, willNotDo, dueDate } =
 		task;
 	const priorityData = PRIORITIES[priority];
-	const taskComments = _id && commentsByTaskId && Object.values(commentsByTaskId[_id]);
+	const taskComments = _id && commentsByTaskId && commentsByTaskId[_id] && Object.values(commentsByTaskId[_id]);
 
 	const CommentList = () => {
+		const [permanentlyDeleteComment] = usePermanentlyDeleteCommentMutation();
+
 		if (!usersById || !taskComments || taskComments.length === 0) {
 			return null;
 		}
@@ -218,6 +221,10 @@ const TaskDetails = () => {
 										'text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer'
 									}
 									fill={0}
+									onClick={() => {
+										setCommentToEdit(null);
+										permanentlyDeleteComment(comment._id);
+									}}
 								/>
 							</div>
 						</div>

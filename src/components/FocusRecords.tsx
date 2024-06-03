@@ -82,8 +82,6 @@ const StatsOverview: React.FC<StatsOverviewProps> = ({ focusRecords }) => {
 		);
 	};
 
-	console.log(totalFocusDuration);
-
 	return (
 		<div className="p-5">
 			<h3 className="text-[18px] font-bold mb-5">Overview</h3>
@@ -157,13 +155,15 @@ const FocusRecordList = () => {
 					const focusRecordsForTheDay = groupedRecords[day];
 
 					return (
-						<div className="text-[13px] px-5 mt-5">
+						<div key={day} className="text-[13px] px-5 mt-5">
 							<div className="text-color-gray-100 text-[13px] mb-3">{day}</div>
 
 							{focusRecords &&
 								tasksById &&
 								sortArrayByEndTime(focusRecordsForTheDay).map((focusRecord) => (
-									<FocusRecord focusRecord={focusRecord} tasksById={tasksById} />
+									<div key={focusRecord._id}>
+										<FocusRecord focusRecord={focusRecord} tasksById={tasksById} />
+									</div>
 								))}
 						</div>
 					);

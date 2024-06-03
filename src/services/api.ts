@@ -193,8 +193,6 @@ export const api = createApi({
 				const focusRecords = response;
 				const focusRecordsByTaskId = arrayToObjectArrayByKey(focusRecords, 'taskId');
 
-				console.log(focusRecordsByTaskId);
-
 				return { focusRecords, focusRecordsByTaskId }; // Return as a combined object
 			},
 		}),
@@ -258,6 +256,13 @@ export const api = createApi({
 			}),
 			invalidatesTags: (result, error, commentId) => ['Comment'],
 		}),
+		permanentlyDeleteComment: builder.mutation({
+			query: (commentId) => ({
+				url: `/comments/delete/${commentId}`,
+				method: 'DELETE',
+			}),
+			invalidatesTags: ['Comment'], // Invalidate the cache when a task is added
+		}),
 	}),
 });
 
@@ -294,4 +299,5 @@ export const {
 	useGetCommentsQuery,
 	useAddCommentMutation,
 	useEditCommentMutation,
+	usePermanentlyDeleteCommentMutation,
 } = api;
