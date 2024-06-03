@@ -10,6 +10,7 @@ interface IconProps {
 	onMouseOver?: React.MouseEventHandler<HTMLSpanElement> | undefined;
 	onMouseLeave?: React.MouseEventHandler<HTMLSpanElement> | undefined;
 	key?: string | number;
+	iconKey?: string;
 }
 
 const Icon: React.FC<IconProps> = ({

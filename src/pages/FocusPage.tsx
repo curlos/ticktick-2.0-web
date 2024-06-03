@@ -1,5 +1,5 @@
 import FocusRecords from '../components/FocusRecords';
-import FocusTimer from '../components/FocusTimer';
+import FocusTimer from '../components/FocusTimer/FocusTimer';
 import ActionSidebar from '../components/ActionSidebar';
 import TaskDetailsPage from '../components/TaskDetails';
 

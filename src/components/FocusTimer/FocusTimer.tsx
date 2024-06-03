@@ -1,14 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect, useRef } from 'react';
 import alarmSound from '/clock-alarm-8761.mp3';
 import iosDarkNoise from '/IOS Dark Noise Background sound 1 Hour.mp3';
-import { Link } from 'react-router-dom';
-import Icon from './Icon';
+import Icon from '../Icon';
 import { CircularProgressbarWithChildren, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
-import PixelArt from './PixelArt';
-import Dropdown from './Dropdown/Dropdown';
-import ModalFocusSettings from './Modal/ModalFocusSettings';
-import { DropdownProps } from '../interfaces/interfaces';
+import PixelArt from '../PixelArt';
+import Dropdown from '../Dropdown/Dropdown';
+import ModalFocusSettings from '../Modal/ModalFocusSettings';
+import { DropdownProps } from '../../interfaces/interfaces';
 
 const bgThemeColor = 'bg-[#4772F9]';
 const textThemeColor = 'text-[#4772F9]';
@@ -181,7 +181,7 @@ const DropdownOptions: React.FC<DropdownPrioritiesProps> = ({
 	setIsVisible,
 	setIsModalFocusSettingsOpen,
 }) => {
-	const [selectedView, setSelectedView] = useState('date');
+	// const [selectedView, setSelectedView] = useState('date');
 
 	interface AdditionalOptionProps {
 		text: string;

@@ -9,51 +9,57 @@ interface BaseDropdownProps extends DropdownProps {
 	positionAdjustment?: string;
 }
 
-const Dropdown = forwardRef<HTMLDivElement, BaseDropdownProps>(
-	({ children, isVisible, setIsVisible, customClasses, positionAdjustment, toggleRef, customStyling }, ref) => {
-		const dropdownRef = useRef(null);
-		useOutsideClick(dropdownRef, toggleRef, () => setIsVisible(false));
+const Dropdown: React.FC<BaseDropdownProps> = ({
+	children,
+	isVisible,
+	setIsVisible,
+	customClasses,
+	positionAdjustment,
+	toggleRef,
+	customStyling,
+}) => {
+	const dropdownRef = useRef(null);
+	useOutsideClick(dropdownRef, toggleRef, () => setIsVisible(false));
 
-		// Animation variants
-		const variants = {
-			hidden: {
-				opacity: 0,
-				scale: 0.95,
-				transition: {
-					duration: 0.2,
-				},
+	// Animation variants
+	const variants = {
+		hidden: {
+			opacity: 0,
+			scale: 0.95,
+			transition: {
+				duration: 0.2,
 			},
-			visible: {
-				opacity: 1,
-				scale: 1,
-				transition: {
-					duration: 0.2,
-				},
+		},
+		visible: {
+			opacity: 1,
+			scale: 1,
+			transition: {
+				duration: 0.2,
 			},
-		};
+		},
+	};
 
-		return (
-			<AnimatePresence>
-				{isVisible && (
-					<motion.div
-						ref={dropdownRef}
-						initial="hidden"
-						animate="visible"
-						exit="hidden"
-						variants={variants}
-						className={classNames(
-							'absolute top-full left-0 z-50 text-white bg-color-gray-600 rounded-lg text-sm mt-[4px]',
-							positionAdjustment || '',
-							customClasses || ''
-						)}
-						style={customStyling || {}}
-					>
-						{children}
-					</motion.div>
-				)}
-			</AnimatePresence>
-		);
-	}
-);
+	return (
+		<AnimatePresence>
+			{isVisible && (
+				<motion.div
+					ref={dropdownRef}
+					initial="hidden"
+					animate="visible"
+					exit="hidden"
+					variants={variants}
+					className={classNames(
+						'absolute top-full left-0 z-50 text-white bg-color-gray-600 rounded-lg text-sm mt-[4px]',
+						positionAdjustment || '',
+						customClasses || ''
+					)}
+					style={customStyling || {}}
+				>
+					{children}
+				</motion.div>
+			)}
+		</AnimatePresence>
+	);
+};
 
 export default Dropdown;
