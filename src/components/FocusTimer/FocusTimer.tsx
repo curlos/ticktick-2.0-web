@@ -141,7 +141,7 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = () => {
 					<div className={`${textThemeColor}`} onClick={() => setSeconds(seconds - 300)}>
 						-
 					</div>
-					<div className="text-center text-[45px]">{formatSeconds(seconds)}</div>
+					<div data-cy="timer-display" className="text-center text-[45px]">{formatSeconds(seconds)}</div>
 					<div className={`${textThemeColor}`} onClick={() => setSeconds(seconds + 300)}>
 						+
 					</div>
