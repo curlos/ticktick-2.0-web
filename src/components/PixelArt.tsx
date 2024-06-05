@@ -1,16 +1,22 @@
 import classNames from 'classnames';
 import { SuperMarioPixelHTML } from '../utils/superMarioPixelArt.utils';
+import { useSelector } from 'react-redux';
 
 interface PixelArtProps {
 	gap?: string;
 }
 
 const PixelArt: React.FC<PixelArtProps> = ({ gap }) => {
-	const colors = extractColorsFromHTML(SuperMarioPixelHTML);
-	const filledInColors = colors.filter((color) => color !== 'transparent');
-	const timerProgress = 0.9;
+	const { seconds, isActive, initialSeconds, isOvertime } = useSelector((state) => state.timer);
+
+	// TODO: Use "timer" seconds and initial seconds from redux to determine "timer" progress
+	const timerProgress = (initialSeconds - seconds) / initialSeconds;
+	const startedTimer = seconds !== initialSeconds;
 	let foundFilledInColors = 0;
 	let lastFilledInColorLessThanOrEqualTimerProgressIndex = null;
+
+	const colors = extractColorsFromHTML(SuperMarioPixelHTML);
+	const filledInColors = colors.filter((color) => color !== 'transparent');
 
 	return (
 		<div
@@ -25,7 +31,7 @@ const PixelArt: React.FC<PixelArtProps> = ({ gap }) => {
 		>
 			{colors.map((color, index) => {
 				const isFilledInColor = color !== 'transparent';
-				let opacity = 0.5;
+				let opacity = startedTimer ? 0.5 : 1;
 				let showBlinkingOpacity = false;
 
 				if (isFilledInColor) {
@@ -44,7 +50,8 @@ const PixelArt: React.FC<PixelArtProps> = ({ gap }) => {
 						index === lastFilledInColorLessThanOrEqualTimerProgressIndex + 1 ||
 						isFirstFilledinColor
 					) {
-						showBlinkingOpacity = true;
+						// Only show the blinking opacity if the timer is currently running and thus making progress.
+						showBlinkingOpacity = isActive ? true : false;
 					}
 				}
 
