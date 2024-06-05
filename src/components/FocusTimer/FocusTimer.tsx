@@ -11,6 +11,7 @@ import ModalFocusSettings from '../Modal/ModalFocusSettings';
 import { DropdownProps } from '../../interfaces/interfaces';
 import { useSelector, useDispatch } from 'react-redux';
 import { setSeconds, setIsActive, setIsOvertime } from '../../slices/timerSlice';
+import DropdownSetTask from '../Dropdown/DropdownsAddFocusRecord/DropdownSetTask';
 
 const bgThemeColor = 'bg-[#4772F9]';
 const textThemeColor = 'text-[#4772F9]';
@@ -24,6 +25,10 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = () => {
 	const { seconds, isActive, initialSeconds, isOvertime } = useSelector((state) => state.timer);
 	// const initialSeconds = 2700; // Consider moving this to Redux if it needs to be dynamic or configurable
 	const isPaused = !isActive && seconds !== initialSeconds;
+
+	const [selectedTask, setSelectedTask] = useState<Object | null>(null);
+	const [isDropdownSetTaskVisible, setIsDropdownSetTaskVisible] = useState(false);
+	const dropdownSetTaskRef = useRef(null);
 
 	const handleTimerAction = () => {
 		dispatch(setIsActive(!isActive)); // Toggle between starting and pausing the timer
@@ -84,16 +89,41 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = () => {
 		return (seconds / initialSeconds) * 100;
 	};
 
+	console.log(selectedTask);
+
+	useEffect(() => {
+		setIsDropdownSetTaskVisible(false);
+	}, [selectedTask]);
+
 	return (
-		<div className="text-center">
-			<div className={`text-white mb-4 cursor-pointer flex justify-center items-center group`}>
-				<span className="text-color-gray-100 group-hover:text-white">Focus</span>
-				<Icon
-					name="chevron_right"
-					customClass={
-						'text-color-gray-100 group-hover:text-white !text-[18px] cursor-p ml-[1px] mb-[-2.25px]'
-					}
-					fill={0}
+		<div className="text-center w-[300px]">
+			<div className="relative">
+				<div
+					ref={dropdownSetTaskRef}
+					onClick={() => {
+						setIsDropdownSetTaskVisible(!isDropdownSetTaskVisible);
+					}}
+					className={`text-white mb-4 cursor-pointer flex justify-center items-center group`}
+				>
+					<span className="text-color-gray-100 group-hover:text-white max-w-[260px] truncate">
+						{selectedTask ? selectedTask?.title : 'Focus'}
+						{/* Focus */}
+					</span>
+					<Icon
+						name="chevron_right"
+						customClass={
+							'text-color-gray-100 group-hover:text-white !text-[18px] cursor-p ml-[1px] mb-[-2.25px]'
+						}
+						fill={0}
+					/>
+				</div>
+
+				<DropdownSetTask
+					toggleRef={dropdownSetTaskRef}
+					isVisible={isDropdownSetTaskVisible}
+					setIsVisible={setIsDropdownSetTaskVisible}
+					selectedTask={selectedTask}
+					setSelectedTask={setSelectedTask}
 				/>
 			</div>
 			<CircularProgressbarWithChildren
