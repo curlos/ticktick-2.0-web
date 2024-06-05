@@ -9,6 +9,8 @@ import PixelArt from '../PixelArt';
 import Dropdown from '../Dropdown/Dropdown';
 import ModalFocusSettings from '../Modal/ModalFocusSettings';
 import { DropdownProps } from '../../interfaces/interfaces';
+import { useSelector, useDispatch } from 'react-redux';
+import { setSeconds, setIsActive, setIsOvertime } from '../../slices/timerSlice';
 
 const bgThemeColor = 'bg-[#4772F9]';
 const textThemeColor = 'text-[#4772F9]';
@@ -18,50 +20,20 @@ interface PomodoroTimerProps {
 }
 
 const PomodoroTimer: React.FC<PomodoroTimerProps> = () => {
-	const [initialSeconds, _] = useState(2700); // Assuming you want to start with a 5 seconds timer for testing
-	const [seconds, setSeconds] = useState(initialSeconds);
-	const [isActive, setIsActive] = useState(false);
-	const [isOvertime, setIsOvertime] = useState(false);
-	const backgroundNoise: any = useState(new Audio(iosDarkNoise));
-	backgroundNoise.loop = true;
+	const dispatch = useDispatch();
+	const { seconds, isActive, initialSeconds, isOvertime } = useSelector((state) => state.timer);
+	// const initialSeconds = 2700; // Consider moving this to Redux if it needs to be dynamic or configurable
 	const isPaused = !isActive && seconds !== initialSeconds;
 
-	useEffect(() => {
-		let intervalId: any = null;
-
-		if (isActive) {
-			if (backgroundNoise && backgroundNoise[0]?.paused) {
-				backgroundNoise[0].play();
-			}
-
-			intervalId = setInterval(() => {
-				setSeconds((prevSeconds) => {
-					if (prevSeconds === 0 && !isOvertime) {
-						playPomodoroCompleteSound();
-						showNotification();
-						setIsOvertime(true); // Switch to overtime
-						return initialSeconds + 1; // Start counting up from 0
-					}
-					return isOvertime ? prevSeconds + 1 : prevSeconds - 1;
-				});
-			}, 1000);
-		} else if (!isActive && seconds !== initialSeconds) {
-			backgroundNoise[0].pause();
-			clearInterval(intervalId);
-		}
-
-		return () => clearInterval(intervalId);
-	}, [isActive, seconds, isOvertime]);
-
 	const handleTimerAction = () => {
-		setIsActive(!isActive); // Toggle between starting and pausing the timer
+		dispatch(setIsActive(!isActive)); // Toggle between starting and pausing the timer
 	};
 
 	const handleResetTimer = () => {
 		// This function will stop and reset the timer, also exiting the overtime phase if it's active
-		setIsActive(false);
-		setIsOvertime(false);
-		setSeconds(initialSeconds); // Reset to the initial time setting
+		dispatch(setIsActive(false));
+		dispatch(setIsOvertime(false));
+		dispatch(setSeconds(initialSeconds)); // Reset to the initial time setting
 	};
 
 	const showNotification = () => {
@@ -138,11 +110,13 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = () => {
 					className="text-white text-[40px] flex justify-center gap-4 w-[100%] select-none cursor-pointer mb-[-10px]"
 					onMouseOver={() => {}}
 				>
-					<div className={`${textThemeColor}`} onClick={() => setSeconds(seconds - 300)}>
+					<div className={`${textThemeColor}`} onClick={() => dispatch(setSeconds(seconds - 300))}>
 						-
 					</div>
-					<div data-cy="timer-display" className="text-center text-[45px]">{formatSeconds(seconds)}</div>
-					<div className={`${textThemeColor}`} onClick={() => setSeconds(seconds + 300)}>
+					<div data-cy="timer-display" className="text-center text-[45px]">
+						{formatSeconds(seconds)}
+					</div>
+					<div className={`${textThemeColor}`} onClick={() => dispatch(setSeconds(seconds + 300))}>
 						+
 					</div>
 				</div>
