@@ -365,3 +365,16 @@ export const getFormattedDuration = (duration) => {
 
 	return formattedDuration;
 };
+
+export const formatSeconds = (seconds: number) => {
+	// Calculate the number of minutes and the remaining seconds
+	const minutes = Math.floor(seconds / 60);
+	const remainingSeconds = seconds % 60;
+
+	// Pad with leading zeros if necessary
+	const paddedMinutes = minutes.toString().padStart(2, '0');
+	const paddedSeconds = remainingSeconds.toString().padStart(2, '0');
+
+	// Return the formatted string
+	return `${paddedMinutes}:${paddedSeconds}`;
+};
