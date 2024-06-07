@@ -22,8 +22,8 @@ const PixelArtTimer: React.FC<PixelArtProps> = ({ gap }) => {
 	let lastFilledInColorLessThanOrEqualTimerProgressIndex = null;
 
 	const colors = extractColorsFromHTML(SuperMarioPixelHTML);
-	const cleanedUpColors = adjustGrid(colors);
-	const filledInColors = colors.filter((color) => color !== 'transparent');
+	const { cleanedUpColors, cleanedUpColorsMatrix } = adjustGrid(colors);
+	const filledInColors = cleanedUpColors.filter((color) => color !== 'transparent');
 
 	return (
 		<div>
@@ -32,8 +32,8 @@ const PixelArtTimer: React.FC<PixelArtProps> = ({ gap }) => {
 				className="grid"
 				style={{
 					display: 'grid',
-					gridTemplateColumns: 'repeat(20, 1fr)',
-					gridTemplateRows: 'repeat(20, 1fr)',
+					gridTemplateColumns: `repeat(${cleanedUpColorsMatrix[0].length}, 1fr)`,
+					gridTemplateRows: `repeat(${cleanedUpColorsMatrix.length}, 1fr)`,
 					gap: gap ? gap : '0px',
 				}}
 			>
@@ -113,8 +113,6 @@ function adjustGrid(colors, gridSize = 20) {
 		matrix.push(colors.slice(i * gridSize, (i + 1) * gridSize));
 	}
 
-	console.log(matrix);
-
 	// Step 2: Determine which rows and columns to keep
 	let rowsToKeep = new Set();
 	let colsToKeep = new Set();
@@ -131,25 +129,32 @@ function adjustGrid(colors, gridSize = 20) {
 		}
 	}
 
-	console.log(rowsToKeep);
-	console.log(colsToKeep);
+	// Step 3: Trim the rows and cols
+	const trimmedRowsMatrix = [];
 
-	// Step 3: Construct a new trimmed matrix excluding fully transparent rows and columns
-	let trimmedMatrix = [];
-	Array.from(rowsToKeep).forEach((row) => {
-		let newRow = [];
-		Array.from(colsToKeep).forEach((col) => {
-			newRow.push(matrix[row][col]);
-		});
-		trimmedMatrix.push(newRow);
-	});
+	for (let row = 0; row < gridSize; row++) {
+		if (rowsToKeep.has(row)) {
+			trimmedRowsMatrix.push(matrix[row]);
+		}
+	}
 
-	console.log(trimmedMatrix);
-	console.log(trimmedMatrix.flat());
+	const trimmedColsMatrix = [];
 
-	// // Step 4: Flatten the trimmed matrix back to a single array
-	return trimmedMatrix.flat();
-	// return colors;
+	for (let row = 0; row < trimmedRowsMatrix.length; row++) {
+		const newRow = [];
+		for (let col = 0; col < gridSize; col++) {
+			if (colsToKeep.has(col)) {
+				newRow.push(trimmedRowsMatrix[row][col]);
+			}
+		}
+
+		if (newRow) {
+			trimmedColsMatrix.push(newRow);
+		}
+	}
+
+	// Step 4: Flatten the trimmed matrix back to a single array
+	return { cleanedUpColors: trimmedColsMatrix.flat(), cleanedUpColorsMatrix: trimmedColsMatrix };
 }
 
 export default PixelArtTimer;
