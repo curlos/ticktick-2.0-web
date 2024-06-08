@@ -176,7 +176,7 @@ const DropdownProjects: React.FC<DropdownProjectsProps> = ({
 					)}
 
 					{showSmartLists && nonSmartListProjects.length > 0 && (
-						<div className="px-2 mt-2 text-color-gray-100">Lists</div>
+						<div className="px-2 mt-2 text-color-gray-100 text-left">Lists</div>
 					)}
 
 					{nonSmartListProjects.map((project) => (

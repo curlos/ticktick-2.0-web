@@ -115,7 +115,8 @@ const ModalFocusSettings: React.FC<ModalFocusSettingsProps> = ({ isModalOpen, se
 					/>
 				</div>
 
-				<div className="p-3 bg-color-gray-600 rounded-lg">
+				{/* TODO: Removing this for now but could be an interesting feature to implement in the future. Not required though. */}
+				{/* <div className="p-3 bg-color-gray-600 rounded-lg">
 					<CheckboxOption
 						text="Sync Across Devices"
 						backendPropName="syncAcrossDevices"
@@ -131,7 +132,7 @@ const ModalFocusSettings: React.FC<ModalFocusSettingsProps> = ({ isModalOpen, se
 					<div className="mt-2 text-color-gray-100 text-[12px]">
 						If enabled, the status of the Focus will be synced across all devices.
 					</div>
-				</div>
+				</div> */}
 
 				{/* Timer Option */}
 
