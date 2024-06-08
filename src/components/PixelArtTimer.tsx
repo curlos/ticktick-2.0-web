@@ -7,6 +7,7 @@ import DropdownSetTask from './Dropdown/DropdownsAddFocusRecord/DropdownSetTask'
 import { useEffect, useRef, useState } from 'react';
 import Icon from './Icon';
 import { PixelDigit, PixelColon } from './PixelDigit';
+import ModalAddFocusNote from './Modal/ModalAddFocusNote';
 
 const bgThemeColor = 'bg-[#4772F9]';
 const textThemeColor = 'text-[#4772F9]';
@@ -24,6 +25,8 @@ const PixelArtTimer: React.FC<PixelArtProps> = ({ gap }) => {
 	const [isDropdownSetTaskVisible, setIsDropdownSetTaskVisible] = useState(false);
 	const dropdownSetTaskRef = useRef(null);
 
+	const [isModalAddFocusNoteOpen, setIsModalAddFocusNoteOpen] = useState(false);
+
 	useEffect(() => {
 		setIsDropdownSetTaskVisible(false);
 	}, [selectedTask]);
@@ -40,6 +43,8 @@ const PixelArtTimer: React.FC<PixelArtProps> = ({ gap }) => {
 	};
 
 	const formattedSeconds = formatSeconds(seconds);
+
+	const secondsOffset = 10;
 
 	return (
 		<div>
@@ -73,26 +78,26 @@ const PixelArtTimer: React.FC<PixelArtProps> = ({ gap }) => {
 				/>
 			</div>
 
-			<div className="my-7">
+			<div className="flex justify-center my-7">
 				<PixelGrid gap={gap} />
 			</div>
 
 			<div
-				className="text-white text-[40px] flex justify-center gap-4 w-[100%] select-none cursor-pointer mb-[-10px]"
+				className="text-white text-[40px] flex justify-center gap-4 w-[100%] select-none cursor-pointer"
 				onMouseOver={() => {}}
 			>
-				<div className={`${textThemeColor}`} onClick={() => dispatch(setSeconds(seconds - 300))}>
+				<div className={`${textThemeColor}`} onClick={() => dispatch(setSeconds(seconds - secondsOffset))}>
 					-
 				</div>
 
 				{formattedSeconds && <TimeDisplay time={formattedSeconds} />}
 
-				<div className={`${textThemeColor}`} onClick={() => dispatch(setSeconds(seconds + 300))}>
+				<div className={`${textThemeColor}`} onClick={() => dispatch(setSeconds(seconds + secondsOffset))}>
 					+
 				</div>
 			</div>
 
-			<div className="flex flex-col gap-2 justify-center items-center pt-6">
+			<div className="flex flex-col gap-2 justify-center items-center mt-10">
 				<button
 					type="button"
 					className={`${bgThemeColor} rounded-full py-3 px-10 text-white min-w-[200px]`}
@@ -108,7 +113,13 @@ const PixelArtTimer: React.FC<PixelArtProps> = ({ gap }) => {
 				>
 					End
 				</button>
+
+				<button className="text-color-gray-100 cursor-pointer" onClick={() => setIsModalAddFocusNoteOpen(true)}>
+					Add Focus Note
+				</button>
 			</div>
+
+			<ModalAddFocusNote isModalOpen={isModalAddFocusNoteOpen} setIsModalOpen={setIsModalAddFocusNoteOpen} />
 		</div>
 	);
 };
@@ -138,8 +149,8 @@ const PixelGrid = ({ gap }) => {
 
 	// TODO: Use "timer" seconds and initial seconds from redux to determine "timer" progress
 	const timerProgress = (initialSeconds - seconds) / initialSeconds;
-	const startedTimer = seconds !== initialSeconds;
-	let foundFilledInColors = 0;
+	const startedTimer = isActive || seconds !== initialSeconds;
+	let currFilledInColorIndex = 0;
 	let lastFilledInColorLessThanOrEqualTimerProgressIndex = null;
 
 	const colors = extractColorsFromHTML(SuperMarioPixelHTML);
@@ -159,23 +170,23 @@ const PixelGrid = ({ gap }) => {
 		>
 			{cleanedUpColors.map((color, index) => {
 				const isFilledInColor = color !== 'transparent';
-				let opacity = startedTimer ? 0.5 : 1;
+				let opacity = startedTimer ? 0.3 : 1;
 				let showBlinkingOpacity = false;
 
 				if (isFilledInColor) {
-					const isFirstFilledinColor = foundFilledInColors === 0;
-					foundFilledInColors += 1;
+					const isFirstFilledinColor = currFilledInColorIndex === 0;
+					currFilledInColorIndex += 1;
 
-					const currentProgress = foundFilledInColors / filledInColors.length;
+					const currentProgress = currFilledInColorIndex / filledInColors.length;
 
 					// Show the filled in color with the full opacity if enough time has progressed to already fill it in.
 					if (currentProgress <= timerProgress) {
 						opacity = 1;
-						lastFilledInColorLessThanOrEqualTimerProgressIndex = index;
+						lastFilledInColorLessThanOrEqualTimerProgressIndex = currFilledInColorIndex;
 
 						// If not enough time has progressed and this is EITHER the first filled in color in the pixel art OR the color AFTER the last filled in color, then show the blinking opacity animation on that color to show that it is in the process of being filled.
 					} else if (
-						index === lastFilledInColorLessThanOrEqualTimerProgressIndex + 1 ||
+						currFilledInColorIndex === lastFilledInColorLessThanOrEqualTimerProgressIndex + 1 ||
 						isFirstFilledinColor
 					) {
 						// Only show the blinking opacity if the timer is currently running and thus making progress.

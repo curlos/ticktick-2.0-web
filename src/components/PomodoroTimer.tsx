@@ -6,6 +6,7 @@ import { CircularProgressbarWithChildren, buildStyles } from 'react-circular-pro
 import DropdownSetTask from './Dropdown/DropdownsAddFocusRecord/DropdownSetTask';
 import Icon from './Icon';
 import { formatSeconds } from '../utils/helpers.utils';
+import ModalAddFocusNote from './Modal/ModalAddFocusNote';
 
 const bgThemeColor = 'bg-[#4772F9]';
 const textThemeColor = 'text-[#4772F9]';
@@ -23,6 +24,8 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = () => {
 	const [selectedTask, setSelectedTask] = useState<Object | null>(null);
 	const [isDropdownSetTaskVisible, setIsDropdownSetTaskVisible] = useState(false);
 	const dropdownSetTaskRef = useRef(null);
+
+	const [isModalAddFocusNoteOpen, setIsModalAddFocusNoteOpen] = useState(false);
 
 	const handleTimerAction = () => {
 		dispatch(setIsActive(!isActive)); // Toggle between starting and pausing the timer
@@ -149,7 +152,13 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = () => {
 				>
 					End
 				</button>
+
+				<button className="text-color-gray-100 cursor-pointer" onClick={() => setIsModalAddFocusNoteOpen(true)}>
+					Add Focus Note
+				</button>
 			</div>
+
+			<ModalAddFocusNote isModalOpen={isModalAddFocusNoteOpen} setIsModalOpen={setIsModalAddFocusNoteOpen} />
 		</div>
 	);
 };

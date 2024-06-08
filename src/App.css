@@ -150,13 +150,32 @@
 
 @keyframes opacity-cycle {
     0%, 100% {
-        opacity: 0.5;
+        opacity: 0.3;
     }
     50% {
-        opacity: 1;
+        opacity: 0.5;
     }
 }
 
 .blinking-opacity {
     animation: opacity-cycle 2s infinite;
+}
+
+.rainbow-container {
+    display: flex;
+    width: 100%;
+    height: 100px;
+}
+
+.rainbow-container div {
+    flex-grow: 1;
+    animation: rainbowAnimation 6s linear infinite;
+    background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+    background-size: 800% 800%;
+}
+
+@keyframes rainbowAnimation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
