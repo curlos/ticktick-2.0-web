@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { SuperMarioPixelHTML } from '../utils/superMarioPixelArt.utils';
 import { useDispatch, useSelector } from 'react-redux';
-import { setIsActive, setIsOvertime, setSeconds } from '../slices/timerSlice';
+import { setIsActive, setIsOvertime, setSeconds, setSelectedTask } from '../slices/timerSlice';
 import { formatSeconds } from '../utils/helpers.utils';
 import DropdownSetTask from './Dropdown/DropdownsAddFocusRecord/DropdownSetTask';
 import { useEffect, useRef, useState } from 'react';
@@ -18,10 +18,9 @@ interface PixelArtProps {
 
 const PixelArtTimer: React.FC<PixelArtProps> = ({ gap }) => {
 	const dispatch = useDispatch();
-	const { seconds, isActive, initialSeconds, isOvertime } = useSelector((state) => state.timer);
+	const { seconds, isActive, initialSeconds, isOvertime, selectedTask } = useSelector((state) => state.timer);
 	const isPaused = !isActive && seconds !== initialSeconds;
 
-	const [selectedTask, setSelectedTask] = useState<Object | null>(null);
 	const [isDropdownSetTaskVisible, setIsDropdownSetTaskVisible] = useState(false);
 	const dropdownSetTaskRef = useRef(null);
 
@@ -74,7 +73,9 @@ const PixelArtTimer: React.FC<PixelArtProps> = ({ gap }) => {
 					isVisible={isDropdownSetTaskVisible}
 					setIsVisible={setIsDropdownSetTaskVisible}
 					selectedTask={selectedTask}
-					setSelectedTask={setSelectedTask}
+					setSelectedTask={(newTask) => {
+						dispatch(setSelectedTask(newTask));
+					}}
 				/>
 			</div>
 

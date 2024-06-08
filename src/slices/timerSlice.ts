@@ -7,6 +7,7 @@ const initialState = {
 	isActive: false,
 	isOvertime: false,
 	focusNote: '',
+	selectedTask: null,
 };
 
 export const timerSlice = createSlice({
@@ -33,9 +34,12 @@ export const timerSlice = createSlice({
 		setFocusNote: (state, action) => {
 			state.focusNote = action.payload;
 		},
+		setSelectedTask: (state, action) => {
+			state.selectedTask = action.payload;
+		},
 	},
 });
 
-export const { setSeconds, setIsActive, setIsOvertime, resetTimer, setFocusNote } = timerSlice.actions;
+export const { setSeconds, setIsActive, setIsOvertime, resetTimer, setFocusNote, setSelectedTask } = timerSlice.actions;
 
 export default timerSlice.reducer;

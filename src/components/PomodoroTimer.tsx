@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setIsActive, setIsOvertime, setSeconds } from '../slices/timerSlice';
+import { setIsActive, setIsOvertime, setSeconds, setSelectedTask } from '../slices/timerSlice';
 import alarmSound from '/clock-alarm-8761.mp3';
 import { CircularProgressbarWithChildren, buildStyles } from 'react-circular-progressbar';
 import DropdownSetTask from './Dropdown/DropdownsAddFocusRecord/DropdownSetTask';
@@ -17,11 +17,10 @@ interface PomodoroTimerProps {
 
 const PomodoroTimer: React.FC<PomodoroTimerProps> = () => {
 	const dispatch = useDispatch();
-	const { seconds, isActive, initialSeconds, isOvertime } = useSelector((state) => state.timer);
+	const { seconds, isActive, initialSeconds, isOvertime, selectedTask } = useSelector((state) => state.timer);
 	// const initialSeconds = 2700; // Consider moving this to Redux if it needs to be dynamic or configurable
 	const isPaused = !isActive && seconds !== initialSeconds;
 
-	const [selectedTask, setSelectedTask] = useState<Object | null>(null);
 	const [isDropdownSetTaskVisible, setIsDropdownSetTaskVisible] = useState(false);
 	const dropdownSetTaskRef = useRef(null);
 
@@ -105,7 +104,9 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = () => {
 					isVisible={isDropdownSetTaskVisible}
 					setIsVisible={setIsDropdownSetTaskVisible}
 					selectedTask={selectedTask}
-					setSelectedTask={setSelectedTask}
+					setSelectedTask={(newTask) => {
+						dispatch(setSelectedTask(newTask));
+					}}
 				/>
 			</div>
 			<CircularProgressbarWithChildren
