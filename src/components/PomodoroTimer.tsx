@@ -17,7 +17,9 @@ interface PomodoroTimerProps {
 
 const PomodoroTimer: React.FC<PomodoroTimerProps> = () => {
 	const dispatch = useDispatch();
-	const { seconds, isActive, initialSeconds, isOvertime, selectedTask } = useSelector((state) => state.timer);
+	const { seconds, isActive, initialSeconds, isOvertime, selectedTask, duration } = useSelector(
+		(state) => state.timer
+	);
 	// const initialSeconds = 2700; // Consider moving this to Redux if it needs to be dynamic or configurable
 	const isPaused = !isActive && seconds !== initialSeconds;
 
@@ -69,12 +71,19 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = () => {
 	};
 
 	const getPercentage = () => {
+		if (isOvertime) {
+			return 13;
+		}
+
 		return (seconds / initialSeconds) * 100;
 	};
 
 	useEffect(() => {
 		setIsDropdownSetTaskVisible(false);
 	}, [selectedTask]);
+
+	console.log(duration);
+	console.log(getPercentage());
 
 	return (
 		<div className="text-center w-[300px]">
@@ -114,27 +123,31 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = () => {
 				strokeWidth={1.5}
 				styles={buildStyles({
 					textColor: '#4772F9',
-					pathColor: '#4772F9',
+					pathColor: '#4772F9', // Red when overtime, otherwise original color
 					trailColor: '#3d3c3c',
+					rotation: 0.25,
 				})}
 				counterClockwise={true}
+				className={isOvertime ? 'animated-progress-path' : ''}
 			>
 				<div
 					className="text-white text-[40px] flex justify-center gap-4 w-[100%] select-none cursor-pointer mb-[-10px]"
 					onMouseOver={() => {}}
 				>
-					<div className={`${textThemeColor}`} onClick={() => dispatch(setSeconds(seconds - 300))}>
-						-
-					</div>
+					{!isOvertime && (
+						<div className={`${textThemeColor}`} onClick={() => dispatch(setSeconds(seconds - 300))}>
+							-
+						</div>
+					)}
 					<div data-cy="timer-display" className="text-center text-[45px]">
-						{formatSeconds(seconds)}
+						{isOvertime ? formatSeconds(duration) : formatSeconds(seconds)}
 					</div>
-					<div className={`${textThemeColor}`} onClick={() => dispatch(setSeconds(seconds + 300))}>
-						+
-					</div>
+					{!isOvertime && (
+						<div className={`${textThemeColor}`} onClick={() => dispatch(setSeconds(seconds + 300))}>
+							+
+						</div>
+					)}
 				</div>
-
-				{/* <div className={`text-color-gray-100` + (!isPaused ? ' invisible' : '')}>Paused</div> */}
 			</CircularProgressbarWithChildren>
 
 			<div className="flex flex-col gap-2 justify-center items-center pt-6">

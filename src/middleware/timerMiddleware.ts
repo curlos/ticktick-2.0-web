@@ -1,5 +1,5 @@
 // src/middleware/timerMiddleware.js
-import { setSeconds, setIsActive, setIsOvertime, resetTimer } from '../slices/timerSlice';
+import { setSeconds, setIsActive, setIsOvertime, resetTimer, setDuration } from '../slices/timerSlice';
 
 const timerMiddleware = (store) => {
 	let intervalId = null;
@@ -7,11 +7,19 @@ const timerMiddleware = (store) => {
 	const startTimer = () => {
 		if (!intervalId) {
 			intervalId = setInterval(() => {
-				const { seconds, isOvertime } = store.getState().timer;
+				const { seconds, isOvertime, duration } = store.getState().timer;
+
+				console.log(isOvertime);
+
 				if (seconds <= 0 && !isOvertime) {
 					store.dispatch(setIsOvertime(true));
+					store.dispatch(setDuration(duration + 1));
 				} else {
-					store.dispatch(setSeconds(seconds - 1));
+					if (!isOvertime) {
+						store.dispatch(setSeconds(seconds - 1));
+					}
+
+					store.dispatch(setDuration(duration + 1));
 				}
 			}, 1000);
 		}

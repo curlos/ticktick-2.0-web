@@ -18,7 +18,9 @@ interface PixelArtProps {
 
 const PixelArtTimer: React.FC<PixelArtProps> = ({ gap }) => {
 	const dispatch = useDispatch();
-	const { seconds, isActive, initialSeconds, isOvertime, selectedTask } = useSelector((state) => state.timer);
+	const { seconds, isActive, initialSeconds, isOvertime, selectedTask, duration } = useSelector(
+		(state) => state.timer
+	);
 	const isPaused = !isActive && seconds !== initialSeconds;
 
 	const [isDropdownSetTaskVisible, setIsDropdownSetTaskVisible] = useState(false);
@@ -41,7 +43,7 @@ const PixelArtTimer: React.FC<PixelArtProps> = ({ gap }) => {
 		dispatch(setSeconds(initialSeconds)); // Reset to the initial time setting
 	};
 
-	const formattedSeconds = formatSeconds(seconds);
+	const formattedSeconds = isOvertime ? formatSeconds(duration) : formatSeconds(seconds);
 
 	const secondsOffset = 10;
 
@@ -87,15 +89,19 @@ const PixelArtTimer: React.FC<PixelArtProps> = ({ gap }) => {
 				className="text-white text-[40px] flex justify-center gap-4 w-[100%] select-none cursor-pointer"
 				onMouseOver={() => {}}
 			>
-				<div className={`${textThemeColor}`} onClick={() => dispatch(setSeconds(seconds - secondsOffset))}>
-					-
-				</div>
+				{!isOvertime && (
+					<div className={`${textThemeColor}`} onClick={() => dispatch(setSeconds(seconds - secondsOffset))}>
+						-
+					</div>
+				)}
 
 				{formattedSeconds && <TimeDisplay time={formattedSeconds} />}
 
-				<div className={`${textThemeColor}`} onClick={() => dispatch(setSeconds(seconds + secondsOffset))}>
-					+
-				</div>
+				{!isOvertime && (
+					<div className={`${textThemeColor}`} onClick={() => dispatch(setSeconds(seconds + secondsOffset))}>
+						+
+					</div>
+				)}
 			</div>
 
 			<div className="flex flex-col gap-2 justify-center items-center mt-10">
@@ -132,7 +138,7 @@ const TimeDisplay = ({ time }) => {
 	const timeElements = time.split('').map((char, index) => {
 		if (char === ':') {
 			return (
-				<div className="mx-2">
+				<div key={index} className="mx-2">
 					<PixelColon />
 				</div>
 			);

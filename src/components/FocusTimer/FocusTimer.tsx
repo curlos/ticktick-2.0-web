@@ -112,7 +112,7 @@ const TopBar: React.FC<TopBarProps> = ({ selectedButton, setSelectedButton, setI
 };
 
 const FocusTimer = () => {
-	const [selectedButton, setSelectedButton] = useState('stopwatch');
+	const [selectedButton, setSelectedButton] = useState('pomo');
 	const [isModalFocusSettingsOpen, setIsModalFocusSettingsOpen] = useState(false);
 
 	return (
