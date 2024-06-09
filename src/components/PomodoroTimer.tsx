@@ -47,6 +47,7 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ timerStyle }) => {
 	// const initialSeconds = 2700; // Consider moving this to Redux if it needs to be dynamic or configurable
 	const isPaused = !isActive && seconds !== initialSeconds;
 
+	const [isDropdownProjectsVisible, setIsDropdownProjectsVisible] = useState(false);
 	const [isDropdownSetTaskVisible, setIsDropdownSetTaskVisible] = useState(false);
 	const dropdownSetTaskRef = useRef(null);
 
@@ -150,6 +151,8 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ timerStyle }) => {
 		setIsDropdownSetTaskVisible(false);
 	}, [selectedTask]);
 
+	console.log('bitch ass');
+
 	return (
 		<div className="text-center w-[300px]">
 			<div className="relative">
@@ -200,6 +203,10 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ timerStyle }) => {
 						}
 
 						dispatch(setSelectedTask(newTask));
+					}}
+					dropdownProjectsState={{
+						isDropdownVisible: isDropdownProjectsVisible,
+						setIsDropdownVisible: setIsDropdownProjectsVisible,
 					}}
 				/>
 			</div>

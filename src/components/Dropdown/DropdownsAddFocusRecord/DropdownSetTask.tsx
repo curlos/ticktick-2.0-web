@@ -13,6 +13,10 @@ import Task from '../../Task';
 interface DropdownSetTaskProps extends DropdownProps {
 	selectedTask: Object | null;
 	setSelectedTask: React.Dispatch<React.SetStateAction<Object | null>>;
+	dropdownProjectsState?: {
+		isDropdownVisible: boolean;
+		setIsDropdownVisible: React.Dispatch<React.SetStateAction<boolean>>;
+	};
 }
 
 const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({
@@ -21,7 +25,9 @@ const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({
 	setIsVisible,
 	selectedTask,
 	setSelectedTask,
+	dropdownProjectsState,
 }) => {
+	console.log('fag');
 	// Tasks
 	const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
 	const { tasks, tasksById } = fetchedTasks || {};
@@ -32,12 +38,17 @@ const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({
 
 	const defaultTodayProject = SMART_LISTS['today'];
 
+	// TODO: Use the top level component above this for timer only otherwise use this one.
 	const [isDropdownProjectsVisible, setIsDropdownProjectsVisible] = useState(false);
 	const [selectedProject, setSelectedProject] = useState(defaultTodayProject);
 	const [tasksWithNoParent, setTasksWithNoParent] = useState([]);
 	const [searchText, setSearchText] = useState('');
 	const [filteredTasks, setFilteredTasks] = useState([]);
 	const [isSearchFocused, setIsSearchFocused] = useState(false);
+
+	console.log('checking');
+	console.log(`isDropdownProjectsVisible: ${isDropdownProjectsVisible}`);
+	console.log(`dropdownProjectsState?.isDropdownVisible: ${dropdownProjectsState?.isDropdownVisible}`);
 
 	const dropdownProjectsRef = useRef(null);
 
@@ -102,7 +113,13 @@ const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({
 			<div className="relative">
 				<div
 					ref={dropdownProjectsRef}
-					onClick={() => setIsDropdownProjectsVisible(!isDropdownProjectsVisible)}
+					onClick={() => {
+						if (dropdownProjectsState) {
+							dropdownProjectsState.setIsDropdownVisible(!dropdownProjectsState.isDropdownVisible);
+						} else {
+							setIsDropdownProjectsVisible(!isDropdownProjectsVisible);
+						}
+					}}
 					className="flex items-center gap-[2px] mt-4 mb-3 cursor-pointer"
 				>
 					<Icon name={iconName} customClass={'!text-[20px] text-color-gray-100 hover:text-white'} />
@@ -112,8 +129,14 @@ const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({
 
 				<DropdownProjects
 					toggleRef={dropdownProjectsRef}
-					isVisible={isDropdownProjectsVisible}
-					setIsVisible={setIsDropdownProjectsVisible}
+					isVisible={
+						dropdownProjectsState ? dropdownProjectsState.isDropdownVisible : isDropdownProjectsVisible
+					}
+					setIsVisible={
+						dropdownProjectsState
+							? dropdownProjectsState.setIsDropdownVisible
+							: setIsDropdownProjectsVisible
+					}
 					selectedProject={selectedProject}
 					setSelectedProject={setSelectedProject}
 					projects={projects}
