@@ -19,15 +19,17 @@ import { formatSeconds } from '../utils/helpers.utils';
 import ModalAddFocusNote from './Modal/ModalAddFocusNote';
 import { useBulkAddFocusRecordsMutation } from '../services/api';
 import { setModalState } from '../slices/modalSlice';
+import PixelArtTimer from './PixelArtTimer';
 
 const bgThemeColor = 'bg-[#4772F9]';
 const textThemeColor = 'text-[#4772F9]';
 
 interface PomodoroTimerProps {
 	selectedButton: string;
+	timerStyle: string;
 }
 
-const PomodoroTimer: React.FC<PomodoroTimerProps> = () => {
+const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ timerStyle }) => {
 	const [bulkAddFocusRecords] = useBulkAddFocusRecordsMutation();
 	const dispatch = useDispatch();
 	const {
@@ -201,36 +203,41 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = () => {
 					}}
 				/>
 			</div>
-			<CircularProgressbarWithChildren
-				value={getPercentage()}
-				strokeWidth={1.5}
-				styles={buildStyles({
-					textColor: '#4772F9',
-					pathColor: '#4772F9', // Red when overtime, otherwise original color
-					trailColor: '#3d3c3c',
-				})}
-				counterClockwise={true}
-				className={isOvertime ? 'animated-progress-path' : ''}
-			>
-				<div
-					className="text-white text-[40px] flex justify-center gap-4 w-[100%] select-none cursor-pointer mb-[-10px]"
-					onMouseOver={() => {}}
+
+			{timerStyle !== 'pixel' ? (
+				<CircularProgressbarWithChildren
+					value={getPercentage()}
+					strokeWidth={1.5}
+					styles={buildStyles({
+						textColor: '#4772F9',
+						pathColor: '#4772F9', // Red when overtime, otherwise original color
+						trailColor: '#3d3c3c',
+					})}
+					counterClockwise={true}
+					className={isOvertime ? 'animated-progress-path' : ''}
 				>
-					{!isOvertime && (
-						<div className={`${textThemeColor}`} onClick={() => dispatch(setSeconds(seconds - 300))}>
-							-
+					<div
+						className="text-white text-[40px] flex justify-center gap-4 w-[100%] select-none cursor-pointer mb-[-10px]"
+						onMouseOver={() => {}}
+					>
+						{!isOvertime && (
+							<div className={`${textThemeColor}`} onClick={() => dispatch(setSeconds(seconds - 300))}>
+								-
+							</div>
+						)}
+						<div data-cy="timer-display" className="text-center text-[45px]">
+							{isOvertime ? formatSeconds(duration) : formatSeconds(seconds)}
 						</div>
-					)}
-					<div data-cy="timer-display" className="text-center text-[45px]">
-						{isOvertime ? formatSeconds(duration) : formatSeconds(seconds)}
+						{!isOvertime && (
+							<div className={`${textThemeColor}`} onClick={() => dispatch(setSeconds(seconds + 300))}>
+								+
+							</div>
+						)}
 					</div>
-					{!isOvertime && (
-						<div className={`${textThemeColor}`} onClick={() => dispatch(setSeconds(seconds + 300))}>
-							+
-						</div>
-					)}
-				</div>
-			</CircularProgressbarWithChildren>
+				</CircularProgressbarWithChildren>
+			) : (
+				<PixelArtTimer gap="1px" />
+			)}
 
 			<div className="flex flex-col gap-2 justify-center items-center pt-6">
 				<button

@@ -125,9 +125,13 @@ const FocusTimer = () => {
 				/>
 				<div className="flex-1 flex justify-center items-center">
 					{selectedButton === 'pomo' ? (
-						<PomodoroTimer selectedButton={selectedButton} />
+						<PomodoroTimer
+							selectedButton={selectedButton}
+							timerStyle={selectedButton !== 'pomo' ? 'pixel' : ''}
+						/>
 					) : (
-						<PixelArtTimer gap="1px" />
+						<PomodoroTimer selectedButton={selectedButton} timerStyle="pixel" />
+						// <PixelArtTimer gap="1px" />
 					)}
 				</div>
 			</div>

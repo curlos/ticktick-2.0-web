@@ -1,15 +1,10 @@
 import classNames from 'classnames';
 import { SuperMarioPixelHTML } from '../utils/superMarioPixelArt.utils';
 import { useDispatch, useSelector } from 'react-redux';
-import { setIsActive, setIsOvertime, setSeconds, setSelectedTask } from '../slices/timerSlice';
+import { setSeconds } from '../slices/timerSlice';
 import { formatSeconds } from '../utils/helpers.utils';
-import DropdownSetTask from './Dropdown/DropdownsAddFocusRecord/DropdownSetTask';
-import { useEffect, useRef, useState } from 'react';
-import Icon from './Icon';
 import { PixelDigit, PixelColon } from './PixelDigit';
-import ModalAddFocusNote from './Modal/ModalAddFocusNote';
 
-const bgThemeColor = 'bg-[#4772F9]';
 const textThemeColor = 'text-[#4772F9]';
 
 interface PixelArtProps {
@@ -18,30 +13,7 @@ interface PixelArtProps {
 
 const PixelArtTimer: React.FC<PixelArtProps> = ({ gap }) => {
 	const dispatch = useDispatch();
-	const { seconds, isActive, initialSeconds, isOvertime, selectedTask, duration } = useSelector(
-		(state) => state.timer
-	);
-	const isPaused = !isActive && seconds !== initialSeconds;
-
-	const [isDropdownSetTaskVisible, setIsDropdownSetTaskVisible] = useState(false);
-	const dropdownSetTaskRef = useRef(null);
-
-	const [isModalAddFocusNoteOpen, setIsModalAddFocusNoteOpen] = useState(false);
-
-	useEffect(() => {
-		setIsDropdownSetTaskVisible(false);
-	}, [selectedTask]);
-
-	const handleTimerAction = () => {
-		dispatch(setIsActive(!isActive)); // Toggle between starting and pausing the timer
-	};
-
-	const handleResetTimer = () => {
-		// This function will stop and reset the timer, also exiting the overtime phase if it's active
-		dispatch(setIsActive(false));
-		dispatch(setIsOvertime(false));
-		dispatch(setSeconds(initialSeconds)); // Reset to the initial time setting
-	};
+	const { seconds, isOvertime, duration } = useSelector((state) => state.timer);
 
 	const formattedSeconds = isOvertime ? formatSeconds(duration) : formatSeconds(seconds);
 
@@ -49,38 +21,6 @@ const PixelArtTimer: React.FC<PixelArtProps> = ({ gap }) => {
 
 	return (
 		<div>
-			<div className="relative">
-				<div
-					ref={dropdownSetTaskRef}
-					onClick={() => {
-						setIsDropdownSetTaskVisible(!isDropdownSetTaskVisible);
-					}}
-					className={`text-white mb-4 cursor-pointer flex justify-center items-center group`}
-				>
-					<span className="text-color-gray-100 group-hover:text-white max-w-[260px] truncate">
-						{selectedTask ? selectedTask?.title : 'Focus'}
-						{/* Focus */}
-					</span>
-					<Icon
-						name="chevron_right"
-						customClass={
-							'text-color-gray-100 group-hover:text-white !text-[18px] cursor-p ml-[1px] mb-[-2.25px]'
-						}
-						fill={0}
-					/>
-				</div>
-
-				<DropdownSetTask
-					toggleRef={dropdownSetTaskRef}
-					isVisible={isDropdownSetTaskVisible}
-					setIsVisible={setIsDropdownSetTaskVisible}
-					selectedTask={selectedTask}
-					setSelectedTask={(newTask) => {
-						dispatch(setSelectedTask(newTask));
-					}}
-				/>
-			</div>
-
 			<div className="flex justify-center my-7">
 				<PixelGrid gap={gap} />
 			</div>
@@ -95,7 +35,7 @@ const PixelArtTimer: React.FC<PixelArtProps> = ({ gap }) => {
 					</div>
 				)}
 
-				{formattedSeconds && <TimeDisplay time={formattedSeconds} />}
+				{formattedSeconds && <PixelatedTime time={formattedSeconds} />}
 
 				{!isOvertime && (
 					<div className={`${textThemeColor}`} onClick={() => dispatch(setSeconds(seconds + secondsOffset))}>
@@ -103,37 +43,11 @@ const PixelArtTimer: React.FC<PixelArtProps> = ({ gap }) => {
 					</div>
 				)}
 			</div>
-
-			<div className="flex flex-col gap-2 justify-center items-center mt-10">
-				<button
-					type="button"
-					className={`${bgThemeColor} rounded-full py-3 px-10 text-white min-w-[200px]`}
-					onClick={handleTimerAction}
-				>
-					{isActive ? 'Pause' : seconds !== initialSeconds ? 'Continue' : 'Start'}
-				</button>
-
-				<button
-					type="button"
-					className={`${!isPaused ? 'invisible ' : ''}${bgThemeColor} rounded-full py-3 px-10 text-white min-w-[200px]`}
-					onClick={handleResetTimer}
-				>
-					End
-				</button>
-
-				<button className="text-color-gray-100 cursor-pointer" onClick={() => setIsModalAddFocusNoteOpen(true)}>
-					Add Focus Note
-				</button>
-			</div>
-
-			<ModalAddFocusNote isModalOpen={isModalAddFocusNoteOpen} setIsModalOpen={setIsModalAddFocusNoteOpen} />
 		</div>
 	);
 };
 
-const TimeDisplay = ({ time }) => {
-	console.log(time);
-
+const PixelatedTime = ({ time }) => {
 	// Split the string into characters and map to components
 	const timeElements = time.split('').map((char, index) => {
 		if (char === ':') {
@@ -151,7 +65,6 @@ const TimeDisplay = ({ time }) => {
 };
 
 const PixelGrid = ({ gap }) => {
-	const dispatch = useDispatch();
 	const { seconds, isActive, initialSeconds, isOvertime } = useSelector((state) => state.timer);
 
 	// TODO: Use "timer" seconds and initial seconds from redux to determine "timer" progress
