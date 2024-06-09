@@ -331,6 +331,18 @@ export const getObjectOfEachTasksParent = (tasks) => {
 	return tasksParent;
 };
 
+export const getObjectOfEachFocusRecordsParent = (focusRecords) => {
+	const focusRecordsParent = {};
+
+	for (let focusRecord of focusRecords) {
+		for (let childId of focusRecord.children) {
+			focusRecordsParent[childId] = focusRecord._id;
+		}
+	}
+
+	return focusRecordsParent;
+};
+
 export const isTaskOverdue = (taskDate) => {
 	const taskDateObj = new Date(taskDate);
 	let today = new Date();

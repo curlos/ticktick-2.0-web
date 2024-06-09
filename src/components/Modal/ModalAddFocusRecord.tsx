@@ -11,10 +11,12 @@ import classNames from 'classnames';
 import {
 	useAddFocusRecordMutation,
 	useEditFocusRecordMutation,
+	useGetFocusRecordsQuery,
 	useGetTasksQuery,
 	usePermanentlyDeleteFocusRecordMutation,
 } from '../../services/api';
 import { formatTimeToHoursAndMinutes, secondsToHoursAndMinutes } from '../../utils/helpers.utils';
+import { formatDateTime } from '../../utils/date.utils';
 
 const ModalAddFocusRecord: React.FC = () => {
 	const modal = useSelector((state) => state.modals.modals['ModalAddFocusRecord']);
@@ -27,6 +29,18 @@ const ModalAddFocusRecord: React.FC = () => {
 
 	const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
 	const { tasks, tasksById } = fetchedTasks || {};
+
+	const {
+		data: fetchedFocusRecords,
+		isLoading: isLoadingFocusRecords,
+		error: errorFocusRecords,
+	} = useGetFocusRecordsQuery();
+	const { focusRecordsById } = fetchedFocusRecords || {};
+
+	console.log(focusRecord);
+	console.log(focusRecord?.children);
+	console.log(focusRecordsById);
+
 	const [addFocusRecord, { isLoading: isLoadingAddFocusRecord, error: errorAddFocusRecord }] =
 		useAddFocusRecordMutation();
 	const [editFocusRecord] = useEditFocusRecordMutation();
@@ -149,40 +163,66 @@ const ModalAddFocusRecord: React.FC = () => {
 
 					<div className="space-y-2">
 						{/* Task */}
-						<div className="flex items-center gap-2">
-							<div className="w-[100px]">Task</div>
-							<div className="relative flex-1">
-								<div
-									ref={dropdownSetTaskRef}
-									className="flex-1 border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500 cursor-pointer"
-									onClick={() => {
-										setIsDropdownSetTaskVisible(!isDropdownSetTaskVisible);
-									}}
-								>
-									<div
-										className={classNames(
-											selectedTask ? 'text-white' : 'text-color-gray-100',
-											'max-w-[260px] text-ellipsis text-nowrap overflow-hidden'
-										)}
-									>
-										{selectedTask ? selectedTask.title : 'Set Task'}
-									</div>
-									<Icon
-										name="expand_more"
-										fill={0}
-										customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'}
-									/>
-								</div>
+						{!focusRecord ||
+							(focusRecord?.children?.length === 0 ? (
+								<div className="flex items-center gap-2">
+									<div className="w-[100px]">Task</div>
+									<div className="relative flex-1">
+										<div
+											ref={dropdownSetTaskRef}
+											className="flex-1 border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500 cursor-pointer"
+											onClick={() => {
+												setIsDropdownSetTaskVisible(!isDropdownSetTaskVisible);
+											}}
+										>
+											<div
+												className={classNames(
+													selectedTask ? 'text-white' : 'text-color-gray-100',
+													'max-w-[260px] text-ellipsis text-nowrap overflow-hidden'
+												)}
+											>
+												{selectedTask ? selectedTask.title : 'Set Task'}
+											</div>
+											<Icon
+												name="expand_more"
+												fill={0}
+												customClass={
+													'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'
+												}
+											/>
+										</div>
 
-								<DropdownSetTask
-									toggleRef={dropdownSetTaskRef}
-									isVisible={isDropdownSetTaskVisible}
-									setIsVisible={setIsDropdownSetTaskVisible}
-									selectedTask={selectedTask}
-									setSelectedTask={setSelectedTask}
-								/>
-							</div>
-						</div>
+										<DropdownSetTask
+											toggleRef={dropdownSetTaskRef}
+											isVisible={isDropdownSetTaskVisible}
+											setIsVisible={setIsDropdownSetTaskVisible}
+											selectedTask={selectedTask}
+											setSelectedTask={setSelectedTask}
+										/>
+									</div>
+								</div>
+							) : (
+								<div className="max-h-[200px] overflow-auto gray-scrollbar flex flex-col gap-4">
+									{focusRecord.children.map((childId) => {
+										const childFocusRecord = focusRecordsById[childId];
+										const task = tasksById[childFocusRecord.taskId];
+
+										const startTimeObj = formatDateTime(childFocusRecord.startTime);
+										const endTimeObj = formatDateTime(childFocusRecord.endTime);
+
+										return (
+											childFocusRecord && (
+												<div key={childFocusRecord._id} className="">
+													<div className="font-bold">{task ? task.title : 'No Task'}</div>
+													<div className="flex mt-1">
+														<div>{`${startTimeObj.time} - ${endTimeObj.time}`}</div>
+													</div>
+												</div>
+											)
+										);
+									})}
+								</div>
+							))}
 
 						{/* Start Time */}
 						<TimeOption

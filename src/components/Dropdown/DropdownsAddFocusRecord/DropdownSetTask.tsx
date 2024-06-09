@@ -27,7 +27,6 @@ const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({
 	setSelectedTask,
 	dropdownProjectsState,
 }) => {
-	console.log('fag');
 	// Tasks
 	const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
 	const { tasks, tasksById } = fetchedTasks || {};
@@ -45,10 +44,6 @@ const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({
 	const [searchText, setSearchText] = useState('');
 	const [filteredTasks, setFilteredTasks] = useState([]);
 	const [isSearchFocused, setIsSearchFocused] = useState(false);
-
-	console.log('checking');
-	console.log(`isDropdownProjectsVisible: ${isDropdownProjectsVisible}`);
-	console.log(`dropdownProjectsState?.isDropdownVisible: ${dropdownProjectsState?.isDropdownVisible}`);
 
 	const dropdownProjectsRef = useRef(null);
 

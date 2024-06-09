@@ -103,7 +103,7 @@ const FocusRecordList = () => {
 		isLoading: isLoadingFocusRecords,
 		error: errorFocusRecords,
 	} = useGetFocusRecordsQuery();
-	const { focusRecords } = fetchedFocusRecords || {};
+	const { focusRecords, parentOfFocusRecords } = fetchedFocusRecords || {};
 
 	const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
 	const { tasksById } = fetchedTasks || {};
@@ -123,7 +123,9 @@ const FocusRecordList = () => {
 
 	useEffect(() => {
 		if (focusRecords) {
-			const newGroupedRecords = groupByEndTimeDay(focusRecords);
+			const focusRecordsWithNoParent = focusRecords.filter((record) => !parentOfFocusRecords[record._id]);
+
+			const newGroupedRecords = groupByEndTimeDay(focusRecordsWithNoParent);
 			setGroupedRecords(newGroupedRecords);
 		}
 	}, [focusRecords]);

@@ -151,8 +151,6 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ timerStyle }) => {
 		setIsDropdownSetTaskVisible(false);
 	}, [selectedTask]);
 
-	console.log('bitch ass');
-
 	return (
 		<div className="text-center w-[300px]">
 			<div className="relative">

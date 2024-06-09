@@ -1,5 +1,10 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { arrayToObjectArrayByKey, arrayToObjectByKey, getObjectOfEachTasksParent } from '../utils/helpers.utils';
+import {
+	arrayToObjectArrayByKey,
+	arrayToObjectByKey,
+	getObjectOfEachTasksParent,
+	getObjectOfEachFocusRecordsParent,
+} from '../utils/helpers.utils';
 import { loginUserSuccess } from '../slices/userSlice';
 
 // Utility function to build query strings
@@ -192,8 +197,11 @@ export const api = createApi({
 			transformResponse: (response) => {
 				const focusRecords = response;
 				const focusRecordsByTaskId = arrayToObjectArrayByKey(focusRecords, 'taskId');
+				const focusRecordsById = arrayToObjectByKey(focusRecords, '_id');
 
-				return { focusRecords, focusRecordsByTaskId }; // Return as a combined object
+				const parentOfFocusRecords = getObjectOfEachFocusRecordsParent(focusRecords);
+
+				return { focusRecords, focusRecordsByTaskId, focusRecordsById, parentOfFocusRecords }; // Return as a combined object
 			},
 		}),
 		addFocusRecord: builder.mutation({
