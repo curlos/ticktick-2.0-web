@@ -222,6 +222,14 @@ export const api = createApi({
 			}),
 			invalidatesTags: ['FocusRecord'], // Invalidate the cache when a task is added
 		}),
+		bulkAddFocusRecords: builder.mutation({
+			query: (payload) => ({
+				url: '/focus-records/bulk-add',
+				method: 'POST',
+				body: payload,
+			}),
+			invalidatesTags: ['FocusRecord'], // Invalidate the cache when a task is added
+		}),
 
 		// Comments
 		getComments: builder.query({
@@ -294,6 +302,7 @@ export const {
 	useAddFocusRecordMutation,
 	useEditFocusRecordMutation,
 	usePermanentlyDeleteFocusRecordMutation,
+	useBulkAddFocusRecordsMutation,
 
 	// Comments
 	useGetCommentsQuery,

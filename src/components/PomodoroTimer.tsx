@@ -1,12 +1,24 @@
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setIsActive, setIsOvertime, setSeconds, setSelectedTask } from '../slices/timerSlice';
+import {
+	addFocusRecord,
+	setIsActive,
+	setIsOvertime,
+	setSeconds,
+	setSelectedTask,
+	setOverallStartTime,
+	setCurrentFocusRecord,
+	setFocusType,
+	resetFocusRecords,
+} from '../slices/timerSlice';
 import alarmSound from '/clock-alarm-8761.mp3';
 import { CircularProgressbarWithChildren, buildStyles } from 'react-circular-progressbar';
 import DropdownSetTask from './Dropdown/DropdownsAddFocusRecord/DropdownSetTask';
 import Icon from './Icon';
 import { formatSeconds } from '../utils/helpers.utils';
 import ModalAddFocusNote from './Modal/ModalAddFocusNote';
+import { useBulkAddFocusRecordsMutation } from '../services/api';
+import { setModalState } from '../slices/modalSlice';
 
 const bgThemeColor = 'bg-[#4772F9]';
 const textThemeColor = 'text-[#4772F9]';
@@ -16,10 +28,20 @@ interface PomodoroTimerProps {
 }
 
 const PomodoroTimer: React.FC<PomodoroTimerProps> = () => {
+	const [bulkAddFocusRecords] = useBulkAddFocusRecordsMutation();
 	const dispatch = useDispatch();
-	const { seconds, isActive, initialSeconds, isOvertime, selectedTask, duration } = useSelector(
-		(state) => state.timer
-	);
+	const {
+		seconds,
+		isActive,
+		initialSeconds,
+		isOvertime,
+		selectedTask,
+		duration,
+		focusRecords,
+		currentFocusRecord,
+		focusType,
+		focusNote,
+	} = useSelector((state) => state.timer);
 	// const initialSeconds = 2700; // Consider moving this to Redux if it needs to be dynamic or configurable
 	const isPaused = !isActive && seconds !== initialSeconds;
 
@@ -29,14 +51,58 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = () => {
 	const [isModalAddFocusNoteOpen, setIsModalAddFocusNoteOpen] = useState(false);
 
 	const handleTimerAction = () => {
+		const pressedStart = !isActive && seconds === initialSeconds;
+		const pressedContinue = !isActive && seconds !== initialSeconds;
+		const pressedPause = isActive;
+
+		if (pressedStart) {
+			// Save full date string here.
+			dispatch(setOverallStartTime(new Date().toISOString()));
+			dispatch(setFocusType('pomo'));
+		}
+
+		if (pressedStart || pressedContinue) {
+			dispatch(
+				setCurrentFocusRecord({
+					startTime: new Date().toISOString(),
+				})
+			);
+		}
+
+		// If it's currently active, then that means that we're pausing the running timer in which case a focus record must be added to the array.
+		if (pressedPause) {
+			dispatch(
+				addFocusRecord({
+					taskId: selectedTask ? selectedTask._id : null,
+					startTime: currentFocusRecord.startTime,
+					endTime: new Date().toISOString(),
+					duration: currentFocusRecord.duration,
+					pomos: 0,
+					focusType: focusType,
+					note: focusNote,
+				})
+			);
+		}
+
 		dispatch(setIsActive(!isActive)); // Toggle between starting and pausing the timer
 	};
 
-	const handleResetTimer = () => {
-		// This function will stop and reset the timer, also exiting the overtime phase if it's active
-		dispatch(setIsActive(false));
-		dispatch(setIsOvertime(false));
-		dispatch(setSeconds(initialSeconds)); // Reset to the initial time setting
+	const handleResetTimer = async () => {
+		// By this point, all the local focus records have been added (since this can only be ended and executed if the timer is paused in the first place.)
+
+		// TODO: Add the focus records to the backend. They must be grouped together though, probably with either a shared parent id or the parent focus record must be created with some children or something. I'll probably do it the second way.
+
+		try {
+			await bulkAddFocusRecords({ focusRecords, focusNote }).unwrap();
+
+			// This function will stop and reset the timer, also exiting the overtime phase if it's active
+			dispatch(setIsActive(false));
+			dispatch(setIsOvertime(false));
+			dispatch(setSeconds(initialSeconds)); // Reset to the initial time setting
+			dispatch(resetFocusRecords());
+		} catch (error) {
+			dispatch(setModalState({ modalId: 'ModalErrorMessenger', isOpen: true, props: { error } }));
+		}
 	};
 
 	const showNotification = () => {
@@ -82,9 +148,6 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = () => {
 		setIsDropdownSetTaskVisible(false);
 	}, [selectedTask]);
 
-	console.log(duration);
-	console.log(getPercentage());
-
 	return (
 		<div className="text-center w-[300px]">
 			<div className="relative">
@@ -114,6 +177,26 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = () => {
 					setIsVisible={setIsDropdownSetTaskVisible}
 					selectedTask={selectedTask}
 					setSelectedTask={(newTask) => {
+						if (!selectedTask) {
+							setCurrentFocusRecord({ taskId: newTask._id });
+						} else {
+							if (isActive) {
+								dispatch(
+									addFocusRecord({
+										taskId: selectedTask ? selectedTask._id : null,
+										startTime: currentFocusRecord.startTime,
+										endTime: new Date().toISOString(),
+										duration: currentFocusRecord.duration,
+										pomos: 0,
+										focusType: focusType,
+										note: focusNote,
+									})
+								);
+
+								dispatch(setCurrentFocusRecord({ startTime: new Date().toISOString() }));
+							}
+						}
+
 						dispatch(setSelectedTask(newTask));
 					}}
 				/>
@@ -125,7 +208,6 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = () => {
 					textColor: '#4772F9',
 					pathColor: '#4772F9', // Red when overtime, otherwise original color
 					trailColor: '#3d3c3c',
-					rotation: 0.25,
 				})}
 				counterClockwise={true}
 				className={isOvertime ? 'animated-progress-path' : ''}

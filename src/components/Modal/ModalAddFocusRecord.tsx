@@ -120,7 +120,7 @@ const ModalAddFocusRecord: React.FC = () => {
 		};
 
 		if (payload.duration < 300000) {
-			console.log('Duration must be longer or equal to 300000 seconds (5 minutes)');
+			console.log('Duration must be longer or equal to 300000 milliseconds (5 minutes)');
 			return;
 		}
 

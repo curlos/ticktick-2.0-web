@@ -1,5 +1,12 @@
 // src/middleware/timerMiddleware.js
-import { setSeconds, setIsActive, setIsOvertime, resetTimer, setDuration } from '../slices/timerSlice';
+import {
+	setSeconds,
+	setIsActive,
+	setIsOvertime,
+	resetTimer,
+	setDuration,
+	setCurrentFocusRecord,
+} from '../slices/timerSlice';
 
 const timerMiddleware = (store) => {
 	let intervalId = null;
@@ -7,19 +14,27 @@ const timerMiddleware = (store) => {
 	const startTimer = () => {
 		if (!intervalId) {
 			intervalId = setInterval(() => {
-				const { seconds, isOvertime, duration } = store.getState().timer;
-
-				console.log(isOvertime);
+				const { seconds, isOvertime, duration, currentFocusRecord } = store.getState().timer;
 
 				if (seconds <= 0 && !isOvertime) {
 					store.dispatch(setIsOvertime(true));
 					store.dispatch(setDuration(duration + 1));
+					store.dispatch(
+						setCurrentFocusRecord({
+							duration: currentFocusRecord.duration + 1,
+						})
+					);
 				} else {
 					if (!isOvertime) {
 						store.dispatch(setSeconds(seconds - 1));
 					}
 
 					store.dispatch(setDuration(duration + 1));
+					store.dispatch(
+						setCurrentFocusRecord({
+							duration: currentFocusRecord.duration + 1,
+						})
+					);
 				}
 			}, 1000);
 		}
