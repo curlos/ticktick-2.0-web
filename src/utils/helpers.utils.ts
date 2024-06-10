@@ -121,15 +121,17 @@ export function getDateWithOrdinalAndMonth(date: Date, includeMonth = false) {
 	return formattedDay;
 }
 
-export function formatTimeToHoursAndMinutes(ms: number) {
-	// Convert milliseconds to total minutes
-	const totalMinutes = ms / (1000 * 60);
+export function formatTimeToHoursMinutesSeconds(ms: number) {
+	// Convert milliseconds to total seconds
+	const totalSeconds = Math.floor(ms / 1000);
 	// Extract hours
-	const hours = Math.floor(totalMinutes / 60);
+	const hours = Math.floor(totalSeconds / 3600);
 	// Extract remaining minutes after converting to hours
-	const minutes = Math.floor(totalMinutes % 60);
+	const minutes = Math.floor((totalSeconds % 3600) / 60);
+	// Extract remaining seconds after converting to minutes
+	const seconds = totalSeconds % 60;
 
-	return { hours, minutes };
+	return { hours, minutes, seconds };
 }
 
 export function containsEmoji(text: string) {
@@ -372,10 +374,13 @@ export const sumProperty = (array, propertyName) => {
 };
 
 export const getFormattedDuration = (duration) => {
-	const { hours, minutes } = formatTimeToHoursAndMinutes(duration);
-	const formattedDuration = `${hours.toLocaleString()}h${minutes}m`;
+	const { hours, minutes, seconds } = formatTimeToHoursMinutesSeconds(duration);
 
-	return formattedDuration;
+	if (hours === 0 && minutes === 0) {
+		return `${seconds}s`;
+	}
+
+	return `${hours.toLocaleString()}h${minutes}m`;
 };
 
 export const formatSeconds = (seconds: number) => {

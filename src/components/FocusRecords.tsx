@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import {
 	areDatesEqual,
 	formatDuration,
-	formatTimeToHoursAndMinutes,
+	formatTimeToHoursMinutesSeconds,
 	getFormattedDuration,
 } from '../utils/helpers.utils';
 import ReactMarkdown from 'react-markdown';
@@ -68,7 +68,7 @@ const StatsOverview: React.FC<StatsOverviewProps> = ({ focusRecords }) => {
 		let shownValue: number | string = Number(value);
 
 		if (convertToHoursAndMinutes) {
-			const { hours, minutes } = formatTimeToHoursAndMinutes(value);
+			const { hours, minutes } = formatTimeToHoursMinutesSeconds(value);
 
 			shownValue = `${hours.toLocaleString()}h${minutes}m`;
 		} else {
@@ -176,12 +176,29 @@ const FocusRecordList = () => {
 
 const FocusRecord = ({ focusRecord, tasksById }) => {
 	const dispatch = useDispatch();
-	const { _id, taskId, note, duration, startTime, endTime } = focusRecord;
+	const {
+		data: fetchedFocusRecords,
+		isLoading: isLoadingFocusRecords,
+		error: errorFocusRecords,
+	} = useGetFocusRecordsQuery();
+	const { focusRecordsById } = fetchedFocusRecords || {};
+
+	const { _id, taskId, note, duration, startTime, endTime, children } = focusRecord;
 
 	const task = tasksById[taskId];
 
 	const startTimeObj = formatDateTime(startTime);
 	const endTimeObj = formatDateTime(endTime);
+
+	const childFocusRecordTaskTitles = new Set();
+
+	const childFocusRecords =
+		children &&
+		children.map((childId) => {
+			const childFocusRecord = focusRecordsById[childId];
+			const childTask = tasksById[childFocusRecord.taskId];
+			childFocusRecordTaskTitles.add(childTask?.title);
+		});
 
 	return (
 		<li
@@ -217,7 +234,17 @@ const FocusRecord = ({ focusRecord, tasksById }) => {
 						<div>{getFormattedDuration(duration)}</div>
 					</div>
 
-					{task && <div className="font-medium">{task.title}</div>}
+					{/* TODO: Render an array of titles if it has children for better clarity. */}
+
+					{children && children.length > 0 ? (
+						<div className="font-medium space-y-1">
+							{[...childFocusRecordTaskTitles].map((title) => (
+								<div>{title}</div>
+							))}
+						</div>
+					) : (
+						<div>{task && <div className="font-medium">{task.title}</div>}</div>
+					)}
 
 					<div className="text-color-gray-100 mt-1 max-w-[350px] break-words">
 						<ReactMarkdown remarkPlugins={[remarkGfm]}>{note}</ReactMarkdown>

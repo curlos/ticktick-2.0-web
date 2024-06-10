@@ -9,6 +9,7 @@ import { debounce, getTasksWithNoParent } from '../../../utils/helpers.utils';
 import DropdownProjects from '../DropdownProjects';
 import Fuse from 'fuse.js';
 import Task from '../../Task';
+import classNames from 'classnames';
 
 interface DropdownSetTaskProps extends DropdownProps {
 	selectedTask: Object | null;
@@ -26,6 +27,7 @@ const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({
 	selectedTask,
 	setSelectedTask,
 	dropdownProjectsState,
+	customClasses,
 }) => {
 	// Tasks
 	const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
@@ -146,7 +148,10 @@ const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({
 			toggleRef={toggleRef}
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
-			customClasses={'w-[300px] mb-[-155px] p-1 shadow-2xl border border-color-gray-200 rounded-lg p-3'}
+			customClasses={classNames(
+				'w-[300px] mb-[-155px] p-1 shadow-2xl border border-color-gray-200 rounded-lg p-3',
+				customClasses ? customClasses : ''
+			)}
 		>
 			<div className="bg-color-gray-200 rounded flex items-center gap-2 p-[6px] mb-2">
 				<Icon name="search" customClass={'!text-[20px] text-color-gray-100 hover:text-white cursor-pointer'} />

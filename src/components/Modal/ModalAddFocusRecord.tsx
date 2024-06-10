@@ -15,7 +15,11 @@ import {
 	useGetTasksQuery,
 	usePermanentlyDeleteFocusRecordMutation,
 } from '../../services/api';
-import { formatTimeToHoursAndMinutes, secondsToHoursAndMinutes } from '../../utils/helpers.utils';
+import {
+	formatTimeToHoursMinutesSeconds,
+	getFormattedDuration,
+	secondsToHoursAndMinutes,
+} from '../../utils/helpers.utils';
 import { formatDateTime } from '../../utils/date.utils';
 
 const ModalAddFocusRecord: React.FC = () => {
@@ -29,17 +33,6 @@ const ModalAddFocusRecord: React.FC = () => {
 
 	const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
 	const { tasks, tasksById } = fetchedTasks || {};
-
-	const {
-		data: fetchedFocusRecords,
-		isLoading: isLoadingFocusRecords,
-		error: errorFocusRecords,
-	} = useGetFocusRecordsQuery();
-	const { focusRecordsById } = fetchedFocusRecords || {};
-
-	console.log(focusRecord);
-	console.log(focusRecord?.children);
-	console.log(focusRecordsById);
 
 	const [addFocusRecord, { isLoading: isLoadingAddFocusRecord, error: errorAddFocusRecord }] =
 		useAddFocusRecordMutation();
@@ -77,7 +70,7 @@ const ModalAddFocusRecord: React.FC = () => {
 
 	useEffect(() => {
 		if (focusRecord) {
-			const duration = formatTimeToHoursAndMinutes(focusRecord?.duration) || { hours: 0, minutes: 0 };
+			const duration = formatTimeToHoursMinutesSeconds(focusRecord?.duration) || { hours: 0, minutes: 0 };
 			const task = tasksById[focusRecord.taskId];
 
 			setSelectedTask(task);
@@ -103,7 +96,7 @@ const ModalAddFocusRecord: React.FC = () => {
 	useEffect(() => {
 		if (focusType === 'pomo') {
 			const duration = getDuration();
-			const { hours, minutes } = formatTimeToHoursAndMinutes(duration);
+			const { hours, minutes } = formatTimeToHoursMinutesSeconds(duration);
 
 			setHours(hours);
 			setMinutes(minutes);
@@ -148,6 +141,8 @@ const ModalAddFocusRecord: React.FC = () => {
 		}
 	};
 
+	const noChildFocusRecords = !focusRecord || focusRecord?.children?.length === 0;
+
 	return (
 		<Modal isOpen={isOpen} onClose={closeModal} position="top-center">
 			<div className="rounded-xl shadow-lg bg-color-gray-650">
@@ -163,134 +158,126 @@ const ModalAddFocusRecord: React.FC = () => {
 
 					<div className="space-y-2">
 						{/* Task */}
-						{!focusRecord ||
-							(focusRecord?.children?.length === 0 ? (
-								<div className="flex items-center gap-2">
-									<div className="w-[100px]">Task</div>
-									<div className="relative flex-1">
+						{noChildFocusRecords ? (
+							<div className="flex items-center gap-2">
+								<div className="w-[100px]">Task</div>
+								<div className="relative flex-1">
+									<div
+										ref={dropdownSetTaskRef}
+										className="flex-1 border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500 cursor-pointer"
+										onClick={() => {
+											setIsDropdownSetTaskVisible(!isDropdownSetTaskVisible);
+										}}
+									>
 										<div
-											ref={dropdownSetTaskRef}
-											className="flex-1 border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500 cursor-pointer"
-											onClick={() => {
-												setIsDropdownSetTaskVisible(!isDropdownSetTaskVisible);
-											}}
+											className={classNames(
+												selectedTask ? 'text-white' : 'text-color-gray-100',
+												'max-w-[260px] text-ellipsis text-nowrap overflow-hidden'
+											)}
 										>
-											<div
-												className={classNames(
-													selectedTask ? 'text-white' : 'text-color-gray-100',
-													'max-w-[260px] text-ellipsis text-nowrap overflow-hidden'
-												)}
-											>
-												{selectedTask ? selectedTask.title : 'Set Task'}
-											</div>
-											<Icon
-												name="expand_more"
-												fill={0}
-												customClass={
-													'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'
-												}
-											/>
+											{selectedTask ? selectedTask.title : 'Set Task'}
 										</div>
-
-										<DropdownSetTask
-											toggleRef={dropdownSetTaskRef}
-											isVisible={isDropdownSetTaskVisible}
-											setIsVisible={setIsDropdownSetTaskVisible}
-											selectedTask={selectedTask}
-											setSelectedTask={setSelectedTask}
+										<Icon
+											name="expand_more"
+											fill={0}
+											customClass={
+												'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'
+											}
 										/>
 									</div>
-								</div>
-							) : (
-								<div className="max-h-[200px] overflow-auto gray-scrollbar flex flex-col gap-4">
-									{focusRecord.children.map((childId) => {
-										const childFocusRecord = focusRecordsById[childId];
-										const task = tasksById[childFocusRecord.taskId];
 
-										const startTimeObj = formatDateTime(childFocusRecord.startTime);
-										const endTimeObj = formatDateTime(childFocusRecord.endTime);
-
-										return (
-											childFocusRecord && (
-												<div key={childFocusRecord._id} className="">
-													<div className="font-bold">{task ? task.title : 'No Task'}</div>
-													<div className="flex mt-1">
-														<div>{`${startTimeObj.time} - ${endTimeObj.time}`}</div>
-													</div>
-												</div>
-											)
-										);
-									})}
-								</div>
-							))}
-
-						{/* Start Time */}
-						<TimeOption
-							dropdownRef={dropdownStartTimeCalendarRef}
-							isDropdownVisible={isDropdownStartTimeVisible}
-							setIsDropdownVisible={setIsDropdownStartTimeVisible}
-							time={startTime}
-							setTime={setStartTime}
-							name="Start Time"
-						/>
-
-						{/* End Time */}
-						<TimeOption
-							dropdownRef={dropdownEndTimeCalendarRef}
-							isDropdownVisible={isDropdownEndTimeVisible}
-							setIsDropdownVisible={setIsDropdownEndTimeVisible}
-							time={endTime}
-							setTime={setEndTime}
-							name="End Time"
-						/>
-
-						{/* Type */}
-						<div className="flex items-center gap-2">
-							<div className="w-[100px]">Type</div>
-							<div className="relative flex-1">
-								<div
-									ref={dropdownSetFocusTypeAndAmountRef}
-									className="flex-1 border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500 cursor-pointer"
-									onClick={() => {
-										setIsDropdownSetFocusTypeAndAmountVisible(
-											!isDropdownSetFocusTypeAndAmountVisible
-										);
-									}}
-								>
-									<div
-										className={classNames(
-											(focusType === 'pomo' && pomos > 0) ||
-												(focusType === 'stopwatch' && (hours > 0 || minutes > 0))
-												? 'text-white'
-												: 'text-color-gray-100'
-										)}
-									>
-										{focusType === 'pomo'
-											? `Pomo: ${pomos} Pomo${pomos > 1 ? 's' : ''}`
-											: `Stopwatch: ${hours > 0 ? `${hours} Hour${hours !== 1 ? 's' : ''}` : ''} ${minutes} Minute${minutes !== 1 ? 's' : ''}`}
-									</div>
-									<Icon
-										name="expand_more"
-										fill={0}
-										customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'}
+									<DropdownSetTask
+										toggleRef={dropdownSetTaskRef}
+										isVisible={isDropdownSetTaskVisible}
+										setIsVisible={setIsDropdownSetTaskVisible}
+										selectedTask={selectedTask}
+										setSelectedTask={setSelectedTask}
 									/>
 								</div>
-
-								<DropdownSetFocusTypeAndAmount
-									toggleRef={dropdownSetFocusTypeAndAmountRef}
-									isVisible={isDropdownSetFocusTypeAndAmountVisible}
-									setIsVisible={setIsDropdownSetFocusTypeAndAmountVisible}
-									focusType={focusType}
-									setFocusType={setFocusType}
-									pomos={pomos}
-									setPomos={setPomos}
-									hours={hours}
-									setHours={setHours}
-									minutes={minutes}
-									setMinutes={setMinutes}
-								/>
 							</div>
-						</div>
+						) : (
+							<div className="max-h-[500px] no-scrollbar overflow-auto flex flex-col gap-4">
+								{focusRecord.children.map((childId) => (
+									<FocusRecordChild childId={childId} />
+								))}
+							</div>
+						)}
+
+						{/* Start Time */}
+						{noChildFocusRecords && (
+							<TimeOption
+								dropdownRef={dropdownStartTimeCalendarRef}
+								isDropdownVisible={isDropdownStartTimeVisible}
+								setIsDropdownVisible={setIsDropdownStartTimeVisible}
+								time={startTime}
+								setTime={setStartTime}
+								name="Start Time"
+							/>
+						)}
+
+						{/* End Time */}
+						{noChildFocusRecords && (
+							<TimeOption
+								dropdownRef={dropdownEndTimeCalendarRef}
+								isDropdownVisible={isDropdownEndTimeVisible}
+								setIsDropdownVisible={setIsDropdownEndTimeVisible}
+								time={endTime}
+								setTime={setEndTime}
+								name="End Time"
+							/>
+						)}
+
+						{/* Type */}
+						{noChildFocusRecords && (
+							<div className="flex items-center gap-2">
+								<div className="w-[100px]">Type</div>
+								<div className="relative flex-1">
+									<div
+										ref={dropdownSetFocusTypeAndAmountRef}
+										className="flex-1 border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500 cursor-pointer"
+										onClick={() => {
+											setIsDropdownSetFocusTypeAndAmountVisible(
+												!isDropdownSetFocusTypeAndAmountVisible
+											);
+										}}
+									>
+										<div
+											className={classNames(
+												(focusType === 'pomo' && pomos > 0) ||
+													(focusType === 'stopwatch' && (hours > 0 || minutes > 0))
+													? 'text-white'
+													: 'text-color-gray-100'
+											)}
+										>
+											{focusType === 'pomo'
+												? `Pomo: ${pomos} Pomo${pomos > 1 ? 's' : ''}`
+												: `Stopwatch: ${hours > 0 ? `${hours} Hour${hours !== 1 ? 's' : ''}` : ''} ${minutes} Minute${minutes !== 1 ? 's' : ''}`}
+										</div>
+										<Icon
+											name="expand_more"
+											fill={0}
+											customClass={
+												'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'
+											}
+										/>
+									</div>
+
+									<DropdownSetFocusTypeAndAmount
+										toggleRef={dropdownSetFocusTypeAndAmountRef}
+										isVisible={isDropdownSetFocusTypeAndAmountVisible}
+										setIsVisible={setIsDropdownSetFocusTypeAndAmountVisible}
+										focusType={focusType}
+										setFocusType={setFocusType}
+										pomos={pomos}
+										setPomos={setPomos}
+										hours={hours}
+										setHours={setHours}
+										minutes={minutes}
+										setMinutes={setMinutes}
+									/>
+								</div>
+							</div>
+						)}
 
 						{/* Focus Note */}
 						<div className="flex gap-2">
@@ -345,6 +332,84 @@ const ModalAddFocusRecord: React.FC = () => {
 				)}
 			</div>
 		</Modal>
+	);
+};
+
+const FocusRecordChild = ({ childId }) => {
+	const {
+		data: fetchedFocusRecords,
+		isLoading: isLoadingFocusRecords,
+		error: errorFocusRecords,
+	} = useGetFocusRecordsQuery();
+	const { focusRecordsById } = fetchedFocusRecords || {};
+
+	const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
+	const { tasks, tasksById } = fetchedTasks || {};
+
+	const [selectedTask, setSelectedTask] = useState<Object | null>(null);
+	const [isDropdownSetTaskVisible, setIsDropdownSetTaskVisible] = useState(false);
+
+	const dropdownSetTaskRef = useRef(null);
+
+	useEffect(() => {
+		setIsDropdownSetTaskVisible(false);
+	}, [selectedTask]);
+
+	const childFocusRecord = focusRecordsById[childId];
+	const { _id, taskId, startTime, endTime, focusType, duration } = childFocusRecord;
+	const task = tasksById[taskId];
+
+	const dateOptions = {
+		year: 'numeric', // Full year
+		month: 'long', // Full month name
+		day: 'numeric', // Day of the month
+	};
+
+	const startDay = new Date(startTime).toLocaleString('en-US', dateOptions);
+	const endDay = new Date(endTime).toLocaleString('en-US', dateOptions);
+
+	const startTimeObj = formatDateTime(startTime);
+	const endTimeObj = formatDateTime(endTime);
+
+	return (
+		childFocusRecord && (
+			<div key={_id} className="">
+				<div className="flex items-center justify-between mb-3">
+					<div className="flex items-center gap-1">
+						<Icon name="nutrition" customClass={'!text-[21px] text-blue-500 cursor-pointer'} fill={1} />
+						<div className="font-bold">{task ? task.title : 'No Task'}</div>
+					</div>
+
+					<div className="relative">
+						<Icon
+							ref={dropdownSetTaskRef}
+							onClick={() => setIsDropdownSetTaskVisible(!isDropdownSetTaskVisible)}
+							name="edit"
+							customClass={'!text-[21px] text-color-gray-100 cursor-pointer'}
+							fill={1}
+						/>
+
+						<DropdownSetTask
+							toggleRef={dropdownSetTaskRef}
+							isVisible={isDropdownSetTaskVisible}
+							setIsVisible={setIsDropdownSetTaskVisible}
+							selectedTask={selectedTask}
+							setSelectedTask={setSelectedTask}
+							customClasses="ml-[-270px]"
+						/>
+					</div>
+				</div>
+				<div className="flex items-center gap-1 mt-1 text-color-gray-100">
+					<Icon name="adjust" customClass={'!text-[20px] cursor-pointer'} fill={0} />
+					<div>{`${startDay}:  ${startTimeObj.time} - ${startDay !== endDay ? endTime : ''}${endTimeObj.time}`}</div>
+				</div>
+
+				<div className="flex items-center gap-1 mt-1 text-color-gray-100">
+					<Icon name="timer" customClass={'!text-[20px] cursor-pointer'} fill={0} />
+					<div>{`${getFormattedDuration(duration)}`}</div>
+				</div>
+			</div>
+		)
 	);
 };
 
