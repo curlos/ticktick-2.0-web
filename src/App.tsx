@@ -5,6 +5,7 @@ import HomePage from './pages/HomePage';
 import GlobalModalList from './components/Modal/GlobalModalList';
 import GlobalAlertList from './components/Alert/GlobalAlertList';
 import LoginPage from './pages/LoginPage';
+import EisenhowerMatrixPage from './pages/EisenhowerMatrixPage';
 
 function App() {
 	return (
@@ -21,6 +22,7 @@ function App() {
 						<Route path="/projects/:projectId/tasks/:taskId" element={<HomePage />}></Route>
 
 						<Route path="/focus" element={<FocusPage />}></Route>
+						<Route path="/matrix" element={<EisenhowerMatrixPage />}></Route>
 						{/* Fallback route for 404 Not Found */}
 						<Route path="*" element={<HomePage />} />
 					</Routes>

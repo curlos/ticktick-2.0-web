@@ -277,11 +277,14 @@ export const getTasksWithNoParent = (tasks, tasksById, projectId, isSmartListVie
 
 	// Filter out tasks that are in the childTaskIds set
 	let newTasksWithNoParent = transformedTasks.filter((task) => !childTaskIds.has(task._id.toString()));
-	// TODO: Figure out smart lsit view filtering
-	if (isSmartListView) {
-		newTasksWithNoParent = SMART_LISTS[projectId].getFilteredTasks(newTasksWithNoParent);
-	} else {
-		newTasksWithNoParent = newTasksWithNoParent.filter((task) => task.projectId === projectId);
+
+	if (projectId) {
+		// TODO: Figure out smart list view filtering
+		if (isSmartListView) {
+			newTasksWithNoParent = SMART_LISTS[projectId].getFilteredTasks(newTasksWithNoParent);
+		} else {
+			newTasksWithNoParent = newTasksWithNoParent.filter((task) => task.projectId === projectId);
+		}
 	}
 
 	return newTasksWithNoParent;
