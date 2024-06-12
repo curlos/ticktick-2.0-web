@@ -3,6 +3,7 @@ import Icon from '../Icon';
 import { DropdownProps } from '../../interfaces/interfaces';
 import classNames from 'classnames';
 import { useRef, useState } from 'react';
+import ModalEditMatrix from '../Modal/ModalEditMatrix';
 
 interface DropdownMatrixOptions extends DropdownProps {}
 
@@ -12,45 +13,7 @@ const DropdownMatrixOptions: React.FC<DropdownMatrixOptions> = ({
 	setIsVisible,
 	customClasses,
 }) => {
-	const OptionWithAnotherDropdown = ({ optionName, iconName }) => {
-		const OPTIONS = ['Time', 'Title', 'Tag', 'Priority'];
-
-		if (optionName.toLowerCase() === 'group by') {
-			OPTIONS.push('None');
-		}
-
-		const dropdownAdditonalDetailsRef = useRef();
-		const [isDropdownAdditionalDetailsVisible, setIsDropdownAdditionalDetailsVisible] = useState(false);
-		const [selectedOption, setSelectedOption] = useState('Time');
-
-		return (
-			<div
-				className="relative"
-				onClick={() => setIsDropdownAdditionalDetailsVisible(!isDropdownAdditionalDetailsVisible)}
-			>
-				<div className="p-2 hover:bg-color-gray-300 flex justify-between items-center gap-2 rounded text-gray-300">
-					<div className="flex items-center gap-2">
-						<Icon name={iconName} fill={0} customClass={'!text-[20px]'} />
-						<div>{optionName}</div>
-					</div>
-
-					<div className="flex items-center gap-1">
-						<div>{selectedOption}</div>
-						<Icon name="chevron_right" fill={0} customClass={'!text-[16px] text-color-gray-100'} />
-					</div>
-				</div>
-
-				<DropdownAdditionalDetails
-					toggleRef={dropdownAdditonalDetailsRef}
-					isVisible={isDropdownAdditionalDetailsVisible}
-					setIsVisible={setIsDropdownAdditionalDetailsVisible}
-					options={OPTIONS}
-					selectedOption={selectedOption}
-					setSelectedOption={setSelectedOption}
-				/>
-			</div>
-		);
-	};
+	const [isModalEditMatrixOpen, setIsModalEditMatrixOpen] = useState(false);
 
 	return (
 		<Dropdown
@@ -60,7 +23,10 @@ const DropdownMatrixOptions: React.FC<DropdownMatrixOptions> = ({
 			customClasses={classNames('shadow-2xl border border-color-gray-200 rounded-lg ml-[-175px]', customClasses)}
 		>
 			<div className="w-[200px] p-1">
-				<div className="p-2 hover:bg-color-gray-300 rounded flex items-center gap-2 text-gray-300">
+				<div
+					className="p-2 hover:bg-color-gray-300 rounded flex items-center gap-2 text-gray-300"
+					onClick={() => setIsModalEditMatrixOpen(!isModalEditMatrixOpen)}
+				>
 					<Icon name="edit" fill={0} customClass={'!text-[20px]'} />
 					<div>Edit</div>
 				</div>
@@ -68,7 +34,49 @@ const DropdownMatrixOptions: React.FC<DropdownMatrixOptions> = ({
 				<OptionWithAnotherDropdown optionName="Group by" iconName="menu" />
 				<OptionWithAnotherDropdown optionName="Sort by" iconName="sort" />
 			</div>
+
+			<ModalEditMatrix isModalOpen={isModalEditMatrixOpen} setIsModalOpen={setIsModalEditMatrixOpen} />
 		</Dropdown>
+	);
+};
+
+const OptionWithAnotherDropdown = ({ optionName, iconName }) => {
+	const OPTIONS = ['Time', 'Title', 'Tag', 'Priority'];
+
+	if (optionName.toLowerCase() === 'group by') {
+		OPTIONS.push('None');
+	}
+
+	const dropdownAdditonalDetailsRef = useRef();
+	const [isDropdownAdditionalDetailsVisible, setIsDropdownAdditionalDetailsVisible] = useState(false);
+	const [selectedOption, setSelectedOption] = useState('Time');
+
+	return (
+		<div
+			className="relative"
+			onClick={() => setIsDropdownAdditionalDetailsVisible(!isDropdownAdditionalDetailsVisible)}
+		>
+			<div className="p-2 hover:bg-color-gray-300 flex justify-between items-center gap-2 rounded text-gray-300">
+				<div className="flex items-center gap-2">
+					<Icon name={iconName} fill={0} customClass={'!text-[20px]'} />
+					<div>{optionName}</div>
+				</div>
+
+				<div className="flex items-center gap-1">
+					<div>{selectedOption}</div>
+					<Icon name="chevron_right" fill={0} customClass={'!text-[16px] text-color-gray-100'} />
+				</div>
+			</div>
+
+			<DropdownAdditionalDetails
+				toggleRef={dropdownAdditonalDetailsRef}
+				isVisible={isDropdownAdditionalDetailsVisible}
+				setIsVisible={setIsDropdownAdditionalDetailsVisible}
+				options={OPTIONS}
+				selectedOption={selectedOption}
+				setSelectedOption={setSelectedOption}
+			/>
+		</div>
 	);
 };
 

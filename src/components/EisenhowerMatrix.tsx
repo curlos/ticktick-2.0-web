@@ -5,6 +5,8 @@ import { SMART_LISTS } from '../utils/smartLists.utils';
 import TaskListByCategory from './TaskListByCategory';
 import Icon from './Icon';
 import DropdownMatrixOptions from './Dropdown/DropdownMatrixOptions';
+import { setModalState } from '../slices/modalSlice';
+import { useDispatch } from 'react-redux';
 
 const EisenhowerMatrix = () => {
 	const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
@@ -45,6 +47,7 @@ const EisenhowerMatrix = () => {
 const MatrixSquare = ({ tasksWithNoParent, priority }) => {
 	const iconClass = '!text-[20px] p-[3px] rounded hover:bg-color-gray-200';
 
+	const dispatch = useDispatch();
 	const dropdownMatrixOptionsRef = useRef();
 	const [isDropdownMatrixOptionsVisible, setIsDropdownMatrixOptionsVisible] = useState(false);
 
@@ -60,7 +63,14 @@ const MatrixSquare = ({ tasksWithNoParent, priority }) => {
 
 				<div className="text-color-gray-100 flex items-center gap-1">
 					<div className="relative">
-						<Icon name="add" fill={0} customClass={iconClass} />
+						<Icon
+							name="add"
+							fill={0}
+							customClass={iconClass}
+							onClick={() => {
+								dispatch(setModalState({ modalId: 'ModalAddTaskForm', isOpen: true }));
+							}}
+						/>
 					</div>
 
 					<div className="relative">
@@ -76,7 +86,6 @@ const MatrixSquare = ({ tasksWithNoParent, priority }) => {
 							toggleRef={dropdownMatrixOptionsRef}
 							isVisible={isDropdownMatrixOptionsVisible}
 							setIsVisible={setIsDropdownMatrixOptionsVisible}
-							// customClasses=" !ml-[0px] mt-[15px]"
 						/>
 					</div>
 				</div>
