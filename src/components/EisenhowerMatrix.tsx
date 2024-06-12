@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useGetProjectsQuery, useGetTasksQuery } from '../services/api';
 import { getTasksWithNoParent } from '../utils/helpers.utils';
 import { SMART_LISTS } from '../utils/smartLists.utils';
 import TaskListByCategory from './TaskListByCategory';
 import Icon from './Icon';
+import DropdownMatrixOptions from './Dropdown/DropdownMatrixOptions';
 
 const EisenhowerMatrix = () => {
 	const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
@@ -44,6 +45,9 @@ const EisenhowerMatrix = () => {
 const MatrixSquare = ({ tasksWithNoParent, priority }) => {
 	const iconClass = '!text-[20px] p-[3px] rounded hover:bg-color-gray-200';
 
+	const dropdownMatrixOptionsRef = useRef();
+	const [isDropdownMatrixOptionsVisible, setIsDropdownMatrixOptionsVisible] = useState(false);
+
 	return (
 		<div className="w-full rounded-lg bg-color-gray-600 p-3 h-full">
 			<div className="mb-3 flex justify-between items-center cursor-pointer group">
@@ -54,9 +58,27 @@ const MatrixSquare = ({ tasksWithNoParent, priority }) => {
 					<Icon name="more_horiz" fill={0} customClass={'!text-[20px] ml-2'} />
 				</div> */}
 
-				<div className="text-color-gray-100 space-x-1">
-					<Icon name="add" fill={0} customClass={iconClass} />
-					<Icon name="more_horiz" fill={0} customClass={iconClass} />
+				<div className="text-color-gray-100 flex items-center gap-1">
+					<div className="relative">
+						<Icon name="add" fill={0} customClass={iconClass} />
+					</div>
+
+					<div className="relative">
+						<Icon
+							toggleRef={dropdownMatrixOptionsRef}
+							name="more_horiz"
+							fill={0}
+							customClass={iconClass}
+							onClick={() => setIsDropdownMatrixOptionsVisible(!isDropdownMatrixOptionsVisible)}
+						/>
+
+						<DropdownMatrixOptions
+							toggleRef={dropdownMatrixOptionsRef}
+							isVisible={isDropdownMatrixOptionsVisible}
+							setIsVisible={setIsDropdownMatrixOptionsVisible}
+							// customClasses=" !ml-[0px] mt-[15px]"
+						/>
+					</div>
 				</div>
 			</div>
 
