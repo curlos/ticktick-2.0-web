@@ -1,12 +1,23 @@
 import classNames from 'classnames';
 import Modal from './Modal';
 import Icon from '../Icon';
+import { useDispatch, useSelector } from 'react-redux';
+import { setModalState } from '../../slices/modalSlice';
 
-const ModalEditMatrix: React.FC = ({ isModalOpen, setIsModalOpen }) => {
-	const closeModal = () => setIsModalOpen(false);
+const ModalEditMatrix: React.FC = () => {
+	const modal = useSelector((state) => state.modals.modals['ModalEditMatrix']);
+	const dispatch = useDispatch();
+
+	if (!modal) {
+		return null;
+	}
+
+	const { isOpen, props } = modal;
+
+	const closeModal = () => dispatch(setModalState({ modalId: 'ModalEditMatrix', isOpen: false }));
 
 	return (
-		<Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} position="top-center">
+		<Modal isOpen={isOpen} onClose={closeModal} position="top-center">
 			<div className="rounded-xl shadow-lg bg-color-gray-600">
 				<div className={classNames('p-5')}>
 					<div className="flex items-center justify-between mb-4">

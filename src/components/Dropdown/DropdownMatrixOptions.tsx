@@ -4,6 +4,8 @@ import { DropdownProps } from '../../interfaces/interfaces';
 import classNames from 'classnames';
 import { useRef, useState } from 'react';
 import ModalEditMatrix from '../Modal/ModalEditMatrix';
+import { setModalState } from '../../slices/modalSlice';
+import { useDispatch } from 'react-redux';
 
 interface DropdownMatrixOptions extends DropdownProps {}
 
@@ -13,7 +15,7 @@ const DropdownMatrixOptions: React.FC<DropdownMatrixOptions> = ({
 	setIsVisible,
 	customClasses,
 }) => {
-	const [isModalEditMatrixOpen, setIsModalEditMatrixOpen] = useState(false);
+	const dispatch = useDispatch();
 
 	return (
 		<Dropdown
@@ -25,7 +27,10 @@ const DropdownMatrixOptions: React.FC<DropdownMatrixOptions> = ({
 			<div className="w-[200px] p-1">
 				<div
 					className="p-2 hover:bg-color-gray-300 rounded flex items-center gap-2 text-gray-300"
-					onClick={() => setIsModalEditMatrixOpen(!isModalEditMatrixOpen)}
+					onClick={() => {
+						dispatch(setModalState({ modalId: 'ModalEditMatrix', isOpen: true }));
+						setIsVisible(false);
+					}}
 				>
 					<Icon name="edit" fill={0} customClass={'!text-[20px]'} />
 					<div>Edit</div>
@@ -34,8 +39,6 @@ const DropdownMatrixOptions: React.FC<DropdownMatrixOptions> = ({
 				<OptionWithAnotherDropdown optionName="Group by" iconName="menu" />
 				<OptionWithAnotherDropdown optionName="Sort by" iconName="sort" />
 			</div>
-
-			<ModalEditMatrix isModalOpen={isModalEditMatrixOpen} setIsModalOpen={setIsModalEditMatrixOpen} />
 		</Dropdown>
 	);
 };
