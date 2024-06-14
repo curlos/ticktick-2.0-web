@@ -107,6 +107,7 @@ const DropdownAdditionalDetails: React.FC<DropdownAdditionalDetails> = ({
 
 					return (
 						<div
+							key={option}
 							className="p-2 hover:bg-color-gray-300 rounded flex justify-between items-center gap-2 text-gray-300"
 							onClick={() => setSelectedOption(option)}
 						>

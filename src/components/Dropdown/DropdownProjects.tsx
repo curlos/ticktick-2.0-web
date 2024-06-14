@@ -142,11 +142,11 @@ const DropdownProjects: React.FC<DropdownProjectsProps> = memo(
 				isVisible={isVisible}
 				setIsVisible={setIsVisible}
 				customClasses={classNames(
-					'ml-[-13px] mt-2 mb-2 shadow-2xl border border-color-gray-200 rounded-lg max-h-[300px]',
+					'ml-[-13px] mt-2 mb-2 shadow-2xl border border-color-gray-200 rounded-lg max-h-[300px] w-[200px]',
 					customClasses
 				)}
 			>
-				<div className="w-[200px]">
+				<div>
 					<div className="flex items-center gap-1 p-1 px-2">
 						<Icon
 							name="search"
