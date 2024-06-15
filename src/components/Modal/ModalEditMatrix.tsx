@@ -11,6 +11,53 @@ import { useGetProjectsQuery } from '../../services/api';
 import DropdownProjects from '../Dropdown/DropdownProjects';
 import { SMART_LISTS } from '../../utils/smartLists.utils';
 
+const DATES = [
+	{
+		name: 'All',
+		iconName: 'stacks',
+	},
+	{
+		name: 'No Date',
+		iconName: 'hourglass_empty',
+	},
+	{
+		name: 'Overdue',
+		iconName: 'west',
+	},
+	{
+		name: 'Repeat',
+		iconName: 'repeat',
+	},
+	{
+		name: 'Today',
+		iconName: 'calendar_today',
+	},
+	{
+		name: 'Tomorrow',
+		iconName: 'upcoming',
+	},
+	{
+		name: 'This Week',
+		iconName: 'event_upcoming',
+	},
+	{
+		name: 'Next Week',
+		iconName: 'stacks',
+	},
+	{
+		name: 'This Month',
+		iconName: 'dark_mode',
+	},
+	{
+		name: 'Next Month',
+		iconName: 'nights_stay',
+	},
+	{
+		name: 'Duration',
+		iconName: 'timer',
+	},
+];
+
 const ModalEditMatrix: React.FC = () => {
 	const modal = useSelector((state) => state.modals.modals['ModalEditMatrix']);
 	const dispatch = useDispatch();
@@ -36,6 +83,10 @@ const ModalEditMatrix: React.FC = () => {
 		topListProjects.find((project) => project.urlName === 'all')
 	);
 	const dropdownProjectsRef = useRef(null);
+
+	const [isDropdownDatesVisible, setIsDropdownDatesVisible] = useState(false);
+	const [selectedDate, setSelectedDate] = useState(DATES.find((date) => date.name.toLowerCase() === 'all'));
+	const dropdownDatesRef = useRef(null);
 
 	console.log(selectedProject);
 
@@ -99,13 +150,13 @@ const ModalEditMatrix: React.FC = () => {
 								<div className="text-color-gray-100 w-[96px]">Date</div>
 								<div className="flex-1 relative">
 									<div
-										ref={dropdownProjectsRef}
+										ref={dropdownDatesRef}
 										className="border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500 rounded-md cursor-pointer"
 										onClick={() => {
-											setIsDropdownProjectsVisible(!isDropdownProjectsVisible);
+											setIsDropdownDatesVisible(!isDropdownDatesVisible);
 										}}
 									>
-										<div>{selectedProject.name}</div>
+										<div>{selectedDate.name}</div>
 										<Icon
 											name="expand_more"
 											fill={0}
@@ -115,13 +166,12 @@ const ModalEditMatrix: React.FC = () => {
 										/>
 									</div>
 
-									<DropdownProjects
-										toggleRef={dropdownProjectsRef}
-										isVisible={isDropdownProjectsVisible}
-										setIsVisible={setIsDropdownProjectsVisible}
-										selectedProject={selectedProject}
-										setSelectedProject={setSelectedProject}
-										projects={projects}
+									<DropdownDates
+										toggleRef={dropdownDatesRef}
+										isVisible={isDropdownDatesVisible}
+										setIsVisible={setIsDropdownDatesVisible}
+										selectedDate={selectedDate}
+										setSelectedDate={setSelectedDate}
 										customClasses="w-full ml-[0px]"
 										showSmartLists={true}
 									/>
@@ -169,77 +219,40 @@ const DropdownDates: React.FC<DropdownDatesProps> = ({
 	selectedDate,
 	setSelectedDate,
 }) => {
-	const dates = [
-		{
-			name: 'All',
-			iconName: 'stacks',
-		},
-		{
-			name: 'No Date',
-			iconName: 'stacks',
-		},
-		{
-			name: 'Overdue',
-			iconName: 'stacks',
-		},
-		{
-			name: 'Repeat',
-			iconName: 'stacks',
-		},
-		{
-			name: 'Today',
-			iconName: 'stacks',
-		},
-		{
-			name: 'Tomorrow',
-			iconName: 'stacks',
-		},
-		{
-			name: 'This Week',
-			iconName: 'stacks',
-		},
-		{
-			name: 'Next Week',
-			iconName: 'stacks',
-		},
-		{
-			name: 'This Month',
-			iconName: 'stacks',
-		},
-		{
-			name: 'Next Month',
-			iconName: 'stacks',
-		},
-		{
-			name: 'Duration',
-			iconName: 'stacks',
-		},
-	];
-
 	return (
 		<Dropdown
 			toggleRef={toggleRef}
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
-			customClasses={'mt-[5px] shadow-2xl border border-color-gray-200 rounded-lg'}
+			customClasses={'mt-[5px] shadow-2xl border border-color-gray-200 rounded-lg w-full'}
 		>
-			<div className="w-[232px] p-1 rounded" onClick={(e) => e.stopPropagation()}>
+			<div className="p-1 rounded" onClick={(e) => e.stopPropagation()}>
 				<div className="overflow-auto gray-scrollbar">
-					{folders &&
-						[noneFolder, ...folders].map((folder) => {
-							const isFolderSelected = selectedFolder._id == folder._id;
+					{DATES &&
+						DATES.map((date) => {
+							const isDateSelected = date.name == selectedDate.name;
 
 							return (
 								<div
-									key={folder._id}
+									key={date.name}
 									className="flex items-center justify-between hover:bg-color-gray-300 p-2 rounded-lg cursor-pointer"
 									onClick={() => {
-										setSelectedDate(folder);
+										setSelectedDate(date);
 										setIsVisible(false);
 									}}
 								>
-									<div className={isFolderSelected ? 'text-blue-500' : ''}>{folder.name}</div>
-									{isFolderSelected && (
+									<div className="flex items-center gap-2">
+										<Icon
+											name={date.iconName}
+											fill={0}
+											customClass={classNames(
+												'!text-[18px] hover:text-white cursor-pointer',
+												isDateSelected ? 'text-blue-500' : ''
+											)}
+										/>
+										<div className={isDateSelected ? 'text-blue-500' : ''}>{date.name}</div>
+									</div>
+									{isDateSelected && (
 										<Icon
 											name="check"
 											fill={0}
@@ -249,21 +262,6 @@ const DropdownDates: React.FC<DropdownDatesProps> = ({
 								</div>
 							);
 						})}
-				</div>
-
-				<div
-					className="flex items-center gap-1 mt-2 hover:bg-color-gray-300 p-2 rounded-lg cursor-pointer"
-					onClick={() => {
-						setIsModalNewProjectOpen(true);
-						setIsVisible(false);
-					}}
-				>
-					<Icon
-						name="add"
-						fill={0}
-						customClass={'text-color-gray-50 !text-[20px] hover:text-white cursor-pointer'}
-					/>
-					<div>New Folder</div>
 				</div>
 			</div>
 		</Dropdown>
