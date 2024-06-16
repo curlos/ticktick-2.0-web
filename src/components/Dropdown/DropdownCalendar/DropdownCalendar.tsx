@@ -329,6 +329,8 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({
 								const dueDate = currDueDate ? currDueDate : new Date();
 								const newDateObject = setTimeOnDateString(dueDate, selectedTime);
 								finalDueDate = newDateObject;
+
+								setCurrDueDate(finalDueDate);
 							}
 
 							if (task) {

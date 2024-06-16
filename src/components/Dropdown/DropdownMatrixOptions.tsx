@@ -3,7 +3,6 @@ import Icon from '../Icon';
 import { DropdownProps } from '../../interfaces/interfaces';
 import classNames from 'classnames';
 import { useRef, useState } from 'react';
-import ModalEditMatrix from '../Modal/ModalEditMatrix';
 import { setModalState } from '../../slices/modalSlice';
 import { useDispatch } from 'react-redux';
 
@@ -19,8 +18,6 @@ const DropdownMatrixOptions: React.FC<DropdownMatrixOptions> = ({
 	matrix,
 }) => {
 	const dispatch = useDispatch();
-
-	console.log(matrix);
 
 	return (
 		<Dropdown

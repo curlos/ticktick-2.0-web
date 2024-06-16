@@ -118,8 +118,6 @@ const ModalEditMatrix: React.FC = () => {
 
 	useEffect(() => {
 		if (matrix) {
-			console.log(matrix);
-
 			// TODO: FIX!
 			const { name, selectedPriorities, selectedDates } = matrix;
 			setName(name);
@@ -237,6 +235,8 @@ const ModalEditMatrix: React.FC = () => {
 										name="All"
 										checked={allPriorities}
 										onChange={() => setAllPriorities(true)}
+										customOuterCircleClasses="!border-blue-500"
+										customInnerCircleClasses="!bg-blue-500"
 									/>
 
 									<CustomCheckbox
@@ -368,24 +368,26 @@ interface DropdownDatesProps extends DropdownProps {
 const DropdownDates: React.FC<DropdownDatesProps> = ({ toggleRef, isVisible, setIsVisible, allDates, setAllDates }) => {
 	const [localAllDates, setLocalAllDates] = useState(allDates);
 
+	const [fromDate, setFromDate] = useState(null);
+	const [toDate, setToDate] = useState(null);
 	const [isDropdownFromDateVisible, setIsDropdownFromDateVisible] = useState(false);
 	const [isDropdownToDateVisible, setIsDropdownToDateVisible] = useState(false);
 
+	const dropdownFromDateRef = useRef();
+	const dropdownToDateRef = useRef();
+
+	console.log(fromDate);
+
 	const Duration = () => {
-		const [fromDate, setFromDate] = useState(null);
-		const [toDate, setToDate] = useState(null);
-
-		const dropdownFromDateRef = useRef();
-		const dropdownToDateRef = useRef();
-
 		return (
-			<div className="flex items-center gap-2">
+			<div className="flex-1 space-y-2 w-full">
 				<DurationOption
 					dropdownDateRef={dropdownFromDateRef}
 					isDropdownDateVisible={isDropdownFromDateVisible}
 					setIsDropdownDateVisible={setIsDropdownFromDateVisible}
 					date={fromDate}
 					setDate={setFromDate}
+					dropdownCustomClasses=" !ml-[100px] mt-[-100px]"
 				/>
 
 				<DurationOption
@@ -394,13 +396,21 @@ const DropdownDates: React.FC<DropdownDatesProps> = ({ toggleRef, isVisible, set
 					setIsDropdownDateVisible={setIsDropdownToDateVisible}
 					date={toDate}
 					setDate={setToDate}
+					dropdownCustomClasses=" !ml-[100px] mt-[-60px]"
 				/>
 			</div>
 		);
 	};
 
-	const DurationOption = ({ dropdownDateRef, isDropdownDateVisible, setIsDropdownDateVisible, date, setDate }) => (
-		<div className="flex-1" onClick={(e) => e.stopPropagation()}>
+	const DurationOption = ({
+		dropdownDateRef,
+		isDropdownDateVisible,
+		setIsDropdownDateVisible,
+		date,
+		setDate,
+		dropdownCustomClasses,
+	}) => (
+		<div className="flex-1 w-full" onClick={(e) => e.stopPropagation()}>
 			<div
 				ref={dropdownDateRef}
 				className="border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500 rounded-md cursor-pointer"
@@ -409,7 +419,18 @@ const DropdownDates: React.FC<DropdownDatesProps> = ({ toggleRef, isVisible, set
 					setIsDropdownDateVisible(!isDropdownDateVisible);
 				}}
 			>
-				<div className="max-w-[300px] truncate text-[12px]">Tomorrow</div>
+				<div className="max-w-[300px] truncate text-[12px]">
+					{date
+						? date.toLocaleString('en-US', {
+								year: 'numeric', // Full year
+								month: 'long', // Full month name
+								day: 'numeric', // Day of the month
+								hour: 'numeric', // Hour (in 12-hour AM/PM format)
+								minute: '2-digit', // Minute with leading zeros
+								hour12: true, // Use AM/PM
+							})
+						: 'No Date'}
+				</div>
 				<Icon
 					name="expand_more"
 					fill={0}
@@ -423,7 +444,7 @@ const DropdownDates: React.FC<DropdownDatesProps> = ({ toggleRef, isVisible, set
 				setIsVisible={setIsDropdownDateVisible}
 				currDueDate={date}
 				setCurrDueDate={setDate}
-				customClasses=" !ml-[100px] mt-[-60px]"
+				customClasses={dropdownCustomClasses}
 			/>
 		</div>
 	);
@@ -449,7 +470,7 @@ const DropdownDates: React.FC<DropdownDatesProps> = ({ toggleRef, isVisible, set
 							return (
 								<div
 									key={value.name}
-									className="flex items-center justify-between hover:bg-color-gray-300 p-2 rounded-lg cursor-pointer"
+									className="flex items-center justify-between gap-2 hover:bg-color-gray-300 p-2 rounded-lg cursor-pointer"
 									onClick={() => {
 										setLocalAllDates({
 											...localAllDates,
@@ -457,7 +478,7 @@ const DropdownDates: React.FC<DropdownDatesProps> = ({ toggleRef, isVisible, set
 										});
 									}}
 								>
-									<div className="flex items-center gap-2">
+									<div className="flex-1 flex items-center gap-2">
 										<Icon
 											name={value.iconName}
 											fill={0}
