@@ -10,6 +10,7 @@ import Dropdown from '../Dropdown/Dropdown';
 import { useGetProjectsQuery } from '../../services/api';
 import DropdownProjects from '../Dropdown/DropdownProjects';
 import { SMART_LISTS } from '../../utils/smartLists.utils';
+import CustomRadioButton from '../CustomRadioButton';
 
 const DATES = [
 	{
@@ -68,12 +69,6 @@ const ModalEditMatrix: React.FC = () => {
 	const TOP_LIST_NAMES = ['all', 'today', 'tomorrow', 'week'];
 	const topListProjects = TOP_LIST_NAMES.map((name) => SMART_LISTS[name]);
 
-	if (!modal) {
-		return null;
-	}
-
-	const { isOpen, props } = modal;
-
 	const closeModal = () => dispatch(setModalState({ modalId: 'ModalEditMatrix', isOpen: false }));
 
 	const [matrixName, setMatrixName] = useState('Urgent & Important');
@@ -88,7 +83,19 @@ const ModalEditMatrix: React.FC = () => {
 	const [selectedDate, setSelectedDate] = useState(DATES.find((date) => date.name.toLowerCase() === 'all'));
 	const dropdownDatesRef = useRef(null);
 
-	console.log(selectedProject);
+	const [allPriorities, setAllPriorities] = useState(true);
+	const [priorities, setPriorities] = useState({
+		high: false,
+		medium: false,
+		low: false,
+		none: false,
+	});
+
+	if (!modal) {
+		return null;
+	}
+
+	const { isOpen, props } = modal;
 
 	return (
 		<Modal isOpen={isOpen} onClose={closeModal} positionClasses="!items-start mt-[150px]" customClasses="my-[2px]">
@@ -110,6 +117,7 @@ const ModalEditMatrix: React.FC = () => {
 							customClasses="!text-left  p-[6px] px-3"
 						/>
 
+						{/* Lists */}
 						<div>
 							<div className="flex items-center">
 								<div className="text-color-gray-100 w-[96px]">Lists</div>
@@ -145,6 +153,7 @@ const ModalEditMatrix: React.FC = () => {
 							</div>
 						</div>
 
+						{/* Dates */}
 						<div>
 							<div className="flex items-center">
 								<div className="text-color-gray-100 w-[96px]">Date</div>
@@ -178,6 +187,49 @@ const ModalEditMatrix: React.FC = () => {
 								</div>
 							</div>
 						</div>
+
+						<div>
+							<div className="flex items-center">
+								<div className="text-color-gray-100 w-[96px]">Priority</div>
+								<div className="flex-1 flex items-center gap-4">
+									<CustomRadioButton
+										label="All"
+										name="All"
+										checked={allPriorities}
+										onChange={() => setAllPriorities(true)}
+									/>
+
+									<CustomCheckbox
+										name="High"
+										values={priorities}
+										setValues={setPriorities}
+										allPriorities={allPriorities}
+										setAllPriorities={setAllPriorities}
+									/>
+									<CustomCheckbox
+										name="Medium"
+										values={priorities}
+										setValues={setPriorities}
+										allPriorities={allPriorities}
+										setAllPriorities={setAllPriorities}
+									/>
+									<CustomCheckbox
+										name="Low"
+										values={priorities}
+										setValues={setPriorities}
+										allPriorities={allPriorities}
+										setAllPriorities={setAllPriorities}
+									/>
+									<CustomCheckbox
+										name="None"
+										values={priorities}
+										setValues={setPriorities}
+										allPriorities={allPriorities}
+										setAllPriorities={setAllPriorities}
+									/>
+								</div>
+							</div>
+						</div>
 					</div>
 
 					<div className="mt-7 flex justify-end gap-2">
@@ -204,6 +256,48 @@ const ModalEditMatrix: React.FC = () => {
 				</div>
 			</div>
 		</Modal>
+	);
+};
+
+const CustomCheckbox = ({ name, values, setValues, allPriorities, setAllPriorities }) => {
+	const value = name.toLowerCase();
+	const isChecked = values[value];
+
+	const handleClick = () => {
+		setValues({ ...values, [value]: !isChecked });
+		// If not checked, then this means, it's going to be checked and be true in the next state value
+		if (allPriorities && !isChecked) {
+			setAllPriorities(false);
+		} else if (!allPriorities && !isChecked) {
+			const everyOtherPriorityTrue = Object.entries(values).every(([key, value]) => {
+				console.log(key);
+
+				if (key === name.toLowerCase()) {
+					return true;
+				}
+
+				return value;
+			});
+
+			if (everyOtherPriorityTrue) {
+				setAllPriorities(true);
+
+				const valuesClone = { ...values };
+				Object.keys(values).forEach((key) => {
+					valuesClone[key] = false;
+				});
+				setValues(valuesClone);
+			}
+
+			console.log(everyOtherPriorityTrue);
+		}
+	};
+
+	return (
+		<div className="flex items-center gap-2" onClick={handleClick}>
+			<input type="checkbox" name={name} className="accent-blue-500" checked={isChecked} />
+			{name}
+		</div>
 	);
 };
 
