@@ -7,15 +7,20 @@ import ModalEditMatrix from '../Modal/ModalEditMatrix';
 import { setModalState } from '../../slices/modalSlice';
 import { useDispatch } from 'react-redux';
 
-interface DropdownMatrixOptions extends DropdownProps {}
+interface DropdownMatrixOptions extends DropdownProps {
+	matrix: Object;
+}
 
 const DropdownMatrixOptions: React.FC<DropdownMatrixOptions> = ({
 	toggleRef,
 	isVisible,
 	setIsVisible,
 	customClasses,
+	matrix,
 }) => {
 	const dispatch = useDispatch();
+
+	console.log(matrix);
 
 	return (
 		<Dropdown
@@ -28,7 +33,7 @@ const DropdownMatrixOptions: React.FC<DropdownMatrixOptions> = ({
 				<div
 					className="p-2 hover:bg-color-gray-300 rounded flex items-center gap-2 text-gray-300"
 					onClick={() => {
-						dispatch(setModalState({ modalId: 'ModalEditMatrix', isOpen: true }));
+						dispatch(setModalState({ modalId: 'ModalEditMatrix', isOpen: true, props: { matrix } }));
 						setIsVisible(false);
 					}}
 				>

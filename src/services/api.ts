@@ -288,6 +288,14 @@ export const api = createApi({
 				return { matrices };
 			},
 		}),
+		editMatrix: builder.mutation({
+			query: ({ matrixId, payload }) => ({
+				url: `/matrices/edit/${matrixId}`,
+				method: 'PUT',
+				body: payload,
+			}),
+			invalidatesTags: (result, error, matrixId) => ['Matrix'],
+		}),
 	}),
 });
 
@@ -328,6 +336,8 @@ export const {
 	usePermanentlyDeleteCommentMutation,
 
 	// Matrices
+	useGetMatricesQuery,
+	useEditMatrixMutation,
 
 	// TODO: Add tags
 } = api;

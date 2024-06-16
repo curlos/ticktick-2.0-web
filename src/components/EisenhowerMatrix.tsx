@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useGetProjectsQuery, useGetTasksQuery } from '../services/api';
+import { useGetMatricesQuery, useGetProjectsQuery, useGetTasksQuery } from '../services/api';
 import { getTasksWithNoParent } from '../utils/helpers.utils';
 import { SMART_LISTS } from '../utils/smartLists.utils';
 import TaskListByCategory from './TaskListByCategory';
@@ -9,16 +9,22 @@ import { setModalState } from '../slices/modalSlice';
 import { useDispatch } from 'react-redux';
 
 const EisenhowerMatrix = () => {
-	const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
 	const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
-	const { projects } = fetchedProjects || {};
 	const { tasks, tasksById } = fetchedTasks || {};
+
+	const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
+	const { projects } = fetchedProjects || {};
+
+	const { data: fetchedMatrices, isLoading: isLoadingMatrices, error: errorMatrices } = useGetMatricesQuery();
+	const { matrices } = fetchedMatrices || {};
+
 	const [tasksWithNoParent, setTasksWithNoParent] = useState([]);
 
-	const isLoadingOrErrors = isLoadingTasks || errorTasks || isLoadingProjects || errorProjects;
+	const isLoadingOrErrors =
+		isLoadingTasks || isLoadingProjects || isLoadingMatrices || errorTasks || errorProjects || errorMatrices;
 
 	useEffect(() => {
-		if (!tasks || !projects) {
+		if (!tasks || !projects || !matrices) {
 			return;
 		}
 
@@ -32,10 +38,10 @@ const EisenhowerMatrix = () => {
 
 	return (
 		<div className="w-full h-full max-h-screen bg-color-gray-700 p-4 flex flex-col">
-			<h1 className="font-medium text-[20px]">Eisenhower Matrix</h1>
+			<h1 className="font-medium text-[20px] mb-4">Eisenhower Matrix</h1>
 
-			<div className="flex-1 max-h-[90vh] grid grid-cols-2 gap-2">
-				<MatrixSquare tasksWithNoParent={tasksWithNoParent} priority={3} />
+			<div className="flex-1 max-h-[80vh] grid grid-cols-2 gap-2">
+				<MatrixSquare matrix={matrices[0]} tasksWithNoParent={tasksWithNoParent} priority={3} />
 				<MatrixSquare tasksWithNoParent={tasksWithNoParent} priority={3} />
 				<MatrixSquare tasksWithNoParent={tasksWithNoParent} priority={3} />
 				<MatrixSquare tasksWithNoParent={tasksWithNoParent} priority={3} />
@@ -44,7 +50,7 @@ const EisenhowerMatrix = () => {
 	);
 };
 
-const MatrixSquare = ({ tasksWithNoParent, priority }) => {
+const MatrixSquare = ({ matrix, tasksWithNoParent, priority }) => {
 	const iconClass = '!text-[20px] p-[3px] rounded hover:bg-color-gray-200';
 
 	const dispatch = useDispatch();
@@ -86,12 +92,13 @@ const MatrixSquare = ({ tasksWithNoParent, priority }) => {
 							toggleRef={dropdownMatrixOptionsRef}
 							isVisible={isDropdownMatrixOptionsVisible}
 							setIsVisible={setIsDropdownMatrixOptionsVisible}
+							matrix={matrix}
 						/>
 					</div>
 				</div>
 			</div>
 
-			<div className="overflow-auto gray-scrollbar max-h-[39vh]">
+			<div className="overflow-auto gray-scrollbar max-h-[36vh]">
 				<TaskListByCategory
 					tasks={tasksWithNoParent.filter((task) => {
 						if (task.isDeleted) {
