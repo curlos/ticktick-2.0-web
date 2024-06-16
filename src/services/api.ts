@@ -18,26 +18,26 @@ export const api = createApi({
 	baseQuery: fetchBaseQuery({
 		baseUrl: 'http://localhost:8888',
 		prepareHeaders: (headers, { getState }) => {
-			const token = getState().user.token; // Assuming you store your token in auth slice
+			const token = getState().user.token;
 			if (token) {
 				headers.set('authorization', `Bearer ${token}`);
 			}
 			return headers;
 		},
 	}),
-	tagTypes: ['Task', 'Project', 'FocusRecord', 'User', 'Comment'], // Define tag type for cache invalidation
+	tagTypes: ['Task', 'Project', 'FocusRecord', 'User', 'Comment', 'Matrix'],
 	endpoints: (builder) => ({
 		// Users
 		getUsers: builder.query({
 			query: (queryParams) => {
 				const queryString = buildQueryString(queryParams);
-				return queryString ? `/users?${queryString}` : '/users'; // Use query string if provided
+				return queryString ? `/users?${queryString}` : '/users';
 			},
-			providesTags: ['User'], // This endpoint provides the 'User' tag
+			providesTags: ['User'],
 			transformResponse: (response) => {
 				const usersById = arrayToObjectByKey(response, '_id');
 
-				return { users: response, usersById }; // Return as a combined object
+				return { users: response, usersById };
 			},
 		}),
 		getLoggedInUser: builder.query({
@@ -50,16 +50,13 @@ export const api = createApi({
 				body: userDetails,
 			}),
 			transformResponse: (response, meta, arg) => {
-				// Optionally, you can handle the response transformation here
 				return response;
 			},
 			// Handle side effects or update the cache after successful registration
 			onQueryStarted: async (arg, { queryFulfilled, dispatch }) => {
 				try {
 					const { data } = await queryFulfilled;
-					// Example: Store the received token or user details after successful registration
-					localStorage.setItem('token', data.token); // Assuming token is part of the response
-					// You could dispatch other actions, e.g., for updating user state in Redux
+					localStorage.setItem('token', data.token);
 				} catch (error) {
 					console.error('Registration failed:', error);
 				}
@@ -74,10 +71,8 @@ export const api = createApi({
 				body: credentials,
 			}),
 			transformResponse: (response, meta, arg) => {
-				// Optionally, you can handle the response transformation here
 				return response;
 			},
-			// Optional: You can use this to update the cache or invalidate tags if needed
 			onQueryStarted: async (arg, { queryFulfilled, dispatch }) => {
 				try {
 					const { data } = await queryFulfilled;
@@ -93,15 +88,15 @@ export const api = createApi({
 		getTasks: builder.query({
 			query: (queryParams) => {
 				const queryString = buildQueryString(queryParams);
-				return queryString ? `/tasks?${queryString}` : '/tasks'; // Use query string if provided
+				return queryString ? `/tasks?${queryString}` : '/tasks';
 			},
-			providesTags: ['Task'], // This endpoint provides the 'Task' tag
+			providesTags: ['Task'],
 			transformResponse: (response) => {
 				const tasksById = arrayToObjectByKey(response, '_id');
 				// Tells us the parent id of a task (if it has any)
 				const parentOfTasks = getObjectOfEachTasksParent(response);
 
-				return { tasks: response, tasksById, parentOfTasks }; // Return as a combined object
+				return { tasks: response, tasksById, parentOfTasks };
 			},
 		}),
 		addTask: builder.mutation({
@@ -141,26 +136,26 @@ export const api = createApi({
 					parentId: parentId, // Optional: Include parentId if needed to update the parent document
 				},
 			}),
-			invalidatesTags: ['Task'], // Invalidate the cache when a task is updated
+			invalidatesTags: ['Task'],
 		}),
 		permanentlyDeleteTask: builder.mutation({
 			query: ({ taskId, parentId }) => ({
 				url: `/tasks/delete/${taskId}${parentId ? `?parentId=${parentId}` : ''}`,
 				method: 'DELETE',
 			}),
-			invalidatesTags: ['Task'], // Invalidate the cache when a task is added
+			invalidatesTags: ['Task'],
 		}),
 
 		// Projects/Folders
 		getProjects: builder.query({
 			query: (queryParams) => {
 				const queryString = buildQueryString(queryParams);
-				return queryString ? `/projects?${queryString}` : '/projects'; // Use query string if provided
+				return queryString ? `/projects?${queryString}` : '/projects';
 			},
-			providesTags: ['Project'], // This endpoint provides the 'Task' tag
+			providesTags: ['Project'],
 			transformResponse: (response) => {
 				const projectsById = arrayToObjectByKey(response, '_id');
-				return { projects: response, projectsById }; // Return as a combined object
+				return { projects: response, projectsById };
 			},
 		}),
 		addProject: builder.mutation({
@@ -169,7 +164,7 @@ export const api = createApi({
 				method: 'POST',
 				body: newProject,
 			}),
-			invalidatesTags: ['Project'], // Invalidate the cache when a task is added
+			invalidatesTags: ['Project'],
 		}),
 		editProject: builder.mutation({
 			query: ({ projectId, payload }) => ({
@@ -191,9 +186,9 @@ export const api = createApi({
 		getFocusRecords: builder.query({
 			query: (queryParams) => {
 				const queryString = buildQueryString(queryParams);
-				return queryString ? `/focus-records?${queryString}` : '/focus-records'; // Use query string if provided
+				return queryString ? `/focus-records?${queryString}` : '/focus-records';
 			},
-			providesTags: ['FocusRecord'], // This endpoint provides the 'Task' tag
+			providesTags: ['FocusRecord'],
 			transformResponse: (response) => {
 				const focusRecords = response;
 				const focusRecordsByTaskId = arrayToObjectArrayByKey(focusRecords, 'taskId');
@@ -201,7 +196,7 @@ export const api = createApi({
 
 				const parentOfFocusRecords = getObjectOfEachFocusRecordsParent(focusRecords);
 
-				return { focusRecords, focusRecordsByTaskId, focusRecordsById, parentOfFocusRecords }; // Return as a combined object
+				return { focusRecords, focusRecordsByTaskId, focusRecordsById, parentOfFocusRecords };
 			},
 		}),
 		addFocusRecord: builder.mutation({
@@ -228,7 +223,7 @@ export const api = createApi({
 				url: `/focus-records/delete/${focusRecordId}`,
 				method: 'DELETE',
 			}),
-			invalidatesTags: ['FocusRecord'], // Invalidate the cache when a task is added
+			invalidatesTags: ['FocusRecord'],
 		}),
 		bulkAddFocusRecords: builder.mutation({
 			query: (payload) => ({
@@ -236,21 +231,21 @@ export const api = createApi({
 				method: 'POST',
 				body: payload,
 			}),
-			invalidatesTags: ['FocusRecord'], // Invalidate the cache when a task is added
+			invalidatesTags: ['FocusRecord'],
 		}),
 
 		// Comments
 		getComments: builder.query({
 			query: (queryParams) => {
 				const queryString = buildQueryString(queryParams);
-				return queryString ? `/comments?${queryString}` : '/comments'; // Use query string if provided
+				return queryString ? `/comments?${queryString}` : '/comments';
 			},
-			providesTags: ['Comment'], // This endpoint provides the 'Task' tag
+			providesTags: ['Comment'],
 			transformResponse: (response) => {
 				const comments = response;
 				const commentsByTaskId = arrayToObjectArrayByKey(comments, 'taskId');
 
-				return { comments, commentsByTaskId }; // Return as a combined object
+				return { comments, commentsByTaskId };
 			},
 		}),
 		addComment: builder.mutation({
@@ -277,7 +272,21 @@ export const api = createApi({
 				url: `/comments/delete/${commentId}`,
 				method: 'DELETE',
 			}),
-			invalidatesTags: ['Comment'], // Invalidate the cache when a task is added
+			invalidatesTags: ['Comment'],
+		}),
+
+		// Matrices
+		getMatrices: builder.query({
+			query: (queryParams) => {
+				const queryString = buildQueryString(queryParams);
+				return queryString ? `/matrices?${queryString}` : '/matrices';
+			},
+			providesTags: ['Matrix'],
+			transformResponse: (response) => {
+				const matrices = response;
+
+				return { matrices };
+			},
 		}),
 	}),
 });
@@ -317,4 +326,8 @@ export const {
 	useAddCommentMutation,
 	useEditCommentMutation,
 	usePermanentlyDeleteCommentMutation,
+
+	// Matrices
+
+	// TODO: Add tags
 } = api;

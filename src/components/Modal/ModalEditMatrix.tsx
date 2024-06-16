@@ -270,8 +270,6 @@ const CustomCheckbox = ({ name, values, setValues, allPriorities, setAllPrioriti
 			setAllPriorities(false);
 		} else if (!allPriorities && !isChecked) {
 			const everyOtherPriorityTrue = Object.entries(values).every(([key, value]) => {
-				console.log(key);
-
 				if (key === name.toLowerCase()) {
 					return true;
 				}
