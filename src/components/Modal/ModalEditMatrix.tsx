@@ -16,19 +16,18 @@ const ModalEditMatrix: React.FC = () => {
 	const dispatch = useDispatch();
 
 	const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
-	const { projects } = fetchedProjects || {};
+	const { projects, projectsById } = fetchedProjects || {};
 
 	const [editMatrix] = useEditMatrixMutation();
 
 	const TOP_LIST_NAMES = ['all', 'today', 'tomorrow', 'week'];
 	const topListProjects = TOP_LIST_NAMES.map((name) => SMART_LISTS[name]);
+	const allProject = topListProjects.find((project) => project.urlName === 'all');
 
 	const closeModal = () => dispatch(setModalState({ modalId: 'ModalEditMatrix', isOpen: false }));
 
 	const [isDropdownProjectsVisible, setIsDropdownProjectsVisible] = useState(false);
-	const [selectedProjectsList, setSelectedProjectsList] = useState([
-		topListProjects.find((project) => project.urlName === 'all'),
-	]);
+	const [selectedProjectsList, setSelectedProjectsList] = useState([allProject]);
 	const dropdownProjectsRef = useRef(null);
 
 	const [isDropdownDatesVisible, setIsDropdownDatesVisible] = useState(false);
@@ -57,10 +56,16 @@ const ModalEditMatrix: React.FC = () => {
 	useEffect(() => {
 		if (matrix) {
 			// TODO: FIX!
-			const { name, selectedPriorities, dateOptions } = matrix;
+			const { name, selectedPriorities, selectedProjectIds, dateOptions } = matrix;
 			setName(name);
 			setSelectedPriorities(selectedPriorities);
 			setDateOptions(dateOptions);
+
+			if (selectedProjectIds.length === 0) {
+				setSelectedProjectsList([allProject]);
+			} else {
+				setSelectedProjectsList(selectedProjectIds.map((projectId) => projectsById[projectId]));
+			}
 		}
 	}, [matrix]);
 
@@ -243,15 +248,25 @@ const ModalEditMatrix: React.FC = () => {
 							onClick={async () => {
 								try {
 									// TODO: Add other properties (priorities and projects) to the payload.
+									const selectedProjectIds = selectedProjectsList.flatMap((project) => {
+										if (project._id) {
+											return project._id;
+										}
+
+										return [];
+									});
+
 									const payload = {
 										matrixId: matrix._id,
 										payload: {
 											name,
 											dateOptions,
+											selectedProjectIds,
 											// selectedPriorities
-											// selectedProjects
 										},
 									};
+
+									// TODO: Figure out what to do with the "All" project. The best way to store this is by having a list of project ids on the backend. So, the "All" project which is a frontend created project can't be stored there. If the array is empty, it can be assumed "All" is selected.
 
 									await editMatrix(payload);
 									closeModal();

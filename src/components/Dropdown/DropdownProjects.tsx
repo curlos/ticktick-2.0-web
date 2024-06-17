@@ -119,7 +119,10 @@ const DropdownProjects: React.FC<DropdownProjectsProps> = memo(
 								if (project.urlName && project.urlName === 'all') {
 									newSelectedProjectsList = [project];
 								} else {
-									// A normal project can just be added to the list.
+									// If a normal project is selected, remove "all" as a specific project has been chosen.
+									newSelectedProjectsList = newSelectedProjectsList.filter(
+										(projectInList) => projectInList && projectInList.urlName !== 'all'
+									);
 									newSelectedProjectsList.push(project);
 								}
 							}
