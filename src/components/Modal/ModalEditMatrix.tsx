@@ -26,9 +26,9 @@ const ModalEditMatrix: React.FC = () => {
 	const closeModal = () => dispatch(setModalState({ modalId: 'ModalEditMatrix', isOpen: false }));
 
 	const [isDropdownProjectsVisible, setIsDropdownProjectsVisible] = useState(false);
-	const [selectedProject, setSelectedProject] = useState(
-		topListProjects.find((project) => project.urlName === 'all')
-	);
+	const [selectedProjectsList, setSelectedProjectsList] = useState([
+		topListProjects.find((project) => project.urlName === 'all'),
+	]);
 	const dropdownProjectsRef = useRef(null);
 
 	const [isDropdownDatesVisible, setIsDropdownDatesVisible] = useState(false);
@@ -79,7 +79,16 @@ const ModalEditMatrix: React.FC = () => {
 			}, [])
 			.join(', ');
 
-	console.log(dateOptions);
+	const selectedProjectNames =
+		dateOptions &&
+		selectedProjectsList
+			.reduce((accumulator, current) => {
+				accumulator.push(current.name);
+				return accumulator;
+			}, [])
+			.join(', ');
+
+	console.log(selectedProjectNames);
 
 	return (
 		<Modal isOpen={isOpen} onClose={closeModal} positionClasses="!items-start mt-[150px]" customClasses="my-[2px]">
@@ -109,7 +118,7 @@ const ModalEditMatrix: React.FC = () => {
 											setIsDropdownProjectsVisible(!isDropdownProjectsVisible);
 										}}
 									>
-										<div>{selectedProject.name}</div>
+										<div>{selectedProjectNames}</div>
 										<Icon
 											name="expand_more"
 											fill={0}
@@ -123,11 +132,11 @@ const ModalEditMatrix: React.FC = () => {
 										toggleRef={dropdownProjectsRef}
 										isVisible={isDropdownProjectsVisible}
 										setIsVisible={setIsDropdownProjectsVisible}
-										selectedProject={selectedProject}
-										setSelectedProject={setSelectedProject}
+										selectedProjectsList={selectedProjectsList}
+										setSelectedProjectsList={setSelectedProjectsList}
 										projects={projects}
 										customClasses="w-full ml-[0px]"
-										showSmartLists={true}
+										multiSelect={true}
 									/>
 								</div>
 							</div>

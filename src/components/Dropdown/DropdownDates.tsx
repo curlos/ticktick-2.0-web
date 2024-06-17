@@ -28,13 +28,15 @@ const DropdownDates: React.FC<DropdownDatesProps> = ({
 	const dropdownToDateRef = useRef();
 
 	useEffect(() => {
-		setLocalDateOptions(dateOptions);
+		if (dateOptions) {
+			setLocalDateOptions(dateOptions);
 
-		const { duration } = dateOptions;
+			const { duration } = dateOptions;
 
-		// TODO: Time doesn't seem to be saving, only the date. Fix that.
-		setFromDate(new Date(duration.fromDate));
-		setToDate(new Date(duration.toDate));
+			// TODO: Time doesn't seem to be saving, only the date. Fix that.
+			setFromDate(new Date(duration.fromDate));
+			setToDate(new Date(duration.toDate));
+		}
 	}, [dateOptions]);
 
 	const Duration = () => {

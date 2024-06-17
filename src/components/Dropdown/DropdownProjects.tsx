@@ -9,12 +9,15 @@ import { useEditTaskMutation } from '../../services/api';
 import { SMART_LISTS } from '../../utils/smartLists.utils';
 
 interface DropdownProjectsProps extends DropdownProps {
-	selectedProject: string;
-	setSelectedProject: React.Dispatch<React.SetStateAction<string>>;
+	selectedProject?: Object;
+	setSelectedProject?: React.Dispatch<React.SetStateAction<Object>>;
+	selectedProjectsList: Array<Object>;
+	setSelectedProjectsList?: React.Dispatch<React.SetStateAction<Array<Object>>>;
 	projects: Array<IProject>;
 	task: TaskObj;
 	onCloseContextMenu: () => void;
 	showSmartLists: boolean;
+	multiSelect: boolean;
 }
 
 const DropdownProjects: React.FC<DropdownProjectsProps> = memo(
@@ -24,11 +27,14 @@ const DropdownProjects: React.FC<DropdownProjectsProps> = memo(
 		setIsVisible,
 		selectedProject,
 		setSelectedProject,
+		selectedProjectsList,
+		setSelectedProjectsList,
 		projects,
 		customClasses,
 		task,
 		onCloseContextMenu,
 		showSmartLists = false,
+		multiSelect = false,
 	}) => {
 		const TOP_LIST_NAMES = ['all', 'today', 'tomorrow', 'week'];
 		const topListProjects = TOP_LIST_NAMES.map((name) => SMART_LISTS[name]);
@@ -81,16 +87,48 @@ const DropdownProjects: React.FC<DropdownProjectsProps> = memo(
 			const smartList = SMART_LISTS[project.urlName];
 
 			let iconName = isFolder ? 'folder' : smartList ? smartList.iconName : project.isInbox ? 'inbox' : 'menu';
-			let isProjectSelected = smartList
-				? selectedProject.urlName === project.urlName
-				: selectedProject._id === _id;
+
+			const checkIfProjectSelected = () => {
+				if (multiSelect) {
+					return selectedProjectsList.find((projectInList) => projectInList._id === project._id);
+				} else {
+					if (smartList) {
+						return selectedProject.urlName === project.urlName;
+					} else {
+						return selectedProject._id === _id;
+					}
+				}
+			};
+
+			const isProjectSelected = checkIfProjectSelected();
 
 			return (
 				<div
 					className="flex items-center justify-between cursor-pointer hover:bg-color-gray-300 px-2 py-[6px] rounded-lg"
 					onClick={() => {
-						setSelectedProject(project);
-						setIsVisible(false);
+						if (multiSelect) {
+							let newSelectedProjectsList = [...selectedProjectsList];
+
+							// If the project is already selected, then remove it.
+							if (isProjectSelected) {
+								newSelectedProjectsList = newSelectedProjectsList.filter(
+									(projectInList) => projectInList._id !== project._id
+								);
+							} else {
+								// If the project being selected is the "All" project, then every other selected project should be removed.
+								if (project.urlName && project.urlName === 'all') {
+									newSelectedProjectsList = [project];
+								} else {
+									// A normal project can just be added to the list.
+									newSelectedProjectsList.push(project);
+								}
+							}
+
+							setSelectedProjectsList(newSelectedProjectsList);
+						} else {
+							setSelectedProject(project);
+							setIsVisible(false);
+						}
 
 						if (task) {
 							// TODO: Edit task's project from here
@@ -124,6 +162,8 @@ const DropdownProjects: React.FC<DropdownProjectsProps> = memo(
 		};
 
 		const inboxProject = filteredProjects.find((project) => project.isInbox);
+		const allProject = filteredProjects.find((project) => project.urlName === 'all');
+
 		const { nonSmartListProjects, smartListProjects } = filteredProjects.reduce(
 			(acc, project) => {
 				if (!project.isInbox && !SMART_LISTS[project.urlName]) {
@@ -175,7 +215,12 @@ const DropdownProjects: React.FC<DropdownProjectsProps> = memo(
 								{inboxProject && <ProjectOption key={inboxProject.name} project={inboxProject} />}
 							</div>
 						) : (
-							inboxProject && <ProjectOption key={inboxProject.name} project={inboxProject} />
+							<div>
+								{multiSelect && allProject && (
+									<ProjectOption key={allProject.name} project={allProject} />
+								)}
+								{inboxProject && <ProjectOption key={inboxProject.name} project={inboxProject} />}
+							</div>
 						)}
 
 						{showSmartLists && nonSmartListProjects.length > 0 && (

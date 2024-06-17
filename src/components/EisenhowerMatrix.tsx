@@ -42,9 +42,9 @@ const EisenhowerMatrix = () => {
 
 			<div className="flex-1 max-h-[80vh] grid grid-cols-2 gap-2">
 				<MatrixSquare matrix={matrices[0]} tasksWithNoParent={tasksWithNoParent} priority={3} />
-				<MatrixSquare tasksWithNoParent={tasksWithNoParent} priority={3} />
-				<MatrixSquare tasksWithNoParent={tasksWithNoParent} priority={3} />
-				<MatrixSquare tasksWithNoParent={tasksWithNoParent} priority={3} />
+				<MatrixSquare matrix={matrices[0]} tasksWithNoParent={tasksWithNoParent} priority={3} />
+				<MatrixSquare matrix={matrices[0]} tasksWithNoParent={tasksWithNoParent} priority={3} />
+				<MatrixSquare matrix={matrices[0]} tasksWithNoParent={tasksWithNoParent} priority={3} />
 			</div>
 		</div>
 	);
@@ -60,7 +60,7 @@ const MatrixSquare = ({ matrix, tasksWithNoParent, priority }) => {
 	return (
 		<div className="w-full rounded-lg bg-color-gray-600 p-3 h-full">
 			<div className="mb-3 flex justify-between items-center cursor-pointer group">
-				<div>Urgent & Important</div>
+				<div>{matrix?.name}</div>
 
 				{/* <div className="invisible group-hover:visible">
 					<Icon name="add" fill={0} customClass={'!text-[20px]'} />
