@@ -42,9 +42,9 @@ const EisenhowerMatrix = () => {
 
 			<div className="flex-1 max-h-[80vh] grid grid-cols-2 gap-2">
 				<MatrixSquare matrix={matrices[0]} tasksWithNoParent={tasksWithNoParent} priority={3} />
-				<MatrixSquare matrix={matrices[0]} tasksWithNoParent={tasksWithNoParent} priority={3} />
-				<MatrixSquare matrix={matrices[0]} tasksWithNoParent={tasksWithNoParent} priority={3} />
-				<MatrixSquare matrix={matrices[0]} tasksWithNoParent={tasksWithNoParent} priority={3} />
+				<MatrixSquare matrix={matrices[1]} tasksWithNoParent={tasksWithNoParent} priority={3} />
+				<MatrixSquare matrix={matrices[2]} tasksWithNoParent={tasksWithNoParent} priority={3} />
+				<MatrixSquare matrix={matrices[3]} tasksWithNoParent={tasksWithNoParent} priority={3} />
 			</div>
 		</div>
 	);
