@@ -78,6 +78,21 @@ const DropdownProjects: React.FC<DropdownProjectsProps> = memo(
 				scrollRef.current.scrollTop = 0;
 			}
 		}, [filteredProjects]); // Triggered when 'filteredProjects' changes
+
+		const inboxProject = filteredProjects.find((project) => project.isInbox);
+		const allProject = filteredProjects.find((project) => project.urlName === 'all');
+
+		const { nonSmartListProjects, smartListProjects } = filteredProjects.reduce(
+			(acc, project) => {
+				if (!project.isInbox && !SMART_LISTS[project.urlName]) {
+					acc.nonSmartListProjects.push(project);
+				} else {
+					acc.smartListProjects.push(project);
+				}
+				return acc;
+			},
+			{ nonSmartListProjects: [], smartListProjects: [] }
+		);
 		interface ProjectOptionProps {
 			project: IProject;
 		}
@@ -107,16 +122,17 @@ const DropdownProjects: React.FC<DropdownProjectsProps> = memo(
 					className="flex items-center justify-between cursor-pointer hover:bg-color-gray-300 px-2 py-[6px] rounded-lg"
 					onClick={() => {
 						if (multiSelect) {
+							const isAllProject = project.urlName && project.urlName === 'all';
 							let newSelectedProjectsList = [...selectedProjectsList];
 
 							// If the project is already selected, then remove it.
-							if (isProjectSelected) {
+							if (isProjectSelected && !isAllProject) {
 								newSelectedProjectsList = newSelectedProjectsList.filter(
 									(projectInList) => projectInList._id !== project._id
 								);
 							} else {
 								// If the project being selected is the "All" project, then every other selected project should be removed.
-								if (project.urlName && project.urlName === 'all') {
+								if (isAllProject) {
 									newSelectedProjectsList = [project];
 								} else {
 									// If a normal project is selected, remove "all" as a specific project has been chosen.
@@ -124,6 +140,17 @@ const DropdownProjects: React.FC<DropdownProjectsProps> = memo(
 										(projectInList) => projectInList && projectInList.urlName !== 'all'
 									);
 									newSelectedProjectsList.push(project);
+								}
+							}
+
+							if (newSelectedProjectsList.length === 0) {
+								const allProject = filteredProjects.find((project) => project.urlName === 'all');
+								newSelectedProjectsList = [allProject];
+							} else {
+								const allMultiSelectProjects = [inboxProject, ...nonSmartListProjects];
+
+								if (allMultiSelectProjects.length === newSelectedProjectsList.length) {
+									newSelectedProjectsList = [allProject];
 								}
 							}
 
@@ -163,21 +190,6 @@ const DropdownProjects: React.FC<DropdownProjectsProps> = memo(
 				</div>
 			);
 		};
-
-		const inboxProject = filteredProjects.find((project) => project.isInbox);
-		const allProject = filteredProjects.find((project) => project.urlName === 'all');
-
-		const { nonSmartListProjects, smartListProjects } = filteredProjects.reduce(
-			(acc, project) => {
-				if (!project.isInbox && !SMART_LISTS[project.urlName]) {
-					acc.nonSmartListProjects.push(project);
-				} else {
-					acc.smartListProjects.push(project);
-				}
-				return acc;
-			},
-			{ nonSmartListProjects: [], smartListProjects: [] }
-		);
 
 		return (
 			<Dropdown

@@ -93,8 +93,6 @@ const ModalEditMatrix: React.FC = () => {
 			}, [])
 			.join(', ');
 
-	console.log(selectedProjectNames);
-
 	return (
 		<Modal isOpen={isOpen} onClose={closeModal} positionClasses="!items-start mt-[150px]" customClasses="my-[2px]">
 			<div className="rounded-xl shadow-lg bg-color-gray-600">
@@ -262,16 +260,14 @@ const ModalEditMatrix: React.FC = () => {
 											name,
 											dateOptions,
 											selectedProjectIds,
-											// selectedPriorities
+											selectedPriorities,
 										},
 									};
-
-									// TODO: Figure out what to do with the "All" project. The best way to store this is by having a list of project ids on the backend. So, the "All" project which is a frontend created project can't be stored there. If the array is empty, it can be assumed "All" is selected.
 
 									await editMatrix(payload);
 									closeModal();
 								} catch (error) {
-									console.log(error);
+									console.error(error);
 								}
 							}}
 						>
