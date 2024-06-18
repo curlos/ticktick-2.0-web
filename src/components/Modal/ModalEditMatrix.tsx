@@ -34,11 +34,9 @@ const ModalEditMatrix: React.FC = () => {
 	const dropdownDatesRef = useRef(null);
 
 	const matrix = modal?.props?.matrix;
-	const everyPriorityIsFalse =
-		matrix?.selectedPriorities && Object.values(matrix?.selectedPriorities).every((value) => !value);
 
 	const [name, setName] = useState(matrix?.name);
-	const [allPriorities, setAllPriorities] = useState(everyPriorityIsFalse);
+	const [allPriorities, setAllPriorities] = useState(false);
 	const [selectedPriorities, setSelectedPriorities] = useState({
 		high: matrix?.selectedPriorities?.high,
 		medium: matrix?.selectedPriorities?.medium,
@@ -60,6 +58,10 @@ const ModalEditMatrix: React.FC = () => {
 			setName(name);
 			setSelectedPriorities(selectedPriorities);
 			setDateOptions(dateOptions);
+
+			const everyPriorityIsFalse =
+				selectedPriorities && Object.values(selectedPriorities).every((value) => !value);
+			setAllPriorities(everyPriorityIsFalse);
 
 			if (selectedProjectIds.length === 0) {
 				setSelectedProjectsList([allProject]);

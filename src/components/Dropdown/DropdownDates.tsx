@@ -133,10 +133,29 @@ const DropdownDates: React.FC<DropdownDatesProps> = ({
 									key={value.name}
 									className="flex items-center justify-between gap-2 hover:bg-color-gray-300 p-2 rounded-lg cursor-pointer"
 									onClick={() => {
-										setLocalDateOptions({
+										let newLocalDateOptions = {
 											...localDateOptions,
 											[key]: { ...value, selected: !localDateOptions[key].selected },
-										});
+										};
+
+										if (value.name.toLowerCase() === 'all') {
+											// Reset other keys to false if "all" is selected
+											Object.keys(newLocalDateOptions).forEach((key) => {
+												if (key !== 'all') {
+													newLocalDateOptions[key] = {
+														...newLocalDateOptions[key],
+														selected: false,
+													};
+												}
+											});
+										} else {
+											newLocalDateOptions['all'] = {
+												...newLocalDateOptions['all'],
+												selected: false,
+											};
+										}
+
+										setLocalDateOptions(newLocalDateOptions);
 									}}
 								>
 									<div className="flex-1 flex items-center gap-2">
