@@ -66,9 +66,10 @@ const DropdownPriorities: React.FC<DropdownPrioritiesProps> = ({
 		>
 			<div className="w-[200px]">
 				<div>
-					{Object.keys(PRIORITIES).map((key: string) => (
-						<Priority key={key} priority={PRIORITIES[key]} />
-					))}
+					<Priority key={'high'} priority={PRIORITIES['high']} />
+					<Priority key={'medium'} priority={PRIORITIES['medium']} />
+					<Priority key={'low'} priority={PRIORITIES['low']} />
+					<Priority key={'none'} priority={PRIORITIES['none']} />
 				</div>
 			</div>
 		</Dropdown>

@@ -398,3 +398,19 @@ export const formatSeconds = (seconds: number) => {
 	// Return the formatted string
 	return `${paddedMinutes}:${paddedSeconds}`;
 };
+
+export const allExceptOneFalse = (obj) => {
+	let foundTrue = false; // To track if more than one `true` is found
+	for (const key in obj) {
+		if (obj[key] === true) {
+			if (foundTrue) return null; // If this is the second true found
+			foundTrue = key; // Mark that we've found true for the exempt key
+		}
+	}
+
+	if (foundTrue) {
+		return foundTrue;
+	}
+
+	return null; // If loop completes without returning false, conditions are met
+};

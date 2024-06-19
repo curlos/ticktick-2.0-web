@@ -17,7 +17,7 @@ interface AddTaskFormProps {
 	parentId: string;
 }
 
-const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId }) => {
+const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId, defaultPriority }) => {
 	const dispatch = useDispatch();
 	const params = useParams();
 	const { projectId } = params;
@@ -33,7 +33,7 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId 
 	const [isDropdownCalendarVisible, setIsDropdownCalendarVisible] = useState(false);
 	const [isDropdownPrioritiesVisible, setIsDropdownPrioritiesVisible] = useState(false);
 	const [isDropdownProjectsVisible, setIsDropdownProjectsVisible] = useState(false);
-	const [tempSelectedPriority, setTempSelectedPriority] = useState(0);
+	const [tempSelectedPriority, setTempSelectedPriority] = useState(defaultPriority ? defaultPriority : 'none');
 	const [selectedProject, setSelectedProject] = useState(null);
 	const [description, setDescription] = useState('');
 

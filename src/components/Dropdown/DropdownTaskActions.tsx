@@ -316,6 +316,30 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 			});
 	}
 
+	const PriorityFlag = ({ priorityName }) => {
+		const priorityObj = PRIORITIES[priorityName];
+
+		return (
+			<span key={priorityObj.backendValue}>
+				<Icon
+					name="flag"
+					customClass={classNames(
+						'!text-[22px] cursor-pointer p-1 rounded',
+						priorityObj.textFlagColor,
+						priority === priorityObj.backendValue ? 'bg-gray-700' : ''
+					)}
+					onClick={() => {
+						editTask({
+							taskId: task._id,
+							payload: { priority: priorityObj.backendValue },
+						});
+						onCloseContextMenu();
+					}}
+				/>
+			</span>
+		);
+	};
+
 	return (
 		<Dropdown
 			toggleRef={toggleRef}
@@ -339,27 +363,10 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 				<div className="p-4 pt-0">
 					Priority
 					<div className="flex justify-between items-center gap-1 mt-2">
-						{Object.values(PRIORITIES).map((priorityObj) => {
-							return (
-								<span key={priorityObj.backendValue}>
-									<Icon
-										name="flag"
-										customClass={classNames(
-											'!text-[22px] cursor-pointer p-1 rounded',
-											priorityObj.textFlagColor,
-											priority === priorityObj.backendValue ? 'bg-gray-700' : ''
-										)}
-										onClick={() => {
-											editTask({
-												taskId: task._id,
-												payload: { priority: priorityObj.backendValue },
-											});
-											onCloseContextMenu();
-										}}
-									/>
-								</span>
-							);
-						})}
+						<PriorityFlag priorityName="high" />
+						<PriorityFlag priorityName="medium" />
+						<PriorityFlag priorityName="low" />
+						<PriorityFlag priorityName="none" />
 					</div>
 				</div>
 

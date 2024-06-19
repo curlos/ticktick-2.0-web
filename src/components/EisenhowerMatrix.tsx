@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useGetMatricesQuery, useGetProjectsQuery, useGetTasksQuery } from '../services/api';
-import { getTasksWithNoParent } from '../utils/helpers.utils';
+import { allExceptOneFalse, getTasksWithNoParent } from '../utils/helpers.utils';
 import { SMART_LISTS } from '../utils/smartLists.utils';
 import TaskListByCategory from './TaskListByCategory';
 import Icon from './Icon';
@@ -112,7 +112,20 @@ const MatrixSquare = ({ matrix, tasksWithNoParent, priority }) => {
 							fill={0}
 							customClass={iconClass}
 							onClick={() => {
-								dispatch(setModalState({ modalId: 'ModalAddTaskForm', isOpen: true }));
+								const onlyOnePriorityChecked = allExceptOneFalse(selectedPriorities);
+								const priorityKey = onlyOnePriorityChecked;
+
+								const defaultPriority = priorityKey ? priorityKey : 'none';
+
+								dispatch(
+									setModalState({
+										modalId: 'ModalAddTaskForm',
+										isOpen: true,
+										props: {
+											defaultPriority,
+										},
+									})
+								);
 							}}
 						/>
 					</div>

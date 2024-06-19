@@ -12,7 +12,7 @@ const ModalAddTaskForm: React.FC = () => {
 	}
 
 	const { isOpen, props } = modal;
-	const { parentId } = props;
+	const { parentId, defaultPriority } = props;
 
 	return (
 		<Modal
@@ -21,7 +21,7 @@ const ModalAddTaskForm: React.FC = () => {
 			position="top-center"
 		>
 			<div className="rounded-xl shadow-lg">
-				<AddTaskForm parentId={parentId} />
+				<AddTaskForm parentId={parentId} defaultPriority={defaultPriority} />
 			</div>
 		</Modal>
 	);
