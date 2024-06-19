@@ -3,19 +3,26 @@ import { TaskObj } from '../interfaces/interfaces';
 import Icon from './Icon';
 import TaskList from './TaskList';
 import { AnimatePresence, motion } from 'framer-motion';
+import React from 'react';
+import { PRIORITIES } from '../utils/priorities.utils';
 
 interface TaskListByCategoryProps {
 	tasks: Array<TaskObj>;
 	selectedFocusRecordTask?: TaskObj;
 	setSelectedFocusRecordTask?: React.Dispatch<React.SetStateAction<TaskObj>>;
+	selectedPriorities?: Array<Object>;
 }
 
 const TaskListByCategory: React.FC<TaskListByCategoryProps> = ({
 	tasks,
 	selectedFocusRecordTask,
 	setSelectedFocusRecordTask,
+	selectedPriorities,
 }) => {
 	const categoryIconClass = 'text-color-gray-100 !text-[16px] hover:text-white';
+	// Show all the priorities if no specific priorities were listed
+	const showAllPriorities =
+		!selectedPriorities || Object.values(selectedPriorities).every((priorityChosen) => !priorityChosen);
 
 	if (!tasks || tasks.length === 0) {
 		return null;
@@ -39,7 +46,16 @@ const TaskListByCategory: React.FC<TaskListByCategoryProps> = ({
 						break;
 				}
 			} else {
-				acc.completedTasks.push(task);
+				if (selectedPriorities && !showAllPriorities) {
+					const key = PRIORITIES[task.priority].name.toLowerCase();
+					const priorityIsSelected = selectedPriorities[key];
+
+					if (priorityIsSelected) {
+						acc.completedTasks.push(task);
+					}
+				} else {
+					acc.completedTasks.push(task);
+				}
 			}
 
 			return acc;
@@ -99,11 +115,24 @@ const TaskListByCategory: React.FC<TaskListByCategoryProps> = ({
 
 	return (
 		<div className="flex flex-col gap-1">
-			<CategoryTaskList categoryName="High" tasks={highPriorityTasks} />
-			<CategoryTaskList categoryName="Medium" tasks={mediumPriorityTasks} />
-			<CategoryTaskList categoryName="Low" tasks={lowPriorityTasks} />
-			<CategoryTaskList categoryName="None" tasks={noPriorityTasks} />
-			<CategoryTaskList categoryName="Completed" tasks={completedTasks} />
+			{showAllPriorities ? (
+				<React.Fragment>
+					<CategoryTaskList categoryName="High" tasks={highPriorityTasks} />
+					<CategoryTaskList categoryName="Medium" tasks={mediumPriorityTasks} />
+					<CategoryTaskList categoryName="Low" tasks={lowPriorityTasks} />
+					<CategoryTaskList categoryName="None" tasks={noPriorityTasks} />
+				</React.Fragment>
+			) : (
+				<React.Fragment>
+					{selectedPriorities.high && <CategoryTaskList categoryName="High" tasks={highPriorityTasks} />}
+					{selectedPriorities.medium && (
+						<CategoryTaskList categoryName="Medium" tasks={mediumPriorityTasks} />
+					)}
+					{selectedPriorities.low && <CategoryTaskList categoryName="Low" tasks={lowPriorityTasks} />}
+					{selectedPriorities.none && <CategoryTaskList categoryName="None" tasks={noPriorityTasks} />}
+				</React.Fragment>
+			)}
+			<CategoryTaskList categoryName="Completed" tasks={completedTasks} selectedPriorities={selectedPriorities} />
 		</div>
 	);
 };

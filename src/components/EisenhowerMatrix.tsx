@@ -7,6 +7,30 @@ import Icon from './Icon';
 import DropdownMatrixOptions from './Dropdown/DropdownMatrixOptions';
 import { setModalState } from '../slices/modalSlice';
 import { useDispatch } from 'react-redux';
+import classNames from 'classnames';
+
+const stylingForMatrixHeaders = [
+	{
+		bgColor: 'bg-red-500',
+		textColor: 'text-red-500',
+		text: 'I',
+	},
+	{
+		bgColor: 'bg-yellow-500',
+		textColor: 'text-yellow-500',
+		text: 'II',
+	},
+	{
+		bgColor: 'bg-blue-500',
+		textColor: 'text-blue-500',
+		text: 'III',
+	},
+	{
+		bgColor: 'bg-emerald-500',
+		textColor: 'text-emerald-500',
+		text: 'IV',
+	},
+];
 
 const EisenhowerMatrix = () => {
 	const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
@@ -57,10 +81,24 @@ const MatrixSquare = ({ matrix, tasksWithNoParent, priority }) => {
 	const dropdownMatrixOptionsRef = useRef();
 	const [isDropdownMatrixOptionsVisible, setIsDropdownMatrixOptionsVisible] = useState(false);
 
+	const { name, order, selectedPriorities } = matrix;
+
 	return (
 		<div className="w-full rounded-lg bg-color-gray-600 p-3 h-full">
 			<div className="mb-3 flex justify-between items-center cursor-pointer group">
-				<div>{matrix?.name}</div>
+				<div className="flex items-center gap-2">
+					<div
+						className={classNames(
+							stylingForMatrixHeaders[order].bgColor,
+							'text-color-gray-600 rounded-full w-[20px] h-[20px] text-[12px] font-[600] flex items-center justify-center font-serif'
+						)}
+					>
+						{stylingForMatrixHeaders[order].text}
+					</div>
+					<div className={classNames(stylingForMatrixHeaders[order].textColor, 'text-[13px] font-[600]')}>
+						{name}
+					</div>
+				</div>
 
 				{/* <div className="invisible group-hover:visible">
 					<Icon name="add" fill={0} customClass={'!text-[20px]'} />
@@ -111,6 +149,7 @@ const MatrixSquare = ({ matrix, tasksWithNoParent, priority }) => {
 
 						return true;
 					})}
+					selectedPriorities={selectedPriorities}
 				/>
 			</div>
 		</div>
