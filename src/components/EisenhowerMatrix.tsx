@@ -65,16 +65,16 @@ const EisenhowerMatrix = () => {
 			<h1 className="font-medium text-[20px] mb-4">Eisenhower Matrix</h1>
 
 			<div className="flex-1 max-h-[80vh] grid grid-cols-2 gap-2">
-				<MatrixSquare matrix={matrices[0]} tasksWithNoParent={tasksWithNoParent} priority={3} />
-				<MatrixSquare matrix={matrices[1]} tasksWithNoParent={tasksWithNoParent} priority={3} />
-				<MatrixSquare matrix={matrices[2]} tasksWithNoParent={tasksWithNoParent} priority={3} />
-				<MatrixSquare matrix={matrices[3]} tasksWithNoParent={tasksWithNoParent} priority={3} />
+				<MatrixSquare matrix={matrices[0]} tasksWithNoParent={tasksWithNoParent} />
+				<MatrixSquare matrix={matrices[1]} tasksWithNoParent={tasksWithNoParent} />
+				<MatrixSquare matrix={matrices[2]} tasksWithNoParent={tasksWithNoParent} />
+				<MatrixSquare matrix={matrices[3]} tasksWithNoParent={tasksWithNoParent} />
 			</div>
 		</div>
 	);
 };
 
-const MatrixSquare = ({ matrix, tasksWithNoParent, priority }) => {
+const MatrixSquare = ({ matrix, tasksWithNoParent }) => {
 	const iconClass = '!text-[20px] p-[3px] rounded hover:bg-color-gray-200';
 
 	const dispatch = useDispatch();
@@ -82,6 +82,12 @@ const MatrixSquare = ({ matrix, tasksWithNoParent, priority }) => {
 	const [isDropdownMatrixOptionsVisible, setIsDropdownMatrixOptionsVisible] = useState(false);
 
 	const { name, order, selectedPriorities } = matrix;
+
+	const handleTaskClick = () => {
+		// TODO: Show side dropdown
+		//
+		console.log('fuck you');
+	};
 
 	return (
 		<div className="w-full rounded-lg bg-color-gray-600 p-3 h-full">
@@ -162,6 +168,7 @@ const MatrixSquare = ({ matrix, tasksWithNoParent, priority }) => {
 
 						return true;
 					})}
+					handleTaskClick={handleTaskClick}
 					selectedPriorities={selectedPriorities}
 				/>
 			</div>

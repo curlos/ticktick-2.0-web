@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Icon from './Icon';
 import { TaskObj } from '../interfaces/interfaces';
 import { millisecondsToHoursAndMinutes } from '../utils/helpers.utils';
@@ -7,6 +7,8 @@ import { useGetProjectsQuery, useGetTasksQuery } from '../services/api';
 import { PRIORITIES } from '../utils/priorities.utils';
 import classNames from 'classnames';
 import TaskDueDateText from './TaskDueDateText';
+import DropdownTaskDetails from './Dropdown/DropdownTaskDetails';
+import ContextMenuTaskDetails from './ContextMenu/ContextMenuTaskDetails';
 
 interface TaskProps {
 	taskId: string;
@@ -16,6 +18,7 @@ interface TaskProps {
 	fromParent?: boolean;
 	showSubtasks?: boolean;
 	onCloseSearchTasks?: () => void;
+	handleTaskClick?: () => void;
 }
 
 const Task: React.FC<TaskProps> = ({
@@ -26,6 +29,7 @@ const Task: React.FC<TaskProps> = ({
 	fromParent,
 	showSubtasks = true,
 	onCloseSearchTasks,
+	handleTaskClick,
 }) => {
 	const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
 	const { tasksById, parentOfTasks } = fetchedTasks || {};
@@ -34,6 +38,20 @@ const Task: React.FC<TaskProps> = ({
 	const navigate = useNavigate();
 	let { taskId: taskIdFromUrl } = useParams();
 	const [project, setProject] = useState(null);
+	const [taskContextMenu, setTaskContextMenu] = useState(null);
+
+	const handleContextMenu = (event) => {
+		event.preventDefault(); // Prevent the default context menu
+
+		setTaskContextMenu({
+			xPos: event.pageX, // X coordinate of the mouse pointer
+			yPos: event.pageY, // Y coordinate of the mouse pointer
+		});
+	};
+
+	const handleClose = () => {
+		setTaskContextMenu(null);
+	};
 
 	let task = typeof taskId == 'string' ? tasksById[taskId] : taskId;
 
@@ -47,44 +65,38 @@ const Task: React.FC<TaskProps> = ({
 		return null;
 	}
 
-	const {
-		_id,
-		projectId,
-		title,
-		children,
-		priority,
-		completedPomodoros,
-		timeTaken,
-		estimatedDuration,
-		completedTime,
-		willNotDo,
-		dueDate,
-	} = task;
-
-	const formattedTimeTaken = millisecondsToHoursAndMinutes(timeTaken);
-	const formattedEstimatedDuration = millisecondsToHoursAndMinutes(estimatedDuration);
-	const categoryIconClass =
-		' text-color-gray-100 !text-[16px] hover:text-white' + (children?.length >= 1 ? '' : ' invisible');
+	const { _id, projectId, title, children, priority, completedTime, willNotDo, dueDate } = task;
 
 	const priorityData = PRIORITIES[priority];
-
 	const hasParentTask = parentOfTasks[_id];
 
 	return (
-		<div className={`${!fromParent || fromTaskDetails ? 'ml-0' : 'ml-4'}`}>
+		<div
+			className={`${!fromParent || fromTaskDetails ? 'ml-0' : 'ml-4'} relative`}
+			onClick={(e) => {
+				if (handleTaskClick) {
+					handleContextMenu(e);
+				}
+			}}
+		>
 			<div
 				className={
 					`flex py-1 hover:bg-color-gray-600 cursor-pointer rounded-lg` +
 					(taskIdFromUrl == taskId ? ' bg-color-gray-300' : '')
 				}
 				onClick={(e) => {
-					if (setSelectedFocusRecordTask) {
-						setSelectedFocusRecordTask(task);
+					if (handleTaskClick) {
+						// TODO: Investigate what props should be passed down.
+						// handleTaskClick();
 					} else {
-						navigate(`/projects/${projectId}/tasks/${_id}`);
+						if (setSelectedFocusRecordTask) {
+							setSelectedFocusRecordTask(task);
+						} else {
+							navigate(`/projects/${projectId}/tasks/${_id}`);
 
-						if (onCloseSearchTasks) {
-							onCloseSearchTasks();
+							if (onCloseSearchTasks) {
+								onCloseSearchTasks();
+							}
 						}
 					}
 				}}
@@ -187,6 +199,16 @@ const Task: React.FC<TaskProps> = ({
 							/>
 						))}
 				</div>
+			)}
+
+			{taskContextMenu && (
+				<ContextMenuTaskDetails
+					taskContextMenu={taskContextMenu}
+					xPos={taskContextMenu.xPos}
+					yPos={taskContextMenu.yPos}
+					onClose={handleClose}
+					task={task}
+				/>
 			)}
 		</div>
 	);

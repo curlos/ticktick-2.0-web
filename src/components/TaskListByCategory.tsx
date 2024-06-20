@@ -11,6 +11,7 @@ interface TaskListByCategoryProps {
 	selectedFocusRecordTask?: TaskObj;
 	setSelectedFocusRecordTask?: React.Dispatch<React.SetStateAction<TaskObj>>;
 	selectedPriorities?: Array<Object>;
+	handleTaskClick?: () => void;
 }
 
 const TaskListByCategory: React.FC<TaskListByCategoryProps> = ({
@@ -18,6 +19,7 @@ const TaskListByCategory: React.FC<TaskListByCategoryProps> = ({
 	selectedFocusRecordTask,
 	setSelectedFocusRecordTask,
 	selectedPriorities,
+	handleTaskClick,
 }) => {
 	const categoryIconClass = 'text-color-gray-100 !text-[16px] hover:text-white';
 	// Show all the priorities if no specific priorities were listed
@@ -105,6 +107,7 @@ const TaskListByCategory: React.FC<TaskListByCategoryProps> = ({
 								tasks={tasks}
 								selectedFocusRecordTask={selectedFocusRecordTask}
 								setSelectedFocusRecordTask={setSelectedFocusRecordTask}
+								handleTaskClick={handleTaskClick}
 							/>
 						</motion.div>
 					)}

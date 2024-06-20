@@ -6,9 +6,15 @@ interface TaskListProps {
 	tasks: Array<TaskObj>;
 	selectedFocusRecordTask?: TaskObj;
 	setSelectedFocusRecordTask?: React.Dispatch<React.SetStateAction<TaskObj>>;
+	handleTaskClick?: () => void;
 }
 
-const TaskList: React.FC<TaskListProps> = ({ tasks, selectedFocusRecordTask, setSelectedFocusRecordTask }) => {
+const TaskList: React.FC<TaskListProps> = ({
+	tasks,
+	selectedFocusRecordTask,
+	setSelectedFocusRecordTask,
+	handleTaskClick,
+}) => {
 	const { projectId } = useParams();
 
 	return (
@@ -19,6 +25,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, selectedFocusRecordTask, set
 					taskId={task._id}
 					selectedFocusRecordTask={selectedFocusRecordTask}
 					setSelectedFocusRecordTask={setSelectedFocusRecordTask}
+					handleTaskClick={handleTaskClick}
 				/>
 			))}
 		</div>

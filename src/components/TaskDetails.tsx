@@ -72,6 +72,7 @@ const TaskDetails = () => {
 
 	const { play: playCompletionSound, stop: stopCompletionSound } = useAudio(amongUsCompletionSoundMP3);
 
+	// useState
 	const [currTitle, setCurrTitle] = useState('');
 	const [currDescription, setCurrDescription] = useState('');
 	const [selectedPriority, setSelectedPriority] = useState(0);
