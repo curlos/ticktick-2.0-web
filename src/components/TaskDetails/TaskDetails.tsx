@@ -1,35 +1,32 @@
 import { useEffect, useRef, useState } from 'react';
-import Icon from './Icon';
+import Icon from '../Icon';
 import { useNavigate, useParams } from 'react-router-dom';
 import TextareaAutosize from 'react-textarea-autosize';
-import { TaskObj } from '../interfaces/interfaces';
-import DropdownCalendar from './Dropdown/DropdownCalendar/DropdownCalendar';
-import AddTaskForm from './AddTaskForm';
-import ModalTaskActivities from './Modal/ModalTaskActivities';
+import { TaskObj } from '../../interfaces/interfaces';
+import DropdownCalendar from '../Dropdown/DropdownCalendar/DropdownCalendar';
+import AddTaskForm from '../AddTaskForm';
+import ModalTaskActivities from '../Modal/ModalTaskActivities';
 import {
 	useGetTasksQuery,
 	useGetProjectsQuery,
 	useEditTaskMutation,
 	useGetFocusRecordsQuery,
-	useGetUsersQuery,
 	useGetCommentsQuery,
-	useAddCommentMutation,
-	useGetLoggedInUserQuery,
-	useEditCommentMutation,
-	usePermanentlyDeleteCommentMutation,
-} from '../services/api';
-import { getFormattedDuration, getTasksWithFilledInChildren, sumProperty } from '../utils/helpers.utils';
-import { SortableTree } from './SortableTest/SortableTree';
-import useDebouncedEditTask from '../hooks/useDebouncedEditTask';
+} from '../../services/api';
+import { getFormattedDuration, getTasksWithFilledInChildren, sumProperty } from '../../utils/helpers.utils';
+import { SortableTree } from '../SortableTest/SortableTree';
+import useDebouncedEditTask from '../../hooks/useDebouncedEditTask';
 import classNames from 'classnames';
-import { SMART_LISTS } from '../utils/smartLists.utils';
-import { PRIORITIES } from '../utils/priorities.utils';
-import TaskDueDateText from './TaskDueDateText';
-import DropdownPriorities from './Dropdown/DropdownPriorities';
-import DropdownProjects from './Dropdown/DropdownProjects';
-import DropdownTaskOptions from './Dropdown/DropdownTaskOptions/DropdownTaskOptions';
-import useAudio from '../hooks/useAudio';
+import { SMART_LISTS } from '../../utils/smartLists.utils';
+import { PRIORITIES } from '../../utils/priorities.utils';
+import TaskDueDateText from '../TaskDueDateText';
+import DropdownPriorities from '../Dropdown/DropdownPriorities';
+import DropdownProjects from '../Dropdown/DropdownProjects';
+import DropdownTaskOptions from '../Dropdown/DropdownTaskOptions/DropdownTaskOptions';
+import useAudio from '../../hooks/useAudio';
 import amongUsCompletionSoundMP3 from '/among_us_complete_task.mp3';
+import CommentList from './CommentList';
+import AddCommentForm from './AddCommentForm';
 
 const EmptyTask = () => (
 	<div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700 flex justify-center items-center text-[18px] text-color-gray-100">
@@ -43,11 +40,7 @@ const EmptyTask = () => (
 	</div>
 );
 
-const TaskDetails = () => {
-	// Users
-	const { data: fetchedUsers, isLoading: isLoadingGetUsers, error: errorGetUsers } = useGetUsersQuery();
-	const { users, usersById } = fetchedUsers || {};
-
+const TaskDetails = ({ taskToUse }) => {
 	// Tasks
 	const { data: fetchedTasks, isLoading: isTasksLoading, error } = useGetTasksQuery();
 	const { tasks, tasksById, parentOfTasks } = fetchedTasks || {};
@@ -68,7 +61,7 @@ const TaskDetails = () => {
 
 	// Comments
 	const { data: fetchedComments, isLoading: isLoadingGetComments, error: errorGetComments } = useGetCommentsQuery();
-	const { comments, commentsByTaskId } = fetchedComments || {};
+	const { commentsByTaskId } = fetchedComments || {};
 
 	const { play: playCompletionSound, stop: stopCompletionSound } = useAudio(amongUsCompletionSoundMP3);
 
@@ -77,7 +70,7 @@ const TaskDetails = () => {
 	const [currDescription, setCurrDescription] = useState('');
 	const [selectedPriority, setSelectedPriority] = useState(0);
 	const [currCompletedTime, setCurrCompletedTime] = useState(null);
-	const [task, setTask] = useState<TaskObj>();
+	const [task, setTask] = useState<TaskObj>(taskToUse || null);
 	const [parentTask, setParentTask] = useState<TaskObj | null>();
 	const [childTasks, setChildTasks] = useState([]);
 	const [currDueDate, setCurrDueDate] = useState(null);
@@ -114,7 +107,7 @@ const TaskDetails = () => {
 			return;
 		}
 
-		const currTask = taskId && tasksById && tasksById[taskId];
+		const currTask = taskToUse ? taskToUse : taskId && tasksById && tasksById[taskId];
 		setTask(currTask);
 
 		if (currTask) {
@@ -168,91 +161,6 @@ const TaskDetails = () => {
 		task;
 	const priorityData = PRIORITIES[priority];
 	const taskComments = _id && commentsByTaskId && commentsByTaskId[_id] && Object.values(commentsByTaskId[_id]);
-
-	const CommentList = () => {
-		const [permanentlyDeleteComment] = usePermanentlyDeleteCommentMutation();
-
-		if (!usersById || !taskComments || taskComments.length === 0) {
-			return null;
-		}
-
-		const Comment = ({ comment }) => {
-			const author = usersById[comment.authorId];
-			const options = {
-				year: 'numeric', // Full year
-				month: 'long', // Full month name
-				day: 'numeric', // Day of the month
-				hour: 'numeric', // Hour (in 12-hour AM/PM format)
-				minute: '2-digit', // Minute with leading zeros
-				hour12: true, // Use AM/PM
-			};
-			const timeUpdated = new Date(comment.updatedAt).toLocaleString('en-US', options);
-
-			return (
-				<div className="flex">
-					<div>
-						<div className="rounded-full bg-black p-1 mb-3">
-							<img src="/prestige-9-bo2.png" alt="user-icon" className="w-[32px] h-[32px] max-w-[none]" />
-						</div>
-					</div>
-
-					<div className="ml-2 flex-1">
-						<div className="flex justify-between items-center w-full">
-							<div className="flex items-center gap-4 text-color-gray-100">
-								<div>{author.nickname}</div>
-								<div>{timeUpdated}</div>
-							</div>
-
-							<div>
-								<Icon
-									name="edit"
-									customClass={
-										'text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer'
-									}
-									fill={0}
-									onClick={() => {
-										setCommentToEdit(comment);
-										setShowAddCommentInput(true);
-										setCurrentComment(comment.content);
-									}}
-								/>
-								<Icon
-									name="delete"
-									customClass={
-										'text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer'
-									}
-									fill={0}
-									onClick={() => {
-										setCommentToEdit(null);
-										permanentlyDeleteComment(comment._id);
-									}}
-								/>
-							</div>
-						</div>
-
-						<div className="mt-2">{comment.content}</div>
-					</div>
-				</div>
-			);
-		};
-
-		return (
-			<div className="flex flex-col justify-end">
-				<div className="p-4 border-t border-color-gray-200 text-[13px] max-h-[200px] overflow-auto gray-scrollbar">
-					<div className="mb-4 flex items-center gap-2 text-[14px]">
-						<span>Comments</span>
-						<span>{taskComments.length}</span>
-					</div>
-
-					<div className="space-y-6">
-						{taskComments.map((comment) => (
-							<Comment key={comment._id} comment={comment} />
-						))}
-					</div>
-				</div>
-			</div>
-		);
-	};
 
 	return (
 		<div className="flex flex-col w-full h-full max-h-screen bg-color-gray-700">
@@ -431,7 +339,12 @@ const TaskDetails = () => {
 					)}
 				</div>
 
-				<CommentList />
+				<CommentList
+					taskComments={taskComments}
+					setCommentToEdit={setCommentToEdit}
+					setShowAddCommentInput={setShowAddCommentInput}
+					setCurrentComment={setCurrentComment}
+				/>
 			</div>
 
 			<div>
@@ -509,78 +422,6 @@ const TaskDetails = () => {
 				setIsModalOpen={setIsModalTaskActivitiesOpen}
 			/>
 		</div>
-	);
-};
-
-const AddCommentForm = ({
-	showAddCommentInput,
-	setShowAddCommentInput,
-	currentComment,
-	setCurrentComment,
-	taskId,
-	commentToEdit,
-	setCommentToEdit,
-}) => {
-	const {
-		data: loggedInUser,
-		error: errorLoggedInUser,
-		isLoading: isLoadingLoggedInUser,
-	} = useGetLoggedInUserQuery();
-
-	const [addComment] = useAddCommentMutation();
-	const [editComment] = useEditCommentMutation();
-
-	return (
-		showAddCommentInput && (
-			<div className="p-4 border-t border-b border-color-gray-200">
-				<TextareaAutosize
-					className="placeholder-color-gray-100 bg-color-gray-300 p-[10px] rounded-md w-full outline-none border border-transparent focus:border-blue-500 resize-none max-h-[300px] gray-scrollbar overflow-auto"
-					placeholder="Write a comment"
-					value={currentComment}
-					onChange={(e) => setCurrentComment(e.target.value)}
-				></TextareaAutosize>
-
-				<div className="flex justify-end items-center gap-2">
-					<button
-						onClick={(e) => {
-							e.stopPropagation();
-							setShowAddCommentInput(false);
-						}}
-						className="border border-color-gray-200 px-4 py-1 mt-2 rounded hover:bg-color-gray-200 disabled:opacity-50 cursor-pointer"
-					>
-						Cancel
-					</button>
-
-					<button
-						type="submit"
-						disabled={!currentComment || !loggedInUser}
-						onClick={() => {
-							if (loggedInUser) {
-								const payload = {
-									taskId,
-									authorId: loggedInUser._id,
-									content: currentComment,
-								};
-
-								if (commentToEdit) {
-									// Edit comment
-									editComment({ commentId: commentToEdit._id, payload });
-								} else {
-									// Add comment
-									addComment(payload);
-								}
-
-								setCurrentComment('');
-								setCommentToEdit(null);
-							}
-						}}
-						className="border border-transparent bg-blue-500 px-4 py-1 mt-2 rounded hover:bg-blue-500 disabled:opacity-50 cursor-pointer"
-					>
-						{commentToEdit ? 'Edit' : 'Add'}
-					</button>
-				</div>
-			</div>
-		)
 	);
 };
 

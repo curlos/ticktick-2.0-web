@@ -1,13 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Icon from './Icon';
 import { TaskObj } from '../interfaces/interfaces';
-import { millisecondsToHoursAndMinutes } from '../utils/helpers.utils';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useGetProjectsQuery, useGetTasksQuery } from '../services/api';
 import { PRIORITIES } from '../utils/priorities.utils';
 import classNames from 'classnames';
 import TaskDueDateText from './TaskDueDateText';
-import DropdownTaskDetails from './Dropdown/DropdownTaskDetails';
 import ContextMenuTaskDetails from './ContextMenu/ContextMenuTaskDetails';
 
 interface TaskProps {
@@ -88,6 +86,7 @@ const Task: React.FC<TaskProps> = ({
 					if (handleTaskClick) {
 						// TODO: Investigate what props should be passed down.
 						// handleTaskClick();
+						handleContextMenu(e);
 					} else {
 						if (setSelectedFocusRecordTask) {
 							setSelectedFocusRecordTask(task);

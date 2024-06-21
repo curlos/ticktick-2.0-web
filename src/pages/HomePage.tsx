@@ -1,5 +1,5 @@
 import ActionSidebar from '../components/ActionSidebar';
-import TaskDetails from '../components/TaskDetails';
+import TaskDetails from '../components/TaskDetails/TaskDetails';
 import TaskListSidebar from '../components/TaskListSidebar';
 import TaskListPage from './TaskListPage';
 

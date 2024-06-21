@@ -1,6 +1,7 @@
 import Dropdown from './Dropdown';
 import { DropdownProps, TaskObj } from '../../interfaces/interfaces';
 import classNames from 'classnames';
+import TaskDetails from '../TaskDetails/TaskDetails';
 
 interface IDropdownTaskDetails extends DropdownProps {
 	task?: TaskObj;
@@ -11,11 +12,9 @@ const DropdownTaskDetails: React.FC<IDropdownTaskDetails> = ({
 	isVisible,
 	setIsVisible,
 	customClasses,
-	task,
 	customStyling,
+	task,
 }) => {
-	console.log(customStyling);
-
 	return (
 		<Dropdown
 			toggleRef={toggleRef}
@@ -25,7 +24,7 @@ const DropdownTaskDetails: React.FC<IDropdownTaskDetails> = ({
 			customStyling={customStyling ? customStyling : null}
 		>
 			<div className="w-[400px]">
-				<div>Hello World</div>
+				<TaskDetails taskToUse={task} />
 			</div>
 		</Dropdown>
 	);

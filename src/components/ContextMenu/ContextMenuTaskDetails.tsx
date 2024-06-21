@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import DropdownTaskDetails from '../Dropdown/DropdownTaskActions';
+import DropdownTaskDetails from '../Dropdown/DropdownTaskDetails';
 import { TaskObj } from '../../interfaces/interfaces';
 
 interface IContextMenuTaskDetails {
@@ -26,23 +26,33 @@ const ContextMenuTaskDetails: React.FC<IContextMenuTaskDetails> = ({ xPos, yPos,
 		if (!isDropdownTaskDetailsVisible) {
 			onClose();
 		}
-	}, [isDropdownTaskDetailsVisible]);
+	}, [isDropdownTaskDetailsVisible, onClose]);
 
 	console.log('g');
 	console.log(isDropdownTaskDetailsVisible);
 	console.log(xPos);
+	console.log(yPos);
+	console.log(task);
 
 	return createPortal(
 		<div>
 			<DropdownTaskDetails
 				toggleRef={dropdownTaskDetailsRef}
-				isVisible={isDropdownTaskDetailsVisible}
+				isVisible={true}
 				setIsVisible={setIsDropdownTaskDetailsVisible}
 				customClasses=" !ml-[0px] mt-[15px]"
 				customStyling={{ position: 'absolute', top: `${yPos}px`, left: `${xPos}px` }}
 				onCloseContextMenu={onClose}
 				task={task}
 			/>
+			{/* <DropdownTaskActions
+				toggleRef={dropdownTaskDetailsRef}
+				isVisible={isDropdownTaskDetailsVisible}
+				setIsVisible={setIsDropdownTaskDetailsVisible}
+				customClasses=" !ml-[0px] mt-[15px]"
+				customStyling={{ position: 'absolute', top: `${yPos}px`, left: `${xPos}px` }}
+				onCloseContextMenu={onClose}
+			/> */}
 		</div>,
 		document.body
 	);
