@@ -59,8 +59,6 @@ const OptionWithAnotherDropdown = ({ optionName, iconName, matrix }) => {
 	const [isDropdownAdditionalDetailsVisible, setIsDropdownAdditionalDetailsVisible] = useState(false);
 	const [selectedOption, setSelectedOption] = useState(toTitleCase(matrix[optionNameBackend]));
 
-	console.log(matrix);
-
 	return (
 		<div
 			className="relative"

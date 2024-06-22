@@ -85,8 +85,6 @@ const MatrixSquare = ({ matrix, tasksWithNoParent }) => {
 
 	const handleTaskClick = () => {
 		// TODO: Show side dropdown
-		//
-		console.log('fuck you');
 	};
 
 	return (
@@ -170,6 +168,8 @@ const MatrixSquare = ({ matrix, tasksWithNoParent }) => {
 					})}
 					handleTaskClick={handleTaskClick}
 					selectedPriorities={selectedPriorities}
+					groupBy={matrix.groupBy}
+					sortBy={matrix.sortBy}
 				/>
 			</div>
 		</div>
