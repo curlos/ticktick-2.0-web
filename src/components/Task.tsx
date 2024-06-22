@@ -72,6 +72,7 @@ const Task: React.FC<TaskProps> = ({
 		<div
 			className={`${!fromParent || fromTaskDetails ? 'ml-0' : 'ml-4'} relative`}
 			onClick={(e) => {
+				e.stopPropagation();
 				if (handleTaskClick) {
 					handleContextMenu(e);
 				}
@@ -195,6 +196,7 @@ const Task: React.FC<TaskProps> = ({
 								selectedFocusRecordTask={selectedFocusRecordTask}
 								setSelectedFocusRecordTask={setSelectedFocusRecordTask}
 								fromParent={true}
+								handleTaskClick={handleTaskClick}
 							/>
 						))}
 				</div>

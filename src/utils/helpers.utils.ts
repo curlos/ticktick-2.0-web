@@ -313,12 +313,14 @@ export const getTasksWithFilledInChildren = (tasks, tasksById, projectId, filter
 		finalTasks = finalTasks.filter((task) => !childTaskIds.has(task._id.toString()));
 	}
 
-	const isSmartListView = SMART_LISTS[projectId];
+	if (projectId) {
+		const isSmartListView = SMART_LISTS[projectId];
 
-	if (isSmartListView) {
-		finalTasks = SMART_LISTS[projectId].getFilteredTasks(finalTasks);
-	} else {
-		finalTasks = finalTasks.filter((task) => task.projectId === projectId);
+		if (isSmartListView) {
+			finalTasks = SMART_LISTS[projectId].getFilteredTasks(finalTasks);
+		} else {
+			finalTasks = finalTasks.filter((task) => task.projectId === projectId);
+		}
 	}
 
 	return finalTasks;

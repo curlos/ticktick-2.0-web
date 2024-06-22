@@ -28,12 +28,6 @@ const ContextMenuTaskDetails: React.FC<IContextMenuTaskDetails> = ({ xPos, yPos,
 		}
 	}, [isDropdownTaskDetailsVisible, onClose]);
 
-	console.log('g');
-	console.log(isDropdownTaskDetailsVisible);
-	console.log(xPos);
-	console.log(yPos);
-	console.log(task);
-
 	return createPortal(
 		<div>
 			<DropdownTaskDetails

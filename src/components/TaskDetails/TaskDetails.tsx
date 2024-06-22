@@ -163,7 +163,10 @@ const TaskDetails = ({ taskToUse }) => {
 	const taskComments = _id && commentsByTaskId && commentsByTaskId[_id] && Object.values(commentsByTaskId[_id]);
 
 	return (
-		<div className="flex flex-col w-full h-full max-h-screen bg-color-gray-700">
+		<div
+			className="flex flex-col w-full h-full max-h-screen bg-color-gray-700"
+			onClick={(e) => e.stopPropagation()}
+		>
 			<div className="flex justify-between items-center p-4 border-b border-color-gray-200">
 				<div className="flex items-center gap-2">
 					<span
@@ -370,7 +373,7 @@ const TaskDetails = ({ taskToUse }) => {
 									name="drive_file_move"
 									customClass={'text-color-gray-100 !text-[18px] hover:text-white cursor-pointer'}
 								/>
-								{selectedProject.name}
+								{selectedProject?.name}
 							</div>
 
 							<DropdownProjects

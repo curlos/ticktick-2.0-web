@@ -56,7 +56,7 @@ const EisenhowerMatrix = () => {
 		setTasksWithNoParent(newTasksWithNoParent);
 	}, [fetchedTasks, fetchedProjects]);
 
-	if (isLoadingOrErrors) {
+	if (isLoadingOrErrors || !matrices) {
 		return <div>Loading...</div>;
 	}
 
