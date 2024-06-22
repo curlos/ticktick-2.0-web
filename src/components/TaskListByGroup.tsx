@@ -5,6 +5,7 @@ import TaskList from './TaskList';
 import { AnimatePresence, motion } from 'framer-motion';
 import React from 'react';
 import { PRIORITIES } from '../utils/priorities.utils';
+import { useGetProjectsQuery } from '../services/api';
 
 interface TaskListByGroupProps {
 	tasks: Array<TaskObj>;
@@ -23,6 +24,9 @@ const TaskListByGroup: React.FC<TaskListByGroupProps> = ({
 	groupBy,
 	sortBy,
 }) => {
+	const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
+	const { projectsById } = fetchedProjects || {};
+
 	const categoryIconClass = 'text-color-gray-100 !text-[16px] hover:text-white';
 	// Show all the priorities if no specific priorities were listed
 	const showAllPriorities =
@@ -31,9 +35,6 @@ const TaskListByGroup: React.FC<TaskListByGroupProps> = ({
 	if (!tasks || tasks.length === 0) {
 		return null;
 	}
-
-	console.log(groupBy);
-	console.log(sortBy);
 
 	const GroupedByTaskList = ({ categoryName, tasks }) => {
 		const [showTasks, setShowTasks] = useState(true);
@@ -112,35 +113,66 @@ const TaskListByGroup: React.FC<TaskListByGroupProps> = ({
 		);
 	};
 
-	const GroupedByTime = () => {
-		const groupedTasksByDueDate = groupTasksByDueDate(tasks);
-
+	const GroupedByTaskListWrapper = ({ groupBy, groupedTasks }) => {
 		return (
 			<React.Fragment>
-				{Object.entries(groupedTasksByDueDate).map(([dueDate, tasksForThisDate]) => {
-					console.log(dueDate);
+				{Object.entries(groupedTasks).map(([key, tasksList]) => {
+					let groupedByKey = key;
 
-					return <GroupedByTaskList categoryName={dueDate} tasks={tasksForThisDate} />;
+					if (groupBy === 'project') {
+						const project = projectsById[key];
+						groupedByKey = project.name;
+					}
+
+					return <GroupedByTaskList categoryName={groupedByKey} tasks={tasksList} />;
 				})}
-				{/* TODO: This is going to be a list of GroupedLists grouped by time (days) */}
-				{/* <GroupedByTaskList categoryName="High" tasks={highPriorityTasks} />
-				<GroupedByTaskList categoryName="High" tasks={highPriorityTasks} />
-				<GroupedByTaskList categoryName="High" tasks={highPriorityTasks} />
-				<GroupedByTaskList categoryName="High" tasks={highPriorityTasks} /> */}
 			</React.Fragment>
 		);
 	};
 
-	const getGroupedByList = () => {
+	const getGroupedByTaskList = () => {
 		switch (groupBy) {
+			case 'project':
+				const groupedTasksByProject = groupTasksByProject(tasks);
+				return <GroupedByTaskListWrapper groupBy="project" groupedTasks={groupedTasksByProject} />;
 			case 'time':
-				return <GroupedByTime />;
-			default:
+				const groupedTasksByDueDate = groupTasksByDueDate(tasks);
+				return <GroupedByTaskListWrapper groupBy="time" groupedTasks={groupedTasksByDueDate} />;
+			case 'tag':
+				// TODO: Implement this when tags are set up on the backend and for tasks
+				return null;
+			case 'priority':
+				// TODO: Refactor this to be more dynamic.
 				return <GroupedByPriority />;
+			default:
+				return (
+					<TaskList
+						tasks={tasks}
+						selectedFocusRecordTask={selectedFocusRecordTask}
+						setSelectedFocusRecordTask={setSelectedFocusRecordTask}
+						handleTaskClick={handleTaskClick}
+					/>
+				);
 		}
 	};
 
-	return <div className="flex flex-col gap-1">{getGroupedByList()}</div>;
+	return <div className="flex flex-col gap-1">{getGroupedByTaskList()}</div>;
+};
+
+const groupTasksByProject = (tasks, projectsById) => {
+	const groupedTasks = {};
+
+	tasks.forEach((task) => {
+		const { projectId } = task;
+
+		if (!groupedTasks[projectId]) {
+			groupedTasks[projectId] = [];
+		}
+
+		groupedTasks[projectId].push(task);
+	});
+
+	return groupedTasks;
 };
 
 const groupTasksByDueDate = (tasks) => {

@@ -40,20 +40,25 @@ const DropdownMatrixOptions: React.FC<DropdownMatrixOptions> = ({
 					<div>Edit</div>
 				</div>
 
-				<OptionWithAnotherDropdown optionName="Group by" iconName="menu" matrix={matrix} />
-				<OptionWithAnotherDropdown optionName="Sort by" iconName="sort" matrix={matrix} />
+				<OptionWithAnotherDropdown
+					optionName="Group by"
+					options={['Project', 'Time', 'Tag', 'Priority', 'None']}
+					iconName="menu"
+					matrix={matrix}
+				/>
+				<OptionWithAnotherDropdown
+					optionName="Sort by"
+					options={['Time', 'Title', 'Tag', 'Priority']}
+					iconName="sort"
+					matrix={matrix}
+				/>
 			</div>
 		</Dropdown>
 	);
 };
 
-const OptionWithAnotherDropdown = ({ optionName, iconName, matrix }) => {
+const OptionWithAnotherDropdown = ({ optionName, options, iconName, matrix }) => {
 	const optionNameBackend = optionName.toLowerCase() === 'group by' ? 'groupBy' : 'sortBy';
-	const OPTIONS = ['Time', 'Title', 'Tag', 'Priority'];
-
-	if (optionName.toLowerCase() === 'group by') {
-		OPTIONS.push('None');
-	}
 
 	const dropdownAdditonalDetailsRef = useRef();
 	const [isDropdownAdditionalDetailsVisible, setIsDropdownAdditionalDetailsVisible] = useState(false);
@@ -80,7 +85,7 @@ const OptionWithAnotherDropdown = ({ optionName, iconName, matrix }) => {
 				toggleRef={dropdownAdditonalDetailsRef}
 				isVisible={isDropdownAdditionalDetailsVisible}
 				setIsVisible={setIsDropdownAdditionalDetailsVisible}
-				options={OPTIONS}
+				options={options}
 				selectedOption={selectedOption}
 				setSelectedOption={setSelectedOption}
 				matrix={matrix}
