@@ -2,12 +2,12 @@ import { useState, useEffect, useRef } from 'react';
 import { useGetMatricesQuery, useGetProjectsQuery, useGetTasksQuery } from '../services/api';
 import { allExceptOneFalse, getTasksWithNoParent } from '../utils/helpers.utils';
 import { SMART_LISTS } from '../utils/smartLists.utils';
-import TaskListByCategory from './TaskListByCategory';
 import Icon from './Icon';
 import DropdownMatrixOptions from './Dropdown/DropdownMatrixOptions';
 import { setModalState } from '../slices/modalSlice';
 import { useDispatch } from 'react-redux';
 import classNames from 'classnames';
+import TaskListByGroup from './TaskListByGroup';
 
 const stylingForMatrixHeaders = [
 	{
@@ -156,7 +156,7 @@ const MatrixSquare = ({ matrix, tasksWithNoParent }) => {
 			</div>
 
 			<div className="overflow-auto gray-scrollbar max-h-[36vh]">
-				<TaskListByCategory
+				<TaskListByGroup
 					tasks={tasksWithNoParent.filter((task) => {
 						if (task.isDeleted) {
 							return false;

@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import React from 'react';
 import { PRIORITIES } from '../utils/priorities.utils';
 
-interface TaskListByCategoryProps {
+interface TaskListByGroupProps {
 	tasks: Array<TaskObj>;
 	selectedFocusRecordTask?: TaskObj;
 	setSelectedFocusRecordTask?: React.Dispatch<React.SetStateAction<TaskObj>>;
@@ -14,7 +14,7 @@ interface TaskListByCategoryProps {
 	handleTaskClick?: () => void;
 }
 
-const TaskListByCategory: React.FC<TaskListByCategoryProps> = ({
+const TaskListByGroup: React.FC<TaskListByGroupProps> = ({
 	tasks,
 	selectedFocusRecordTask,
 	setSelectedFocusRecordTask,
@@ -140,4 +140,4 @@ const TaskListByCategory: React.FC<TaskListByCategoryProps> = ({
 	);
 };
 
-export default TaskListByCategory;
+export default TaskListByGroup;

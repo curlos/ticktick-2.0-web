@@ -5,6 +5,8 @@ import classNames from 'classnames';
 import { useRef, useState } from 'react';
 import { setModalState } from '../../slices/modalSlice';
 import { useDispatch } from 'react-redux';
+import { useEditMatrixMutation } from '../../services/api';
+import { toTitleCase } from '../../utils/helpers.utils';
 
 interface DropdownMatrixOptions extends DropdownProps {
 	matrix: Object;
@@ -38,14 +40,15 @@ const DropdownMatrixOptions: React.FC<DropdownMatrixOptions> = ({
 					<div>Edit</div>
 				</div>
 
-				<OptionWithAnotherDropdown optionName="Group by" iconName="menu" />
-				<OptionWithAnotherDropdown optionName="Sort by" iconName="sort" />
+				<OptionWithAnotherDropdown optionName="Group by" iconName="menu" matrix={matrix} />
+				<OptionWithAnotherDropdown optionName="Sort by" iconName="sort" matrix={matrix} />
 			</div>
 		</Dropdown>
 	);
 };
 
-const OptionWithAnotherDropdown = ({ optionName, iconName }) => {
+const OptionWithAnotherDropdown = ({ optionName, iconName, matrix }) => {
+	const optionNameBackend = optionName.toLowerCase() === 'group by' ? 'groupBy' : 'sortBy';
 	const OPTIONS = ['Time', 'Title', 'Tag', 'Priority'];
 
 	if (optionName.toLowerCase() === 'group by') {
@@ -54,7 +57,9 @@ const OptionWithAnotherDropdown = ({ optionName, iconName }) => {
 
 	const dropdownAdditonalDetailsRef = useRef();
 	const [isDropdownAdditionalDetailsVisible, setIsDropdownAdditionalDetailsVisible] = useState(false);
-	const [selectedOption, setSelectedOption] = useState('Time');
+	const [selectedOption, setSelectedOption] = useState(toTitleCase(matrix[optionNameBackend]));
+
+	console.log(matrix);
 
 	return (
 		<div
@@ -80,6 +85,8 @@ const OptionWithAnotherDropdown = ({ optionName, iconName }) => {
 				options={OPTIONS}
 				selectedOption={selectedOption}
 				setSelectedOption={setSelectedOption}
+				matrix={matrix}
+				optionName={optionName}
 			/>
 		</div>
 	);
@@ -95,7 +102,12 @@ const DropdownAdditionalDetails: React.FC<DropdownAdditionalDetails> = ({
 	options,
 	selectedOption,
 	setSelectedOption,
+	matrix,
+	optionName,
 }) => {
+	const [editMatrix] = useEditMatrixMutation();
+	const optionNameBackend = optionName.toLowerCase() === 'group by' ? 'groupBy' : 'sortBy';
+
 	return (
 		<Dropdown
 			toggleRef={toggleRef}
@@ -111,7 +123,18 @@ const DropdownAdditionalDetails: React.FC<DropdownAdditionalDetails> = ({
 						<div
 							key={option}
 							className="p-2 hover:bg-color-gray-300 rounded flex justify-between items-center gap-2 text-gray-300"
-							onClick={() => setSelectedOption(option)}
+							onClick={async () => {
+								setSelectedOption(option);
+
+								const payload = {
+									matrixId: matrix._id,
+									payload: {
+										[optionNameBackend]: option.toLowerCase(),
+									},
+								};
+
+								await editMatrix(payload);
+							}}
 						>
 							<div className={isSelectedOption ? 'text-blue-500' : ''}>{option}</div>
 							{isSelectedOption && (

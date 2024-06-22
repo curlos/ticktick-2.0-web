@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { DropdownProps } from '../../../interfaces/interfaces';
 import { useGetProjectsQuery, useGetTasksQuery } from '../../../services/api';
 import Icon from '../../Icon';
-import TaskListByCategory from '../../TaskListByCategory';
 import Dropdown from '../Dropdown';
 import { SMART_LISTS } from '../../../utils/smartLists.utils';
 import { debounce, getTasksWithNoParent } from '../../../utils/helpers.utils';
@@ -10,6 +9,7 @@ import DropdownProjects from '../DropdownProjects';
 import Fuse from 'fuse.js';
 import Task from '../../Task';
 import classNames from 'classnames';
+import TaskListByGroup from '../../TaskListByGroup';
 
 interface DropdownSetTaskProps extends DropdownProps {
 	selectedTask: Object | null;
@@ -178,7 +178,7 @@ const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({
 
 			<div className="space-y-2 h-[300px] gray-scrollbar overflow-auto">
 				{!isSearchFocused && !searchText ? (
-					<TaskListByCategory
+					<TaskListByGroup
 						tasks={tasksWithNoParent.filter((task) => {
 							if (task.isDeleted) {
 								return false;

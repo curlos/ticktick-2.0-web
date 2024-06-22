@@ -4,7 +4,7 @@ import TaskList from '../components/TaskList';
 import { useSelector } from 'react-redux';
 import { TaskObj } from '../interfaces/interfaces';
 import AddTaskForm from '../components/AddTaskForm';
-import TaskListByCategory from '../components/TaskListByCategory';
+import TaskListByCategory from '../components/TaskListByGroup';
 import { SortableTree } from '../components/SortableTest/SortableTree';
 import { useGetProjectsQuery, useGetTasksQuery } from '../services/api';
 import { fillInChildren, getTasksWithNoParent } from '../utils/helpers.utils';
@@ -84,7 +84,7 @@ const TaskListPage = () => {
 
 				{/* {tasksWithNoParent?.length > 0 && (
                     <div className="mt-4 space-y-4">
-                        <TaskListByCategory tasks={tasksWithNoParent} />
+                        <TaskListByGroup tasks={tasksWithNoParent} />
                     </div>
                 )} */}
 

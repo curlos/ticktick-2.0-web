@@ -416,3 +416,7 @@ export const allExceptOneFalse = (obj) => {
 
 	return null; // If loop completes without returning false, conditions are met
 };
+
+export const toTitleCase = (str) => {
+	return str.replace(/\w\S*/g, (text) => text.charAt(0).toUpperCase() + text.substring(1).toLowerCase());
+};
