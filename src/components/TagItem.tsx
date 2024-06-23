@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { useGetTagsQuery, useGetTasksQuery } from '../services/api';
 import { useEffect, useState } from 'react';
 import classNames from 'classnames';
@@ -7,6 +7,9 @@ import ContextMenuSidebarItemActions from './ContextMenu/ContextMenuSidebarItemA
 
 const TagItem = ({ tag, isChild }) => {
 	const navigate = useNavigate();
+	const params = useParams();
+
+	const { tagId } = params;
 
 	const { data: fetchedTags, isLoading: isLoadingGetTags, error: errorGetTags } = useGetTagsQuery();
 	const { tags, tagsById } = fetchedTags || {};
@@ -16,7 +19,7 @@ const TagItem = ({ tag, isChild }) => {
 
 	const { name, color, children, _id } = tag;
 
-	const iconName = 'tag';
+	const iconName = 'sell';
 	const displayName = name;
 	const [numberOfTasks, setNumberOfTasks] = useState(0);
 	const [taskContextMenu, setTaskContextMenu] = useState(null);
@@ -32,7 +35,8 @@ const TagItem = ({ tag, isChild }) => {
 		setNumberOfTasks(filteredTasks.length);
 	}, [tasks]);
 
-	const handleClick = () => {
+	const handleClick = (e) => {
+		e.stopPropagation();
 		navigate(`/tags/${_id}/tasks`);
 	};
 
@@ -52,6 +56,7 @@ const TagItem = ({ tag, isChild }) => {
 	};
 
 	const childTags = children.map((childId) => tagsById[childId]);
+	const isSelected = tagId === tag._id;
 
 	return (
 		<div onContextMenu={handleContextMenu} onClick={handleClick}>
@@ -59,7 +64,8 @@ const TagItem = ({ tag, isChild }) => {
 				className={
 					classNames(
 						'p-2 rounded-lg flex items-center justify-between cursor-pointer cursor-pointer',
-						isChild ? 'ml-3' : ''
+						isChild ? 'ml-3' : '',
+						isSelected ? ' bg-color-gray-200' : ' hover:bg-color-gray-600'
 					)
 					// (projectId === _id || (isSmartListView && name.toLowerCase() === projectId)
 					// 	? ' bg-color-gray-200'
@@ -73,7 +79,7 @@ const TagItem = ({ tag, isChild }) => {
 							<Icon name={'chevron_right'} customClass={'text-white !text-[12px] ml-[-12px]'} fill={1} />
 						)}
 
-						<Icon name={iconName} customClass={'text-white !text-[22px]'} fill={1} />
+						<Icon name={iconName} customClass={'text-white !text-[22px]'} fill={0} />
 					</div>
 					<div className="overflow-hidden text-nowrap text-ellipsis w-[130px]">{displayName}</div>
 				</div>

@@ -129,14 +129,17 @@ export const ProjectItem: React.FC<ProjectItemProps> = ({ project, projectsWithG
 
 	const isSmartListView = SMART_LISTS[projectId];
 
+	const isSelected =
+		projectId && ((_id && projectId === _id) || (isSmartListView && name.toLowerCase() === projectId));
+
+	console.log(isSelected);
+
 	return (
 		<div onContextMenu={handleContextMenu} onClick={handleClick}>
 			<div
 				className={
 					'p-2 rounded-lg flex items-center justify-between cursor-pointer cursor-pointer' +
-					(projectId === _id || (isSmartListView && name.toLowerCase() === projectId)
-						? ' bg-color-gray-200'
-						: ' hover:bg-color-gray-600') +
+					(isSelected ? ' bg-color-gray-200' : ' hover:bg-color-gray-600') +
 					(insideFolder ? ' ml-3' : '')
 				}
 			>
