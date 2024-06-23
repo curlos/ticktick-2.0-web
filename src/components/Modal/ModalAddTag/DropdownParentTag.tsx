@@ -3,29 +3,39 @@ import { DropdownProps, IProject } from '../../../interfaces/interfaces';
 import { fetchData } from '../../../utils/helpers.utils';
 import Icon from '../../Icon';
 import Dropdown from '../../Dropdown/Dropdown';
+import { useGetTagsQuery } from '../../../services/api';
 
-interface DropdownFolderProps extends DropdownProps {
+interface DropdownParentTagProps extends DropdownProps {
 	selectedParentTag: IProject | Object;
 	setSelectedParentTag: React.Dispatch<React.SetStateAction<IProject | Object>>;
 }
 
-const DropdownParentTag: React.FC<DropdownFolderProps> = ({
+const DropdownParentTag: React.FC<DropdownParentTagProps> = ({
 	toggleRef,
 	isVisible,
 	setIsVisible,
 	selectedParentTag,
 	setSelectedParentTag,
 }) => {
+	const { data: fetchedTags, isLoading: isLoadingGetTags, error: errorGetTags } = useGetTagsQuery();
+	const { tags, tagsById } = fetchedTags || {};
+
 	const [parentTags, setParentTags] = useState<Array<IProject>>([]);
 
 	useEffect(() => {
-		getData();
-	}, []);
+		if (tags) {
+			const newParentTags = [];
 
-	const getData = async () => {
-		const foundParentTags = await fetchData(`${import.meta.env.VITE_SERVER_URL}/projects?isFolder=true`);
-		setParentTags(foundParentTags);
-	};
+			tags.forEach((tag) => {
+				// If there's no parentId, then the tag is a candidate to be a parentTag. Tags with a parentId, are already indented by one and I don't want tags to be too complicated like Tasks where they can be indented infinitely as that's a whole mess to deal with already in Tasks. Tags should be simpler so only one indentation level at most.
+				if (!tag.parentId) {
+					newParentTags.push(tag);
+				}
+			});
+
+			setParentTags(newParentTags);
+		}
+	}, [tags]);
 
 	const noneFolder = {
 		_id: null,

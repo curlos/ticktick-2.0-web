@@ -284,8 +284,24 @@ export const api = createApi({
 			providesTags: ['Tag'],
 			transformResponse: (response) => {
 				const tags = response;
+				const tagsById = arrayToObjectByKey(tags, '_id');
+				const tagsWithoutParentId = tags.filter((tag) => !tag.parentId);
 
-				return { tags };
+				const tagsByIdChildren = {};
+
+				tags.forEach((tag) => {
+					const { parentId } = tag;
+
+					if (parentId) {
+						if (!tagsByIdChildren[parentId]) {
+							tagsByIdChildren[parentId] = [];
+						}
+
+						tagsByIdChildren[parentId].push(tag);
+					}
+				});
+
+				return { tags, tagsById, tagsWithoutParentId };
 			},
 		}),
 		addTag: builder.mutation({

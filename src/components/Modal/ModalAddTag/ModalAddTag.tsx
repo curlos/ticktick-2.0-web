@@ -1,7 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router';
-import { useAddProjectMutation, useEditProjectMutation } from '../../../services/api';
+import {
+	useAddProjectMutation,
+	useAddTagMutation,
+	useEditProjectMutation,
+	useGetTagsQuery,
+} from '../../../services/api';
 import { setModalState } from '../../../slices/modalSlice';
 import ColorList from '../../ColorList';
 import Icon from '../../Icon';
@@ -13,14 +18,14 @@ const ModalAddTag: React.FC = () => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
-	console.log('hi');
+	const { data: fetchedTags, isLoading: isLoadingGetTags, error: errorGetTags } = useGetTagsQuery();
+	const { tagsById } = fetchedTags || {};
 
-	const [addProject, { isLoading: isLoadingAddProject, error: errorAddProject }] = useAddProjectMutation(); // Mutation hook
-	const [editProject, { isLoading: isLoadingEditProject, error: errorEditProject }] = useEditProjectMutation();
+	const [addTag] = useAddTagMutation();
 
 	const [name, setName] = useState(modal?.props?.tag?.name || '');
 	const [color, setColor] = useState(modal?.props?.tag?.color || '');
-	const [selectedParentTag, setSelectedParentTag] = useState(null);
+	const [selectedParentTag, setSelectedParentTag] = useState({ name: 'None' });
 	const [isDropdownParentTagVisible, setIsDropdownParentTagVisible] = useState(false);
 
 	const DEFAULT_COLORS = ['#ff6161', '#FFAC37', '#FFD323', '#E6EA48', '#33D870', '#4BA1FF', '#6D75F4'];
@@ -29,15 +34,20 @@ const ModalAddTag: React.FC = () => {
 	const isEditingTag = modal?.props?.tag ? true : false;
 
 	useEffect(() => {
-		if (modal?.props?.project) {
-			const { project } = modal.props;
-			setName(project.name);
-			setColor(project.color);
+		if (modal?.props?.tag) {
+			const { tag } = modal.props;
+			setName(tag.name);
+			setColor(tag.color);
+
+			if (tag.parentId) {
+				const parentTag = tagsById[tag.parentId];
+				setSelectedParentTag(parentTag);
+			}
 		} else {
 			setName('');
 			setColor('');
 		}
-	}, [modal?.props?.project]);
+	}, [modal?.props?.tag]);
 
 	const handleAddTag = async () => {
 		if (name.trim() === '') {
@@ -46,9 +56,13 @@ const ModalAddTag: React.FC = () => {
 
 		const newTag = {
 			name: name,
-			parentTagId: null,
+			parentId: selectedParentTag?._id ? selectedParentTag?._id : null,
 			color,
 		};
+
+		console.log(newTag);
+		console.log(selectedParentTag);
+		debugger;
 
 		try {
 			let tagId = null;
@@ -102,7 +116,6 @@ const ModalAddTag: React.FC = () => {
 				<div
 					className={`border border-[#4c4c4c] rounded-md flex items-center ${isNameInputFocused ? 'border-blue-500' : ''}`}
 				>
-					<Icon name="menu" customClass="!text-[16px] text-color-gray-100 hover:text-white p-[6px]" />
 					<div className="border-l border-[#4c4c4c] p-[6px] flex-1">
 						<input
 							value={name}

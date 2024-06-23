@@ -8,6 +8,7 @@ import DraggableProjects, { ProjectItem } from './DraggableProjects';
 import { SortableTree } from './SortableTest/SortableTree';
 import { SMART_LISTS } from '../utils/smartLists.utils';
 import { setModalState } from '../slices/modalSlice';
+import TagItem from './TagItem';
 
 const TaskListSidebar = () => {
 	const dispatch = useDispatch();
@@ -15,7 +16,7 @@ const TaskListSidebar = () => {
 	const { projects } = fetchedProjects || {};
 
 	const { data: fetchedTags } = useGetTagsQuery();
-	const { tags } = fetchedTags || {};
+	const { tags, tagsWithoutParentId } = fetchedTags || {};
 
 	// TODO: Look into this. I had this before to drag projects and drop them into different folders.
 	// const projectsWithNoGroup = projects && projects.filter((project) => !project.groupId);
@@ -109,8 +110,8 @@ const TaskListSidebar = () => {
 						</div>
 					) : (
 						<div>
-							{tags.map((tag) => {
-								return <div key={tag._id}>{tag.name}</div>;
+							{tagsWithoutParentId.map((tag) => {
+								return <TagItem key={tag._id} tag={tag} />;
 							})}
 						</div>
 					)}

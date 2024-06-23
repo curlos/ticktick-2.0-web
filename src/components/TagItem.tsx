@@ -2,6 +2,8 @@ import { useNavigate } from 'react-router';
 import { useGetTagsQuery, useGetTasksQuery } from '../services/api';
 import { useEffect, useState } from 'react';
 import classNames from 'classnames';
+import Icon from './Icon';
+import ContextMenuSidebarItemActions from './ContextMenu/ContextMenuSidebarItemActions';
 
 const TagItem = ({ tag }) => {
 	const navigate = useNavigate();
@@ -14,17 +16,19 @@ const TagItem = ({ tag }) => {
 
 	const { name, color, parentId, _id } = tag;
 
-	let iconName = 'tag';
+	const iconName = 'tag';
 	const displayName = name;
 	const [numberOfTasks, setNumberOfTasks] = useState(0);
 	const [taskContextMenu, setTaskContextMenu] = useState(null);
+
+	const isParent = false;
 
 	useEffect(() => {
 		if (!tasks) {
 			return;
 		}
 
-		const filteredTasks = tasks.filter((task) => !task.isDeleted && !task.willNotDo && task.tagIds.includes(_id));
+		const filteredTasks = tasks.filter((task) => !task.isDeleted && !task.willNotDo && task?.tagIds?.includes(_id));
 		setNumberOfTasks(filteredTasks.length);
 	}, [tasks]);
 
@@ -59,23 +63,11 @@ const TagItem = ({ tag }) => {
 			>
 				<div className="flex items-center gap-2">
 					<div className="flex items-center gap-0">
-						{isFolder && (
-							<Icon
-								name={'chevron_right'}
-								customClass={'text-white !text-[12px] ml-[-12px]'}
-								fill={iconFill != undefined ? iconFill : 1}
-							/>
+						{isParent && (
+							<Icon name={'chevron_right'} customClass={'text-white !text-[12px] ml-[-12px]'} fill={1} />
 						)}
 
-						{emoji ? (
-							emoji
-						) : (
-							<Icon
-								name={iconName}
-								customClass={'text-white !text-[22px]'}
-								fill={iconFill != undefined ? iconFill : 1}
-							/>
-						)}
+						<Icon name={iconName} customClass={'text-white !text-[22px]'} fill={1} />
 					</div>
 					<div className="overflow-hidden text-nowrap text-ellipsis w-[130px]">{displayName}</div>
 				</div>
@@ -84,7 +76,7 @@ const TagItem = ({ tag }) => {
 					<div className="flex justify-end">
 						<div
 							className={(!color ? 'hidden ' : '') + ' ' + `rounded-full w-[8px] h-[8px]`}
-							style={{ backgroundColor: color && !isFolder ? color : 'transparent' }}
+							style={{ backgroundColor: color && !isParent ? color : 'transparent' }}
 						></div>
 					</div>
 
@@ -92,7 +84,7 @@ const TagItem = ({ tag }) => {
 				</div>
 			</div>
 
-			{/* {isFolder && showChildProjects && projects && projects.map((projectId: string) => {
+			{/* {isParent && showChildProjects && projects && projects.map((projectId: string) => {
                 const project = formattedProjectsWithGroup[projectId];
 
                 return (
@@ -103,12 +95,13 @@ const TagItem = ({ tag }) => {
             })} */}
 
 			{taskContextMenu && (
-				<ContextMenuProjectActions
+				<ContextMenuSidebarItemActions
 					taskContextMenu={taskContextMenu}
 					xPos={taskContextMenu.xPos}
 					yPos={taskContextMenu.yPos}
 					onClose={handleClose}
-					project={project}
+					item={tag}
+					type="tag"
 				/>
 			)}
 		</div>

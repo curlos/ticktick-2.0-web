@@ -17,9 +17,13 @@ function App() {
 						<Route path="/signup" element={<LoginPage />}></Route>
 						<Route path="/" element={<HomePage />}></Route>
 
+						{/* Projects */}
 						<Route path="/projects/:projectId/tasks" element={<HomePage />}></Route>
-
 						<Route path="/projects/:projectId/tasks/:taskId" element={<HomePage />}></Route>
+
+						{/* Tags */}
+						<Route path="/tags/:tagId/tasks" element={<HomePage />}></Route>
+						<Route path="/tags/:tagId/tasks/:taskId" element={<HomePage />}></Route>
 
 						<Route path="/focus" element={<FocusPage />}></Route>
 						<Route path="/matrix" element={<EisenhowerMatrixPage />}></Route>
