@@ -10,6 +10,7 @@ import Icon from './Icon';
 import { useGetTasksQuery } from '../services/api';
 import { SMART_LISTS } from '../utils/smartLists.utils';
 import ContextMenuProjectActions from './ContextMenu/ContextMenuProjectActions';
+import ContextMenuSidebarItemActions from './ContextMenu/ContextMenuSidebarItemActions';
 
 const DraggableProjects = ({ projects }) => {
 	const [items, setItems] = useState([...projects]);
@@ -185,12 +186,13 @@ export const ProjectItem: React.FC<ProjectItemProps> = ({ project, projectsWithG
             })} */}
 
 			{taskContextMenu && (
-				<ContextMenuProjectActions
+				<ContextMenuSidebarItemActions
 					taskContextMenu={taskContextMenu}
 					xPos={taskContextMenu.xPos}
 					yPos={taskContextMenu.yPos}
 					onClose={handleClose}
-					project={project}
+					item={project}
+					type="project"
 				/>
 			)}
 		</div>

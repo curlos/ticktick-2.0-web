@@ -2,16 +2,23 @@ import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import DropdownSidebarItemActions from '../Dropdown/DropdownSidebarItemActions';
 
-interface IContextMenuTagActions {
+interface IContextMenuSidebarItemActions {
 	xPos: string;
 	yPos: string;
 	onClose: () => void;
-	tag: Object;
+	item: Object;
+	type: 'project' | 'tag' | 'filter';
 }
 
-const ContextMenuProjectActions: React.FC<IContextMenuTagActions> = ({ xPos, yPos, onClose, tag }) => {
+const ContextMenuSidebarItemActions: React.FC<IContextMenuSidebarItemActions> = ({
+	xPos,
+	yPos,
+	onClose,
+	item,
+	type,
+}) => {
 	const [isDropdownSidebarItemActionsVisible, setIsDropdownSidebarItemActionsVisible] = useState(true);
-	const dropdownActionsToggleRef = useRef(null);
+	const dropdownSidebarItemActionsRef = useRef(null);
 
 	useEffect(() => {
 		if (xPos !== undefined || xPos !== null) {
@@ -30,17 +37,17 @@ const ContextMenuProjectActions: React.FC<IContextMenuTagActions> = ({ xPos, yPo
 	return createPortal(
 		<div>
 			<DropdownSidebarItemActions
-				toggleRef={dropdownActionsToggleRef}
+				toggleRef={dropdownSidebarItemActionsRef}
 				isVisible={isDropdownSidebarItemActionsVisible}
 				setIsVisible={setIsDropdownSidebarItemActionsVisible}
 				customClasses=" !ml-[0px] mt-[15px]"
 				customStyling={{ position: 'absolute', top: `${yPos}px`, left: `${xPos}px` }}
-				item={tag}
-				type="tag"
+				item={item}
+				type={type}
 			/>
 		</div>,
 		document.body
 	);
 };
 
-export default ContextMenuProjectActions;
+export default ContextMenuSidebarItemActions;
