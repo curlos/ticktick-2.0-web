@@ -1,34 +1,32 @@
-import Modal from '../Modal';
-import Icon from '../../Icon';
-import { useEffect, useRef, useState } from 'react';
-import { IProject } from '../../../interfaces/interfaces';
-import { useAddProjectMutation, useEditProjectMutation } from '../../../services/api';
-import { useDispatch, useSelector } from 'react-redux';
-import { setModalState } from '../../../slices/modalSlice';
+import { useState, useEffect, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router';
-import ModalNewFolder from './ModalNewFolder';
-import DropdownFolder from './DropdownFolder';
+import { useAddProjectMutation, useEditProjectMutation } from '../../../services/api';
+import { setModalState } from '../../../slices/modalSlice';
 import ColorList from '../../ColorList';
+import Icon from '../../Icon';
+import Modal from '../Modal';
+import DropdownParentTag from './DropdownParentTag';
 
-const ModalAddProject: React.FC = () => {
-	const modal = useSelector((state) => state.modals.modals['ModalAddProject']);
+const ModalAddTag: React.FC = () => {
+	const modal = useSelector((state) => state.modals.modals['ModalAddTag']);
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
+
+	console.log('hi');
 
 	const [addProject, { isLoading: isLoadingAddProject, error: errorAddProject }] = useAddProjectMutation(); // Mutation hook
 	const [editProject, { isLoading: isLoadingEditProject, error: errorEditProject }] = useEditProjectMutation();
 
-	const [name, setName] = useState(modal?.props?.project?.name || '');
-	const [color, setColor] = useState(modal?.props?.project?.color || '');
-	const [selectedView, setSelectedView] = useState('list');
-	const [selectedFolder, setSelectedFolder] = useState<IProject | Object>({ name: 'None' });
-	const [isDropdownFolderVisible, setIsDropdownFolderVisible] = useState(false);
-	const [isModalNewFolderOpen, setIsModalNewFolderOpen] = useState(false);
+	const [name, setName] = useState(modal?.props?.tag?.name || '');
+	const [color, setColor] = useState(modal?.props?.tag?.color || '');
+	const [selectedParentTag, setSelectedParentTag] = useState(null);
+	const [isDropdownParentTagVisible, setIsDropdownParentTagVisible] = useState(false);
 
 	const DEFAULT_COLORS = ['#ff6161', '#FFAC37', '#FFD323', '#E6EA48', '#33D870', '#4BA1FF', '#6D75F4'];
 	const DEFAULT_COLORS_LOWERCASE = DEFAULT_COLORS.map((color) => color.toLowerCase());
 
-	const isEditingList = modal?.props?.project ? true : false;
+	const isEditingTag = modal?.props?.tag ? true : false;
 
 	useEffect(() => {
 		if (modal?.props?.project) {
@@ -41,49 +39,34 @@ const ModalAddProject: React.FC = () => {
 		}
 	}, [modal?.props?.project]);
 
-	const views = [
-		{
-			type: 'list',
-			iconName: 'list',
-		},
-		// {
-		//     type: 'kanban',
-		//     iconName: 'view_kanban'
-		// },
-		// {
-		//     type: 'timeline',
-		//     iconName: 'timeline'
-		// },
-	];
-
-	// TODO: Setup backend to add lists. Should take all the properties in an object: name, color, view, and folder.
-	const handleAddProject = async () => {
+	const handleAddTag = async () => {
 		if (name.trim() === '') {
 			return;
 		}
 
-		const newProject = {
+		const newTag = {
 			name: name,
-			isFolder: false,
+			parentTagId: null,
 			color,
 		};
 
 		try {
-			let projectId = null;
+			let tagId = null;
 
-			if (isEditingList) {
-				const {
-					data: { _id },
-				} = await editProject({ projectId: modal.props.project._id, payload: newProject });
-				projectId = _id;
+			if (isEditingTag) {
+				// TODO: Bring this back in a moment.
+				// const {
+				// 	data: { _id },
+				// } = await editProject({ projectId: modal.props.project._id, payload: newTag });
+				// tagId = _id;
 			} else {
 				const {
 					data: { _id },
-				} = await addProject(newProject);
-				projectId = _id;
+				} = await addTag(newTag);
+				tagId = _id;
 			}
 			closeModal();
-			navigate(`/projects/${projectId}/tasks`);
+			navigate(`/tags/${tagId}/tasks`);
 		} catch (error) {
 			console.error(error);
 		}
@@ -91,7 +74,7 @@ const ModalAddProject: React.FC = () => {
 
 	const [isNameInputFocused, setIsNameInputFocused] = useState(false);
 
-	const dropdownFolderRef = useRef(null);
+	const dropdownParentTagRef = useRef(null);
 
 	if (!modal) {
 		return null;
@@ -100,14 +83,14 @@ const ModalAddProject: React.FC = () => {
 	const { isOpen } = modal;
 
 	const closeModal = () => {
-		dispatch(setModalState({ modalId: 'ModalAddProject', isOpen: false }));
+		dispatch(setModalState({ modalId: 'ModalAddTag', isOpen: false }));
 	};
 
 	return (
 		<Modal isOpen={isOpen} onClose={closeModal} position="top-center" customClasses="!w-[400px]">
 			<div className="bg-color-gray-650 rounded-lg shadow-lg py-4 px-6">
 				<div className="flex items-center justify-between mb-4">
-					<h3 className="font-bold text-[16px]">{isEditingList ? 'Edit List' : 'Add List'}</h3>
+					<h3 className="font-bold text-[16px]">{isEditingTag ? 'Edit Tag' : 'Add Tag'}</h3>
 					<Icon
 						name="close"
 						customClass={'!text-[20px] text-color-gray-100 hover:text-white cursor-pointer'}
@@ -136,37 +119,18 @@ const ModalAddProject: React.FC = () => {
 					{/* Color */}
 					<ColorList colorList={DEFAULT_COLORS_LOWERCASE} color={color} setColor={setColor} />
 
-					{/* View */}
+					{/* Parent Tag */}
 					<div className="flex items-center">
-						<div className="text-color-gray-100 w-[96px]">View</div>
-						<div className="flex items-center gap-1">
-							{views.map((view) => (
-								<span key={view.iconName}>
-									<Icon
-										name={view.iconName}
-										customClass={
-											'!text-[22px] px-3 py-1 text-color-gray-100 bg-color-gray-300 rounded-md cursor-pointer border border-transparent' +
-											(selectedView === view.type ? ' !border-blue-500 !text-blue-500' : '')
-										}
-										onClick={() => setSelectedView(view.type)}
-									/>
-								</span>
-							))}
-						</div>
-					</div>
-
-					{/* Folder */}
-					<div className="flex items-center">
-						<div className="text-color-gray-100 w-[96px]">Folder</div>
+						<div className="text-color-gray-100 w-[96px]">Parent Tag</div>
 						<div className="flex-1 relative">
 							<div
-								ref={dropdownFolderRef}
+								ref={dropdownParentTagRef}
 								className="border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500 rounded-md cursor-pointer"
 								onClick={() => {
-									setIsDropdownFolderVisible(!isDropdownFolderVisible);
+									setIsDropdownParentTagVisible(!isDropdownParentTagVisible);
 								}}
 							>
-								<div>{selectedFolder.name}</div>
+								<div>{selectedParentTag?.name}</div>
 								<Icon
 									name="expand_more"
 									fill={0}
@@ -174,14 +138,12 @@ const ModalAddProject: React.FC = () => {
 								/>
 							</div>
 
-							<DropdownFolder
-								toggleRef={dropdownFolderRef}
-								isVisible={isDropdownFolderVisible}
-								setIsVisible={setIsDropdownFolderVisible}
-								selectedFolder={selectedFolder}
-								setSelectedFolder={setSelectedFolder}
-								isModalNewFolderOpen={isModalNewFolderOpen}
-								setIsModalNewFolderOpen={setIsModalNewFolderOpen}
+							<DropdownParentTag
+								toggleRef={dropdownParentTagRef}
+								isVisible={isDropdownParentTagVisible}
+								setIsVisible={setIsDropdownParentTagVisible}
+								selectedParentTag={selectedParentTag}
+								setSelectedParentTag={setSelectedParentTag}
 							/>
 						</div>
 					</div>
@@ -199,16 +161,14 @@ const ModalAddProject: React.FC = () => {
 							'bg-blue-500 rounded py-[2px] cursor-pointer hover:bg-blue-600 min-w-[114px]' +
 							(!name ? ' opacity-50' : '')
 						}
-						onClick={handleAddProject}
+						onClick={handleAddTag}
 					>
-						{isEditingList ? 'Edit' : 'Save'}
+						{isEditingTag ? 'Edit' : 'Save'}
 					</button>
 				</div>
 			</div>
-
-			<ModalNewFolder isModalOpen={isModalNewFolderOpen} setIsModalOpen={setIsModalNewFolderOpen} />
 		</Modal>
 	);
 };
 
-export default ModalAddProject;
+export default ModalAddTag;

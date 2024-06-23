@@ -25,7 +25,7 @@ export const api = createApi({
 			return headers;
 		},
 	}),
-	tagTypes: ['Task', 'Project', 'FocusRecord', 'User', 'Comment', 'Matrix'],
+	tagTypes: ['Task', 'Project', 'FocusRecord', 'User', 'Comment', 'Tag', 'Matrix'],
 	endpoints: (builder) => ({
 		// Users
 		getUsers: builder.query({
@@ -275,6 +275,46 @@ export const api = createApi({
 			invalidatesTags: ['Comment'],
 		}),
 
+		// Tags
+		getTags: builder.query({
+			query: (queryParams) => {
+				const queryString = buildQueryString(queryParams);
+				return queryString ? `/tags?${queryString}` : '/tags';
+			},
+			providesTags: ['Tag'],
+			transformResponse: (response) => {
+				const tags = response;
+
+				return { tags };
+			},
+		}),
+		addTag: builder.mutation({
+			query: (payload) => {
+				const url = '/tags/add';
+				return {
+					url,
+					method: 'POST',
+					body: payload,
+				};
+			},
+			invalidatesTags: ['Tag'],
+		}),
+		editTag: builder.mutation({
+			query: ({ tagId, payload }) => ({
+				url: `/tags/edit/${tagId}`,
+				method: 'PUT',
+				body: payload,
+			}),
+			invalidatesTags: (result, error, tagId) => ['Tag'],
+		}),
+		permanentlyDeleteTag: builder.mutation({
+			query: (tagId) => ({
+				url: `/tags/delete/${tagId}`,
+				method: 'DELETE',
+			}),
+			invalidatesTags: ['Tag'],
+		}),
+
 		// Matrices
 		getMatrices: builder.query({
 			query: (queryParams) => {
@@ -334,6 +374,12 @@ export const {
 	useAddCommentMutation,
 	useEditCommentMutation,
 	usePermanentlyDeleteCommentMutation,
+
+	// Tags
+	useGetTagsQuery,
+	useAddTagMutation,
+	useEditTagMutation,
+	usePermanentlyDeleteTagMutation,
 
 	// Matrices
 	useGetMatricesQuery,

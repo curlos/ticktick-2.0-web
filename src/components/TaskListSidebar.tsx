@@ -3,7 +3,7 @@ import Icon from './Icon';
 import { IProject } from '../interfaces/interfaces';
 import { arrayToObjectByKey, containsEmoji, fetchData } from '../utils/helpers.utils';
 import { useDispatch, useSelector } from 'react-redux';
-import { useGetProjectsQuery } from '../services/api';
+import { useGetProjectsQuery, useGetTagsQuery } from '../services/api';
 import DraggableProjects, { ProjectItem } from './DraggableProjects';
 import { SortableTree } from './SortableTest/SortableTree';
 import { SMART_LISTS } from '../utils/smartLists.utils';
@@ -13,6 +13,9 @@ const TaskListSidebar = () => {
 	const dispatch = useDispatch();
 	const { data: fetchedProjects, isLoading, error } = useGetProjectsQuery();
 	const { projects } = fetchedProjects || {};
+
+	const { data: fetchedTags } = useGetTagsQuery();
+	const { tags } = fetchedTags || {};
 
 	// TODO: Look into this. I had this before to drag projects and drop them into different folders.
 	// const projectsWithNoGroup = projects && projects.filter((project) => !project.groupId);
@@ -94,13 +97,23 @@ const TaskListSidebar = () => {
 							name={'add'}
 							customClass={'text-color-gray-100 !text-[16px] hover:text-white'}
 							onClick={() => {
+								console.log('Bitch');
 								dispatch(setModalState({ modalId: 'ModalAddTag', isOpen: true }));
 							}}
 						/>
 					</div>
-					<div className="p-2 rounded-lg text-color-gray-100 bg-color-gray-600 text-[12px]">
-						Categorize your tasks with tags. Quickly select a tag by typing "#" when adding a task
-					</div>
+
+					{!tags || tags.length === 0 ? (
+						<div className="p-2 rounded-lg text-color-gray-100 bg-color-gray-600 text-[12px]">
+							Categorize your tasks with tags. Quickly select a tag by typing "#" when adding a task
+						</div>
+					) : (
+						<div>
+							{tags.map((tag) => {
+								return <div key={tag._id}>{tag.name}</div>;
+							})}
+						</div>
+					)}
 				</div>
 			</div>
 
