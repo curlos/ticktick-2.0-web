@@ -456,6 +456,28 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 							onCloseContextMenu={onCloseContextMenu}
 						/>
 					</div>
+					<div className="relative">
+						<TaskAction
+							toggleRef={dropdownProjectsRef}
+							iconName="sell"
+							title="Tags"
+							onClick={() => setIsDropdownProjectsVisible(!isDropdownProjectsVisible)}
+							hasSideDropdown={true}
+						/>
+
+						{/* Side Dropdown */}
+						<DropdownProjects
+							toggleRef={dropdownProjectsRef}
+							isVisible={isDropdownProjectsVisible}
+							setIsVisible={setIsDropdownProjectsVisible}
+							selectedProject={selectedProject}
+							setSelectedProject={setSelectedProject}
+							projects={projects}
+							task={task}
+							customClasses="ml-[200px] mt-[-30px]"
+							onCloseContextMenu={onCloseContextMenu}
+						/>
+					</div>
 				</div>
 
 				<hr className="border-color-gray-200" />
