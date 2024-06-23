@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import DropdownProjectActions from '../Dropdown/DropdownProjectActions';
+import DropdownSidebarItemActions from '../Dropdown/DropdownSidebarItemActions';
 
 interface IContextMenuProjectActions {
 	xPos: string;
@@ -29,13 +30,14 @@ const ContextMenuProjectActions: React.FC<IContextMenuProjectActions> = ({ xPos,
 
 	return createPortal(
 		<div>
-			<DropdownProjectActions
+			<DropdownSidebarItemActions
 				toggleRef={dropdownTaskActionsToggleRef}
 				isVisible={isDropdownProjectActionsVisible}
 				setIsVisible={setIsDropdownProjectActionsVisible}
 				customClasses=" !ml-[0px] mt-[15px]"
 				customStyling={{ position: 'absolute', top: `${yPos}px`, left: `${xPos}px` }}
-				project={project}
+				item={project}
+				type="project"
 			/>
 		</div>,
 		document.body
