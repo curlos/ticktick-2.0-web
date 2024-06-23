@@ -18,7 +18,7 @@ const DropdownParentTag: React.FC<DropdownParentTagProps> = ({
 	setSelectedParentTag,
 }) => {
 	const { data: fetchedTags, isLoading: isLoadingGetTags, error: errorGetTags } = useGetTagsQuery();
-	const { tags, tagsById } = fetchedTags || {};
+	const { tags, parentOfTags } = fetchedTags || {};
 
 	const [parentTags, setParentTags] = useState<Array<IProject>>([]);
 
@@ -27,8 +27,10 @@ const DropdownParentTag: React.FC<DropdownParentTagProps> = ({
 			const newParentTags = [];
 
 			tags.forEach((tag) => {
-				// If there's no parentId, then the tag is a candidate to be a parentTag. Tags with a parentId, are already indented by one and I don't want tags to be too complicated like Tasks where they can be indented infinitely as that's a whole mess to deal with already in Tasks. Tags should be simpler so only one indentation level at most.
-				if (!tag.parentId) {
+				// If there's no parent tag, then the tag is a candidate to be a parentTag. Tags with a parent, are already indented by one and I don't want tags to be too complicated like Tasks where they can be indented infinitely as that's a whole mess to deal with already in Tasks. Tags should be simpler so only one indentation level at most.
+				const hasParentTag = parentOfTags[tag._id];
+
+				if (!hasParentTag) {
 					newParentTags.push(tag);
 				}
 			});

@@ -14,7 +14,7 @@ const TagItem = ({ tag }) => {
 	const { data: fetchedTasks, isLoading: isLoadingGetTasks, error: errorGetTasks } = useGetTasksQuery();
 	const { tasks } = fetchedTasks || {};
 
-	const { name, color, parentId, _id } = tag;
+	const { name, color, children, _id } = tag;
 
 	const iconName = 'tag';
 	const displayName = name;

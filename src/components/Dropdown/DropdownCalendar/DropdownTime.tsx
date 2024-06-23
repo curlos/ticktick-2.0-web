@@ -51,9 +51,6 @@ const DropdownTime = ({ toggleRef, isVisible, setIsVisible, selectedTime, setSel
 			time = '';
 		}
 
-		console.log();
-		console.log(time);
-
 		// TODO: Fix
 		// if (time === '12:00 AM') {
 		// 	setSelectedHour('');

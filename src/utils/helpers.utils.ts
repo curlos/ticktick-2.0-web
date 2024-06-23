@@ -326,16 +326,16 @@ export const getTasksWithFilledInChildren = (tasks, tasksById, projectId, filter
 	return finalTasks;
 };
 
-export const getObjectOfEachTasksParent = (tasks) => {
-	const tasksParent = {};
+export const getObjectOfEachItemsParent = (items) => {
+	const itemsParent = {};
 
-	for (let task of tasks) {
-		for (let childId of task.children) {
-			tasksParent[childId] = task._id;
+	for (let item of items) {
+		for (let childId of item.children) {
+			itemsParent[childId] = item._id;
 		}
 	}
 
-	return tasksParent;
+	return itemsParent;
 };
 
 export const getObjectOfEachFocusRecordsParent = (focusRecords) => {

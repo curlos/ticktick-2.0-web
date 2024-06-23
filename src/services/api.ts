@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import {
 	arrayToObjectArrayByKey,
 	arrayToObjectByKey,
-	getObjectOfEachTasksParent,
+	getObjectOfEachItemsParent,
 	getObjectOfEachFocusRecordsParent,
 } from '../utils/helpers.utils';
 import { loginUserSuccess } from '../slices/userSlice';
@@ -94,7 +94,7 @@ export const api = createApi({
 			transformResponse: (response) => {
 				const tasksById = arrayToObjectByKey(response, '_id');
 				// Tells us the parent id of a task (if it has any)
-				const parentOfTasks = getObjectOfEachTasksParent(response);
+				const parentOfTasks = getObjectOfEachItemsParent(response);
 
 				return { tasks: response, tasksById, parentOfTasks };
 			},
@@ -285,23 +285,16 @@ export const api = createApi({
 			transformResponse: (response) => {
 				const tags = response;
 				const tagsById = arrayToObjectByKey(tags, '_id');
-				const tagsWithoutParentId = tags.filter((tag) => !tag.parentId);
-
-				const tagsByIdChildren = {};
-
-				tags.forEach((tag) => {
-					const { parentId } = tag;
-
-					if (parentId) {
-						if (!tagsByIdChildren[parentId]) {
-							tagsByIdChildren[parentId] = [];
-						}
-
-						tagsByIdChildren[parentId].push(tag);
-					}
+				// Tells us the parent id of a task (if it has any)
+				const parentOfTags = getObjectOfEachItemsParent(tags);
+				const tagsWithNoParent = tags.filter((tag) => {
+					const hasParentTag = parentOfTags[tag._id];
+					return !hasParentTag;
 				});
 
-				return { tags, tagsById, tagsWithoutParentId };
+				console.log(tagsWithNoParent);
+
+				return { tags, tagsById, tagsWithNoParent, parentOfTags };
 			},
 		}),
 		addTag: builder.mutation({

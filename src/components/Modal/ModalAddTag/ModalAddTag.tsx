@@ -19,7 +19,7 @@ const ModalAddTag: React.FC = () => {
 	const navigate = useNavigate();
 
 	const { data: fetchedTags, isLoading: isLoadingGetTags, error: errorGetTags } = useGetTagsQuery();
-	const { tagsById } = fetchedTags || {};
+	const { tagsById, parentOfTags } = fetchedTags || {};
 
 	const [addTag] = useAddTagMutation();
 
@@ -39,8 +39,9 @@ const ModalAddTag: React.FC = () => {
 			setName(tag.name);
 			setColor(tag.color);
 
-			if (tag.parentId) {
-				const parentTag = tagsById[tag.parentId];
+			const parentTag = parentOfTags[tag._id];
+
+			if (parentTag) {
 				setSelectedParentTag(parentTag);
 			}
 		} else {
@@ -59,10 +60,6 @@ const ModalAddTag: React.FC = () => {
 			parentId: selectedParentTag?._id ? selectedParentTag?._id : null,
 			color,
 		};
-
-		console.log(newTag);
-		console.log(selectedParentTag);
-		debugger;
 
 		try {
 			let tagId = null;

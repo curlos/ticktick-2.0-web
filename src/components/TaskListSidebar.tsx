@@ -16,7 +16,7 @@ const TaskListSidebar = () => {
 	const { projects } = fetchedProjects || {};
 
 	const { data: fetchedTags } = useGetTagsQuery();
-	const { tags, tagsWithoutParentId } = fetchedTags || {};
+	const { tags, tagsWithNoParent } = fetchedTags || {};
 
 	// TODO: Look into this. I had this before to drag projects and drop them into different folders.
 	// const projectsWithNoGroup = projects && projects.filter((project) => !project.groupId);
@@ -110,7 +110,7 @@ const TaskListSidebar = () => {
 						</div>
 					) : (
 						<div>
-							{tagsWithoutParentId.map((tag) => {
+							{tagsWithNoParent.map((tag) => {
 								return <TagItem key={tag._id} tag={tag} />;
 							})}
 						</div>
