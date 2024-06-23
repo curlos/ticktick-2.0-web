@@ -5,6 +5,7 @@ import {
 	useAddProjectMutation,
 	useAddTagMutation,
 	useEditProjectMutation,
+	useEditTagMutation,
 	useGetTagsQuery,
 } from '../../../services/api';
 import { setModalState } from '../../../slices/modalSlice';
@@ -22,6 +23,7 @@ const ModalAddTag: React.FC = () => {
 	const { tagsById, parentOfTags } = fetchedTags || {};
 
 	const [addTag] = useAddTagMutation();
+	const [editTag] = useEditTagMutation();
 
 	const [name, setName] = useState(modal?.props?.tag?.name || '');
 	const [color, setColor] = useState(modal?.props?.tag?.color || '');
@@ -39,10 +41,13 @@ const ModalAddTag: React.FC = () => {
 			setName(tag.name);
 			setColor(tag.color);
 
-			const parentTag = parentOfTags[tag._id];
+			const parentTagId = parentOfTags[tag._id];
 
-			if (parentTag) {
+			if (parentTagId) {
+				const parentTag = tagsById[parentTagId];
 				setSelectedParentTag(parentTag);
+			} else {
+				setSelectedParentTag({ name: 'None' });
 			}
 		} else {
 			setName('');
@@ -55,7 +60,7 @@ const ModalAddTag: React.FC = () => {
 			return;
 		}
 
-		const newTag = {
+		let newTag = {
 			name: name,
 			parentId: selectedParentTag?._id ? selectedParentTag?._id : null,
 			color,
@@ -65,11 +70,28 @@ const ModalAddTag: React.FC = () => {
 			let tagId = null;
 
 			if (isEditingTag) {
-				// TODO: Bring this back in a moment.
-				// const {
-				// 	data: { _id },
-				// } = await editProject({ projectId: modal.props.project._id, payload: newTag });
-				// tagId = _id;
+				const { tag } = modal.props;
+				// TODO: Pass in old and new parent. Also, check if they changed.
+				const oldParentTagId = parentOfTags[tag._id];
+				const newParentTagId = newTag.parentId;
+
+				delete newTag.parentId;
+
+				const { parentId, ...restOfNewTag } = newTag;
+
+				newTag = {
+					...restOfNewTag,
+					oldParentTagId,
+					newParentTagId,
+				};
+
+				console.log(newTag);
+				debugger;
+
+				const {
+					data: { _id },
+				} = await editTag({ tagId: tag._id, payload: newTag });
+				tagId = _id;
 			} else {
 				const {
 					data: { _id },
@@ -154,6 +176,7 @@ const ModalAddTag: React.FC = () => {
 								setIsVisible={setIsDropdownParentTagVisible}
 								selectedParentTag={selectedParentTag}
 								setSelectedParentTag={setSelectedParentTag}
+								tag={modal?.props?.tag}
 							/>
 						</div>
 					</div>

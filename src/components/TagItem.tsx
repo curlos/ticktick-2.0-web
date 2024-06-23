@@ -5,11 +5,11 @@ import classNames from 'classnames';
 import Icon from './Icon';
 import ContextMenuSidebarItemActions from './ContextMenu/ContextMenuSidebarItemActions';
 
-const TagItem = ({ tag }) => {
+const TagItem = ({ tag, isChild }) => {
 	const navigate = useNavigate();
 
 	const { data: fetchedTags, isLoading: isLoadingGetTags, error: errorGetTags } = useGetTagsQuery();
-	const { tags } = fetchedTags || {};
+	const { tags, tagsById } = fetchedTags || {};
 
 	const { data: fetchedTasks, isLoading: isLoadingGetTasks, error: errorGetTasks } = useGetTasksQuery();
 	const { tasks } = fetchedTasks || {};
@@ -39,6 +39,7 @@ const TagItem = ({ tag }) => {
 	const handleContextMenu = (event) => {
 		// Prevent the default context menu
 		event.preventDefault();
+		event.stopPropagation();
 
 		setTaskContextMenu({
 			xPos: event.pageX,
@@ -50,11 +51,16 @@ const TagItem = ({ tag }) => {
 		setTaskContextMenu(null);
 	};
 
+	const childTags = children.map((childId) => tagsById[childId]);
+
 	return (
 		<div onContextMenu={handleContextMenu} onClick={handleClick}>
 			<div
 				className={
-					classNames('p-2 rounded-lg flex items-center justify-between cursor-pointer cursor-pointer')
+					classNames(
+						'p-2 rounded-lg flex items-center justify-between cursor-pointer cursor-pointer',
+						isChild ? 'ml-3' : ''
+					)
 					// (projectId === _id || (isSmartListView && name.toLowerCase() === projectId)
 					// 	? ' bg-color-gray-200'
 					// 	: ' hover:bg-color-gray-600') +
@@ -84,15 +90,9 @@ const TagItem = ({ tag }) => {
 				</div>
 			</div>
 
-			{/* {isParent && showChildProjects && projects && projects.map((projectId: string) => {
-                const project = formattedProjectsWithGroup[projectId];
-
-                return (
-                    project ? (
-                        <ProjectItem project={project} insideFolder={true} />
-                    ) : null
-                );
-            })} */}
+			{childTags &&
+				childTags.length > 0 &&
+				childTags.map((childTag) => <TagItem key={childTag._id} tag={childTag} isChild={true} />)}
 
 			{taskContextMenu && (
 				<ContextMenuSidebarItemActions
