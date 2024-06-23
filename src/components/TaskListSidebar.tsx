@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import Icon from './Icon';
-import ModalAddList from './Modal/ModalAddList';
 import { IProject } from '../interfaces/interfaces';
 import { arrayToObjectByKey, containsEmoji, fetchData } from '../utils/helpers.utils';
 import { useDispatch, useSelector } from 'react-redux';
@@ -49,7 +48,7 @@ const TaskListSidebar = () => {
 							name={'add'}
 							customClass={'text-color-gray-100 !text-[16px] hover:text-white'}
 							onClick={() => {
-								dispatch(setModalState({ modalId: 'ModalAddList', isOpen: true }));
+								dispatch(setModalState({ modalId: 'ModalAddProject', isOpen: true }));
 							}}
 						/>
 					</div>
@@ -85,7 +84,20 @@ const TaskListSidebar = () => {
 				</div>
 
 				<div className="pt-3">
-					<div className="p-2 text-color-gray-100">Tags</div>
+					<div className="flex items-center justify-between py-1 pr-1 hover:bg-color-gray-600 rounded cursor-pointer mb-2">
+						<div className="flex items-center">
+							<Icon name={'chevron_right'} customClass={'text-color-gray-100 !text-[16px]'} />
+							<div className="text-color-gray-100">Tag</div>
+						</div>
+
+						<Icon
+							name={'add'}
+							customClass={'text-color-gray-100 !text-[16px] hover:text-white'}
+							onClick={() => {
+								dispatch(setModalState({ modalId: 'ModalAddTag', isOpen: true }));
+							}}
+						/>
+					</div>
 					<div className="p-2 rounded-lg text-color-gray-100 bg-color-gray-600 text-[12px]">
 						Categorize your tasks with tags. Quickly select a tag by typing "#" when adding a task
 					</div>

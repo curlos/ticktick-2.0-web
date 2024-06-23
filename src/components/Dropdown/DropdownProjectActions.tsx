@@ -52,7 +52,7 @@ const DropdownProjectActions: React.FC<DropdownProjectActionsProps> = ({
 					name="Edit"
 					onClick={() => {
 						setIsVisible(false);
-						dispatch(setModalState({ modalId: 'ModalAddList', isOpen: true, props: { project } }));
+						dispatch(setModalState({ modalId: 'ModalAddProject', isOpen: true, props: { project } }));
 					}}
 				/>
 				<ProjectAction

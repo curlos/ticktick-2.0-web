@@ -1,7 +1,7 @@
 import React from 'react';
 import ModalAddTaskForm from './ModalAddTaskForm';
 import ModalAddFocusRecord from './ModalAddFocusRecord';
-import ModalAddList from './ModalAddList';
+import ModalAddProject from './ModalAddProject/ModalAddProject';
 import ModalSearchTasks from './ModalSearchTasks';
 import ModalErrorMessenger from './ModalErrorMessenger';
 import ModalAccountSettings from './ModalAccountSettings';
@@ -17,7 +17,7 @@ const GlobalModalList = () => {
 			<ModalErrorMessenger />
 			<ModalAddTaskForm />
 			<ModalAddFocusRecord />
-			<ModalAddList />
+			<ModalAddProject />
 			<ModalSearchTasks />
 			<ModalAccountSettings />
 			<ModalEditMatrix />

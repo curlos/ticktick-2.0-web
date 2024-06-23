@@ -9,7 +9,8 @@ const DEFAULT_MODAL_STATE = {
 const MODAL_IDS = [
 	'ModalErrorMessenger',
 	'ModalAddFocusRecord',
-	'ModalAddList',
+	'ModalAddProject',
+	'ModalAddTag',
 	'ModalAddTaskForm',
 	'ModalFocusSettings',
 	'ModalTaskActivities',
