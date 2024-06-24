@@ -132,8 +132,6 @@ export const ProjectItem: React.FC<ProjectItemProps> = ({ project, projectsWithG
 	const isSelected =
 		projectId && ((_id && projectId === _id) || (isSmartListView && name.toLowerCase() === projectId));
 
-	console.log(isSelected);
-
 	return (
 		<div onContextMenu={handleContextMenu} onClick={handleClick}>
 			<div

@@ -21,12 +21,12 @@ import { SMART_LISTS } from '../../utils/smartLists.utils';
 import { PRIORITIES } from '../../utils/priorities.utils';
 import TaskDueDateText from '../TaskDueDateText';
 import DropdownPriorities from '../Dropdown/DropdownPriorities';
-import DropdownProjects from '../Dropdown/DropdownProjects';
 import DropdownTaskOptions from '../Dropdown/DropdownTaskOptions/DropdownTaskOptions';
 import useAudio from '../../hooks/useAudio';
 import amongUsCompletionSoundMP3 from '/among_us_complete_task.mp3';
 import CommentList from './CommentList';
 import AddCommentForm from './AddCommentForm';
+import DropdownItemsWithSearch from '../Dropdown/DropdownItemsWithSearch';
 
 const EmptyTask = () => (
 	<div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700 flex justify-center items-center text-[18px] text-color-gray-100">
@@ -376,14 +376,15 @@ const TaskDetails = ({ taskToUse }) => {
 								{selectedProject?.name}
 							</div>
 
-							<DropdownProjects
+							<DropdownItemsWithSearch
 								toggleRef={dropdownProjectsRef}
 								isVisible={isDropdownProjectsVisible}
 								setIsVisible={setIsDropdownProjectsVisible}
-								selectedProject={selectedProject}
-								setSelectedProject={setSelectedProject}
-								projects={projects}
+								selectedItem={selectedProject}
+								setSelectedItem={setSelectedProject}
+								items={projects}
 								task={task}
+								type="project"
 								customClasses="!mt-[-315px]"
 							/>
 						</div>

@@ -2,7 +2,13 @@ import Dropdown from './Dropdown';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Icon from '../Icon';
 import { DropdownProps, TaskObj } from '../../interfaces/interfaces';
-import { useEditTaskMutation, useGetProjectsQuery, useGetTasksQuery, useFlagTaskMutation } from '../../services/api';
+import {
+	useEditTaskMutation,
+	useGetProjectsQuery,
+	useGetTasksQuery,
+	useFlagTaskMutation,
+	useGetTagsQuery,
+} from '../../services/api';
 import { PRIORITIES } from '../../utils/priorities.utils';
 import classNames from 'classnames';
 import { isInXDaysUTC, isTodayUTC, isTomorrowUTC } from '../../utils/date.utils';
@@ -13,6 +19,7 @@ import { setModalState } from '../../slices/modalSlice';
 import { setAlertState } from '../../slices/alertSlice';
 import DropdownStartFocus from './DropdownTaskOptions/DropdownStartFocus';
 import DropdownProjects from './DropdownProjects';
+import DropdownItemsWithSearch from './DropdownItemsWithSearch';
 
 interface IDateIconOption {
 	iconName: string;
@@ -212,20 +219,27 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 	const { data: fetchedProjects, isLoading: isProjectsLoading, error: errorProjects } = useGetProjectsQuery();
 	const { projects, projectsById } = fetchedProjects || {};
 
+	// RTK Query - Tags
+	const { data: fetchedTags, isLoading: isLoadingGetTags, error: errorGetTags } = useGetTagsQuery();
+	const { tags, tagsWithNoParent } = fetchedTags || {};
+
 	// useState
 	const [task, setTask] = useState<TaskObj>();
 	const [parentTask, setParentTask] = useState<TaskObj>();
 	const [currDueDate, setCurrDueDate] = useState(null);
 	const [priority, setPriority] = useState(0);
 	const [selectedProject, setSelectedProject] = useState(null);
+	const [selectedTagList, setSelectedTagList] = useState([]);
 
 	// Dropdowns
 	const [isDropdownStartFocusVisible, setIsDropdownStartFocusVisible] = useState(false);
 	const [isDropdownProjectsVisible, setIsDropdownProjectsVisible] = useState(false);
+	const [isDropdownItemsWithSearchTagVisible, setIsDropdownItemsWithSearchTagVisible] = useState(false);
 
 	// Refs
 	const dropdownStartFocusRef = useRef(null);
 	const dropdownProjectsRef = useRef(null);
+	const dropdownItemsWithSearchTagRef = useRef(null);
 
 	useEffect(() => {
 		if (isTasksLoading) {
@@ -461,19 +475,21 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 							toggleRef={dropdownProjectsRef}
 							iconName="sell"
 							title="Tags"
-							onClick={() => setIsDropdownProjectsVisible(!isDropdownProjectsVisible)}
+							onClick={() => setIsDropdownItemsWithSearchTagVisible(!isDropdownItemsWithSearchTagVisible)}
 							hasSideDropdown={true}
 						/>
 
 						{/* Side Dropdown */}
-						<DropdownProjects
-							toggleRef={dropdownProjectsRef}
-							isVisible={isDropdownProjectsVisible}
-							setIsVisible={setIsDropdownProjectsVisible}
-							selectedProject={selectedProject}
-							setSelectedProject={setSelectedProject}
-							projects={projects}
+						<DropdownItemsWithSearch
+							toggleRef={dropdownItemsWithSearchTagRef}
+							isVisible={isDropdownItemsWithSearchTagVisible}
+							setIsVisible={setIsDropdownItemsWithSearchTagVisible}
+							selectedItemList={selectedTagList}
+							setSelectedItemList={setSelectedTagList}
+							items={tagsWithNoParent}
 							task={task}
+							multiSelect={true}
+							type="tags"
 							customClasses="ml-[200px] mt-[-30px]"
 							onCloseContextMenu={onCloseContextMenu}
 						/>
