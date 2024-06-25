@@ -458,14 +458,15 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 						/>
 
 						{/* Side Dropdown */}
-						<DropdownProjects
+						<DropdownItemsWithSearch
 							toggleRef={dropdownProjectsRef}
 							isVisible={isDropdownProjectsVisible}
 							setIsVisible={setIsDropdownProjectsVisible}
-							selectedProject={selectedProject}
-							setSelectedProject={setSelectedProject}
-							projects={projects}
+							selectedItem={selectedProject}
+							setSelectedItem={setSelectedProject}
+							items={projects}
 							task={task}
+							type="project"
 							customClasses="ml-[200px] mt-[-30px]"
 							onCloseContextMenu={onCloseContextMenu}
 						/>

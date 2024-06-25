@@ -43,7 +43,7 @@ const DropdownTags: React.FC<DropdownTagsProps> = memo(
 
 		const TOP_LIST_NAMES = ['all', 'today', 'tomorrow', 'week'];
 		const topListProjects = TOP_LIST_NAMES.map((name) => SMART_LISTS[name]);
-		const defaultItems = type === 'project' ? [...items, ...topListProjects] : [items];
+		const defaultItems = type === 'project' ? [...items, ...topListProjects] : items;
 
 		const [editTask] = useEditTaskMutation();
 		const [filteredItems, setFilteredItems] = useState(defaultItems);
@@ -121,7 +121,7 @@ const DropdownTags: React.FC<DropdownTagsProps> = memo(
 
 			const checkIfItemSelected = () => {
 				if (multiSelect) {
-					return selectedItemList.find((itemInList) => itemInList._id === itemInList._id);
+					return selectedItemList.find((itemInList) => itemInList._id === item._id);
 				} else {
 					if (type === 'project' && smartList) {
 						return selectedItem.urlName === item.urlName;
@@ -133,54 +133,49 @@ const DropdownTags: React.FC<DropdownTagsProps> = memo(
 
 			const isItemSelected = checkIfItemSelected();
 
-			const handleClick = (e) => {
-				e.stopPropagation();
+			console.log(selectedItemList);
 
+			const handleClickProject = () => {
 				if (multiSelect) {
-					const isAllProject = type === 'project' && item.urlName && item.urlName === 'all';
-					let newSelectedItemList = [...selectedItemList];
+					const isAllProject = item.urlName && item.urlName === 'all';
+					let newSelectedProjectsList = [...selectedItemList];
 
-					// If the item is already selected, then remove it.
-					if (isItemSelected) {
-						if ((type === 'project' && !isAllProject) || type !== 'project') {
-							newSelectedItemList = newSelectedItemList.filter(
-								(itemInList) => itemInList._id !== item._id
+					// If the project is already selected, then remove it.
+					if (isItemSelected && !isAllProject) {
+						newSelectedProjectsList = newSelectedProjectsList.filter(
+							(projectInList) => projectInList._id !== project._id
+						);
+					} else {
+						// If the project being selected is the "All" project, then every other selected project should be removed.
+						if (isAllProject) {
+							newSelectedProjectsList = [item];
+						} else {
+							// If a normal project is selected, remove "all" as a specific project has been chosen.
+							newSelectedProjectsList = newSelectedProjectsList.filter(
+								(projectInList) => projectInList && projectInList.urlName !== 'all'
 							);
-						} else {
-							// If the project being selected is the "All" project, then every other selected project should be removed.
-							if (isAllProject) {
-								newSelectedItemList = [item];
-							} else {
-								// If a normal project is selected, remove "all" as a specific project has been chosen.
-								newSelectedItemList = newSelectedItemList.filter(
-									(itemInList) => itemInList && itemInList.urlName !== 'all'
-								);
-								newSelectedItemList.push(item);
-							}
+							newSelectedProjectsList.push(item);
 						}
 					}
 
-					if (type === 'project') {
-						if (newSelectedItemList.length === 0) {
-							const allProject = filteredItems.find((item) => item.urlName === 'all');
-							newSelectedItemList = [allProject];
-						} else {
-							const allMultiSelectProjects = [inboxProject, ...nonSmartListProjects];
+					if (newSelectedProjectsList.length === 0) {
+						const allProject = filteredItems.find((project) => project.urlName === 'all');
+						newSelectedProjectsList = [allProject];
+					} else {
+						const allMultiSelectProjects = [inboxProject, ...nonSmartListProjects];
 
-							if (allMultiSelectProjects.length === newSelectedItemList.length) {
-								newSelectedItemList = [allProject];
-							}
+						if (allMultiSelectProjects.length === newSelectedProjectsList.length) {
+							newSelectedProjectsList = [allProject];
 						}
 					}
 
-					setSelectedItemList(newSelectedItemList);
+					setSelectedItemList(newSelectedProjectsList);
 				} else {
 					setSelectedItem(item);
 					setIsVisible(false);
 				}
 
-				// TODO: Maybe have something like that for tags too?
-				if (task && type === 'project') {
+				if (task) {
 					// TODO: Edit task's project from here
 					editTask({ taskId: task._id, payload: { projectId: item._id } });
 				}
@@ -190,11 +185,35 @@ const DropdownTags: React.FC<DropdownTagsProps> = memo(
 				}
 			};
 
+			const handleClickTag = (e) => {
+				e.stopPropagation();
+
+				if (multiSelect) {
+					let newSelectedItemList = [...selectedItemList];
+
+					// If the item is already selected, then remove it.
+					if (isItemSelected) {
+						newSelectedItemList = newSelectedItemList.filter((itemInList) => itemInList._id !== item._id);
+					} else {
+						newSelectedItemList.push(item);
+					}
+
+					setSelectedItemList(newSelectedItemList);
+				} else {
+					setSelectedItem(item);
+					setIsVisible(false);
+				}
+
+				if (onCloseContextMenu && !multiSelect) {
+					onCloseContextMenu();
+				}
+			};
+
 			return (
 				<div>
 					<div
 						className="flex items-center justify-between cursor-pointer hover:bg-color-gray-300 px-2 py-[6px] rounded-lg"
-						onClick={handleClick}
+						onClick={type === 'project' ? handleClickProject : handleClickTag}
 					>
 						<div className={classNames('flex items-center gap-1', isItemSelected ? 'text-blue-500' : '')}>
 							<Icon
@@ -233,7 +252,7 @@ const DropdownTags: React.FC<DropdownTagsProps> = memo(
 
 		const ItemOptionList = () => {
 			switch (type) {
-				case 'projects':
+				case 'project':
 					return (
 						<React.Fragment>
 							{showSmartLists ? (
@@ -266,7 +285,7 @@ const DropdownTags: React.FC<DropdownTagsProps> = memo(
 				case 'tags':
 					return (
 						<React.Fragment>
-							{items.map((item) => {
+							{filteredItems.map((item) => {
 								return <ItemOption key={item.name} item={item} iconFill={0} />;
 							})}
 						</React.Fragment>
@@ -295,7 +314,7 @@ const DropdownTags: React.FC<DropdownTagsProps> = memo(
 							customClass={'text-color-gray-50 !text-[20px] hover:text-white cursor-pointer'}
 						/>
 						<input
-							placeholder="Search"
+							placeholder={type === 'tags' ? 'Type in a tag' : 'Search'}
 							value={searchText}
 							onChange={(e) => setSearchText(e.target.value)}
 							className="text-[13px] bg-transparent placeholder:text-[#7C7C7C] mb-0 w-full outline-none resize-none p-1"

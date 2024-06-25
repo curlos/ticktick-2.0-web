@@ -124,7 +124,7 @@ const TaskListByGroup: React.FC<TaskListByGroupProps> = ({
 						groupedByKey = project.name;
 					}
 
-					return <GroupedByTaskList categoryName={groupedByKey} tasks={tasksList} />;
+					return <GroupedByTaskList key={groupedByKey} categoryName={groupedByKey} tasks={tasksList} />;
 				})}
 			</React.Fragment>
 		);
