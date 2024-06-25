@@ -420,3 +420,16 @@ export const allExceptOneFalse = (obj) => {
 export const toTitleCase = (str) => {
 	return str.replace(/\w\S*/g, (text) => text.charAt(0).toUpperCase() + text.substring(1).toLowerCase());
 };
+
+export const hexToRGBA = (hex, opacity) => {
+	// Remove the hash at the beginning of the hex code if it's there
+	hex = hex.replace('#', '');
+
+	// Parse the hex string into RGB components
+	const r = parseInt(hex.substring(0, 2), 16); // Red component
+	const g = parseInt(hex.substring(2, 4), 16); // Green component
+	const b = parseInt(hex.substring(4, 6), 16); // Blue component
+
+	// Return the RGBA color with specified opacity
+	return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+};

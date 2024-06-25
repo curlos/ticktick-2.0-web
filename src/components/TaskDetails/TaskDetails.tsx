@@ -12,8 +12,9 @@ import {
 	useEditTaskMutation,
 	useGetFocusRecordsQuery,
 	useGetCommentsQuery,
+	useGetTagsQuery,
 } from '../../services/api';
-import { getFormattedDuration, getTasksWithFilledInChildren, sumProperty } from '../../utils/helpers.utils';
+import { getFormattedDuration, getTasksWithFilledInChildren, hexToRGBA, sumProperty } from '../../utils/helpers.utils';
 import { SortableTree } from '../SortableTest/SortableTree';
 import useDebouncedEditTask from '../../hooks/useDebouncedEditTask';
 import classNames from 'classnames';
@@ -41,17 +42,17 @@ const EmptyTask = () => (
 );
 
 const TaskDetails = ({ taskToUse }) => {
-	// Tasks
+	// RTK Query - Tasks
 	const { data: fetchedTasks, isLoading: isTasksLoading, error } = useGetTasksQuery();
 	const { tasks, tasksById, parentOfTasks } = fetchedTasks || {};
 	const { debouncedEditTaskApiCall } = useDebouncedEditTask();
 	const [editTask] = useEditTaskMutation();
 
-	// Projects
+	// RTK Query - Projects
 	const { data: fetchedProjects, isLoading: isProjectsLoading, error: errorProjects } = useGetProjectsQuery();
 	const { projects, projectsById } = fetchedProjects || {};
 
-	// Focus Records
+	// RTK Query - Focus Records
 	const {
 		data: fetchedFocusRecords,
 		isLoading: isLoadingFocusRecords,
@@ -59,9 +60,13 @@ const TaskDetails = ({ taskToUse }) => {
 	} = useGetFocusRecordsQuery();
 	const { focusRecords, focusRecordsByTaskId } = fetchedFocusRecords || {};
 
-	// Comments
+	// RTK Query - Comments
 	const { data: fetchedComments, isLoading: isLoadingGetComments, error: errorGetComments } = useGetCommentsQuery();
 	const { commentsByTaskId } = fetchedComments || {};
+
+	// RTK Query - Tags
+	const { data: fetchedTags, isLoading: isLoadingGetTags, error: errorGetTags } = useGetTagsQuery();
+	const { tagsById } = fetchedTags || {};
 
 	const { play: playCompletionSound, stop: stopCompletionSound } = useAudio(amongUsCompletionSoundMP3);
 
@@ -157,10 +162,22 @@ const TaskDetails = ({ taskToUse }) => {
 		return <EmptyTask />;
 	}
 
-	const { _id, children, priority, completedPomodoros, timeTaken, estimatedDuration, deadline, willNotDo, dueDate } =
-		task;
+	const {
+		_id,
+		children,
+		priority,
+		completedPomodoros,
+		timeTaken,
+		estimatedDuration,
+		deadline,
+		willNotDo,
+		dueDate,
+		tagIds,
+	} = task;
 	const priorityData = PRIORITIES[priority];
 	const taskComments = _id && commentsByTaskId && commentsByTaskId[_id] && Object.values(commentsByTaskId[_id]);
+
+	const taskTags = tagIds.map((tagId) => tagsById[tagId]);
 
 	return (
 		<div
@@ -264,7 +281,6 @@ const TaskDetails = ({ taskToUse }) => {
 							/>
 						</div>
 					)}
-
 					{/* TODO: Focused for... */}
 					{(pomos > 0 || duration > 0) && (
 						<div className="flex items-center gap-1 text-blue-500">
@@ -289,7 +305,6 @@ const TaskDetails = ({ taskToUse }) => {
 							{duration > 0 && getFormattedDuration(duration)}
 						</div>
 					)}
-
 					<TextareaAutosize
 						className="text-[16px] placeholder:text-[#7C7C7C] font-bold mb-0 bg-transparent w-full outline-none resize-none no-scrollbar"
 						placeholder="What would you like to do?"
@@ -299,7 +314,6 @@ const TaskDetails = ({ taskToUse }) => {
 							debouncedEditTaskApiCall(_id, { title: e.target.value });
 						}}
 					></TextareaAutosize>
-
 					<TextareaAutosize
 						className="text-[14px] placeholder:text-[#7C7C7C] mt-2 mb-4 bg-transparent w-full outline-none resize-none"
 						placeholder="Description"
@@ -309,11 +323,9 @@ const TaskDetails = ({ taskToUse }) => {
 							debouncedEditTaskApiCall(_id, { description: e.target.value });
 						}}
 					></TextareaAutosize>
-
 					{/* {children.map((subtaskId: string) => (
                         <Task key={subtaskId} taskId={subtaskId} fromTaskDetails={true} />
                     ))} */}
-
 					{/* TODO: There is a problem caused by this. Sortable Tree not updating with latest tasks. */}
 					{childTasks && childTasks.length > 0 && (
 						<SortableTree
@@ -324,7 +336,6 @@ const TaskDetails = ({ taskToUse }) => {
 							tasksToUse={task.children}
 						/>
 					)}
-
 					{children && children.length > 0 && (
 						<div>
 							{!showAddTaskForm && (
@@ -340,6 +351,27 @@ const TaskDetails = ({ taskToUse }) => {
 							{showAddTaskForm && <AddTaskForm setShowAddTaskForm={setShowAddTaskForm} parentId={_id} />}
 						</div>
 					)}
+
+					<div className="flex gap-1">
+						{/* TODO: SHow tags if there are any */}
+
+						{taskTags.map((tag) => {
+							const { name, color, _id } = tag;
+
+							const backgroundColor = hexToRGBA(color, '65%');
+
+							return (
+								<div key={_id} style={{ backgroundColor }} className="px-2 py-1 text-[12px] rounded-xl">
+									<div>{name}</div>
+								</div>
+							);
+						})}
+
+						{/* TODO: When this is clicked, show the typing input instead to search for tags. Also, show a dropdown of the resulting tags from this filter. Of course, if there's nothing. Well, at least that's how TickTick 1.0 does it BUT I think an easier and better way to do it is to reuse the previous Dropdown where tags are set. I think that makes more sense. */}
+						<div className="rounded-xl border border-blue-500 flex items-center justify-center px-2 py-1 cursor-pointer hover:bg-color-gray-600">
+							<Icon name="add" customClass={'text-blue-500 !text-[15px]'} />
+						</div>
+					</div>
 				</div>
 
 				<CommentList

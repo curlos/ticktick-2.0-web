@@ -176,7 +176,6 @@ const DropdownTags: React.FC<DropdownTagsProps> = memo(
 				}
 
 				if (task) {
-					// TODO: Edit task's project from here
 					editTask({ taskId: task._id, payload: { projectId: item._id } });
 				}
 
@@ -295,7 +294,6 @@ const DropdownTags: React.FC<DropdownTagsProps> = memo(
 			}
 		};
 
-		// TODO: Refactor all of this to NOT be specific to projects and instead be for projects or tags. I don't want to copy and paste all of this for tags as that seems inefficient.
 		return (
 			<Dropdown
 				toggleRef={toggleRef}
