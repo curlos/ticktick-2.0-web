@@ -221,7 +221,7 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 
 	// RTK Query - Tags
 	const { data: fetchedTags, isLoading: isLoadingGetTags, error: errorGetTags } = useGetTagsQuery();
-	const { tags, tagsWithNoParent } = fetchedTags || {};
+	const { tags, tagsById, tagsWithNoParent } = fetchedTags || {};
 
 	// useState
 	const [task, setTask] = useState<TaskObj>();
@@ -242,7 +242,7 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 	const dropdownItemsWithSearchTagRef = useRef(null);
 
 	useEffect(() => {
-		if (isTasksLoading) {
+		if (isTasksLoading || isProjectsLoading || isLoadingGetTags) {
 			return;
 		}
 
@@ -260,6 +260,11 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 
 			if (projectsById && currTask.projectId) {
 				setSelectedProject(projectsById[currTask.projectId]);
+			}
+
+			if (currTask.tagIds && currTask.tagIds.length > 0) {
+				const newSelectedTagList = currTask.tagIds.map((tagId) => tagsById[tagId]);
+				setSelectedTagList(newSelectedTagList);
 			}
 
 			const parentTaskId = parentOfTasks[currTask._id];

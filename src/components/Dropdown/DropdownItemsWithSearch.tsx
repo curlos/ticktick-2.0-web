@@ -323,10 +323,33 @@ const DropdownTags: React.FC<DropdownTagsProps> = memo(
 
 					<div
 						ref={scrollRef}
-						className="p-1 h-[250px] overflow-auto gray-scrollbar border-t border-color-gray-200"
+						className="p-1 h-[200px] overflow-auto gray-scrollbar border-t border-color-gray-200"
 					>
 						<ItemOptionList />
 					</div>
+
+					{type === 'tags' && (
+						<div className="grid grid-cols-2 gap-2 p-2 pt-4">
+							<button
+								className="border border-color-gray-200 rounded py-[2px] cursor-pointer hover:bg-color-gray-200"
+								onClick={() => {
+									setIsVisible(false);
+								}}
+							>
+								Cancel
+							</button>
+							<button
+								className="bg-blue-500 rounded py-[2px] cursor-pointer hover:bg-blue-600"
+								onClick={async () => {
+									setIsVisible(false);
+									const selectedItemListIds = selectedItemList.map((item) => item._id);
+									await editTask({ taskId: task._id, payload: { tagIds: selectedItemListIds } });
+								}}
+							>
+								Ok
+							</button>
+						</div>
+					)}
 				</div>
 			</Dropdown>
 		);
