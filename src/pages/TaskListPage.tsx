@@ -12,7 +12,7 @@ import { useParams } from 'react-router';
 import { SMART_LISTS } from '../utils/smartLists.utils';
 
 const TaskListPage = () => {
-	const { projectId } = useParams();
+	const { projectId, tagId } = useParams();
 	const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
 	const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
 	const { projects } = fetchedProjects || {};
@@ -39,9 +39,11 @@ const TaskListPage = () => {
 			return;
 		}
 
-		const newTasksWithNoParent = getTasksWithNoParent(tasks, tasksById, projectId, isSmartListView);
+		console.log(tagId);
+
+		const newTasksWithNoParent = getTasksWithNoParent(tasks, tasksById, projectId, isSmartListView, tagId);
 		setTasksWithNoParent(newTasksWithNoParent);
-	}, [fetchedTasks, fetchedProjects, projectId]);
+	}, [fetchedTasks, fetchedProjects, projectId, tagId]);
 
 	if (isLoadingOrErrors) {
 		return <div>Loading...</div>; // Show loading state

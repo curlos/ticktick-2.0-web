@@ -133,8 +133,6 @@ const DropdownTags: React.FC<DropdownTagsProps> = memo(
 
 			const isItemSelected = checkIfItemSelected();
 
-			console.log(selectedItemList);
-
 			const handleClickProject = () => {
 				if (multiSelect) {
 					const isAllProject = item.urlName && item.urlName === 'all';

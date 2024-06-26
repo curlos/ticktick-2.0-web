@@ -130,11 +130,15 @@ const TaskDetails = ({ taskToUse }) => {
 
 			if (projectsById && currTask.projectId) {
 				setSelectedProject(projectsById[currTask.projectId]);
+			} else {
+				setSelectedProject(null);
 			}
 
 			if (currTask.tagIds && currTask.tagIds.length > 0) {
 				const newSelectedTagList = currTask.tagIds.map((tagId) => tagsById[tagId]);
 				setSelectedTagList(newSelectedTagList);
+			} else {
+				setSelectedTagList([]);
 			}
 
 			const parentTaskId = parentOfTasks[currTask._id];

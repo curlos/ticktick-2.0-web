@@ -292,8 +292,6 @@ export const api = createApi({
 					return !hasParentTag;
 				});
 
-				console.log(tagsWithNoParent);
-
 				return { tags, tagsById, tagsWithNoParent, parentOfTags };
 			},
 		}),

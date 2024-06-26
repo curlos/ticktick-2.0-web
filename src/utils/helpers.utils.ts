@@ -263,7 +263,7 @@ export const getNumberOfTasks = (tasks, tasksById) => {
 	return numberOfTasks;
 };
 
-export const getTasksWithNoParent = (tasks, tasksById, projectId, isSmartListView) => {
+export const getTasksWithNoParent = (tasks, tasksById, projectId, isSmartListView, tagId) => {
 	const transformedTasks = fillInChildren(tasks, tasksById);
 
 	// Create a set of task IDs that are children
@@ -285,12 +285,16 @@ export const getTasksWithNoParent = (tasks, tasksById, projectId, isSmartListVie
 		} else {
 			newTasksWithNoParent = newTasksWithNoParent.filter((task) => task.projectId === projectId);
 		}
+	} else if (tagId) {
+		newTasksWithNoParent = newTasksWithNoParent.filter((task) => task.tagIds.includes(tagId));
 	}
+
+	console.log(newTasksWithNoParent);
 
 	return newTasksWithNoParent;
 };
 
-export const getTasksWithFilledInChildren = (tasks, tasksById, projectId, filterByNoParent) => {
+export const getTasksWithFilledInChildren = (tasks, tasksById, projectId, filterByNoParent, tagId) => {
 	const tasksObjects = tasks.map((task) => {
 		// If it's an id such as one coming from "children" array of strings, then we need to find the corresponding task using that id. If not, it can be assumed that it's already an object and thus we can just get the task as is.
 		return typeof task === 'string' ? tasksById[task] : task;
@@ -321,6 +325,8 @@ export const getTasksWithFilledInChildren = (tasks, tasksById, projectId, filter
 		} else {
 			finalTasks = finalTasks.filter((task) => task.projectId === projectId);
 		}
+	} else if (tagId) {
+		finalTasks = finalTasks.filter((task) => task.tagIds.includes(tagId));
 	}
 
 	return finalTasks;

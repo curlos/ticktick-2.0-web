@@ -98,7 +98,6 @@ const TaskListSidebar = () => {
 							name={'add'}
 							customClass={'text-color-gray-100 !text-[16px] hover:text-white'}
 							onClick={() => {
-								console.log('Bitch');
 								dispatch(setModalState({ modalId: 'ModalAddTag', isOpen: true }));
 							}}
 						/>

@@ -18,7 +18,7 @@ const TagList = ({ taskTags, task, selectedTagList, setSelectedTagList }) => {
 		const [isHovering, setIsHovering] = useState(false);
 
 		const { name, color, _id } = tag;
-		const backgroundColor = hexToRGBA(color, '65%');
+		const backgroundColor = color ? hexToRGBA(color, '65%') : 'gray';
 
 		return (
 			<div

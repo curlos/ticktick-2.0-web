@@ -75,7 +75,7 @@ export function SortableTree({
 		overId: string;
 	} | null>(null);
 
-	const { projectId } = useParams();
+	const { projectId, tagId } = useParams();
 	const {
 		data: { tasks, tasksById },
 		isLoading: isTasksLoading,
@@ -93,7 +93,7 @@ export function SortableTree({
 
 		// const tasksWithNoParent = getTasksWithNoParent(tasks, tasksById, projectId, isSmartListView);
 		// setItems(tasksWithNoParent);
-		const newChildTasks = getTasksWithFilledInChildren(tasksToUse, tasksById, projectId, true);
+		const newChildTasks = getTasksWithFilledInChildren(tasksToUse, tasksById, projectId, true, tagId);
 		setItems(newChildTasks);
 
 		// For now the issue from above has been fixed with this piece of code. This is very unstable though as I haven't fully ran through all of the logic but we'll see.
@@ -103,7 +103,7 @@ export function SortableTree({
 		// if (tasksWithNoParent.length !== items.length) {
 		// setItems(tasksWithNoParent);
 		// }
-	}, [tasks, isTasksLoading, projectId]);
+	}, [tasks, isTasksLoading, projectId, tagId]);
 
 	const flattenedItems = useMemo(() => {
 		const flattenedTree = flattenTree(items);
