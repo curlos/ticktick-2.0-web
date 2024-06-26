@@ -85,9 +85,6 @@ const ModalAddTag: React.FC = () => {
 					newParentTagId,
 				};
 
-				console.log(newTag);
-				debugger;
-
 				const {
 					data: { _id },
 				} = await editTag({ tagId: tag._id, payload: newTag });

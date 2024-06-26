@@ -28,6 +28,7 @@ import amongUsCompletionSoundMP3 from '/among_us_complete_task.mp3';
 import CommentList from './CommentList';
 import AddCommentForm from './AddCommentForm';
 import DropdownItemsWithSearch from '../Dropdown/DropdownItemsWithSearch';
+import TagList from './TagList';
 
 const EmptyTask = () => (
 	<div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700 flex justify-center items-center text-[18px] text-color-gray-100">
@@ -66,7 +67,7 @@ const TaskDetails = ({ taskToUse }) => {
 
 	// RTK Query - Tags
 	const { data: fetchedTags, isLoading: isLoadingGetTags, error: errorGetTags } = useGetTagsQuery();
-	const { tagsById } = fetchedTags || {};
+	const { tagsById, tagsWithNoParent } = fetchedTags || {};
 
 	const { play: playCompletionSound, stop: stopCompletionSound } = useAudio(amongUsCompletionSoundMP3);
 
@@ -80,6 +81,7 @@ const TaskDetails = ({ taskToUse }) => {
 	const [childTasks, setChildTasks] = useState([]);
 	const [currDueDate, setCurrDueDate] = useState(null);
 	const [selectedProject, setSelectedProject] = useState(null);
+	const [selectedTagList, setSelectedTagList] = useState([]);
 	const [pomos, setPomos] = useState(0);
 	const [duration, setDuration] = useState(0);
 
@@ -128,6 +130,11 @@ const TaskDetails = ({ taskToUse }) => {
 
 			if (projectsById && currTask.projectId) {
 				setSelectedProject(projectsById[currTask.projectId]);
+			}
+
+			if (currTask.tagIds && currTask.tagIds.length > 0) {
+				const newSelectedTagList = currTask.tagIds.map((tagId) => tagsById[tagId]);
+				setSelectedTagList(newSelectedTagList);
 			}
 
 			const parentTaskId = parentOfTasks[currTask._id];
@@ -352,26 +359,12 @@ const TaskDetails = ({ taskToUse }) => {
 						</div>
 					)}
 
-					<div className="flex gap-1">
-						{/* TODO: SHow tags if there are any */}
-
-						{taskTags.map((tag) => {
-							const { name, color, _id } = tag;
-
-							const backgroundColor = hexToRGBA(color, '65%');
-
-							return (
-								<div key={_id} style={{ backgroundColor }} className="px-2 py-1 text-[12px] rounded-xl">
-									<div>{name}</div>
-								</div>
-							);
-						})}
-
-						{/* TODO: When this is clicked, show the typing input instead to search for tags. Also, show a dropdown of the resulting tags from this filter. Of course, if there's nothing. Well, at least that's how TickTick 1.0 does it BUT I think an easier and better way to do it is to reuse the previous Dropdown where tags are set. I think that makes more sense. */}
-						<div className="rounded-xl border border-blue-500 flex items-center justify-center px-2 py-1 cursor-pointer hover:bg-color-gray-600">
-							<Icon name="add" customClass={'text-blue-500 !text-[15px]'} />
-						</div>
-					</div>
+					<TagList
+						taskTags={taskTags}
+						task={task}
+						selectedTagList={selectedTagList}
+						setSelectedTagList={setSelectedTagList}
+					/>
 				</div>
 
 				<CommentList
