@@ -10,6 +10,7 @@ import DropdownProjects from '../Dropdown/DropdownProjects';
 import { SMART_LISTS } from '../../utils/smartLists.utils';
 import CustomRadioButton from '../CustomRadioButton';
 import DropdownDates from '../Dropdown/DropdownDates';
+import DropdownItemsWithSearch from '../Dropdown/DropdownItemsWithSearch';
 
 const ModalEditMatrix: React.FC = () => {
 	const modal = useSelector((state) => state.modals.modals['ModalEditMatrix']);
@@ -133,15 +134,16 @@ const ModalEditMatrix: React.FC = () => {
 										/>
 									</div>
 
-									<DropdownProjects
+									<DropdownItemsWithSearch
 										toggleRef={dropdownProjectsRef}
 										isVisible={isDropdownProjectsVisible}
 										setIsVisible={setIsDropdownProjectsVisible}
-										selectedProjectsList={selectedProjectsList}
-										setSelectedProjectsList={setSelectedProjectsList}
-										projects={projects}
+										selectedItemList={selectedProjectsList}
+										setSelectedItemList={setSelectedProjectsList}
+										items={projects}
 										customClasses="w-full ml-[0px]"
 										multiSelect={true}
+										type="project"
 									/>
 								</div>
 							</div>

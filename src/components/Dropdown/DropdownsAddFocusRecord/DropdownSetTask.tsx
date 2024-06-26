@@ -10,6 +10,7 @@ import Fuse from 'fuse.js';
 import Task from '../../Task';
 import classNames from 'classnames';
 import TaskListByGroup from '../../TaskListByGroup';
+import DropdownItemsWithSearch from '../DropdownItemsWithSearch';
 
 interface DropdownSetTaskProps extends DropdownProps {
 	selectedTask: Object | null;
@@ -124,7 +125,7 @@ const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({
 					<Icon name="chevron_right" customClass={'!text-[20px] text-color-gray-100'} />
 				</div>
 
-				<DropdownProjects
+				<DropdownItemsWithSearch
 					toggleRef={dropdownProjectsRef}
 					isVisible={
 						dropdownProjectsState ? dropdownProjectsState.isDropdownVisible : isDropdownProjectsVisible
@@ -134,10 +135,11 @@ const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({
 							? dropdownProjectsState.setIsDropdownVisible
 							: setIsDropdownProjectsVisible
 					}
-					selectedProject={selectedProject}
-					setSelectedProject={setSelectedProject}
-					projects={projects}
+					selectedItem={selectedProject}
+					setSelectedItem={setSelectedProject}
+					items={projects}
 					showSmartLists={true}
+					type="project"
 				/>
 			</div>
 		);

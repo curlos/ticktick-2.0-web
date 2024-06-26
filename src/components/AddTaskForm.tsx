@@ -12,6 +12,7 @@ import { useParams } from 'react-router';
 import classNames from 'classnames';
 import TaskDueDateText from './TaskDueDateText';
 import { setModalState } from '../slices/modalSlice';
+import DropdownItemsWithSearch from './Dropdown/DropdownItemsWithSearch';
 
 interface AddTaskFormProps {
 	parentId: string;
@@ -184,13 +185,14 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId,
 								<Icon name="expand_more" customClass={'!text-[16px] hover:text-white'} />
 							</div>
 
-							<DropdownProjects
+							<DropdownItemsWithSearch
 								toggleRef={dropdownProjectsRef}
 								isVisible={isDropdownProjectsVisible}
 								setIsVisible={setIsDropdownProjectsVisible}
-								selectedProject={selectedProject}
-								setSelectedProject={setSelectedProject}
-								projects={projects}
+								selectedItem={selectedProject}
+								setSelectedItem={setSelectedProject}
+								items={projects}
+								type="project"
 							/>
 						</div>
 					)}
