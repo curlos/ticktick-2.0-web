@@ -6,32 +6,56 @@ import { TaskObj } from '../interfaces/interfaces';
 import AddTaskForm from '../components/AddTaskForm';
 import TaskListByCategory from '../components/TaskListByGroup';
 import { SortableTree } from '../components/SortableTest/SortableTree';
-import { useGetProjectsQuery, useGetTasksQuery } from '../services/api';
+import { useGetProjectsQuery, useGetTagsQuery, useGetTasksQuery } from '../services/api';
 import { fillInChildren, getTasksWithNoParent } from '../utils/helpers.utils';
 import { useParams } from 'react-router';
 import { SMART_LISTS } from '../utils/smartLists.utils';
 
 const TaskListPage = () => {
 	const { projectId, tagId } = useParams();
+
+	// RTK Query - Projects
 	const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
+	const { projects, projectsById } = fetchedProjects || {};
+
+	// RTK Query - Tags
+	const { data: fetchedTags, isLoading: isLoadingGetTags, error: errorGetTags } = useGetTagsQuery();
+	const { tagsById } = fetchedTags || {};
+
+	// RTK Query - Tasks
 	const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
-	const { projects } = fetchedProjects || {};
 	const { tasks, tasksById } = fetchedTasks || {};
+
 	const [showAddTaskForm, setShowAddTaskForm] = useState(false);
 	const [tasksWithNoParent, setTasksWithNoParent] = useState([]);
-	const [foundProject, setFoundProject] = useState(null);
+	const [title, setTitle] = useState(null);
 
-	const isLoadingOrErrors = isLoadingTasks || errorTasks || isLoadingProjects || errorProjects;
+	const isLoadingOrErrors =
+		isLoadingTasks || errorTasks || isLoadingProjects || errorProjects || isLoadingGetTags || errorGetTags;
 	const isSmartListView = SMART_LISTS[projectId];
 
 	useEffect(() => {
-		if (projects && projectId) {
-			const inSmartListView = SMART_LISTS[projectId];
+		if (isLoadingOrErrors) {
+			return null;
+		}
 
-			if (inSmartListView) {
-				setFoundProject(SMART_LISTS[projectId]);
-			} else {
-				setFoundProject(projects.find((project) => project._id === projectId));
+		const inSmartListView = SMART_LISTS[projectId];
+
+		if (inSmartListView) {
+			if (SMART_LISTS[projectId]) {
+				setTitle(SMART_LISTS[projectId].name);
+			}
+		} else {
+			const foundProject = projectsById[projectId];
+
+			if (foundProject) {
+				setTitle(foundProject.name);
+			} else if (tagId) {
+				const foundTag = tagsById[tagId];
+
+				if (foundTag) {
+					setTitle(foundTag.name);
+				}
 			}
 		}
 
@@ -55,7 +79,7 @@ const TaskListPage = () => {
 				<div className="flex justify-between items-center mb-4">
 					<div className="flex gap-1 items-center">
 						<Icon name="menu_open" customClass={'text-white !text-[24px]'} />
-						<h3 className="text-[20px] font-[600]">{foundProject?.name}</h3>
+						<h3 className="text-[20px] font-[600]">{title}</h3>
 					</div>
 
 					<div className="flex items-center gap-2">
