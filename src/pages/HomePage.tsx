@@ -17,10 +17,10 @@ const HomePage = () => {
 			</div>
 			<div className="flex-[6] bg-red-500">
 				{/* <ResizableBox width={500} height={'100%'} resizeHandles={['sw', 'se', 'nw', 'ne', 'w', 'e', 'n', 's']}>
-            <div className="h-full">
-              <TaskDetails />
-            </div>
-          </ResizableBox> */}
+					<div className="h-full">
+						<TaskDetails />
+					</div>
+				</ResizableBox> */}
 				<TaskDetails />
 			</div>
 		</div>

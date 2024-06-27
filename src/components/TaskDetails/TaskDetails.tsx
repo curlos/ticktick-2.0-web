@@ -167,7 +167,7 @@ const TaskDetails = ({ taskToUse }) => {
 			// TODO: Maybe think about what should happen when a project id changes. Should we redirect to the project id list too? Maybe, maybe not.
 			// navigate(`/projects/${inSmartListView ? paramsProjectId : currTask.projectId}/tasks/${currTask._id}`);
 		}
-	}, [taskId, tasks, tasksById]);
+	}, [taskId, tasks, tasksById, isTasksLoading, isProjectsLoading, isLoadingFocusRecords]);
 
 	if (!task || isTasksLoading) {
 		return <EmptyTask />;
