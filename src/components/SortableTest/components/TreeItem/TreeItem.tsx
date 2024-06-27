@@ -7,13 +7,15 @@ import { Handle } from './Handle';
 import styles from './TreeItem.module.css';
 import { useNavigate, useParams } from 'react-router-dom';
 import Icon from '../../../Icon';
-import { useEditTaskMutation, useGetProjectsQuery } from '../../../../services/api';
+import { useEditTaskMutation, useGetProjectsQuery, useGetTagsQuery } from '../../../../services/api';
 import { SMART_LISTS } from '../../../../utils/smartLists.utils';
 import { PRIORITIES } from '../../../../utils/priorities.utils';
 import TaskDueDateText from '../../../TaskDueDateText';
 import ContextMenuTaskActions from '../../../ContextMenu/ContextMenuTaskActions';
 import DropdownCalendar from '../../../Dropdown/DropdownCalendar/DropdownCalendar';
 import useAudio from '../../../../hooks/useAudio';
+import TagItemForTask from '../../../TagItemForTask';
+import Dropdown from '../../../Dropdown/Dropdown';
 
 export interface Props extends HTMLAttributes<HTMLLIElement> {
 	childCount?: number;
@@ -59,11 +61,20 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 
 		const navigate = useNavigate();
 		const params = useParams();
+		const { tagId } = params;
+
+		// RTK Query - Projects
 		const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
-		const [editTask] = useEditTaskMutation();
 		const { projectsById } = fetchedProjects || {};
 
-		const { children, _id, title, projectId, dueDate, priority, completedTime, willNotDo } = item;
+		// RTK Query - Tags
+		const { data: fetchedTags, isLoading: isLoadingGetTags, error: errorGetTags } = useGetTagsQuery();
+		const { tagsById } = fetchedTags || {};
+
+		// RTK Query - Tasks
+		const [editTask] = useEditTaskMutation();
+
+		const { children, _id, title, projectId, dueDate, priority, completedTime, willNotDo, tagIds } = item;
 
 		const [currCompletedTime, setCurrCompletedTime] = useState(completedTime);
 		const [currDueDate, setCurrDueDate] = useState(dueDate ? new Date(dueDate) : null);
@@ -98,7 +109,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 				yPos: event.pageY, // Y coordinate of the mouse pointer
 			});
 
-			navigate(`/projects/${inSmartListView ? params.projectId : projectId}/tasks/${_id}`);
+			handleNavigation();
 		};
 
 		const handleClose = () => {
@@ -107,6 +118,17 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 
 		const inSmartListView = params.projectId && SMART_LISTS[params.projectId];
 		const priorityData = PRIORITIES[priority];
+
+		const handleNavigation = () => {
+			if (tagId) {
+				navigate(`/tags/${tagId}/tasks/${_id}`);
+			} else {
+				navigate(`/projects/${inSmartListView ? params.projectId : projectId}/tasks/${_id}`);
+			}
+		};
+
+		const taskTags = tagIds && tagIds.map((tagId) => tagsById[tagId]);
+		console.log(taskTags);
 
 		return (
 			<li
@@ -190,6 +212,9 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 					<div className="flex-grow flex justify-end mt-[2px]">
 						<div>
 							<div className="flex items-center">
+								{/* Tags */}
+								<MiniTagList taskTags={taskTags} task={item} />
+
 								{/* Only show the project name if the user is not currently already in the project itself. */}
 								{project && params.projectId !== project._id && (
 									<div className="text-color-gray-100 mr-1">{project.name}</div>
@@ -217,11 +242,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 
 								<Icon
 									name="chevron_right"
-									onClick={() =>
-										navigate(
-											`/projects/${inSmartListView ? params.projectId : projectId}/tasks/${_id}`
-										)
-									}
+									onClick={handleNavigation}
 									customClass={'text-color-gray-100 !text-[20px] hover:text-white cursor-pointer'}
 								/>
 							</div>
@@ -241,3 +262,55 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 		);
 	}
 );
+
+const MiniTagList = ({ taskTags, task }) => {
+	if (!taskTags || taskTags.length === 0) {
+		return null;
+	}
+
+	const tag = taskTags[0];
+
+	if (taskTags.length === 1) {
+		return <TagItemForTask key={tag._id} tag={tag} task={task} allowDelete={false} />;
+	}
+
+	const PlusMoreTags = () => {
+		const dropdownRef = useRef(null);
+		const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+
+		if (!taskTags || taskTags.length <= 1) {
+			return null;
+		}
+
+		const allRemainingTagsList = taskTags.slice(1).map((tag) => tag.name);
+		const allRemainingTagsStr = allRemainingTagsList.join(', ');
+
+		return (
+			<div className="relative">
+				<Dropdown
+					toggleRef={dropdownRef}
+					isVisible={isDropdownVisible}
+					setIsVisible={setIsDropdownVisible}
+					customClasses={'!bg-black'}
+				>
+					<div className="p-2 text-[12px] text-nowrap">{allRemainingTagsStr}</div>
+				</Dropdown>
+
+				<div
+					className="px-2 py-1 text-[12px] text-white rounded-xl cursor-pointer bg-blue-500/[.65]"
+					onMouseOver={() => setIsDropdownVisible(true)}
+					onMouseLeave={() => setIsDropdownVisible(false)}
+				>
+					<div>+{taskTags.length - 1}</div>
+				</div>
+			</div>
+		);
+	};
+
+	return (
+		<div className="flex gap-1 mx-1">
+			<TagItemForTask key={tag._id} tag={tag} task={task} allowDelete={false} />
+			<PlusMoreTags />
+		</div>
+	);
+};

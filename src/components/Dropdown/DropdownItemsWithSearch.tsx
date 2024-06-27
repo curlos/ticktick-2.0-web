@@ -9,7 +9,7 @@ import { useEditTaskMutation, useGetTagsQuery } from '../../services/api';
 import { SMART_LISTS } from '../../utils/smartLists.utils';
 import React from 'react';
 
-interface DropdownTagsProps extends DropdownProps {
+interface DropdownItemsWithSearchProps extends DropdownProps {
 	selectedItem?: Object;
 	setSelectedItem?: React.Dispatch<React.SetStateAction<Object>>;
 	selectedItemList: Array<Object>;
@@ -21,7 +21,7 @@ interface DropdownTagsProps extends DropdownProps {
 	multiSelect: boolean;
 }
 
-const DropdownTags: React.FC<DropdownTagsProps> = memo(
+const DropdownItemsWithSearch: React.FC<DropdownItemsWithSearchProps> = memo(
 	({
 		toggleRef,
 		isVisible,
@@ -221,7 +221,7 @@ const DropdownTags: React.FC<DropdownTagsProps> = memo(
 								)}
 								fill={iconFill}
 							/>
-							{name}
+							<span className="overflow-hidden text-nowrap text-ellipsis max-w-[120px]">{name}</span>
 						</div>
 						{isItemSelected && (
 							<Icon
@@ -352,4 +352,4 @@ const DropdownTags: React.FC<DropdownTagsProps> = memo(
 	}
 );
 
-export default DropdownTags;
+export default DropdownItemsWithSearch;
