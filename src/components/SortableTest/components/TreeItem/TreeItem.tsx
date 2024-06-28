@@ -211,7 +211,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 
 					<div className="flex-grow flex justify-end mt-[2px]">
 						<div>
-							<div className="flex items-center">
+							<div className="flex gap-1 items-center">
 								{/* Tags */}
 								<MiniTagList taskTags={taskTags} task={item} />
 
