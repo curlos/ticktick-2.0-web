@@ -36,7 +36,7 @@ const TaskListPage = () => {
 
 	useEffect(() => {
 		if (isLoadingOrErrors) {
-			return null;
+			return;
 		}
 
 		const inSmartListView = SMART_LISTS[projectId];

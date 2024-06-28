@@ -61,17 +61,11 @@ const TagItem = ({ tag, isChild }) => {
 	return (
 		<div onContextMenu={handleContextMenu} onClick={handleClick}>
 			<div
-				className={
-					classNames(
-						'p-2 rounded-lg flex items-center justify-between cursor-pointer cursor-pointer',
-						isChild ? 'ml-3' : '',
-						isSelected ? ' bg-color-gray-200' : ' hover:bg-color-gray-600'
-					)
-					// (projectId === _id || (isSmartListView && name.toLowerCase() === projectId)
-					// 	? ' bg-color-gray-200'
-					// 	: ' hover:bg-color-gray-600') +
-					// (insideFolder ? ' ml-3' : '')
-				}
+				className={classNames(
+					'p-2 rounded-lg flex items-center justify-between cursor-pointer cursor-pointer',
+					isChild ? 'ml-3' : '',
+					isSelected ? ' bg-color-gray-200' : ' hover:bg-color-gray-600'
+				)}
 			>
 				<div className="flex items-center gap-2">
 					<div className="flex items-center gap-0">

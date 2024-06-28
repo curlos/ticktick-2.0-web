@@ -18,27 +18,29 @@ const TagList = ({ taskTags, task, selectedTagList, setSelectedTagList }) => {
 				<TagItemForTask key={tag._id} tag={tag} task={task} selectedTagList={selectedTagList} />
 			))}
 
-			<div className="relative">
-				<div
-					ref={dropdownItemsWithSearchTagRef}
-					className="rounded-xl border border-blue-500 flex items-center justify-center px-2 py-1 cursor-pointer hover:bg-color-gray-600"
-					onClick={() => setIsDropdownItemsWithSearchTagVisible(!isDropdownItemsWithSearchTagVisible)}
-				>
-					<Icon name="add" customClass={'text-blue-500 !text-[15px]'} />
-				</div>
+			{taskTags.length > 0 && (
+				<div className="relative">
+					<div
+						ref={dropdownItemsWithSearchTagRef}
+						className="rounded-xl border border-blue-500 flex items-center justify-center px-2 py-1 cursor-pointer hover:bg-color-gray-600"
+						onClick={() => setIsDropdownItemsWithSearchTagVisible(!isDropdownItemsWithSearchTagVisible)}
+					>
+						<Icon name="add" customClass={'text-blue-500 !text-[15px]'} />
+					</div>
 
-				<DropdownItemsWithSearch
-					toggleRef={dropdownItemsWithSearchTagRef}
-					isVisible={isDropdownItemsWithSearchTagVisible}
-					setIsVisible={setIsDropdownItemsWithSearchTagVisible}
-					selectedItemList={selectedTagList}
-					setSelectedItemList={setSelectedTagList}
-					items={tagsWithNoParent}
-					task={task}
-					multiSelect={true}
-					type="tags"
-				/>
-			</div>
+					<DropdownItemsWithSearch
+						toggleRef={dropdownItemsWithSearchTagRef}
+						isVisible={isDropdownItemsWithSearchTagVisible}
+						setIsVisible={setIsDropdownItemsWithSearchTagVisible}
+						selectedItemList={selectedTagList}
+						setSelectedItemList={setSelectedTagList}
+						items={tagsWithNoParent}
+						task={task}
+						multiSelect={true}
+						type="tags"
+					/>
+				</div>
+			)}
 		</div>
 	);
 };

@@ -5,7 +5,7 @@ import Icon from '../Icon';
 import { DropdownProps, IProject, TaskObj } from '../../interfaces/interfaces';
 import classNames from 'classnames';
 import { memo, useEffect, useRef, useState } from 'react';
-import { useEditTaskMutation, useGetTagsQuery } from '../../services/api';
+import { useAddTagMutation, useEditTaskMutation, useGetTagsQuery } from '../../services/api';
 import { SMART_LISTS } from '../../utils/smartLists.utils';
 import React from 'react';
 
@@ -38,8 +38,11 @@ const DropdownItemsWithSearch: React.FC<DropdownItemsWithSearchProps> = memo(
 		multiSelect = false,
 		type,
 	}) => {
+		// RTK Query - Tags
 		const { data: fetchedTags, isLoading: isLoadingGetTags, error: errorGetTags } = useGetTagsQuery();
 		const { tagsById } = fetchedTags || {};
+
+		const [addTag] = useAddTagMutation();
 
 		const TOP_LIST_NAMES = ['all', 'today', 'tomorrow', 'week'];
 		const topListProjects = TOP_LIST_NAMES.map((name) => SMART_LISTS[name]);
@@ -292,6 +295,8 @@ const DropdownItemsWithSearch: React.FC<DropdownItemsWithSearchProps> = memo(
 			}
 		};
 
+		const noTagResults = type === 'tags' && filteredItems.length === 0;
+
 		return (
 			<Dropdown
 				toggleRef={toggleRef}
@@ -335,14 +340,35 @@ const DropdownItemsWithSearch: React.FC<DropdownItemsWithSearchProps> = memo(
 								Cancel
 							</button>
 							<button
+								disabled={filteredItems.length === 0 && type !== 'tags'}
 								className="bg-blue-500 rounded py-[2px] cursor-pointer hover:bg-blue-600"
 								onClick={async () => {
 									setIsVisible(false);
 									const selectedItemListIds = selectedItemList.map((item) => item._id);
+
+									// If there's no results upon searching for a tag, optionally allow the user to create the tag on the spot and then add to that task immediately.
+									// TODO: This does work but it's possible to show search results of related tags even if they don't have the exact name the user needs. So, this needs to be refactored to check if NONE of the search results have the same name as the typed in text, then show the create button
+									if (noTagResults) {
+										// Create the tag first
+										let newTag = {
+											name: searchText,
+											parentId: null,
+											color: null,
+										};
+
+										const result = await addTag(newTag);
+										const {
+											data: { _id: newlyCreatedTagId },
+										} = result;
+
+										selectedItemListIds.push(newlyCreatedTagId);
+									}
+
 									await editTask({ taskId: task._id, payload: { tagIds: selectedItemListIds } });
+									setSearchText('');
 								}}
 							>
-								Ok
+								{noTagResults ? 'Create Tag' : 'Ok'}
 							</button>
 						</div>
 					)}
