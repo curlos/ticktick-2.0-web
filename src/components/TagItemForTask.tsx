@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router';
 import { useEditTaskMutation } from '../services/api';
 import Dropdown from './Dropdown/Dropdown';
 
-const TagItemForTask = ({ tag, task, selectedTagList, allowDelete = true }) => {
+const TagItemForTask = ({ tag, task, selectedTagList, setSelectedTagList, allowDelete = true }) => {
 	const navigate = useNavigate();
 	// RTK Query - Tasks
 	const [editTask] = useEditTaskMutation();
@@ -21,8 +21,12 @@ const TagItemForTask = ({ tag, task, selectedTagList, allowDelete = true }) => {
 	const deleteTagFromTask = async (e) => {
 		e.stopPropagation();
 		const listWithoutCurrentTag = selectedTagList.filter((currTag) => currTag._id !== tag._id);
-		const selectedItemListIds = listWithoutCurrentTag.map((item) => item._id);
-		await editTask({ taskId: task._id, payload: { tagIds: selectedItemListIds } });
+		setSelectedTagList(listWithoutCurrentTag);
+
+		if (task) {
+			const selectedItemListIds = listWithoutCurrentTag.map((item) => item._id);
+			await editTask({ taskId: task._id, payload: { tagIds: selectedItemListIds } });
+		}
 	};
 
 	return (

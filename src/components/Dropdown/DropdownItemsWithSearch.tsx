@@ -286,7 +286,7 @@ const DropdownItemsWithSearch: React.FC<DropdownItemsWithSearchProps> = memo(
 					return (
 						<React.Fragment>
 							{filteredItems.map((item) => {
-								return <ItemOption key={item.name} item={item} iconFill={0} />;
+								return <ItemOption key={item._id} item={item} iconFill={0} />;
 							})}
 						</React.Fragment>
 					);
@@ -364,7 +364,10 @@ const DropdownItemsWithSearch: React.FC<DropdownItemsWithSearchProps> = memo(
 										selectedItemListIds.push(newlyCreatedTagId);
 									}
 
-									await editTask({ taskId: task._id, payload: { tagIds: selectedItemListIds } });
+									if (task) {
+										await editTask({ taskId: task._id, payload: { tagIds: selectedItemListIds } });
+									}
+
 									setSearchText('');
 								}}
 							>

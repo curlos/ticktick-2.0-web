@@ -15,7 +15,13 @@ const TagList = ({ taskTags, task, selectedTagList, setSelectedTagList }) => {
 	return (
 		<div className="flex flex-wrap gap-1">
 			{taskTags.map((tag) => (
-				<TagItemForTask key={tag._id} tag={tag} task={task} selectedTagList={selectedTagList} />
+				<TagItemForTask
+					key={tag._id}
+					tag={tag}
+					task={task}
+					selectedTagList={selectedTagList}
+					setSelectedTagList={setSelectedTagList}
+				/>
 			))}
 
 			{taskTags.length > 0 && (

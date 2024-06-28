@@ -6,13 +6,14 @@ import TextareaAutosize from 'react-textarea-autosize';
 import DropdownPriorities from './Dropdown/DropdownPriorities';
 import { PRIORITIES } from '../utils/priorities.utils';
 import DropdownProjects from './Dropdown/DropdownProjects';
-import { useAddTaskMutation, useGetProjectsQuery } from '../services/api';
+import { useAddTaskMutation, useGetProjectsQuery, useGetTagsQuery } from '../services/api';
 import { SMART_LISTS } from '../utils/smartLists.utils';
 import { useParams } from 'react-router';
 import classNames from 'classnames';
 import TaskDueDateText from './TaskDueDateText';
 import { setModalState } from '../slices/modalSlice';
 import DropdownItemsWithSearch from './Dropdown/DropdownItemsWithSearch';
+import TagItemForTask from './TagItemForTask';
 
 interface AddTaskFormProps {
 	parentId: string;
@@ -23,25 +24,37 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId,
 	const params = useParams();
 	const { projectId } = params;
 
+	// RTK Query - Tasks
+	const [addTask, { isLoading, error }] = useAddTaskMutation();
+
+	// RTK Query - Projects
 	const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
 	const { projects } = fetchedProjects || {};
-	const [addTask, { isLoading, error }] = useAddTaskMutation();
+
+	// RTK Query - Tags
+	const { data: fetchedTags, isLoading: isLoadingGetTags, error: errorGetTags } = useGetTagsQuery();
+	const { tagsWithNoParent } = fetchedTags || {};
 
 	// useState
 	const [title, setTitle] = useState('');
 	const [focused, setFocused] = useState(false);
 	const [currDueDate, setCurrDueDate] = useState(null);
-	const [isDropdownCalendarVisible, setIsDropdownCalendarVisible] = useState(false);
-	const [isDropdownPrioritiesVisible, setIsDropdownPrioritiesVisible] = useState(false);
-	const [isDropdownProjectsVisible, setIsDropdownProjectsVisible] = useState(false);
 	const [tempSelectedPriority, setTempSelectedPriority] = useState(defaultPriority ? defaultPriority : 'none');
 	const [selectedProject, setSelectedProject] = useState(null);
 	const [description, setDescription] = useState('');
+	const [selectedTagList, setSelectedTagList] = useState([]);
+
+	// useState - Dropdowns
+	const [isDropdownCalendarVisible, setIsDropdownCalendarVisible] = useState(false);
+	const [isDropdownPrioritiesVisible, setIsDropdownPrioritiesVisible] = useState(false);
+	const [isDropdownProjectsVisible, setIsDropdownProjectsVisible] = useState(false);
+	const [isDropdownItemsWithSearchTagVisible, setIsDropdownItemsWithSearchTagVisible] = useState(false);
 
 	// useRef
 	const dropdownCalendarToggleRef = useRef(null);
 	const dropdownPrioritiesRef = useRef(null);
 	const dropdownProjectsRef = useRef(null);
+	const dropdownItemsWithSearchTagRef = useRef(null);
 
 	const priority = PRIORITIES[tempSelectedPriority];
 
@@ -121,6 +134,17 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId,
 						onChange={(e) => setDescription(e.target.value)}
 					></TextareaAutosize>
 
+					<div className="flex gap-1 mt-2">
+						{selectedTagList.map((tag) => (
+							<TagItemForTask
+								key={tag._id}
+								tag={tag}
+								selectedTagList={selectedTagList}
+								setSelectedTagList={setSelectedTagList}
+							/>
+						))}
+					</div>
+
 					<div className="flex gap-2 mt-3">
 						<div className="text-[14px] flex items-center gap-1 text-color-gray-100 p-1 border border-color-gray-100 rounded-md relative">
 							<div
@@ -171,7 +195,7 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId,
 
 				<hr className="border-color-gray-200 my-1" />
 
-				<div className="p-2 pt-1 flex justify-between items-center">
+				<div className="p-2 pt-1 flex justify-between items-center gap-2">
 					{/* TODO: If there is a parentId, probably should not give the user the option to change the project here because the project MUST be the same as its parent. If it is a subtask of another task, it wouldn't make sense to have a different projectId. */}
 					{/* TODO: For now, I won't take it out experiement with TickTick to see what it does about subtasks when you move it to a different project. One solution would be to change all the parentId's "projectId" in an upstream fashion. */}
 					{!isLoadingProjects && (
@@ -193,6 +217,32 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId,
 								setSelectedItem={setSelectedProject}
 								items={projects}
 								type="project"
+							/>
+						</div>
+					)}
+
+					{!isLoadingGetTags && (
+						<div className="relative">
+							<div
+								ref={dropdownItemsWithSearchTagRef}
+								className="flex items-center gap-1 font-bold text-[12px] cursor-pointer"
+								onClick={() =>
+									setIsDropdownItemsWithSearchTagVisible(!isDropdownItemsWithSearchTagVisible)
+								}
+							>
+								Tags
+								<Icon name="expand_more" customClass={'!text-[16px] hover:text-white'} />
+							</div>
+
+							<DropdownItemsWithSearch
+								toggleRef={dropdownItemsWithSearchTagRef}
+								isVisible={isDropdownItemsWithSearchTagVisible}
+								setIsVisible={setIsDropdownItemsWithSearchTagVisible}
+								selectedItemList={selectedTagList}
+								setSelectedItemList={setSelectedTagList}
+								items={tagsWithNoParent}
+								multiSelect={true}
+								type="tags"
 							/>
 						</div>
 					)}

@@ -128,7 +128,6 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 		};
 
 		const taskTags = tagIds && tagIds.map((tagId) => tagsById[tagId]);
-		console.log(taskTags);
 
 		return (
 			<li
