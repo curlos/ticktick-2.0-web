@@ -81,6 +81,7 @@ const TaskListSidebar = () => {
 					{/* <SortableTree collapsible indicator removable /> */}
 				</div>
 
+				{/* Filters */}
 				<div className="pt-3">
 					<div className="flex items-center justify-between py-1 pr-1 hover:bg-color-gray-600 rounded cursor-pointer mb-2">
 						<div className="flex items-center">
@@ -92,7 +93,7 @@ const TaskListSidebar = () => {
 							name={'add'}
 							customClass={'text-color-gray-100 !text-[16px] hover:text-white'}
 							onClick={() => {
-								dispatch(setModalState({ modalId: 'ModalAddTag', isOpen: true }));
+								dispatch(setModalState({ modalId: 'ModalAddFilter', isOpen: true }));
 							}}
 						/>
 					</div>

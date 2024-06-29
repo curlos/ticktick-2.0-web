@@ -7,6 +7,7 @@ import ModalErrorMessenger from './ModalErrorMessenger';
 import ModalAccountSettings from './ModalAccountSettings';
 import ModalEditMatrix from './ModalAddFilterOrEditMatrix/ModalEditMatrix';
 import ModalAddTag from './ModalAddTag/ModalAddTag';
+import ModalAddFilter from './ModalAddFilterOrEditMatrix/ModalAddFilter';
 
 /**
  * @description Modals in this list can be opened from anywhere on the site. In most cases, this'll be reserved for Modals that can be opened from multiple parts in the site such as the "Add Task Form Modal".
@@ -23,6 +24,7 @@ const GlobalModalList = () => {
 			<ModalSearchTasks />
 			<ModalAccountSettings />
 			<ModalEditMatrix />
+			<ModalAddFilter />
 		</React.Fragment>
 	);
 };

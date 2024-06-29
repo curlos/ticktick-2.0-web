@@ -12,9 +12,12 @@ import DateMultiSelectSection from './DateMultiSelectSection';
 import PriorityMultiSelectSection from './PriorityMultiSelectSection';
 import TagMultiSelectSection from './TagMultiSelectSection';
 
-const ModalEditMatrix: React.FC = () => {
-	const modal = useSelector((state) => state.modals.modals['ModalEditMatrix']);
+const ModalAddFilter: React.FC = () => {
+	const modal = useSelector((state) => state.modals.modals['ModalAddFilter']);
 	const dispatch = useDispatch();
+
+	console.log('faggot');
+	console.log(modal);
 
 	// RTK Query - Projects
 	const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
@@ -30,7 +33,7 @@ const ModalEditMatrix: React.FC = () => {
 	const topListProjects = TOP_LIST_NAMES.map((name) => SMART_LISTS[name]);
 	const allProject = topListProjects.find((project) => project.urlName === 'all');
 
-	const closeModal = () => dispatch(setModalState({ modalId: 'ModalEditMatrix', isOpen: false }));
+	const closeModal = () => dispatch(setModalState({ modalId: 'ModalAddFilter', isOpen: false }));
 
 	const [selectedProjectsList, setSelectedProjectsList] = useState([allProject]);
 	const [selectedTagList, setSelectedTagList] = useState([]);
@@ -83,9 +86,9 @@ const ModalEditMatrix: React.FC = () => {
 		}
 	};
 
-	if (!matrix || !dateOptions) {
-		return null;
-	}
+	// if (!matrix || !dateOptions) {
+	// 	return null;
+	// }
 
 	return (
 		<Modal
@@ -97,7 +100,7 @@ const ModalEditMatrix: React.FC = () => {
 			<div className="rounded-xl shadow-lg bg-color-gray-600">
 				<div className={classNames('p-5')}>
 					<div className="flex items-center justify-between mb-4">
-						<h3 className="font-bold text-[16px]">Edit Matrix</h3>
+						<h3 className="font-bold text-[16px]">Add Filter</h3>
 						<Icon
 							name="close"
 							customClass={'!text-[20px] text-color-gray-100 hover:text-white cursor-pointer'}
@@ -188,4 +191,4 @@ const ModalEditMatrix: React.FC = () => {
 	);
 };
 
-export default ModalEditMatrix;
+export default ModalAddFilter;
