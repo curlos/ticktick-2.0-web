@@ -35,6 +35,8 @@ const TaskListPage = () => {
 	const isSmartListView = SMART_LISTS[projectId];
 
 	useEffect(() => {
+		setShowAddTaskForm(false);
+
 		if (isLoadingOrErrors) {
 			return;
 		}

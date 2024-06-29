@@ -22,18 +22,18 @@ interface AddTaskFormProps {
 const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId, defaultPriority }) => {
 	const dispatch = useDispatch();
 	const params = useParams();
-	const { projectId } = params;
+	const { projectId, tagId } = params;
 
 	// RTK Query - Tasks
 	const [addTask, { isLoading, error }] = useAddTaskMutation();
 
 	// RTK Query - Projects
 	const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
-	const { projects } = fetchedProjects || {};
+	const { projects, inboxProject } = fetchedProjects || {};
 
 	// RTK Query - Tags
 	const { data: fetchedTags, isLoading: isLoadingGetTags, error: errorGetTags } = useGetTagsQuery();
-	const { tagsWithNoParent } = fetchedTags || {};
+	const { tagsById, tagsWithNoParent } = fetchedTags || {};
 
 	// useState
 	const [title, setTitle] = useState('');
@@ -74,9 +74,15 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId,
 				setCurrDueDate(SMART_LISTS[projectId].getDefaultDueDate());
 			}
 		} else {
-			setSelectedProject(projects[0]);
+			// If not in a projectId route, the default project will be the inbox project.
+			setSelectedProject(inboxProject);
 		}
-	}, [fetchedProjects, projectId]);
+
+		if (tagId) {
+			const defaultTag = tagsById[tagId];
+			setSelectedTagList([defaultTag]);
+		}
+	}, [fetchedProjects, projectId, tagId]);
 
 	const handleAddTask = async (e) => {
 		e.preventDefault();

@@ -155,7 +155,9 @@ export const api = createApi({
 			providesTags: ['Project'],
 			transformResponse: (response) => {
 				const projectsById = arrayToObjectByKey(response, '_id');
-				return { projects: response, projectsById };
+				const inboxProject = projectsById['665233f98d8317681ddb831a'];
+
+				return { projects: response, projectsById, inboxProject };
 			},
 		}),
 		addProject: builder.mutation({
