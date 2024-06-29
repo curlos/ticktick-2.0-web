@@ -16,7 +16,7 @@ const ModalEditMatrix: React.FC = () => {
 	const dispatch = useDispatch();
 
 	const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
-	const { projects, projectsById } = fetchedProjects || {};
+	const { projectsById } = fetchedProjects || {};
 
 	const [editMatrix] = useEditMatrixMutation();
 
@@ -26,9 +26,7 @@ const ModalEditMatrix: React.FC = () => {
 
 	const closeModal = () => dispatch(setModalState({ modalId: 'ModalEditMatrix', isOpen: false }));
 
-	const [isDropdownProjectsVisible, setIsDropdownProjectsVisible] = useState(false);
 	const [selectedProjectsList, setSelectedProjectsList] = useState([allProject]);
-	const dropdownProjectsRef = useRef(null);
 
 	const [isDropdownDatesVisible, setIsDropdownDatesVisible] = useState(false);
 	const dropdownDatesRef = useRef(null);
@@ -54,26 +52,25 @@ const ModalEditMatrix: React.FC = () => {
 	useEffect(() => {
 		if (matrix) {
 			// TODO: FIX!
-			const { name, selectedPriorities, selectedProjectIds, dateOptions } = matrix;
-			setName(name);
-			setSelectedPriorities(selectedPriorities);
-			setDateOptions(dateOptions);
-
-			const everyPriorityIsFalse =
-				selectedPriorities && Object.values(selectedPriorities).every((value) => !value);
-			setAllPriorities(everyPriorityIsFalse);
-
-			if (selectedProjectIds.length === 0) {
-				setSelectedProjectsList([allProject]);
-			} else {
-				setSelectedProjectsList(selectedProjectIds.map((projectId) => projectsById[projectId]));
-			}
+			updateInitialData();
 		}
 	}, [matrix]);
 
-	if (!projects) {
-		return null;
-	}
+	const updateInitialData = () => {
+		const { name, selectedPriorities, selectedProjectIds, dateOptions } = matrix;
+		setName(name);
+		setSelectedPriorities(selectedPriorities);
+		setDateOptions(dateOptions);
+
+		const everyPriorityIsFalse = selectedPriorities && Object.values(selectedPriorities).every((value) => !value);
+		setAllPriorities(everyPriorityIsFalse);
+
+		if (selectedProjectIds.length === 0) {
+			setSelectedProjectsList([allProject]);
+		} else {
+			setSelectedProjectsList(selectedProjectIds.map((projectId) => projectsById[projectId]));
+		}
+	};
 
 	const selectedDatesNames =
 		dateOptions &&
@@ -82,15 +79,6 @@ const ModalEditMatrix: React.FC = () => {
 				if (current.selected) {
 					accumulator.push(current.name);
 				}
-				return accumulator;
-			}, [])
-			.join(', ');
-
-	const selectedProjectNames =
-		dateOptions &&
-		selectedProjectsList
-			.reduce((accumulator, current) => {
-				accumulator.push(current.name);
 				return accumulator;
 			}, [])
 			.join(', ');
@@ -112,41 +100,10 @@ const ModalEditMatrix: React.FC = () => {
 						<CustomInput value={name} setValue={setName} customClasses="!text-left  p-[6px] px-3" />
 
 						{/* Lists */}
-						<div>
-							<div className="flex items-center">
-								<div className="text-color-gray-100 w-[96px]">Lists</div>
-								<div className="flex-1 relative">
-									<div
-										ref={dropdownProjectsRef}
-										className="border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500 rounded-md cursor-pointer"
-										onClick={() => {
-											setIsDropdownProjectsVisible(!isDropdownProjectsVisible);
-										}}
-									>
-										<div>{selectedProjectNames}</div>
-										<Icon
-											name="expand_more"
-											fill={0}
-											customClass={
-												'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'
-											}
-										/>
-									</div>
-
-									<DropdownItemsWithSearch
-										toggleRef={dropdownProjectsRef}
-										isVisible={isDropdownProjectsVisible}
-										setIsVisible={setIsDropdownProjectsVisible}
-										selectedItemList={selectedProjectsList}
-										setSelectedItemList={setSelectedProjectsList}
-										items={projects}
-										customClasses="w-full ml-[0px]"
-										multiSelect={true}
-										type="project"
-									/>
-								</div>
-							</div>
-						</div>
+						<ProjectMultiSelectSection
+							selectedProjectsList={selectedProjectsList}
+							setSelectedProjectsList={setSelectedProjectsList}
+						/>
 
 						{/* Dates */}
 						<div>
@@ -280,6 +237,63 @@ const ModalEditMatrix: React.FC = () => {
 				</div>
 			</div>
 		</Modal>
+	);
+};
+
+const ProjectMultiSelectSection = ({ selectedProjectsList, setSelectedProjectsList }) => {
+	const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
+	const { projects } = fetchedProjects || {};
+
+	const [isDropdownProjectsVisible, setIsDropdownProjectsVisible] = useState(false);
+	const dropdownProjectsRef = useRef(null);
+
+	const selectedProjectNames =
+		selectedProjectsList &&
+		selectedProjectsList
+			.reduce((accumulator, current) => {
+				accumulator.push(current.name);
+				return accumulator;
+			}, [])
+			.join(', ');
+
+	if (!projects) {
+		return null;
+	}
+
+	return (
+		<div>
+			<div className="flex items-center">
+				<div className="text-color-gray-100 w-[96px]">Lists</div>
+				<div className="flex-1 relative">
+					<div
+						ref={dropdownProjectsRef}
+						className="border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500 rounded-md cursor-pointer"
+						onClick={() => {
+							setIsDropdownProjectsVisible(!isDropdownProjectsVisible);
+						}}
+					>
+						<div>{selectedProjectNames}</div>
+						<Icon
+							name="expand_more"
+							fill={0}
+							customClass={'text-color-gray-50 !text-[18px] hover:text-white cursor-pointer'}
+						/>
+					</div>
+
+					<DropdownItemsWithSearch
+						toggleRef={dropdownProjectsRef}
+						isVisible={isDropdownProjectsVisible}
+						setIsVisible={setIsDropdownProjectsVisible}
+						selectedItemList={selectedProjectsList}
+						setSelectedItemList={setSelectedProjectsList}
+						items={projects}
+						customClasses="w-full ml-[0px]"
+						multiSelect={true}
+						type="project"
+					/>
+				</div>
+			</div>
+		</div>
 	);
 };
 

@@ -72,26 +72,20 @@ const TaskListSidebar = () => {
 					{/* <DraggableProjects projects={projects} /> */}
 
 					{/* Show every project that is NOT the Inbox. */}
-					{projects &&
+					{/* TODO: Bring back soon! THIS TAKES PRIORITY OVER THE ONE ABOVE "DraggableProjects". */}
+					{/* {projects &&
 						projects
 							.filter((project) => !project.isInbox)
-							.map((project) => <ProjectItem key={project._id} project={project} />)}
+							.map((project) => <ProjectItem key={project._id} project={project} />)} */}
 
 					{/* <SortableTree collapsible indicator removable /> */}
-				</div>
-
-				<div className="pt-3">
-					<div className="p-2 text-color-gray-100">Filters</div>
-					<div className="p-2 rounded-lg text-color-gray-100 bg-color-gray-600 text-[12px]">
-						Display tasks filtered by list, date, priority, tag, and more
-					</div>
 				</div>
 
 				<div className="pt-3">
 					<div className="flex items-center justify-between py-1 pr-1 hover:bg-color-gray-600 rounded cursor-pointer mb-2">
 						<div className="flex items-center">
 							<Icon name={'chevron_right'} customClass={'text-color-gray-100 !text-[16px]'} />
-							<div className="text-color-gray-100">Tag</div>
+							<div className="text-color-gray-100">Filters</div>
 						</div>
 
 						<Icon
@@ -105,7 +99,7 @@ const TaskListSidebar = () => {
 
 					{!tags || tags.length === 0 ? (
 						<div className="p-2 rounded-lg text-color-gray-100 bg-color-gray-600 text-[12px]">
-							Categorize your tasks with tags. Quickly select a tag by typing "#" when adding a task
+							Display tasks filtered by list, date, priority, tag, and more.
 						</div>
 					) : (
 						<div>
@@ -114,6 +108,36 @@ const TaskListSidebar = () => {
 							})}
 						</div>
 					)}
+				</div>
+
+				<div className="pt-3">
+					<div className="flex items-center justify-between py-1 pr-1 hover:bg-color-gray-600 rounded cursor-pointer mb-2">
+						<div className="flex items-center">
+							<Icon name={'chevron_right'} customClass={'text-color-gray-100 !text-[16px]'} />
+							<div className="text-color-gray-100">Tags</div>
+						</div>
+
+						<Icon
+							name={'add'}
+							customClass={'text-color-gray-100 !text-[16px] hover:text-white'}
+							onClick={() => {
+								dispatch(setModalState({ modalId: 'ModalAddTag', isOpen: true }));
+							}}
+						/>
+					</div>
+
+					{/* TODO: Bring back soon! */}
+					{/* {!tags || tags.length === 0 ? (
+						<div className="p-2 rounded-lg text-color-gray-100 bg-color-gray-600 text-[12px]">
+							Categorize your tasks with tags. Quickly select a tag by typing "#" when adding a task
+						</div>
+					) : (
+						<div>
+							{tagsWithNoParent.map((tag) => {
+								return <TagItem key={tag._id} tag={tag} />;
+							})}
+						</div>
+					)} */}
 				</div>
 			</div>
 
