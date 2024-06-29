@@ -144,7 +144,7 @@ const DropdownItemsWithSearch: React.FC<DropdownItemsWithSearchProps> = memo(
 					// If the project is already selected, then remove it.
 					if (isItemSelected && !isAllProject) {
 						newSelectedProjectsList = newSelectedProjectsList.filter(
-							(projectInList) => projectInList._id !== project._id
+							(projectInList) => projectInList._id !== item._id
 						);
 					} else {
 						// If the project being selected is the "All" project, then every other selected project should be removed.
