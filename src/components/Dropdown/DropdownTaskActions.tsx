@@ -18,7 +18,6 @@ import { useDispatch } from 'react-redux';
 import { setModalState } from '../../slices/modalSlice';
 import { setAlertState } from '../../slices/alertSlice';
 import DropdownStartFocus from './DropdownTaskOptions/DropdownStartFocus';
-import DropdownProjects from './DropdownProjects';
 import DropdownItemsWithSearch from './DropdownItemsWithSearch';
 
 interface IDateIconOption {

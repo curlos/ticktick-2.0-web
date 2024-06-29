@@ -5,7 +5,6 @@ import Icon from '../../Icon';
 import Dropdown from '../Dropdown';
 import { SMART_LISTS } from '../../../utils/smartLists.utils';
 import { debounce, getTasksWithNoParent } from '../../../utils/helpers.utils';
-import DropdownProjects from '../DropdownProjects';
 import Fuse from 'fuse.js';
 import Task from '../../Task';
 import classNames from 'classnames';

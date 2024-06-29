@@ -5,10 +5,9 @@ import DropdownCalendar from './Dropdown/DropdownCalendar/DropdownCalendar';
 import TextareaAutosize from 'react-textarea-autosize';
 import DropdownPriorities from './Dropdown/DropdownPriorities';
 import { PRIORITIES } from '../utils/priorities.utils';
-import DropdownProjects from './Dropdown/DropdownProjects';
 import { useAddTaskMutation, useGetProjectsQuery, useGetTagsQuery } from '../services/api';
 import { SMART_LISTS } from '../utils/smartLists.utils';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import classNames from 'classnames';
 import TaskDueDateText from './TaskDueDateText';
 import { setModalState } from '../slices/modalSlice';
@@ -21,6 +20,7 @@ interface AddTaskFormProps {
 
 const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId, defaultPriority }) => {
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 	const params = useParams();
 	const { projectId, tagId } = params;
 
@@ -91,29 +91,40 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId,
 			return null;
 		}
 
+		const selectedTagListIds = selectedTagList.map((tag) => tag._id);
+
 		const payload = {
 			title,
 			description,
 			priority: priority && priority.backendValue,
 			projectId: selectedProject._id,
+			tagIds: selectedTagListIds,
 			dueDate: currDueDate,
 		};
 
 		try {
-			await addTask({ payload, parentId });
+			const newTask = await addTask({ payload, parentId }).unwrap();
+
+			console.log(newTask);
+			debugger;
 
 			setTitle('');
 			setDescription('');
 			setCurrDueDate(null);
-			// setPriority({
-			//     name: 'No Priority',
-			//     backendValue: 'none',
-			//     flagColor: '#7B7B7B'
-			// });
-
+			setTempSelectedPriority(defaultPriority ? defaultPriority : 'none');
 			dispatch(setModalState({ modalId: 'ModalAddTaskForm', isOpen: false }));
+
+			handleTaskNavigation(newTask);
 		} catch (error) {
 			console.error(error);
+		}
+	};
+
+	const handleTaskNavigation = (task) => {
+		if (tagId) {
+			navigate(`/tags/${tagId}/tasks/${task._id}`);
+		} else {
+			navigate(`/projects/${task.projectId}/tasks/${task._id}`);
 		}
 	};
 
@@ -267,10 +278,11 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId,
 							Cancel
 						</button>
 						<button
+							disabled={!title}
 							type="submit"
-							className="bg-blue-500 rounded-md py-1 cursor-pointer hover:bg-blue-600 p-3"
+							className="bg-blue-500 rounded-md py-1 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 hover:bg-blue-600 p-3"
 						>
-							Add task
+							Add Task
 						</button>
 					</div>
 				</div>

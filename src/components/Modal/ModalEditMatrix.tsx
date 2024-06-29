@@ -6,7 +6,6 @@ import { setModalState } from '../../slices/modalSlice';
 import CustomInput from '../CustomInput';
 import { useEffect, useRef, useState } from 'react';
 import { useEditMatrixMutation, useGetProjectsQuery } from '../../services/api';
-import DropdownProjects from '../Dropdown/DropdownProjects';
 import { SMART_LISTS } from '../../utils/smartLists.utils';
 import CustomRadioButton from '../CustomRadioButton';
 import DropdownDates from '../Dropdown/DropdownDates';

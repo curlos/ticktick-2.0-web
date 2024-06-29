@@ -81,7 +81,8 @@ const TaskListPage = () => {
 				<div className="flex justify-between items-center mb-4">
 					<div className="flex gap-1 items-center">
 						<Icon name="menu_open" customClass={'text-white !text-[24px]'} />
-						<h3 className="text-[20px] font-[600]">{title}</h3>
+						{/* TODO: Look into this later. Need to make this an input that is editable by the user. */}
+						<h3 className="text-[20px] font-[600] max-w-[500px] truncate">{title}</h3>
 					</div>
 
 					<div className="flex items-center gap-2">
