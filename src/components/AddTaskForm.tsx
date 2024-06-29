@@ -11,7 +11,7 @@ import { useNavigate, useParams } from 'react-router';
 import classNames from 'classnames';
 import TaskDueDateText from './TaskDueDateText';
 import { setModalState } from '../slices/modalSlice';
-import DropdownItemsWithSearch from './Dropdown/DropdownItemsWithSearch';
+import DropdownItemsWithSearch from './Dropdown/DropdownItemsWithSearch/DropdownItemsWithSearch';
 import TagItemForTask from './TagItemForTask';
 
 interface AddTaskFormProps {

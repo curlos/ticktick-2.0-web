@@ -27,7 +27,7 @@ import useAudio from '../../hooks/useAudio';
 import amongUsCompletionSoundMP3 from '/among_us_complete_task.mp3';
 import CommentList from './CommentList';
 import AddCommentForm from './AddCommentForm';
-import DropdownItemsWithSearch from '../Dropdown/DropdownItemsWithSearch';
+import DropdownItemsWithSearch from '../Dropdown/DropdownItemsWithSearch/DropdownItemsWithSearch';
 import TagList from './TagList';
 
 const EmptyTask = () => (

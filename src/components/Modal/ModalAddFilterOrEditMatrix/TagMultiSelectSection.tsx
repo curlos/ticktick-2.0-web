@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { useGetTagsQuery } from '../../../services/api';
-import DropdownItemsWithSearch from '../../Dropdown/DropdownItemsWithSearch';
+import DropdownItemsWithSearch from '../../Dropdown/DropdownItemsWithSearch/DropdownItemsWithSearch';
 import Icon from '../../Icon';
 
 const TagMultiSelectSection = ({ selectedTagList, setSelectedTagList }) => {

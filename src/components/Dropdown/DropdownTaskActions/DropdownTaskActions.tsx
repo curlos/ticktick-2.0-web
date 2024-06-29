@@ -16,7 +16,7 @@ import { useDispatch } from 'react-redux';
 import { setModalState } from '../../../slices/modalSlice';
 import { setAlertState } from '../../../slices/alertSlice';
 import DropdownStartFocus from '../DropdownTaskOptions/DropdownStartFocus';
-import DropdownItemsWithSearch from '../DropdownItemsWithSearch';
+import DropdownItemsWithSearch from '../DropdownItemsWithSearch/DropdownItemsWithSearch';
 import DateIconOptionList from './DateIconOptionList';
 import TaskAction from './TaskAction';
 

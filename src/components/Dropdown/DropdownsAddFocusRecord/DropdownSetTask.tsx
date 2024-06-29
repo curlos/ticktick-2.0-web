@@ -9,7 +9,7 @@ import Fuse from 'fuse.js';
 import Task from '../../Task';
 import classNames from 'classnames';
 import TaskListByGroup from '../../TaskListByGroup';
-import DropdownItemsWithSearch from '../DropdownItemsWithSearch';
+import DropdownItemsWithSearch from '../DropdownItemsWithSearch/DropdownItemsWithSearch';
 
 interface DropdownSetTaskProps extends DropdownProps {
 	selectedTask: Object | null;
