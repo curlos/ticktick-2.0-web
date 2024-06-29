@@ -35,7 +35,7 @@ const ProjectMultiSelectSection = ({ selectedProjectsList, setSelectedProjectsLi
 							setIsDropdownProjectsVisible(!isDropdownProjectsVisible);
 						}}
 					>
-						<div>{selectedProjectNames}</div>
+						<div style={{ wordBreak: 'break-word' }}>{selectedProjectNames}</div>
 						<Icon
 							name="expand_more"
 							fill={0}

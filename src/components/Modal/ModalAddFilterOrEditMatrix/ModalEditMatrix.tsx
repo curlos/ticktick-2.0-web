@@ -5,18 +5,24 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setModalState } from '../../../slices/modalSlice';
 import CustomInput from '../../CustomInput';
 import { useEffect, useState } from 'react';
-import { useEditMatrixMutation, useGetProjectsQuery } from '../../../services/api';
+import { useEditMatrixMutation, useGetProjectsQuery, useGetTagsQuery } from '../../../services/api';
 import { SMART_LISTS } from '../../../utils/smartLists.utils';
 import ProjectMultiSelectSection from './ProjectMutliSelectSection';
 import DateMultiSelectSection from './DateMultiSelectSection';
 import PriorityMultiSelectSection from './PriorityMultiSelectSection';
+import TagMultiSelectSection from './TagMultiSelectSection';
 
 const ModalEditMatrix: React.FC = () => {
 	const modal = useSelector((state) => state.modals.modals['ModalEditMatrix']);
 	const dispatch = useDispatch();
 
+	// RTK Query - Projects
 	const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
 	const { projectsById } = fetchedProjects || {};
+
+	// RTK Query - Tags
+	const { data: fetchedTags, isLoading: isLoadingGetTags, error: errorGetTags } = useGetTagsQuery();
+	const { tagsById } = fetchedTags || {};
 
 	const [editMatrix] = useEditMatrixMutation();
 
@@ -27,6 +33,7 @@ const ModalEditMatrix: React.FC = () => {
 	const closeModal = () => dispatch(setModalState({ modalId: 'ModalEditMatrix', isOpen: false }));
 
 	const [selectedProjectsList, setSelectedProjectsList] = useState([allProject]);
+	const [selectedTagList, setSelectedTagList] = useState([]);
 
 	const matrix = modal?.props?.matrix;
 
@@ -54,7 +61,7 @@ const ModalEditMatrix: React.FC = () => {
 	}, [matrix]);
 
 	const updateInitialData = () => {
-		const { name, selectedPriorities, selectedProjectIds, dateOptions } = matrix;
+		const { name, selectedProjectIds, selectedTagIds, selectedPriorities, dateOptions } = matrix;
 		setName(name);
 		setSelectedPriorities(selectedPriorities);
 		setDateOptions(dateOptions);
@@ -66,6 +73,13 @@ const ModalEditMatrix: React.FC = () => {
 			setSelectedProjectsList([allProject]);
 		} else {
 			setSelectedProjectsList(selectedProjectIds.map((projectId) => projectsById[projectId]));
+		}
+
+		if (selectedTagIds && selectedTagIds.length > 0) {
+			const newSelectedTagList = selectedTagIds.map((tagId) => tagsById[tagId]);
+			setSelectedTagList(newSelectedTagList);
+		} else {
+			setSelectedTagList([]);
 		}
 	};
 
@@ -93,6 +107,12 @@ const ModalEditMatrix: React.FC = () => {
 						<ProjectMultiSelectSection
 							selectedProjectsList={selectedProjectsList}
 							setSelectedProjectsList={setSelectedProjectsList}
+						/>
+
+						{/* Tags */}
+						<TagMultiSelectSection
+							selectedTagList={selectedTagList}
+							setSelectedTagList={setSelectedTagList}
 						/>
 
 						{/* Dates */}
@@ -128,6 +148,14 @@ const ModalEditMatrix: React.FC = () => {
 										return [];
 									});
 
+									const selectedTagIds = selectedTagList.flatMap((tag) => {
+										if (tag._id) {
+											return tag._id;
+										}
+
+										return [];
+									});
+
 									const payload = {
 										matrixId: matrix._id,
 										payload: {
@@ -135,8 +163,12 @@ const ModalEditMatrix: React.FC = () => {
 											dateOptions,
 											selectedProjectIds,
 											selectedPriorities,
+											selectedTagIds,
 										},
 									};
+
+									console.log(payload);
+									debugger;
 
 									await editMatrix(payload);
 									closeModal();
