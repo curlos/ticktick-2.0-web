@@ -30,15 +30,15 @@ const ModalEditMatrix: React.FC = () => {
 
 	const matrix = modal?.props?.matrix;
 
-	const [name, setName] = useState(matrix?.name);
+	const [name, setName] = useState('');
 	const [allPriorities, setAllPriorities] = useState(false);
 	const [selectedPriorities, setSelectedPriorities] = useState({
-		high: matrix?.selectedPriorities?.high,
-		medium: matrix?.selectedPriorities?.medium,
-		low: matrix?.selectedPriorities?.low,
-		none: matrix?.selectedPriorities?.none,
+		high: false,
+		medium: false,
+		low: false,
+		none: false,
 	});
-	const [dateOptions, setDateOptions] = useState(matrix?.dateOptions);
+	const [dateOptions, setDateOptions] = useState(null);
 
 	if (!modal) {
 		return null;
@@ -68,6 +68,10 @@ const ModalEditMatrix: React.FC = () => {
 			setSelectedProjectsList(selectedProjectIds.map((projectId) => projectsById[projectId]));
 		}
 	};
+
+	if (!matrix || !dateOptions) {
+		return null;
+	}
 
 	return (
 		<Modal isOpen={isOpen} onClose={closeModal} positionClasses="!items-start mt-[150px]" customClasses="my-[2px]">

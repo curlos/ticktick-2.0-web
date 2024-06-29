@@ -289,8 +289,6 @@ export const getTasksWithNoParent = (tasks, tasksById, projectId, isSmartListVie
 		newTasksWithNoParent = newTasksWithNoParent.filter((task) => task.tagIds.includes(tagId));
 	}
 
-	console.log(newTasksWithNoParent);
-
 	return newTasksWithNoParent;
 };
 
