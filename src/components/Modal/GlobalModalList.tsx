@@ -5,7 +5,7 @@ import ModalAddProject from './ModalAddProject/ModalAddProject';
 import ModalSearchTasks from './ModalSearchTasks';
 import ModalErrorMessenger from './ModalErrorMessenger';
 import ModalAccountSettings from './ModalAccountSettings';
-import ModalEditMatrix from './ModalEditMatrix';
+import ModalEditMatrix from './ModalAddFilterOrEditMatrix/ModalEditMatrix';
 import ModalAddTag from './ModalAddTag/ModalAddTag';
 
 /**
