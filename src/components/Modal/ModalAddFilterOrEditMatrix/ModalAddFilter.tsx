@@ -16,9 +16,6 @@ const ModalAddFilter: React.FC = () => {
 	const modal = useSelector((state) => state.modals.modals['ModalAddFilter']);
 	const dispatch = useDispatch();
 
-	console.log('faggot');
-	console.log(modal);
-
 	// RTK Query - Projects
 	const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
 	const { projectsById } = fetchedProjects || {};
@@ -38,7 +35,7 @@ const ModalAddFilter: React.FC = () => {
 	const [selectedProjectsList, setSelectedProjectsList] = useState([allProject]);
 	const [selectedTagList, setSelectedTagList] = useState([]);
 
-	const matrix = modal?.props?.matrix;
+	const filter = modal?.props?.filter;
 
 	const [name, setName] = useState('');
 	const [allPriorities, setAllPriorities] = useState(false);
@@ -57,14 +54,14 @@ const ModalAddFilter: React.FC = () => {
 	const { isOpen } = modal;
 
 	useEffect(() => {
-		if (matrix) {
+		if (filter) {
 			// TODO: FIX!
 			updateInitialData();
 		}
-	}, [matrix]);
+	}, [filter]);
 
 	const updateInitialData = () => {
-		const { name, selectedProjectIds, selectedTagIds, selectedPriorities, dateOptions } = matrix;
+		const { name, selectedProjectIds, selectedTagIds, selectedPriorities, dateOptions } = filter;
 		setName(name);
 		setSelectedPriorities(selectedPriorities);
 		setDateOptions(dateOptions);
@@ -86,6 +83,7 @@ const ModalAddFilter: React.FC = () => {
 		}
 	};
 
+	// TODO: Investigate!
 	// if (!matrix || !dateOptions) {
 	// 	return null;
 	// }

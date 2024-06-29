@@ -1,22 +1,28 @@
 import { useEffect, useState } from 'react';
-import Icon from './Icon';
-import { IProject } from '../interfaces/interfaces';
-import { arrayToObjectByKey, containsEmoji, fetchData } from '../utils/helpers.utils';
+import Icon from '../Icon';
+import { IProject } from '../../interfaces/interfaces';
+import { arrayToObjectByKey, containsEmoji, fetchData } from '../../utils/helpers.utils';
 import { useDispatch, useSelector } from 'react-redux';
-import { useGetProjectsQuery, useGetTagsQuery } from '../services/api';
-import DraggableProjects, { ProjectItem } from './DraggableProjects';
-import { SortableTree } from './SortableTest/SortableTree';
-import { SMART_LISTS } from '../utils/smartLists.utils';
-import { setModalState } from '../slices/modalSlice';
+import { useGetFiltersQuery, useGetProjectsQuery, useGetTagsQuery } from '../../services/api';
+import DraggableProjects, { ProjectItem } from '../DraggableProjects';
+import { SortableTree } from '../SortableTest/SortableTree';
+import { SMART_LISTS } from '../../utils/smartLists.utils';
+import { setModalState } from '../../slices/modalSlice';
 import TagItem from './TagItem';
+import FilterItem from './FilterItem';
 
 const TaskListSidebar = () => {
 	const dispatch = useDispatch();
 	const { data: fetchedProjects, isLoading, error } = useGetProjectsQuery();
 	const { projects } = fetchedProjects || {};
 
+	// RTK Query - Tags
 	const { data: fetchedTags } = useGetTagsQuery();
 	const { tags, tagsWithNoParent } = fetchedTags || {};
+
+	// RTK Query - Filters
+	const { data: fetchedFilters } = useGetFiltersQuery();
+	const { filters } = fetchedFilters || {};
 
 	// TODO: Look into this. I had this before to drag projects and drop them into different folders.
 	// const projectsWithNoGroup = projects && projects.filter((project) => !project.groupId);
@@ -98,14 +104,14 @@ const TaskListSidebar = () => {
 						/>
 					</div>
 
-					{!tags || tags.length === 0 ? (
+					{!filters || filters.length === 0 ? (
 						<div className="p-2 rounded-lg text-color-gray-100 bg-color-gray-600 text-[12px]">
 							Display tasks filtered by list, date, priority, tag, and more.
 						</div>
 					) : (
 						<div>
-							{tagsWithNoParent.map((tag) => {
-								return <TagItem key={tag._id} tag={tag} />;
+							{filters.map((filter) => {
+								return <FilterItem key={filter._id} filter={filter} />;
 							})}
 						</div>
 					)}

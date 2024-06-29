@@ -1,6 +1,10 @@
 import Dropdown from './Dropdown';
 import { DropdownProps } from '../../interfaces/interfaces';
-import { usePermanentlyDeleteProjectMutation, usePermanentlyDeleteTagMutation } from '../../services/api';
+import {
+	usePermanentlyDeleteFilterMutation,
+	usePermanentlyDeleteProjectMutation,
+	usePermanentlyDeleteTagMutation,
+} from '../../services/api';
 import classNames from 'classnames';
 import { useNavigate } from 'react-router';
 import { useDispatch } from 'react-redux';
@@ -27,6 +31,7 @@ const DropdownSidebarItemActions: React.FC<DropdownSidebarItemActionsProps> = ({
 
 	const [permanentlyDeleteProject] = usePermanentlyDeleteProjectMutation();
 	const [permanentlyDeleteTag] = usePermanentlyDeleteTagMutation();
+	const [permanentlyDeleteFilter] = usePermanentlyDeleteFilterMutation();
 
 	if (!item) {
 		return null;
@@ -60,7 +65,22 @@ const DropdownSidebarItemActions: React.FC<DropdownSidebarItemActionsProps> = ({
 			tagId: item._id,
 		});
 		// I guess re-route them back to Inbox for now. Maybe if the delete tag has a parent, we can route there instead.
+		// TODO: FIX THIS! WRONG LOGIC AND ROUTE!
 		navigate('/tags/665233f98d8317681ddb831a/tasks');
+	};
+
+	// Filters
+	const handleEditFilter = () => {
+		dispatch(setModalState({ modalId: 'ModalAddFilter', isOpen: true, props: { filter: item } }));
+	};
+
+	const handleDeleteFilter = async () => {
+		await permanentlyDeleteFilter({
+			filterId: item._id,
+		});
+		// I guess re-route them back to Inbox for now. Maybe if the delete tag has a parent, we can route there instead.
+		// TODO: FIX THIS! WRONG LOGIC AND ROUTE!
+		navigate('/filter/665233f98d8317681ddb831a/tasks');
 	};
 
 	const handleEdit = () => {
@@ -72,6 +92,9 @@ const DropdownSidebarItemActions: React.FC<DropdownSidebarItemActionsProps> = ({
 				break;
 			case 'tag':
 				handleEditTag();
+				break;
+			case 'filter':
+				handleEditFilter();
 				break;
 			default:
 				break;
@@ -87,6 +110,9 @@ const DropdownSidebarItemActions: React.FC<DropdownSidebarItemActionsProps> = ({
 				break;
 			case 'tag':
 				await handleDeleteTag();
+				break;
+			case 'filter':
+				await handleDeleteFilter();
 				break;
 			default:
 				break;

@@ -25,6 +25,10 @@ function App() {
 						<Route path="/tags/:tagId/tasks" element={<HomePage />}></Route>
 						<Route path="/tags/:tagId/tasks/:taskId" element={<HomePage />}></Route>
 
+						{/* Filters */}
+						<Route path="/filters/:filterId/tasks" element={<HomePage />}></Route>
+						<Route path="/filters/:filterId/tasks/:taskId" element={<HomePage />}></Route>
+
 						<Route path="/focus" element={<FocusPage />}></Route>
 						<Route path="/matrix" element={<EisenhowerMatrixPage />}></Route>
 						{/* Fallback route for 404 Not Found */}

@@ -328,7 +328,7 @@ export const api = createApi({
 		getFilters: builder.query({
 			query: (queryParams) => {
 				const queryString = buildQueryString(queryParams);
-				return queryString ? `/filters?${queryString}` : '/filter';
+				return queryString ? `/filters?${queryString}` : '/filters';
 			},
 			providesTags: ['Filter'],
 			transformResponse: (response) => {
@@ -430,6 +430,12 @@ export const {
 	useAddTagMutation,
 	useEditTagMutation,
 	usePermanentlyDeleteTagMutation,
+
+	// Filters
+	useGetFiltersQuery,
+	useAddFiltersMutation,
+	useEditFilterMutation,
+	usePermanentlyDeleteFilterMutation,
 
 	// Matrices
 	useGetMatricesQuery,
