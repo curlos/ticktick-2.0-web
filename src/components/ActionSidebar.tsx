@@ -42,7 +42,7 @@ const ActionSidebar = () => {
 					{/* <Icon name="calendar_month" customClass={iconCustomClass} /> */}
 					<Icon name="timer" customClass={iconCustomClass} onClick={() => navigate('/focus')} />
 					<Icon name="grid_view" customClass={iconCustomClass} onClick={() => navigate('/matrix')} />
-					{/* <Icon name="location_on" customClass={iconCustomClass} /> */}
+					<Icon name="church" customClass={iconCustomClass} onClick={() => navigate('/habits')} />
 					<Icon
 						name="search"
 						customClass={iconCustomClass}

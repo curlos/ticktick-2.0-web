@@ -6,6 +6,7 @@ import GlobalModalList from './components/Modal/GlobalModalList';
 import GlobalAlertList from './components/Alert/GlobalAlertList';
 import LoginPage from './pages/LoginPage';
 import EisenhowerMatrixPage from './pages/EisenhowerMatrixPage';
+import HabitsPage from './pages/HabitsPage';
 
 function App() {
 	return (
@@ -28,6 +29,10 @@ function App() {
 						{/* Filters */}
 						<Route path="/filters/:filterId/tasks" element={<HomePage />}></Route>
 						<Route path="/filters/:filterId/tasks/:taskId" element={<HomePage />}></Route>
+
+						{/* Habits */}
+						<Route path="/habits" element={<HabitsPage />}></Route>
+						<Route path="/habits/:habitId" element={<HabitsPage />}></Route>
 
 						<Route path="/focus" element={<FocusPage />}></Route>
 						<Route path="/matrix" element={<EisenhowerMatrixPage />}></Route>
