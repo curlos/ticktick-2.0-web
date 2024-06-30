@@ -8,13 +8,11 @@ const HabitsPage = () => {
 			<div className="">
 				<ActionSidebar />
 			</div>
-			<div className="flex-[10] bg-blue-500">
+			<div className="flex-[8] bg-blue-500">
 				<HabitList />
-				{/* <FocusTimer /> */}
 			</div>
-			<div className="flex-[5] bg-red-500">
+			<div className="flex-[6] bg-red-500">
 				<HabitDetails />
-				{/* <FocusRecords /> */}
 			</div>
 		</div>
 	);
