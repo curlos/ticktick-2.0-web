@@ -41,7 +41,8 @@ const DropdownItemsWithSearch: React.FC<DropdownItemsWithSearchProps> = memo(
 	}) => {
 		const TOP_LIST_NAMES = ['all', 'today', 'tomorrow', 'week'];
 		const topListProjects = TOP_LIST_NAMES.map((name) => SMART_LISTS[name]);
-		const defaultItems = type === 'project' ? [...items, ...topListProjects] : items;
+		const allTag = { name: 'All' };
+		const defaultItems = type === 'project' ? [...items, ...topListProjects] : [allTag, ...items];
 
 		const [filteredItems, setFilteredItems] = useState(defaultItems);
 		const [searchText, setSearchText] = useState('');
@@ -80,9 +81,9 @@ const DropdownItemsWithSearch: React.FC<DropdownItemsWithSearchProps> = memo(
 			}
 		}, [filteredItems]); // Triggered when 'filteredProjects' changes
 
+		// Projects
 		const inboxProject = filteredItems.find((project) => project.isInbox);
 		const allProject = filteredItems.find((project) => project.urlName === 'all');
-
 		const { nonSmartListProjects, smartListProjects } =
 			type === 'project' &&
 			filteredItems.reduce(
@@ -96,6 +97,8 @@ const DropdownItemsWithSearch: React.FC<DropdownItemsWithSearchProps> = memo(
 				},
 				{ nonSmartListProjects: [], smartListProjects: [] }
 			);
+
+		console.log(filteredItems);
 
 		return (
 			<Dropdown
@@ -133,7 +136,9 @@ const DropdownItemsWithSearch: React.FC<DropdownItemsWithSearchProps> = memo(
 							inboxProject={inboxProject}
 							multiSelect={multiSelect}
 							allProject={allProject}
+							allTag={allTag}
 							nonSmartListProjects={nonSmartListProjects}
+							defaultItems={defaultItems}
 							filteredItems={filteredItems}
 							selectedItem={selectedItem}
 							setSelectedItem={setSelectedItem}

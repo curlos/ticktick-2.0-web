@@ -134,7 +134,7 @@ const TaskListSidebar = () => {
 					</div>
 
 					{/* TODO: Bring back soon! */}
-					{/* {!tags || tags.length === 0 ? (
+					{!tags || tags.length === 0 ? (
 						<div className="p-2 rounded-lg text-color-gray-100 bg-color-gray-600 text-[12px]">
 							Categorize your tasks with tags. Quickly select a tag by typing "#" when adding a task
 						</div>
@@ -144,7 +144,7 @@ const TaskListSidebar = () => {
 								return <TagItem key={tag._id} tag={tag} />;
 							})}
 						</div>
-					)} */}
+					)}
 				</div>
 			</div>
 

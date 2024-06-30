@@ -26,14 +26,18 @@ const ModalEditMatrix: React.FC = () => {
 
 	const [editMatrix] = useEditMatrixMutation();
 
+	// Projects
 	const TOP_LIST_NAMES = ['all', 'today', 'tomorrow', 'week'];
 	const topListProjects = TOP_LIST_NAMES.map((name) => SMART_LISTS[name]);
 	const allProject = topListProjects.find((project) => project.urlName === 'all');
 
+	// Tags
+	const allTag = { name: 'All' };
+
 	const closeModal = () => dispatch(setModalState({ modalId: 'ModalEditMatrix', isOpen: false }));
 
 	const [selectedProjectsList, setSelectedProjectsList] = useState([allProject]);
-	const [selectedTagList, setSelectedTagList] = useState([]);
+	const [selectedTagList, setSelectedTagList] = useState([allTag]);
 
 	const matrix = modal?.props?.matrix;
 
@@ -75,17 +79,19 @@ const ModalEditMatrix: React.FC = () => {
 			setSelectedProjectsList(selectedProjectIds.map((projectId) => projectsById[projectId]));
 		}
 
-		if (selectedTagIds && selectedTagIds.length > 0) {
+		if (selectedTagIds.length === 0) {
+			setSelectedTagList([allTag]);
+		} else {
 			const newSelectedTagList = selectedTagIds.map((tagId) => tagsById[tagId]);
 			setSelectedTagList(newSelectedTagList);
-		} else {
-			setSelectedTagList([]);
 		}
 	};
 
 	if (!matrix || !dateOptions) {
 		return null;
 	}
+
+	console.log(selectedTagList);
 
 	return (
 		<Modal

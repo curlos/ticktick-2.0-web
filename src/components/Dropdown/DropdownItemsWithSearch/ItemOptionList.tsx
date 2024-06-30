@@ -9,6 +9,7 @@ const ItemOptionList = ({
 	multiSelect,
 	allProject,
 	nonSmartListProjects,
+	defaultItems,
 	filteredItems,
 	selectedItem,
 	setSelectedItem,
@@ -31,6 +32,7 @@ const ItemOptionList = ({
 				setSelectedItemList={setSelectedItemList}
 				setIsVisible={setIsVisible}
 				task={task}
+				defaultItems={defaultItems}
 				filteredItems={filteredItems}
 				inboxProject={inboxProject}
 				nonSmartListProjects={nonSmartListProjects}

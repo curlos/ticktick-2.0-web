@@ -20,6 +20,8 @@ const TagMultiSelectSection = ({ selectedTagList, setSelectedTagList }) => {
 			}, [])
 			.join(', ');
 
+	console.log(selectedTagList);
+
 	if (!tagsWithNoParent) {
 		return null;
 	}

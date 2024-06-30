@@ -19,6 +19,7 @@ const ItemOption: React.FC<ItemOptionProps> = ({
 	setSelectedItemList,
 	setIsVisible,
 	task,
+	defaultItems,
 	filteredItems,
 	inboxProject,
 	nonSmartListProjects,
@@ -60,66 +61,48 @@ const ItemOption: React.FC<ItemOptionProps> = ({
 
 	const isItemSelected = checkIfItemSelected();
 
-	const handleClickProject = () => {
-		if (multiSelect) {
-			const isAllProject = item.urlName && item.urlName === 'all';
-			let newSelectedProjectsList = [...selectedItemList];
-
-			// If the project is already selected, then remove it.
-			if (isItemSelected && !isAllProject) {
-				newSelectedProjectsList = newSelectedProjectsList.filter(
-					(projectInList) => projectInList._id !== item._id
-				);
-			} else {
-				// If the project being selected is the "All" project, then every other selected project should be removed.
-				if (isAllProject) {
-					newSelectedProjectsList = [item];
-				} else {
-					// If a normal project is selected, remove "all" as a specific project has been chosen.
-					newSelectedProjectsList = newSelectedProjectsList.filter(
-						(projectInList) => projectInList && projectInList.urlName !== 'all'
-					);
-					newSelectedProjectsList.push(item);
-				}
-			}
-
-			if (newSelectedProjectsList.length === 0) {
-				const allProject = filteredItems.find((project) => project.urlName === 'all');
-				newSelectedProjectsList = [allProject];
-			} else {
-				const allMultiSelectProjects = [inboxProject, ...nonSmartListProjects];
-
-				if (allMultiSelectProjects.length === newSelectedProjectsList.length) {
-					newSelectedProjectsList = [allProject];
-				}
-			}
-
-			setSelectedItemList(newSelectedProjectsList);
-		} else {
-			setSelectedItem(item);
-			setIsVisible(false);
-		}
-
-		if (task) {
-			editTask({ taskId: task._id, payload: { projectId: item._id } });
-		}
-
-		if (onCloseContextMenu) {
-			onCloseContextMenu();
-		}
-	};
-
-	const handleClickTag = (e) => {
+	const handleClick = (e) => {
 		e.stopPropagation();
 
 		if (multiSelect) {
+			const isAllItem =
+				type === 'project'
+					? item.urlName && item.urlName === 'all'
+					: item.name && item.name.toLowerCase() === 'all';
 			let newSelectedItemList = [...selectedItemList];
 
-			// If the item is already selected, then remove it.
-			if (isItemSelected) {
-				newSelectedItemList = newSelectedItemList.filter((itemInList) => itemInList._id !== item._id);
+			// If the tag is already selected, then remove it.
+			if (isItemSelected && !isAllItem) {
+				newSelectedItemList = newSelectedItemList.filter((selectedItem) => selectedItem._id !== item._id);
 			} else {
-				newSelectedItemList.push(item);
+				// If the project being selected is the "All" project, then every other selected project should be removed.
+				if (isAllItem) {
+					newSelectedItemList = [item];
+				} else {
+					// If a normal project is selected, remove "all" as a specific project has been chosen.
+					newSelectedItemList = newSelectedItemList.filter(
+						(itemInList) =>
+							itemInList &&
+							(type === 'project'
+								? itemInList?.urlName?.toLowerCase() !== 'all'
+								: itemInList.name.toLowerCase() !== 'all')
+					);
+					newSelectedItemList.push(item);
+				}
+			}
+
+			const allItem = filteredItems.find((item) =>
+				type === 'project' ? item?.urlName?.toLowerCase() === 'all' : item.name.toLowerCase() === 'all'
+			);
+
+			if (newSelectedItemList.length === 0) {
+				newSelectedItemList = [allItem];
+			} else {
+				const allMultiSelectItems = type === 'project' ? [inboxProject, ...nonSmartListProjects] : defaultItems;
+
+				if (allMultiSelectItems.length === newSelectedItemList.length) {
+					newSelectedItemList = [allItem];
+				}
 			}
 
 			setSelectedItemList(newSelectedItemList);
@@ -146,6 +129,7 @@ const ItemOption: React.FC<ItemOptionProps> = ({
 				setSelectedItemList={setSelectedItemList}
 				setIsVisible={setIsVisible}
 				task={task}
+				defaultItems={defaultItems}
 				filteredItems={filteredItems}
 				inboxProject={inboxProject}
 				nonSmartListProjects={nonSmartListProjects}
@@ -159,7 +143,7 @@ const ItemOption: React.FC<ItemOptionProps> = ({
 		<div>
 			<div
 				className="flex items-center justify-between cursor-pointer hover:bg-color-gray-300 px-2 py-[6px] rounded-lg"
-				onClick={type === 'project' ? handleClickProject : handleClickTag}
+				onClick={handleClick}
 			>
 				<div className={classNames('flex items-center gap-1', isItemSelected ? 'text-blue-500' : '')}>
 					<Icon
