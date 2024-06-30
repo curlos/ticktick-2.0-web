@@ -338,7 +338,7 @@ export const api = createApi({
 				return { filters, filtersById };
 			},
 		}),
-		addFilters: builder.mutation({
+		addFilter: builder.mutation({
 			query: (payload) => {
 				const url = '/filters/add';
 				return {
@@ -347,7 +347,7 @@ export const api = createApi({
 					body: payload,
 				};
 			},
-			invalidatesTags: ['Filter'],
+			invalidatesTags: (result, error) => (error ? [] : ['Filter']),
 		}),
 		editFilter: builder.mutation({
 			query: ({ filterId, payload }) => ({
@@ -355,7 +355,7 @@ export const api = createApi({
 				method: 'PUT',
 				body: payload,
 			}),
-			invalidatesTags: (result, error, filterId) => ['Filter'],
+			invalidatesTags: (result, error) => (error ? [] : ['Filter']),
 		}),
 		permanentlyDeleteFilter: builder.mutation({
 			query: (filterId) => ({
@@ -433,7 +433,7 @@ export const {
 
 	// Filters
 	useGetFiltersQuery,
-	useAddFiltersMutation,
+	useAddFilterMutation,
 	useEditFilterMutation,
 	usePermanentlyDeleteFilterMutation,
 

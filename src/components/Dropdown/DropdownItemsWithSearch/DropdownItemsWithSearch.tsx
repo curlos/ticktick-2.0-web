@@ -98,8 +98,6 @@ const DropdownItemsWithSearch: React.FC<DropdownItemsWithSearchProps> = memo(
 				{ nonSmartListProjects: [], smartListProjects: [] }
 			);
 
-		console.log(filteredItems);
-
 		return (
 			<Dropdown
 				toggleRef={toggleRef}

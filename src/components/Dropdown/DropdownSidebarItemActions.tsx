@@ -79,7 +79,7 @@ const DropdownSidebarItemActions: React.FC<DropdownSidebarItemActionsProps> = ({
 	const handleDeleteFilter = async () => {
 		await permanentlyDeleteFilter({
 			filterId: item._id,
-		});
+		}).unwrap();
 		// I guess re-route them back to Inbox for now. Maybe if the delete tag has a parent, we can route there instead.
 		// TODO: FIX THIS! WRONG LOGIC AND ROUTE!
 		navigate('/filter/665233f98d8317681ddb831a/tasks');

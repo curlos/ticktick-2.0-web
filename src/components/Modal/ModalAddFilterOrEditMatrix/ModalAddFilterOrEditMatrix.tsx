@@ -6,6 +6,7 @@ import { setModalState } from '../../../slices/modalSlice';
 import CustomInput from '../../CustomInput';
 import { useEffect, useState } from 'react';
 import {
+	useAddFilterMutation,
 	useEditFilterMutation,
 	useEditMatrixMutation,
 	useGetProjectsQuery,
@@ -17,15 +18,14 @@ import DateMultiSelectSection from './DateMultiSelectSection';
 import PriorityMultiSelectSection from './PriorityMultiSelectSection';
 import TagMultiSelectSection from './TagMultiSelectSection';
 import { DEFAULT_DATE_OPTIONS } from './DefaultDateOptions';
+import useHandleError from '../../../hooks/useHandleError';
 
 const ModalAddFilterOrEditMatrix: React.FC = () => {
 	const modal = useSelector((state) => state.modals.modals['ModalAddFilterOrEditMatrix']);
 	const dispatch = useDispatch();
+	const handleError = useHandleError();
 
 	const modalType = modal?.props?.type;
-
-	console.log('fag');
-	console.log(modal);
 
 	// RTK Query - Projects
 	const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
@@ -36,6 +36,8 @@ const ModalAddFilterOrEditMatrix: React.FC = () => {
 	const { tagsById } = fetchedTags || {};
 
 	const [editMatrix] = useEditMatrixMutation();
+
+	const [addFilter] = useAddFilterMutation();
 	const [editFilter] = useEditFilterMutation();
 
 	// Projects
@@ -117,7 +119,7 @@ const ModalAddFilterOrEditMatrix: React.FC = () => {
 				<div className={classNames('p-5')}>
 					<div className="flex items-center justify-between mb-4">
 						<h3 className="font-bold text-[16px]">
-							{modalType === 'matrix' ? 'Edit Matrix' : 'Add Filter'}
+							{modalType === 'matrix' ? 'Edit Matrix' : item ? 'Edit Filter' : 'Add Filter'}
 						</h3>
 						<Icon
 							name="close"
@@ -201,9 +203,28 @@ const ModalAddFilterOrEditMatrix: React.FC = () => {
 
 										await editMatrix(payload);
 									} else {
-										// TODO: Edit filter
+										// TODO: Edit or add filter
+										const payload = {
+											name,
+											dateOptions,
+											selectedProjectIds,
+											selectedPriorities,
+											selectedTagIds,
+										};
+
+										handleError(async () => {
+											if (item) {
+												await editFilter({
+													filterId: item._id,
+													payload,
+												}).unwrap();
+											} else {
+												await addFilter(payload).unwrap();
+											}
+
+											closeModal();
+										});
 									}
-									closeModal();
 								} catch (error) {
 									console.error(error);
 								}

@@ -15,7 +15,6 @@ const GlobalModalList = () => {
 	// TODO: Currently, any modal in this global list of modals will be unable to recieve props unless they are checking redux. So, if you pass "props" like normal to the Modal without globally calling it, it won't work. Not sure if I want to continue doing this but it does seem like the "correct" choice to maintain a single source of truth. In any case, this should be reviewed.
 	return (
 		<React.Fragment>
-			<ModalErrorMessenger />
 			<ModalAddTaskForm />
 			<ModalAddFocusRecord />
 			<ModalAddProject />
@@ -23,6 +22,9 @@ const GlobalModalList = () => {
 			<ModalSearchTasks />
 			<ModalAccountSettings />
 			<ModalAddFilterOrEditMatrix />
+
+			{/* Error messenger needs to be at the bottom-most line so it always appears above every other modal. */}
+			<ModalErrorMessenger />
 		</React.Fragment>
 	);
 };

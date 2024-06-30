@@ -22,11 +22,12 @@ const CustomInput: React.FC<CustomInputProps> = ({ type, placeholder, value, set
 			onChange
 				? onChange
 				: (e) => {
-						if (isNaN(e.target.value)) {
-							setValue(e.target.value);
-						} else {
-							setValue(Number(e.target.value));
-						}
+						// if (isNaN(e.target.value)) {
+						// 	setValue(e.target.value);
+						// } else {
+						// 	setValue(Number(e.target.value));
+						// }
+						setValue(e.target.value);
 					}
 		}
 	/>

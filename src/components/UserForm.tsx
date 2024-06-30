@@ -32,8 +32,6 @@ const UserForm = ({ mode }) => {
 
 			navigate('/projects/all/tasks');
 		} catch (error) {
-			// TODO: Show an ErrorMessenger modal or something detailing the error from the API.
-			console.log(error);
 			dispatch(setModalState({ modalId: 'ModalErrorMessenger', isOpen: true, props: { error } }));
 		}
 	};
