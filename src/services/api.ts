@@ -358,7 +358,7 @@ export const api = createApi({
 			invalidatesTags: (result, error) => (error ? [] : ['Filter']),
 		}),
 		permanentlyDeleteFilter: builder.mutation({
-			query: (filterId) => ({
+			query: ({ filterId }) => ({
 				url: `/filters/delete/${filterId}`,
 				method: 'DELETE',
 			}),

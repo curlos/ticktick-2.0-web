@@ -9,6 +9,7 @@ import classNames from 'classnames';
 import { useNavigate } from 'react-router';
 import { useDispatch } from 'react-redux';
 import { setModalState } from '../../slices/modalSlice';
+import useHandleError from '../../hooks/useHandleError';
 
 interface DropdownSidebarItemActionsProps extends DropdownProps {
 	onCloseContextMenu: () => void;
@@ -28,6 +29,7 @@ const DropdownSidebarItemActions: React.FC<DropdownSidebarItemActionsProps> = ({
 }) => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
+	const handleError = useHandleError();
 
 	const [permanentlyDeleteProject] = usePermanentlyDeleteProjectMutation();
 	const [permanentlyDeleteTag] = usePermanentlyDeleteTagMutation();
@@ -77,12 +79,14 @@ const DropdownSidebarItemActions: React.FC<DropdownSidebarItemActionsProps> = ({
 	};
 
 	const handleDeleteFilter = async () => {
-		await permanentlyDeleteFilter({
-			filterId: item._id,
-		}).unwrap();
-		// I guess re-route them back to Inbox for now. Maybe if the delete tag has a parent, we can route there instead.
-		// TODO: FIX THIS! WRONG LOGIC AND ROUTE!
-		navigate('/filter/665233f98d8317681ddb831a/tasks');
+		handleError(async () => {
+			await permanentlyDeleteFilter({
+				filterId: item._id,
+			}).unwrap();
+			// I guess re-route them back to Inbox for now. Maybe if the delete tag has a parent, we can route there instead.
+			// TODO: FIX THIS! WRONG LOGIC AND ROUTE!
+			navigate('/filter/665233f98d8317681ddb831a/tasks');
+		});
 	};
 
 	const handleEdit = () => {
