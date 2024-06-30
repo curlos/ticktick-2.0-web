@@ -79,16 +79,17 @@ const TaskListSidebar = () => {
 
 					{/* Show every project that is NOT the Inbox. */}
 					{/* TODO: Bring back soon! THIS TAKES PRIORITY OVER THE ONE ABOVE "DraggableProjects". */}
-					{/* {projects &&
+					{projects &&
 						projects
 							.filter((project) => !project.isInbox)
-							.map((project) => <ProjectItem key={project._id} project={project} />)} */}
+							.map((project) => <ProjectItem key={project._id} project={project} />)}
 
 					{/* <SortableTree collapsible indicator removable /> */}
 				</div>
 
 				{/* Filters */}
-				<div className="pt-3">
+				{/* TODO: Bring back after fixing bug with stale state in Sortabletree */}
+				{/* <div className="pt-3">
 					<div className="flex items-center justify-between py-1 pr-1 hover:bg-color-gray-600 rounded cursor-pointer mb-2">
 						<div className="flex items-center">
 							<Icon name={'chevron_right'} customClass={'text-color-gray-100 !text-[16px]'} />
@@ -123,7 +124,7 @@ const TaskListSidebar = () => {
 							})}
 						</div>
 					)}
-				</div>
+				</div> */}
 
 				<div className="pt-3">
 					<div className="flex items-center justify-between py-1 pr-1 hover:bg-color-gray-600 rounded cursor-pointer mb-2">

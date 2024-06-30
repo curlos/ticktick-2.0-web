@@ -334,6 +334,11 @@ export const getTasksWithFilledInChildren = (
 	} else if (tagId) {
 		finalTasks = finalTasks.filter((task) => task.tagIds.includes(tagId));
 	} else if (filterId) {
+		// TODO: Fix filter issue later
+		// console.log('BINGAS');
+		// console.log(filtersById);
+		// console.log(filterId);
+		// debugger;
 		const foundFilter = filtersById[filterId];
 		finalTasks = filterTasksByFilter(finalTasks, foundFilter);
 	}

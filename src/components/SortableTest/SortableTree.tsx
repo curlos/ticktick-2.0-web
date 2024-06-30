@@ -105,6 +105,8 @@ export function SortableTree({
 
 		// const tasksWithNoParent = getTasksWithNoParent(tasks, tasksById, projectId, isSmartListView);
 		// setItems(tasksWithNoParent);
+
+		// TODO: FILTERS ISSUE - Had a lot of trouble with the Sortable Tree. When you click a FilterItem on the sidebar and change the URL, the tree was not changing to reflect the new items until you clicked one other time. It does do it if you refresh so seems to be a state issue.
 		const newChildTasks = getTasksWithFilledInChildren(
 			tasksToUse,
 			tasksById,
