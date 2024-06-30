@@ -317,11 +317,11 @@ export const api = createApi({
 			invalidatesTags: (result, error, tagId) => ['Tag'],
 		}),
 		permanentlyDeleteTag: builder.mutation({
-			query: (tagId) => ({
+			query: ({ tagId }) => ({
 				url: `/tags/delete/${tagId}`,
 				method: 'DELETE',
 			}),
-			invalidatesTags: ['Tag'],
+			invalidatesTags: ['Tag', 'Task'],
 		}),
 
 		// Filters
