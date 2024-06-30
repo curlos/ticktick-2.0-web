@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import Icon from '../Icon';
 import ContextMenuSidebarItemActions from '../ContextMenu/ContextMenuSidebarItemActions';
+import { arrayToObjectByKey } from '../../utils/helpers.utils';
+import { PRIORITIES } from '../../utils/priorities.utils';
+import { filterTasksByFilter } from '../../utils/filters.util';
 
 const FilterItem = ({ filter }) => {
 	const navigate = useNavigate();
@@ -12,14 +15,14 @@ const FilterItem = ({ filter }) => {
 	const { filterId } = params;
 
 	const { data: fetchedTasks, isLoading: isLoadingGetTasks, error: errorGetTasks } = useGetTasksQuery();
-	const { tasks } = fetchedTasks || {};
+	const { tasks, tasksWithoutDeletedOrWillNotDo } = fetchedTasks || {};
 
 	const { data: fetchedFilters } = useGetFiltersQuery();
 	const { filters } = fetchedFilters || {};
 
 	const { name, _id } = filter;
 
-	const iconName = 'sell';
+	const iconName = 'filter_list';
 	const displayName = name;
 	const [numberOfTasks, setNumberOfTasks] = useState(0);
 	const [taskContextMenu, setTaskContextMenu] = useState(null);
@@ -29,12 +32,8 @@ const FilterItem = ({ filter }) => {
 			return;
 		}
 
-		// const filteredTasks = tasks.filter((task) => !task.isDeleted && !task.willNotDo && task?.tagIds?.includes(_id));
-
-		// TODO: Actually filter out the tasks here based on the logic from the filters.
-
-		console.log(filter);
-		const filteredTasks = tasks;
+		// Filter out tasks by the selected filters
+		const filteredTasks = filterTasksByFilter(tasksWithoutDeletedOrWillNotDo, filter);
 		setNumberOfTasks(filteredTasks.length);
 	}, [tasks]);
 

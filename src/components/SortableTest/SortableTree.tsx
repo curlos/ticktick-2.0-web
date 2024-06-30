@@ -32,7 +32,12 @@ import type { FlattenedItem, SensorContext, TreeItems } from './types';
 // TODO: Bring this back to use when I want to work on Accessbility
 import { sortableTreeKeyboardCoordinates } from './keyboardCoordinates';
 import { SortableTreeItem } from './components';
-import { useBulkEditTasksMutation, useFlagTaskMutation, useGetTasksQuery } from '../../services/api';
+import {
+	useBulkEditTasksMutation,
+	useFlagTaskMutation,
+	useGetFiltersQuery,
+	useGetTasksQuery,
+} from '../../services/api';
 import { getTasksWithFilledInChildren, prepareForBulkEdit } from '../../utils/helpers.utils';
 import { SMART_LISTS } from '../../utils/smartLists.utils';
 import { useParams } from 'react-router-dom';
@@ -75,12 +80,19 @@ export function SortableTree({
 		overId: string;
 	} | null>(null);
 
-	const { projectId, tagId } = useParams();
+	const { projectId, tagId, filterId } = useParams();
+
+	// RTK Query - Tasks
 	const {
 		data: { tasks, tasksById },
 		isLoading: isTasksLoading,
 		error,
 	} = useGetTasksQuery();
+
+	// RTK Query - Filters
+	const { data: fetchedFilters } = useGetFiltersQuery();
+	const { filtersById } = fetchedFilters || {};
+
 	const [bulkEditTasks] = useBulkEditTasksMutation();
 	const [flagTask] = useFlagTaskMutation();
 	// const [collapseAllByDefault, setCollapseAllByDefault] = useState(true)
@@ -93,7 +105,15 @@ export function SortableTree({
 
 		// const tasksWithNoParent = getTasksWithNoParent(tasks, tasksById, projectId, isSmartListView);
 		// setItems(tasksWithNoParent);
-		const newChildTasks = getTasksWithFilledInChildren(tasksToUse, tasksById, projectId, true, tagId);
+		const newChildTasks = getTasksWithFilledInChildren(
+			tasksToUse,
+			tasksById,
+			projectId,
+			true,
+			tagId,
+			filterId,
+			filtersById
+		);
 		setItems(newChildTasks);
 
 		// For now the issue from above has been fixed with this piece of code. This is very unstable though as I haven't fully ran through all of the logic but we'll see.
@@ -103,7 +123,7 @@ export function SortableTree({
 		// if (tasksWithNoParent.length !== items.length) {
 		// setItems(tasksWithNoParent);
 		// }
-	}, [tasks, isTasksLoading, projectId, tagId]);
+	}, [tasks, isTasksLoading, projectId, tagId, filterId]);
 
 	const flattenedItems = useMemo(() => {
 		const flattenedTree = flattenTree(items);

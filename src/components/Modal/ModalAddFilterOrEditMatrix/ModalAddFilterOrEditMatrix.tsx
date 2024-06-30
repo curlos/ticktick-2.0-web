@@ -78,6 +78,8 @@ const ModalAddFilterOrEditMatrix: React.FC = () => {
 		if (item) {
 			// TODO: FIX!
 			updateInitialData();
+		} else {
+			resetData();
 		}
 	}, [item]);
 
@@ -102,6 +104,20 @@ const ModalAddFilterOrEditMatrix: React.FC = () => {
 			const newSelectedTagList = selectedTagIds.map((tagId) => tagsById[tagId]);
 			setSelectedTagList(newSelectedTagList);
 		}
+	};
+
+	const resetData = () => {
+		setName('');
+		setSelectedPriorities({
+			high: false,
+			medium: false,
+			low: false,
+			none: false,
+		});
+		setDateOptions(DEFAULT_DATE_OPTIONS);
+		setAllPriorities(false);
+		setSelectedProjectsList([allProject]);
+		setSelectedTagList([allTag]);
 	};
 
 	if (!dateOptions) {

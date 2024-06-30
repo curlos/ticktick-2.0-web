@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { filterTasksByFilter } from './filters.util';
 import { SMART_LISTS } from './smartLists.utils';
 
 export function millisecondsToHoursAndMinutes(milliseconds: number) {
@@ -38,7 +38,7 @@ export function secondsToHoursAndMinutes(seconds: number) {
 export function arrayToObjectByKey(array: any[], keyProperty: string) {
 	return array.reduce((acc, obj) => {
 		// Use the value of the specified property as the key
-		const key = obj[keyProperty];
+		const key = keyProperty ? obj[keyProperty] : obj;
 		// Assign the entire object as the value for this key
 		acc[key] = obj;
 		return acc;
@@ -292,7 +292,15 @@ export const getTasksWithNoParent = (tasks, tasksById, projectId, isSmartListVie
 	return newTasksWithNoParent;
 };
 
-export const getTasksWithFilledInChildren = (tasks, tasksById, projectId, filterByNoParent, tagId) => {
+export const getTasksWithFilledInChildren = (
+	tasks,
+	tasksById,
+	projectId,
+	filterByNoParent,
+	tagId,
+	filterId,
+	filtersById
+) => {
 	const tasksObjects = tasks.map((task) => {
 		// If it's an id such as one coming from "children" array of strings, then we need to find the corresponding task using that id. If not, it can be assumed that it's already an object and thus we can just get the task as is.
 		return typeof task === 'string' ? tasksById[task] : task;
@@ -325,6 +333,9 @@ export const getTasksWithFilledInChildren = (tasks, tasksById, projectId, filter
 		}
 	} else if (tagId) {
 		finalTasks = finalTasks.filter((task) => task.tagIds.includes(tagId));
+	} else if (filterId) {
+		const foundFilter = filtersById[filterId];
+		finalTasks = filterTasksByFilter(finalTasks, foundFilter);
 	}
 
 	return finalTasks;

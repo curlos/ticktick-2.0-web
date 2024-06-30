@@ -92,11 +92,13 @@ export const api = createApi({
 			},
 			providesTags: ['Task'],
 			transformResponse: (response) => {
-				const tasksById = arrayToObjectByKey(response, '_id');
+				const tasks = response;
+				const tasksById = arrayToObjectByKey(tasks, '_id');
 				// Tells us the parent id of a task (if it has any)
 				const parentOfTasks = getObjectOfEachItemsParent(response);
+				const tasksWithoutDeletedOrWillNotDo = tasks.filter((task) => !task.isDeleted && !task.willNotDo);
 
-				return { tasks: response, tasksById, parentOfTasks };
+				return { tasks, tasksById, parentOfTasks, tasksWithoutDeletedOrWillNotDo };
 			},
 		}),
 		addTask: builder.mutation({

@@ -6,13 +6,14 @@ import { TaskObj } from '../interfaces/interfaces';
 import AddTaskForm from '../components/AddTaskForm';
 import TaskListByCategory from '../components/TaskListByGroup';
 import { SortableTree } from '../components/SortableTest/SortableTree';
-import { useGetProjectsQuery, useGetTagsQuery, useGetTasksQuery } from '../services/api';
+import { useGetFiltersQuery, useGetProjectsQuery, useGetTagsQuery, useGetTasksQuery } from '../services/api';
 import { fillInChildren, getTasksWithNoParent } from '../utils/helpers.utils';
 import { useParams } from 'react-router';
 import { SMART_LISTS } from '../utils/smartLists.utils';
+import { filterTasksByFilter } from '../utils/filters.util';
 
 const TaskListPage = () => {
-	const { projectId, tagId } = useParams();
+	const { projectId, tagId, filterId } = useParams();
 
 	// RTK Query - Projects
 	const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
@@ -22,16 +23,28 @@ const TaskListPage = () => {
 	const { data: fetchedTags, isLoading: isLoadingGetTags, error: errorGetTags } = useGetTagsQuery();
 	const { tagsById } = fetchedTags || {};
 
+	// RTK Query - Filters
+	const { data: fetchedFilters, isLoading: isLoadingGetFilters, error: errorGetFilters } = useGetFiltersQuery();
+	const { filtersById } = fetchedFilters || {};
+
 	// RTK Query - Tasks
 	const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
-	const { tasks, tasksById } = fetchedTasks || {};
+	const { tasks, tasksById, tasksWithoutDeletedOrWillNotDo } = fetchedTasks || {};
 
 	const [showAddTaskForm, setShowAddTaskForm] = useState(false);
 	const [tasksWithNoParent, setTasksWithNoParent] = useState([]);
 	const [title, setTitle] = useState(null);
+	const [filterToUse, setFilterToUse] = useState(null);
 
 	const isLoadingOrErrors =
-		isLoadingTasks || errorTasks || isLoadingProjects || errorProjects || isLoadingGetTags || errorGetTags;
+		isLoadingTasks ||
+		errorTasks ||
+		isLoadingProjects ||
+		errorProjects ||
+		isLoadingGetTags ||
+		errorGetTags ||
+		isLoadingGetFilters ||
+		errorGetFilters;
 	const isSmartListView = SMART_LISTS[projectId];
 
 	useEffect(() => {
@@ -58,6 +71,17 @@ const TaskListPage = () => {
 				if (foundTag) {
 					setTitle(foundTag.name);
 				}
+			} else if (filterId) {
+				const foundFilter = filtersById[filterId];
+
+				if (foundFilter) {
+					setTitle(foundFilter.name);
+					setFilterToUse(foundFilter);
+				}
+			}
+
+			if (!filterId) {
+				setFilterToUse(null);
 			}
 		}
 
@@ -65,15 +89,15 @@ const TaskListPage = () => {
 			return;
 		}
 
-		console.log(tagId);
-
 		const newTasksWithNoParent = getTasksWithNoParent(tasks, tasksById, projectId, isSmartListView, tagId);
 		setTasksWithNoParent(newTasksWithNoParent);
-	}, [fetchedTasks, fetchedProjects, projectId, tagId]);
+	}, [fetchedTasks, fetchedProjects, projectId, tagId, filterId]);
 
 	if (isLoadingOrErrors) {
 		return <div>Loading...</div>; // Show loading state
 	}
+
+	const tasksToUse = filterTasksByFilter(tasksWithoutDeletedOrWillNotDo, filterToUse);
 
 	return (
 		<div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700">
@@ -97,17 +121,7 @@ const TaskListPage = () => {
 						indicator
 						removable
 						defaultItems={tasksWithNoParent}
-						tasksToUse={tasks.filter((task) => {
-							if (projectId !== 'trash' && task.isDeleted) {
-								return false;
-							}
-
-							if (projectId !== 'will-not-do' && task.willNotDo) {
-								return false;
-							}
-
-							return true;
-						})}
+						tasksToUse={tasksToUse}
 					/>
 				)}
 

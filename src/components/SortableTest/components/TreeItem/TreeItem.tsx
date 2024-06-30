@@ -61,7 +61,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 
 		const navigate = useNavigate();
 		const params = useParams();
-		const { tagId } = params;
+		const { tagId, filterId } = params;
 
 		// RTK Query - Projects
 		const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
@@ -122,6 +122,8 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 		const handleNavigation = () => {
 			if (tagId) {
 				navigate(`/tags/${tagId}/tasks/${_id}`);
+			} else if (filterId) {
+				navigate(`/filters/${filterId}/tasks/${_id}`);
 			} else {
 				navigate(`/projects/${inSmartListView ? params.projectId : projectId}/tasks/${_id}`);
 			}

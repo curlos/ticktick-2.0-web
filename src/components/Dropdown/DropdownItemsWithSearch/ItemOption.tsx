@@ -109,6 +109,10 @@ const ItemOption: React.FC<ItemOptionProps> = ({
 		} else {
 			setSelectedItem(item);
 			setIsVisible(false);
+
+			if (type === 'project' && task) {
+				editTask({ taskId: task._id, payload: { projectId: item._id } });
+			}
 		}
 
 		if (onCloseContextMenu && !multiSelect) {
