@@ -5,16 +5,27 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setModalState } from '../../../slices/modalSlice';
 import CustomInput from '../../CustomInput';
 import { useEffect, useState } from 'react';
-import { useEditMatrixMutation, useGetProjectsQuery, useGetTagsQuery } from '../../../services/api';
+import {
+	useEditFilterMutation,
+	useEditMatrixMutation,
+	useGetProjectsQuery,
+	useGetTagsQuery,
+} from '../../../services/api';
 import { SMART_LISTS } from '../../../utils/smartLists.utils';
 import ProjectMultiSelectSection from './ProjectMutliSelectSection';
 import DateMultiSelectSection from './DateMultiSelectSection';
 import PriorityMultiSelectSection from './PriorityMultiSelectSection';
 import TagMultiSelectSection from './TagMultiSelectSection';
+import { DEFAULT_DATE_OPTIONS } from './DefaultDateOptions';
 
-const ModalEditMatrix: React.FC = () => {
-	const modal = useSelector((state) => state.modals.modals['ModalEditMatrix']);
+const ModalAddFilterOrEditMatrix: React.FC = () => {
+	const modal = useSelector((state) => state.modals.modals['ModalAddFilterOrEditMatrix']);
 	const dispatch = useDispatch();
+
+	const modalType = modal?.props?.type;
+
+	console.log('fag');
+	console.log(modal);
 
 	// RTK Query - Projects
 	const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
@@ -25,6 +36,7 @@ const ModalEditMatrix: React.FC = () => {
 	const { tagsById } = fetchedTags || {};
 
 	const [editMatrix] = useEditMatrixMutation();
+	const [editFilter] = useEditFilterMutation();
 
 	// Projects
 	const TOP_LIST_NAMES = ['all', 'today', 'tomorrow', 'week'];
@@ -34,12 +46,12 @@ const ModalEditMatrix: React.FC = () => {
 	// Tags
 	const allTag = { name: 'All' };
 
-	const closeModal = () => dispatch(setModalState({ modalId: 'ModalEditMatrix', isOpen: false }));
+	const closeModal = () => {
+		dispatch(setModalState({ modalId: 'ModalAddFilterOrEditMatrix', isOpen: false }));
+	};
 
 	const [selectedProjectsList, setSelectedProjectsList] = useState([allProject]);
 	const [selectedTagList, setSelectedTagList] = useState([allTag]);
-
-	const matrix = modal?.props?.matrix;
 
 	const [name, setName] = useState('');
 	const [allPriorities, setAllPriorities] = useState(false);
@@ -49,23 +61,26 @@ const ModalEditMatrix: React.FC = () => {
 		low: false,
 		none: false,
 	});
-	const [dateOptions, setDateOptions] = useState(null);
+	const [dateOptions, setDateOptions] = useState(DEFAULT_DATE_OPTIONS);
 
 	if (!modal) {
 		return null;
 	}
 
-	const { isOpen } = modal;
+	const {
+		isOpen,
+		props: { item },
+	} = modal;
 
 	useEffect(() => {
-		if (matrix) {
+		if (item) {
 			// TODO: FIX!
 			updateInitialData();
 		}
-	}, [matrix]);
+	}, [item]);
 
 	const updateInitialData = () => {
-		const { name, selectedProjectIds, selectedTagIds, selectedPriorities, dateOptions } = matrix;
+		const { name, selectedProjectIds, selectedTagIds, selectedPriorities, dateOptions } = item;
 		setName(name);
 		setSelectedPriorities(selectedPriorities);
 		setDateOptions(dateOptions);
@@ -87,11 +102,9 @@ const ModalEditMatrix: React.FC = () => {
 		}
 	};
 
-	if (!matrix || !dateOptions) {
+	if (!dateOptions) {
 		return null;
 	}
-
-	console.log(selectedTagList);
 
 	return (
 		<Modal
@@ -103,7 +116,9 @@ const ModalEditMatrix: React.FC = () => {
 			<div className="rounded-xl shadow-lg bg-color-gray-600">
 				<div className={classNames('p-5')}>
 					<div className="flex items-center justify-between mb-4">
-						<h3 className="font-bold text-[16px]">Edit Matrix</h3>
+						<h3 className="font-bold text-[16px]">
+							{modalType === 'matrix' ? 'Edit Matrix' : 'Add Filter'}
+						</h3>
 						<Icon
 							name="close"
 							customClass={'!text-[20px] text-color-gray-100 hover:text-white cursor-pointer'}
@@ -112,7 +127,12 @@ const ModalEditMatrix: React.FC = () => {
 					</div>
 
 					<div className="flex flex-col gap-2">
-						<CustomInput value={name} setValue={setName} customClasses="!text-left  p-[6px] px-3" />
+						<CustomInput
+							value={name}
+							placeholder="Name"
+							setValue={setName}
+							customClasses="!text-left  p-[6px] px-3"
+						/>
 
 						{/* Lists */}
 						<ProjectMultiSelectSection
@@ -167,18 +187,22 @@ const ModalEditMatrix: React.FC = () => {
 										return [];
 									});
 
-									const payload = {
-										matrixId: matrix._id,
-										payload: {
-											name,
-											dateOptions,
-											selectedProjectIds,
-											selectedPriorities,
-											selectedTagIds,
-										},
-									};
+									if (modalType === 'matrix') {
+										const payload = {
+											matrixId: item._id,
+											payload: {
+												name,
+												dateOptions,
+												selectedProjectIds,
+												selectedPriorities,
+												selectedTagIds,
+											},
+										};
 
-									await editMatrix(payload);
+										await editMatrix(payload);
+									} else {
+										// TODO: Edit filter
+									}
 									closeModal();
 								} catch (error) {
 									console.error(error);
@@ -194,4 +218,4 @@ const ModalEditMatrix: React.FC = () => {
 	);
 };
 
-export default ModalEditMatrix;
+export default ModalAddFilterOrEditMatrix;

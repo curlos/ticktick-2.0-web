@@ -16,8 +16,7 @@ const MODAL_IDS = [
 	'ModalTaskActivities',
 	'ModalSearchTasks',
 	'ModalAccountSettings',
-	'ModalEditMatrix',
-	'ModalAddFilter',
+	'ModalAddFilterOrEditMatrix',
 ];
 
 const initialState = {

@@ -71,7 +71,9 @@ const DropdownSidebarItemActions: React.FC<DropdownSidebarItemActionsProps> = ({
 
 	// Filters
 	const handleEditFilter = () => {
-		dispatch(setModalState({ modalId: 'ModalAddFilter', isOpen: true, props: { filter: item } }));
+		dispatch(
+			setModalState({ modalId: 'ModalAddFilterOrEditMatrix', isOpen: true, props: { type: 'filter', item } })
+		);
 	};
 
 	const handleDeleteFilter = async () => {

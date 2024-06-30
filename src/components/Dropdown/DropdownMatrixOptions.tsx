@@ -32,7 +32,13 @@ const DropdownMatrixOptions: React.FC<DropdownMatrixOptions> = ({
 				<div
 					className="p-2 hover:bg-color-gray-300 rounded flex items-center gap-2 text-gray-300"
 					onClick={() => {
-						dispatch(setModalState({ modalId: 'ModalEditMatrix', isOpen: true, props: { matrix } }));
+						dispatch(
+							setModalState({
+								modalId: 'ModalAddFilterOrEditMatrix',
+								isOpen: true,
+								props: { type: 'matrix', item: matrix },
+							})
+						);
 						setIsVisible(false);
 					}}
 				>

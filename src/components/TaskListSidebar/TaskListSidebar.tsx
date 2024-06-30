@@ -99,7 +99,15 @@ const TaskListSidebar = () => {
 							name={'add'}
 							customClass={'text-color-gray-100 !text-[16px] hover:text-white'}
 							onClick={() => {
-								dispatch(setModalState({ modalId: 'ModalAddFilter', isOpen: true }));
+								dispatch(
+									setModalState({
+										modalId: 'ModalAddFilterOrEditMatrix',
+										isOpen: true,
+										props: {
+											type: 'filter',
+										},
+									})
+								);
 							}}
 						/>
 					</div>
