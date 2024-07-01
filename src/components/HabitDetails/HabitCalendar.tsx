@@ -3,9 +3,7 @@ import { areDatesEqual } from '../../utils/helpers.utils';
 import Icon from '../Icon';
 import classNames from 'classnames';
 
-const HabitCalendar = () => {
-	const [currentDate, setCurrentDate] = useState(new Date());
-
+const HabitCalendar = ({ currentDate, setCurrentDate }) => {
 	function getCalendarMonth(year, month) {
 		const calendar = [];
 		const firstDayOfMonth = new Date(year, month, 1);
@@ -90,7 +88,6 @@ const HabitCalendar = () => {
 							'text-white !text-[22px] cursor-pointer',
 							!isChecked ? 'invisible' : ''
 						)}
-						onClick={goToPreviousMonth}
 					/>
 				</div>
 			</div>

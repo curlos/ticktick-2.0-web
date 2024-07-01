@@ -8,7 +8,7 @@ const HabitsPage = () => {
 			<div className="">
 				<ActionSidebar />
 			</div>
-			<div className="flex-[8] bg-blue-500">
+			<div className="flex-[9] bg-blue-500">
 				<HabitList />
 			</div>
 			<div className="flex-[6] bg-red-500">
