@@ -64,18 +64,6 @@ export function arrayToObjectArrayByKey(array: any[], keyProperty: string) {
 	}, {});
 }
 
-export function areDatesEqual(date1: Date | null, date2: Date | null) {
-	if (!date1 || !date2) {
-		return false;
-	}
-
-	return (
-		date1.getDate() === date2.getDate() &&
-		date1.getMonth() === date2.getMonth() &&
-		date1.getFullYear() === date2.getFullYear()
-	);
-}
-
 export function debounce(func, wait, immediate = null) {
 	var timeout;
 	var cancelled = false; // flag to check if the debounce was cancelled

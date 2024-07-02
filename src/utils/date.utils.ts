@@ -169,3 +169,39 @@ export const groupByEndTimeDay = (records) => {
 
 	return sortedGrouped;
 };
+
+export const getLast7Days = () => {
+	let result = [];
+
+	for (let i = 0; i < 7; i++) {
+		const date = new Date(); // Get today's date
+		date.setDate(date.getDate() - i); // Subtract `i` days from today
+		result.push(date); // Format the date as "YYYY-MM-DD" and add to the result array
+	}
+
+	return result.reverse(); // Reverse the array to start from 7 days ago to today
+};
+
+export const getDayNameAbbreviation = (date) => {
+	// Get the full name of the day in English
+	const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
+	// Return the first two letters
+	return dayName.substring(0, 3);
+};
+
+export function areDatesEqual(date1: Date | null, date2: Date | null) {
+	if (!date1 || !date2) {
+		return false;
+	}
+
+	return (
+		date1.getDate() === date2.getDate() &&
+		date1.getMonth() === date2.getMonth() &&
+		date1.getFullYear() === date2.getFullYear()
+	);
+}
+
+export const getMonthAndDay = (date) => {
+	// Convert the date to a string with the format "Month day"
+	return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+};

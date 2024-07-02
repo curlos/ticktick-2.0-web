@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { areDatesEqual } from '../../utils/helpers.utils';
+import { areDatesEqual } from '../../utils/date.utils';
 import Icon from '../Icon';
 import classNames from 'classnames';
 
@@ -128,7 +128,7 @@ const HabitCalendar = ({ currentDate, setCurrentDate }) => {
 					{calendarMonth.map((week, index) => (
 						<div key={`week-${index}`} className="mb-1 grid grid-cols-7 gap-1">
 							{week.map((day, index) => (
-								<DayCircle day={day} index={index} />
+								<DayCircle key={`${day} ${index}`} day={day} index={index} />
 							))}
 						</div>
 					))}

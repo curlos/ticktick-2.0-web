@@ -17,6 +17,7 @@ const HabitLogSection = ({ currentDate }) => {
 				<div>
 					{habitLogsForTheMonth.map((habitLogData, index) => (
 						<HabitLogDay
+							key={index}
 							habitLogData={habitLogData}
 							isLastInList={index === habitLogsForTheMonth.length - 1}
 						/>

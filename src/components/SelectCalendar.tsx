@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Icon from './Icon';
-import { areDatesEqual } from '../utils/helpers.utils';
+import { areDatesEqual } from '../utils/date.utils';
 import { setTimeOnDateString } from '../utils/date.utils';
 
 interface CalendarProps {

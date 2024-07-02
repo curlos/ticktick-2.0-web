@@ -1,10 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import {
-	areDatesEqual,
-	formatDuration,
-	formatTimeToHoursMinutesSeconds,
-	getFormattedDuration,
-} from '../utils/helpers.utils';
+import { formatDuration, formatTimeToHoursMinutesSeconds, getFormattedDuration } from '../utils/helpers.utils';
+import { areDatesEqual } from '../utils/date.utils';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import Icon from './Icon';
