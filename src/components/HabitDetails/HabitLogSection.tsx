@@ -8,17 +8,19 @@ import classNames from 'classnames';
 const HabitLogSection = ({ currentDate }) => {
 	const monthName = currentDate.toLocaleString('default', { month: 'long' });
 	// TODO: Get list of habits from the backend and show that data instead.
-	const [habitLogsForTheMonth, setHabitLogsForTheMonth] = useState(['hi']);
+	const [habitLogsForTheMonth, setHabitLogsForTheMonth] = useState(['hi', 'hi', 'hi', 'hi']);
 
 	return (
 		<div className="bg-color-gray-600 rounded-lg p-3">
 			<div className="mb-5 font-medium text-[14px]">Habit Log on {monthName}</div>
 			{habitLogsForTheMonth?.length > 0 ? (
 				<div>
-					<HabitLogDay />
-					<HabitLogDay />
-					<HabitLogDay />
-					<HabitLogDay />
+					{habitLogsForTheMonth.map((habitLogData, index) => (
+						<HabitLogDay
+							habitLogData={habitLogData}
+							isLastInList={index === habitLogsForTheMonth.length - 1}
+						/>
+					))}
 				</div>
 			) : (
 				<div className="text-color-gray-100">No check-in thoughts to share this month yet.</div>
@@ -27,9 +29,9 @@ const HabitLogSection = ({ currentDate }) => {
 	);
 };
 
-const HabitLogDay = () => {
+const HabitLogDay = ({ habitLogData, isLastInList }) => {
 	// TODO: Get from backend!
-	const [isChecked, setIsChecked] = useState(false);
+	const [isChecked, setIsChecked] = useState(true);
 
 	return (
 		<li
@@ -37,10 +39,12 @@ const HabitLogDay = () => {
 			className="relative m-0 list-none last:mb-[4px] mt-[12px] cursor-pointer"
 			style={{ minHeight: '54px' }}
 		>
-			<div
-				className="absolute top-[28px] left-[11px] h-full border-solid border-l-[1px] border-blue-900"
-				style={{ height: 'calc(100% - 16px)' }}
-			></div>
+			{!isLastInList && (
+				<div
+					className="absolute top-[28px] left-[11px] h-full border-solid border-l-[1px] border-blue-900"
+					style={{ height: 'calc(100% - 16px)' }}
+				></div>
+			)}
 
 			<div className="relative m-0 ml-[40px] break-words" style={{ marginTop: 'unset' }}>
 				<div
