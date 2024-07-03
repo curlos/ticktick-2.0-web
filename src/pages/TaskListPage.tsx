@@ -100,8 +100,8 @@ const TaskListPage = () => {
 	const tasksToUse = filterTasksByFilter(tasksWithoutDeletedOrWillNotDo, filterToUse);
 
 	return (
-		<div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700">
-			<div className="p-4 h-full border-l border-r border-color-gray-200">
+		<div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700 border-l border-r border-color-gray-200">
+			<div className="p-4 h-full">
 				<div className="flex justify-between items-center mb-4">
 					<div className="flex gap-1 items-center">
 						<Icon name="menu_open" customClass={'text-white !text-[24px]'} />

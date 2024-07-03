@@ -14,8 +14,8 @@ const HabitList = () => {
 	const monthAndDay = getMonthAndDay(selectedDay);
 
 	return (
-		<div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700">
-			<div className="p-4 h-full border-l border-r border-color-gray-200">
+		<div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700 border-l border-r border-color-gray-200">
+			<div className="p-4 h-full">
 				<HeaderSection />
 
 				<div className="grid grid-cols-7 gap-4 my-2">
@@ -37,6 +37,91 @@ const HabitList = () => {
 						customClass={'text-color-gray-100 hover:text-color-gray-50 !text-[16px] cursor-pointer'}
 					/>
 				</div>
+
+				<HabitListByCategory categoryHabits={['No Coke', 'No Coke']} />
+				<HabitListByCategory categoryHabits={['No Coke', 'No Coke']} />
+				<HabitListByCategory categoryHabits={['No Coke', 'No Coke']} />
+			</div>
+		</div>
+	);
+};
+
+const HabitListByCategory = ({ categoryHabits }) => {
+	return (
+		<div>
+			<div className="mt-5">
+				<div className="flex items-center gap-1">
+					<Icon
+						name="expand_more"
+						fill={0}
+						customClass={'text-color-gray-100 hover:text-color-gray-50 !text-[16px] cursor-pointer'}
+					/>
+					<div className="font-bold">Morning</div>
+					<div className="ml-1 text-color-gray-100">2</div>
+				</div>
+			</div>
+
+			<div className="space-y-3 mt-3">
+				{categoryHabits.map((categoryHabit) => (
+					<HabitCard categoryHabit={categoryHabit} />
+				))}
+			</div>
+		</div>
+	);
+};
+
+const HabitCard = ({ categoryHabit }) => {
+	const lastSevenDays = getLast7Days();
+
+	return (
+		<div className="flex justify-between items-center bg-color-gray-600 rounded-lg p-3">
+			<div className="flex items-center gap-2">
+				<div>
+					<img src="/Food.webp" alt="" className="h-[40px]" />
+				</div>
+
+				<div>
+					<div>No Fast Food</div>
+					<div className="flex items-center gap-2">
+						<div className="flex gap-1">
+							<Icon name="bolt" fill={1} customClass={'text-cyan-400 !text-[18px] cursor-pointer'} />
+							<div className="text-color-gray-100">1 Day</div>
+						</div>
+						<div className="flex gap-1">
+							<Icon
+								name="local_fire_department"
+								fill={1}
+								customClass={'text-orange-400 !text-[18px] cursor-pointer'}
+							/>
+							<div className="text-color-gray-100">1 Day</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div className="flex gap-2">
+				{lastSevenDays.map((day, i) => {
+					// TODO: This "isChecked" logic is made up for now by me and not real. It's just meant to simulate the scenario where it's not checked and to render that. Remove after real backend data comes in.
+					const isChecked = i !== 0 && i !== 2;
+
+					return (
+						<div
+							className={classNames(
+								'h-[20px] w-[20px] rounded-full flex justify-center items-center',
+								isChecked ? 'bg-blue-500' : 'bg-color-gray-100/30'
+							)}
+						>
+							<Icon
+								name="check"
+								fill={1}
+								customClass={classNames(
+									'text-white !text-[18px] cursor-pointer',
+									!isChecked ? 'invisible' : ''
+								)}
+							/>
+						</div>
+					);
+				})}
 			</div>
 		</div>
 	);
@@ -50,8 +135,6 @@ const HabitDay = ({ day, selectedDay, setSelectedDay }) => {
 
 	const dayName = getDayNameAbbreviation(day);
 	const dayOfMonth = day.getDate();
-
-	console.log(dayName);
 
 	const isSelectedDay = areDatesEqual(selectedDay, day);
 	const isDayToday = areDatesEqual(new Date(), day);
