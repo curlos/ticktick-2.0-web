@@ -1,6 +1,10 @@
+import { useDispatch } from 'react-redux';
+import { setModalState } from '../../slices/modalSlice';
 import Icon from '../Icon';
 
 const HeaderSection = () => {
+	const dispatch = useDispatch();
+
 	const iconClass =
 		'text-color-gray-100 !text-[21px] hover:text-white cursor-pointer rounded hover:bg-color-gray-300 p-1';
 
@@ -14,7 +18,12 @@ const HeaderSection = () => {
 			<div className="flex items-center gap-2">
 				<Icon name="grid_view" fill={0} customClass={iconClass} />
 
-				<Icon name="add" fill={1} customClass={iconClass} />
+				<Icon
+					name="add"
+					fill={1}
+					customClass={iconClass}
+					onClick={() => dispatch(setModalState({ modalId: 'ModalAddHabit', isOpen: true }))}
+				/>
 
 				<Icon name="more_horiz" fill={1} customClass={iconClass} />
 			</div>

@@ -63,7 +63,7 @@ const HabitListByCategory = ({ categoryHabits }) => {
 
 			<div className="space-y-3 mt-3">
 				{categoryHabits.map((categoryHabit) => (
-					<HabitCard categoryHabit={categoryHabit} />
+					<HabitCard key={categoryHabit + Math.random() * 1000} categoryHabit={categoryHabit} />
 				))}
 			</div>
 		</div>
@@ -106,6 +106,7 @@ const HabitCard = ({ categoryHabit }) => {
 
 					return (
 						<div
+							key={day}
 							className={classNames(
 								'h-[20px] w-[20px] rounded-full flex justify-center items-center',
 								isChecked ? 'bg-blue-500' : 'bg-color-gray-100/30'
