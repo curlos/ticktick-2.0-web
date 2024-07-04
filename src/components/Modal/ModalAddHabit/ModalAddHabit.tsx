@@ -6,6 +6,7 @@ import { setModalState } from '../../../slices/modalSlice';
 import CustomInput from '../../CustomInput';
 import { useState } from 'react';
 import useHandleError from '../../../hooks/useHandleError';
+import FrequencySection from './FrequencySection';
 
 const ModalAddHabit: React.FC = () => {
 	const modal = useSelector((state) => state.modals.modals['ModalAddHabit']);
@@ -28,12 +29,7 @@ const ModalAddHabit: React.FC = () => {
 	} = modal;
 
 	return (
-		<Modal
-			isOpen={isOpen}
-			onClose={closeModal}
-			positionClasses="!items-start mt-[150px]"
-			customClasses="my-[2px] w-[600px]"
-		>
+		<Modal isOpen={isOpen} onClose={closeModal} positionClasses="!items-start mt-[150px]" customClasses="my-[2px]">
 			<div className="rounded-xl shadow-lg bg-color-gray-600">
 				<div className={classNames('p-5')}>
 					<div className="flex items-center justify-between mb-4">
@@ -53,11 +49,7 @@ const ModalAddHabit: React.FC = () => {
 							customClasses="!text-left  p-[6px] px-3"
 						/>
 
-						{/* Lists */}
-						{/* <ProjectMultiSelectSection
-							selectedProjectsList={selectedProjectsList}
-							setSelectedProjectsList={setSelectedProjectsList}
-						/> */}
+						<FrequencySection />
 					</div>
 
 					{/* Close and Save buttons */}
