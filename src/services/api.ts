@@ -26,47 +26,6 @@ export const baseAPI = createApi({
 	}),
 	tagTypes: ['Task', 'Project', 'FocusRecord', 'User', 'Comment', 'Tag', 'Filter', 'Matrix'],
 	endpoints: (builder) => ({
-		// Comments
-		getComments: builder.query({
-			query: (queryParams) => {
-				const queryString = buildQueryString(queryParams);
-				return queryString ? `/comments?${queryString}` : '/comments';
-			},
-			providesTags: ['Comment'],
-			transformResponse: (response) => {
-				const comments = response;
-				const commentsByTaskId = arrayToObjectArrayByKey(comments, 'taskId');
-
-				return { comments, commentsByTaskId };
-			},
-		}),
-		addComment: builder.mutation({
-			query: (payload) => {
-				const url = '/comments/add';
-				return {
-					url,
-					method: 'POST',
-					body: payload,
-				};
-			},
-			invalidatesTags: ['Comment'],
-		}),
-		editComment: builder.mutation({
-			query: ({ commentId, payload }) => ({
-				url: `/comments/edit/${commentId}`,
-				method: 'PUT',
-				body: payload,
-			}),
-			invalidatesTags: (result, error, commentId) => ['Comment'],
-		}),
-		permanentlyDeleteComment: builder.mutation({
-			query: (commentId) => ({
-				url: `/comments/delete/${commentId}`,
-				method: 'DELETE',
-			}),
-			invalidatesTags: ['Comment'],
-		}),
-
 		// Tags
 		getTags: builder.query({
 			query: (queryParams) => {
@@ -181,12 +140,6 @@ export const baseAPI = createApi({
 
 // Export hooks to use in React components
 export const {
-	// Comments
-	useGetCommentsQuery,
-	useAddCommentMutation,
-	useEditCommentMutation,
-	usePermanentlyDeleteCommentMutation,
-
 	// Tags
 	useGetTagsQuery,
 	useAddTagMutation,

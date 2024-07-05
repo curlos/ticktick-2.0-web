@@ -1,6 +1,6 @@
-import { useAddCommentMutation, useEditCommentMutation } from '../../services/api';
 import TextareaAutosize from 'react-textarea-autosize';
 import { useGetLoggedInUserQuery } from '../../services/resources/usersApi';
+import { useAddCommentMutation, useEditCommentMutation } from '../../services/resources/commentsApi';
 
 const AddCommentForm = ({
 	showAddCommentInput,

@@ -1,4 +1,4 @@
-import { usePermanentlyDeleteCommentMutation } from '../../services/api';
+import { usePermanentlyDeleteCommentMutation } from '../../services/resources/commentsApi';
 import { useGetUsersQuery } from '../../services/resources/usersApi';
 import Icon from '../Icon';
 
