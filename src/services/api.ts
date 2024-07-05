@@ -18,6 +18,6 @@ export const baseAPI = createApi({
 			return headers;
 		},
 	}),
-	tagTypes: ['Task', 'Project', 'FocusRecord', 'User', 'Comment', 'Tag', 'Filter', 'Matrix'],
+	tagTypes: ['Task', 'Project', 'FocusRecord', 'User', 'Comment', 'Tag', 'Filter', 'Matrix', 'Habit', 'HabitSection'],
 	endpoints: () => ({}),
 });
