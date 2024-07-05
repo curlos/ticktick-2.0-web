@@ -7,6 +7,7 @@ import GlobalAlertList from './components/Alert/GlobalAlertList';
 import LoginPage from './pages/LoginPage';
 import EisenhowerMatrixPage from './pages/EisenhowerMatrixPage';
 import HabitsPage from './pages/HabitsPage';
+import FocusStatsPage from './pages/FocusStatsPage';
 
 function App() {
 	return (
@@ -35,6 +36,7 @@ function App() {
 						<Route path="/habits/:habitId" element={<HabitsPage />}></Route>
 
 						<Route path="/focus" element={<FocusPage />}></Route>
+						<Route path="/stats" element={<FocusStatsPage />}></Route>
 						<Route path="/matrix" element={<EisenhowerMatrixPage />}></Route>
 						{/* Fallback route for 404 Not Found */}
 						<Route path="*" element={<HomePage />} />
