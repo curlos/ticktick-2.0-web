@@ -147,21 +147,8 @@ const ReminderSection = () => {
 							<TimeOptionWithDropdown key={reminder.toLocaleDateString()} reminderTime={reminder} />
 						))}
 
+						{/* New Reminder with "+" icon. */}
 						<TimeOptionWithDropdown />
-
-						{/* <div
-							ref={dropdownTimeRef}
-							onClick={() => {
-								const currentDate = new Date();
-								const newDateObject = setTimeOnDateString(currentDate, selectedTime);
-
-								setIsDropdownTimeVisible(!isDropdownTimeVisible);
-								setReminderList([...reminderList, newDateObject]);
-							}}
-							className="border border-color-gray-200 hover:border-blue-500 p-1 px-4 flex items-center justify-center h-full cursor-pointer"
-						>
-							<Icon name="add" fill={0} customClass={classNames('!text-[18px] cursor-pointer')} />
-						</div> */}
 					</div>
 				</div>
 			</div>

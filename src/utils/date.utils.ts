@@ -194,11 +194,14 @@ export function areDatesEqual(date1: Date | null, date2: Date | null) {
 		return false;
 	}
 
-	return (
+	const datesEqual =
 		date1.getDate() === date2.getDate() &&
 		date1.getMonth() === date2.getMonth() &&
-		date1.getFullYear() === date2.getFullYear()
-	);
+		date1.getFullYear() === date2.getFullYear();
+
+	console.log(datesEqual);
+
+	return datesEqual;
 }
 
 export function areTimesEqual(time1: Date | null, time2: Date | null): boolean {
