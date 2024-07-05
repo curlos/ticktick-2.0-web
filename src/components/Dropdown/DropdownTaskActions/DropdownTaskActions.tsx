@@ -2,7 +2,6 @@ import Dropdown from '../Dropdown';
 import { useEffect, useRef, useState } from 'react';
 import Icon from '../../Icon';
 import { DropdownProps, TaskObj } from '../../../interfaces/interfaces';
-import { useGetTagsQuery } from '../../../services/api';
 import { PRIORITIES } from '../../../utils/priorities.utils';
 import classNames from 'classnames';
 import { useNavigate, useParams } from 'react-router';
@@ -15,6 +14,7 @@ import DateIconOptionList from './DateIconOptionList';
 import TaskAction from './TaskAction';
 import { useEditTaskMutation, useFlagTaskMutation, useGetTasksQuery } from '../../../services/resources/tasksApi';
 import { useGetProjectsQuery } from '../../../services/resources/projectsApi';
+import { useGetTagsQuery } from '../../../services/resources/tagsApi';
 
 interface DropdownTaskActionsProps extends DropdownProps {
 	onCloseContextMenu: () => void;

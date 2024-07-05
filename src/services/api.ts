@@ -26,53 +26,6 @@ export const baseAPI = createApi({
 	}),
 	tagTypes: ['Task', 'Project', 'FocusRecord', 'User', 'Comment', 'Tag', 'Filter', 'Matrix'],
 	endpoints: (builder) => ({
-		// Tags
-		getTags: builder.query({
-			query: (queryParams) => {
-				const queryString = buildQueryString(queryParams);
-				return queryString ? `/tags?${queryString}` : '/tags';
-			},
-			providesTags: ['Tag'],
-			transformResponse: (response) => {
-				const tags = response;
-				const tagsById = arrayToObjectByKey(tags, '_id');
-				// Tells us the parent id of a task (if it has any)
-				const parentOfTags = getObjectOfEachItemsParent(tags);
-				const tagsWithNoParent = tags.filter((tag) => {
-					const hasParentTag = parentOfTags[tag._id];
-					return !hasParentTag;
-				});
-
-				return { tags, tagsById, tagsWithNoParent, parentOfTags };
-			},
-		}),
-		addTag: builder.mutation({
-			query: (payload) => {
-				const url = '/tags/add';
-				return {
-					url,
-					method: 'POST',
-					body: payload,
-				};
-			},
-			invalidatesTags: ['Tag'],
-		}),
-		editTag: builder.mutation({
-			query: ({ tagId, payload }) => ({
-				url: `/tags/edit/${tagId}`,
-				method: 'PUT',
-				body: payload,
-			}),
-			invalidatesTags: (result, error, tagId) => ['Tag'],
-		}),
-		permanentlyDeleteTag: builder.mutation({
-			query: ({ tagId }) => ({
-				url: `/tags/delete/${tagId}`,
-				method: 'DELETE',
-			}),
-			invalidatesTags: ['Tag', 'Task'],
-		}),
-
 		// Filters
 		getFilters: builder.query({
 			query: (queryParams) => {
@@ -140,12 +93,6 @@ export const baseAPI = createApi({
 
 // Export hooks to use in React components
 export const {
-	// Tags
-	useGetTagsQuery,
-	useAddTagMutation,
-	useEditTagMutation,
-	usePermanentlyDeleteTagMutation,
-
 	// Filters
 	useGetFiltersQuery,
 	useAddFilterMutation,

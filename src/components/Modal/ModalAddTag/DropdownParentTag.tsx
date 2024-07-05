@@ -3,7 +3,7 @@ import { DropdownProps, IProject } from '../../../interfaces/interfaces';
 import { fetchData } from '../../../utils/helpers.utils';
 import Icon from '../../Icon';
 import Dropdown from '../../Dropdown/Dropdown';
-import { useGetTagsQuery } from '../../../services/api';
+import { useGetTagsQuery } from '../../../services/resources/tagsApi';
 
 interface DropdownParentTagProps extends DropdownProps {
 	selectedParentTag: IProject | Object;

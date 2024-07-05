@@ -3,7 +3,7 @@ import Icon from '../Icon';
 import { IProject } from '../../interfaces/interfaces';
 import { arrayToObjectByKey, containsEmoji, fetchData } from '../../utils/helpers.utils';
 import { useDispatch, useSelector } from 'react-redux';
-import { useGetFiltersQuery, useGetTagsQuery } from '../../services/api';
+import { useGetFiltersQuery } from '../../services/api';
 import DraggableProjects, { ProjectItem } from '../DraggableProjects';
 import { SortableTree } from '../SortableTest/SortableTree';
 import { SMART_LISTS } from '../../utils/smartLists.utils';
@@ -11,6 +11,7 @@ import { setModalState } from '../../slices/modalSlice';
 import TagItem from './TagItem';
 import FilterItem from './FilterItem';
 import { useGetProjectsQuery } from '../../services/resources/projectsApi';
+import { useGetTagsQuery } from '../../services/resources/tagsApi';
 
 const TaskListSidebar = () => {
 	const dispatch = useDispatch();

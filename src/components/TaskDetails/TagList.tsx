@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react';
 import DropdownItemsWithSearch from '../Dropdown/DropdownItemsWithSearch/DropdownItemsWithSearch';
 import Icon from '../Icon';
-import { useGetTagsQuery } from '../../services/api';
 import TagItemForTask from '../TagItemForTask';
+import { useGetTagsQuery } from '../../services/resources/tagsApi';
 
 const TagList = ({ taskTags, task, selectedTagList, setSelectedTagList }) => {
 	// RTK Query - Tags
