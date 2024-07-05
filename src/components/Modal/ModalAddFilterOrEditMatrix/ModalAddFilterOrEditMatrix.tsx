@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setModalState } from '../../../slices/modalSlice';
 import CustomInput from '../../CustomInput';
 import { useEffect, useState } from 'react';
-import { useEditMatrixMutation } from '../../../services/api';
 import { SMART_LISTS } from '../../../utils/smartLists.utils';
 import ProjectMultiSelectSection from './ProjectMutliSelectSection';
 import DateMultiSelectSection from './DateMultiSelectSection';
@@ -16,6 +15,7 @@ import useHandleError from '../../../hooks/useHandleError';
 import { useGetProjectsQuery } from '../../../services/resources/projectsApi';
 import { useGetTagsQuery } from '../../../services/resources/tagsApi';
 import { useAddFilterMutation, useEditFilterMutation } from '../../../services/resources/filtersApi';
+import { useEditMatrixMutation } from '../../../services/resources/matrixApi';
 
 const ModalAddFilterOrEditMatrix: React.FC = () => {
 	const modal = useSelector((state) => state.modals.modals['ModalAddFilterOrEditMatrix']);

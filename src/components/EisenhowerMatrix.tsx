@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react';
-import { useGetMatricesQuery } from '../services/api';
 import { allExceptOneFalse, getTasksWithNoParent } from '../utils/helpers.utils';
 import { SMART_LISTS } from '../utils/smartLists.utils';
 import Icon from './Icon';
@@ -10,6 +9,7 @@ import classNames from 'classnames';
 import TaskListByGroup from './TaskListByGroup';
 import { useGetTasksQuery } from '../services/resources/tasksApi';
 import { useGetProjectsQuery } from '../services/resources/projectsApi';
+import { useGetMatricesQuery } from '../services/resources/matrixApi';
 
 const stylingForMatrixHeaders = [
 	{

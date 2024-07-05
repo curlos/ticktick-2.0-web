@@ -1,10 +1,4 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import {
-	arrayToObjectArrayByKey,
-	arrayToObjectByKey,
-	getObjectOfEachItemsParent,
-	getObjectOfEachFocusRecordsParent,
-} from '../utils/helpers.utils';
 
 // Utility function to build query strings
 export const buildQueryString = (params) => {
@@ -25,36 +19,5 @@ export const baseAPI = createApi({
 		},
 	}),
 	tagTypes: ['Task', 'Project', 'FocusRecord', 'User', 'Comment', 'Tag', 'Filter', 'Matrix'],
-	endpoints: (builder) => ({
-		// Matrices
-		getMatrices: builder.query({
-			query: (queryParams) => {
-				const queryString = buildQueryString(queryParams);
-				return queryString ? `/matrices?${queryString}` : '/matrices';
-			},
-			providesTags: ['Matrix'],
-			transformResponse: (response) => {
-				const matrices = response;
-
-				return { matrices };
-			},
-		}),
-		editMatrix: builder.mutation({
-			query: ({ matrixId, payload }) => ({
-				url: `/matrices/edit/${matrixId}`,
-				method: 'PUT',
-				body: payload,
-			}),
-			invalidatesTags: (result, error, matrixId) => ['Matrix'],
-		}),
-	}),
+	endpoints: () => ({}),
 });
-
-// Export hooks to use in React components
-export const {
-	// Matrices
-	useGetMatricesQuery,
-	useEditMatrixMutation,
-
-	// TODO: Add tags
-} = baseAPI;

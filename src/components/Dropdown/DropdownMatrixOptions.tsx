@@ -5,8 +5,8 @@ import classNames from 'classnames';
 import { useRef, useState } from 'react';
 import { setModalState } from '../../slices/modalSlice';
 import { useDispatch } from 'react-redux';
-import { useEditMatrixMutation } from '../../services/api';
 import { toTitleCase } from '../../utils/helpers.utils';
+import { useEditMatrixMutation } from '../../services/resources/matrixApi';
 
 interface DropdownMatrixOptions extends DropdownProps {
 	matrix: Object;
