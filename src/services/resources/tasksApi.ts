@@ -1,7 +1,7 @@
 import { arrayToObjectByKey, getObjectOfEachItemsParent } from '../../utils/helpers.utils';
 import { baseAPI, buildQueryString } from '../api';
 
-export const usersApi = baseAPI.injectEndpoints({
+export const tasksApi = baseAPI.injectEndpoints({
 	endpoints: (builder) => ({
 		getTasks: builder.query({
 			query: (queryParams) => {
@@ -75,4 +75,4 @@ export const {
 	useBulkEditTasksMutation,
 	useFlagTaskMutation,
 	usePermanentlyDeleteTaskMutation,
-} = usersApi;
+} = tasksApi;

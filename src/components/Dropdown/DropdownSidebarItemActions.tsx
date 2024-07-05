@@ -1,15 +1,12 @@
 import Dropdown from './Dropdown';
 import { DropdownProps } from '../../interfaces/interfaces';
-import {
-	usePermanentlyDeleteFilterMutation,
-	usePermanentlyDeleteProjectMutation,
-	usePermanentlyDeleteTagMutation,
-} from '../../services/api';
+import { usePermanentlyDeleteFilterMutation, usePermanentlyDeleteTagMutation } from '../../services/api';
 import classNames from 'classnames';
 import { useNavigate } from 'react-router';
 import { useDispatch } from 'react-redux';
 import { setModalState } from '../../slices/modalSlice';
 import useHandleError from '../../hooks/useHandleError';
+import { usePermanentlyDeleteProjectMutation } from '../../services/resources/projectsApi';
 
 interface DropdownSidebarItemActionsProps extends DropdownProps {
 	onCloseContextMenu: () => void;

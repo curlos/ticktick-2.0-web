@@ -5,7 +5,7 @@ import TaskList from './TaskList';
 import { AnimatePresence, motion } from 'framer-motion';
 import React from 'react';
 import { PRIORITIES } from '../utils/priorities.utils';
-import { useGetProjectsQuery } from '../services/api';
+import { useGetProjectsQuery } from '../services/resources/projectsApi';
 
 interface TaskListByGroupProps {
 	tasks: Array<TaskObj>;

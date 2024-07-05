@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { DropdownProps } from '../../../interfaces/interfaces';
-import { useGetProjectsQuery } from '../../../services/api';
 import Icon from '../../Icon';
 import Dropdown from '../Dropdown';
 import { SMART_LISTS } from '../../../utils/smartLists.utils';
@@ -11,6 +10,7 @@ import classNames from 'classnames';
 import TaskListByGroup from '../../TaskListByGroup';
 import DropdownItemsWithSearch from '../DropdownItemsWithSearch/DropdownItemsWithSearch';
 import { useGetTasksQuery } from '../../../services/resources/tasksApi';
+import { useGetProjectsQuery } from '../../../services/resources/projectsApi';
 
 interface DropdownSetTaskProps extends DropdownProps {
 	selectedTask: Object | null;

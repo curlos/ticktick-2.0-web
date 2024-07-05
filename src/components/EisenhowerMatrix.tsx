@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useGetMatricesQuery, useGetProjectsQuery } from '../services/api';
+import { useGetMatricesQuery } from '../services/api';
 import { allExceptOneFalse, getTasksWithNoParent } from '../utils/helpers.utils';
 import { SMART_LISTS } from '../utils/smartLists.utils';
 import Icon from './Icon';
@@ -9,6 +9,7 @@ import { useDispatch } from 'react-redux';
 import classNames from 'classnames';
 import TaskListByGroup from './TaskListByGroup';
 import { useGetTasksQuery } from '../services/resources/tasksApi';
+import { useGetProjectsQuery } from '../services/resources/projectsApi';
 
 const stylingForMatrixHeaders = [
 	{

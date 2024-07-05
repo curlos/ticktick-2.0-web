@@ -5,7 +5,7 @@ import DropdownCalendar from './Dropdown/DropdownCalendar/DropdownCalendar';
 import TextareaAutosize from 'react-textarea-autosize';
 import DropdownPriorities from './Dropdown/DropdownPriorities';
 import { PRIORITIES } from '../utils/priorities.utils';
-import { useGetProjectsQuery, useGetTagsQuery } from '../services/api';
+import { useGetTagsQuery } from '../services/api';
 import { SMART_LISTS } from '../utils/smartLists.utils';
 import { useNavigate, useParams } from 'react-router';
 import classNames from 'classnames';
@@ -14,6 +14,7 @@ import { setModalState } from '../slices/modalSlice';
 import DropdownItemsWithSearch from './Dropdown/DropdownItemsWithSearch/DropdownItemsWithSearch';
 import TagItemForTask from './TagItemForTask';
 import { useAddTaskMutation } from '../services/resources/tasksApi';
+import { useGetProjectsQuery } from '../services/resources/projectsApi';
 
 interface AddTaskFormProps {
 	parentId: string;

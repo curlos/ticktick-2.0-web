@@ -7,7 +7,7 @@ import { Handle } from './Handle';
 import styles from './TreeItem.module.css';
 import { useNavigate, useParams } from 'react-router-dom';
 import Icon from '../../../Icon';
-import { useGetProjectsQuery, useGetTagsQuery } from '../../../../services/api';
+import { useGetTagsQuery } from '../../../../services/api';
 import { SMART_LISTS } from '../../../../utils/smartLists.utils';
 import { PRIORITIES } from '../../../../utils/priorities.utils';
 import TaskDueDateText from '../../../TaskDueDateText';
@@ -17,6 +17,7 @@ import useAudio from '../../../../hooks/useAudio';
 import TagItemForTask from '../../../TagItemForTask';
 import Dropdown from '../../../Dropdown/Dropdown';
 import { useEditTaskMutation } from '../../../../services/resources/tasksApi';
+import { useGetProjectsQuery } from '../../../../services/resources/projectsApi';
 
 export interface Props extends HTMLAttributes<HTMLLIElement> {
 	childCount?: number;

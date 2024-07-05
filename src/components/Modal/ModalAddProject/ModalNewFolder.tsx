@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { useAddProjectMutation } from '../../../services/api';
 import Icon from '../../Icon';
 import Modal from '../Modal';
+import { useAddProjectMutation } from '../../../services/resources/projectsApi';
 
 interface ModalNewFolderProps {
 	isModalOpen: boolean;

@@ -2,13 +2,13 @@ import Modal from '../Modal';
 import Icon from '../../Icon';
 import { useEffect, useRef, useState } from 'react';
 import { IProject } from '../../../interfaces/interfaces';
-import { useAddProjectMutation, useEditProjectMutation } from '../../../services/api';
 import { useDispatch, useSelector } from 'react-redux';
 import { setModalState } from '../../../slices/modalSlice';
 import { useNavigate } from 'react-router';
 import ModalNewFolder from './ModalNewFolder';
 import DropdownFolder from './DropdownFolder';
 import ColorList from '../../ColorList';
+import { useAddProjectMutation, useEditProjectMutation } from '../../../services/resources/projectsApi';
 
 const ModalAddProject: React.FC = () => {
 	const modal = useSelector((state) => state.modals.modals['ModalAddProject']);

@@ -1,13 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router';
-import {
-	useAddProjectMutation,
-	useAddTagMutation,
-	useEditProjectMutation,
-	useEditTagMutation,
-	useGetTagsQuery,
-} from '../../../services/api';
+import { useAddTagMutation, useEditTagMutation, useGetTagsQuery } from '../../../services/api';
 import { setModalState } from '../../../slices/modalSlice';
 import ColorList from '../../ColorList';
 import Icon from '../../Icon';

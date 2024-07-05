@@ -6,7 +6,7 @@ import { TaskObj } from '../../interfaces/interfaces';
 import DropdownCalendar from '../Dropdown/DropdownCalendar/DropdownCalendar';
 import AddTaskForm from '../AddTaskForm';
 import ModalTaskActivities from '../Modal/ModalTaskActivities';
-import { useGetProjectsQuery, useGetFocusRecordsQuery, useGetCommentsQuery, useGetTagsQuery } from '../../services/api';
+import { useGetFocusRecordsQuery, useGetCommentsQuery, useGetTagsQuery } from '../../services/api';
 import { getFormattedDuration, getTasksWithFilledInChildren, hexToRGBA, sumProperty } from '../../utils/helpers.utils';
 import { SortableTree } from '../SortableTest/SortableTree';
 import useDebouncedEditTask from '../../hooks/useDebouncedEditTask';
@@ -23,6 +23,7 @@ import AddCommentForm from './AddCommentForm';
 import DropdownItemsWithSearch from '../Dropdown/DropdownItemsWithSearch/DropdownItemsWithSearch';
 import TagList from './TagList';
 import { useEditTaskMutation, useGetTasksQuery } from '../../services/resources/tasksApi';
+import { useGetProjectsQuery } from '../../services/resources/projectsApi';
 
 const EmptyTask = () => (
 	<div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700 flex justify-center items-center text-[18px] text-color-gray-100">

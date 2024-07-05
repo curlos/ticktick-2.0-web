@@ -9,7 +9,6 @@ import {
 	useAddFilterMutation,
 	useEditFilterMutation,
 	useEditMatrixMutation,
-	useGetProjectsQuery,
 	useGetTagsQuery,
 } from '../../../services/api';
 import { SMART_LISTS } from '../../../utils/smartLists.utils';
@@ -19,6 +18,7 @@ import PriorityMultiSelectSection from './PriorityMultiSelectSection';
 import TagMultiSelectSection from './TagMultiSelectSection';
 import { DEFAULT_DATE_OPTIONS } from './DefaultDateOptions';
 import useHandleError from '../../../hooks/useHandleError';
+import { useGetProjectsQuery } from '../../../services/resources/projectsApi';
 
 const ModalAddFilterOrEditMatrix: React.FC = () => {
 	const modal = useSelector((state) => state.modals.modals['ModalAddFilterOrEditMatrix']);

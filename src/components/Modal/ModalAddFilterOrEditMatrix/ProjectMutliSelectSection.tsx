@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
-import { useGetProjectsQuery } from '../../../services/api';
 import DropdownItemsWithSearch from '../../Dropdown/DropdownItemsWithSearch/DropdownItemsWithSearch';
 import Icon from '../../Icon';
+import { useGetProjectsQuery } from '../../../services/resources/projectsApi';
 
 const ProjectMultiSelectSection = ({ selectedProjectsList, setSelectedProjectsList }) => {
 	const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
