@@ -3,6 +3,7 @@ import Icon from '../../Icon';
 import { DropdownProps } from '../../../interfaces/interfaces';
 import Dropdown from '../../Dropdown/Dropdown';
 import classNames from 'classnames';
+import CustomInput from '../../CustomInput';
 
 const FrequencySection = () => {
 	const dropdownFrequencyRef = useRef(null);
@@ -64,6 +65,8 @@ const DropdownFrequency: React.FC<DropdownFrequencyProps> = ({ toggleRef, isVisi
 	};
 
 	const [selectedDays, setSelectedDays] = useState(['Mon', 'Tue', 'Sat']);
+	const [daysPerWeek, setDaysPerWeek] = useState(1);
+	const [everyDayInterval, setEveryDayInterval] = useState(1);
 
 	return (
 		<Dropdown
@@ -79,7 +82,17 @@ const DropdownFrequency: React.FC<DropdownFrequencyProps> = ({ toggleRef, isVisi
 					<TopButton name="Interval" />
 				</div>
 
-				<DailySection selectedDays={selectedDays} setSelectedDays={setSelectedDays} />
+				{selectedInterval.toLowerCase() === 'daily' && (
+					<DailySection selectedDays={selectedDays} setSelectedDays={setSelectedDays} />
+				)}
+
+				{selectedInterval.toLowerCase() === 'weekly' && (
+					<WeeklySection daysPerWeek={daysPerWeek} setDaysPerWeek={setDaysPerWeek} />
+				)}
+
+				{selectedInterval.toLowerCase() === 'interval' && (
+					<IntervalSection everyDayInterval={everyDayInterval} setEveryDayInterval={setEveryDayInterval} />
+				)}
 
 				<div className="grid grid-cols-2 gap-2 mt-6">
 					<button
@@ -132,6 +145,54 @@ const DailySection = ({ selectedDays, setSelectedDays }) => {
 						</div>
 					);
 				})}
+			</div>
+		</div>
+	);
+};
+
+const WeeklySection = ({ daysPerWeek, setDaysPerWeek }) => {
+	return (
+		<div className="mt-4">
+			<div className="text-color-gray-100">
+				{daysPerWeek} {daysPerWeek === 1 ? 'day' : 'days'} per week
+			</div>
+
+			<div className="flex gap-2 mt-3">
+				{[1, 2, 3, 4, 5, 6, 7].map((dayNumber) => {
+					const isSelected = dayNumber === daysPerWeek;
+
+					return (
+						<div
+							className={classNames(
+								'rounded-full text-white h-[35px] w-[35px] flex items-center justify-center cursor-pointer',
+								isSelected
+									? 'bg-blue-500 hover:bg-blue-500/90'
+									: 'bg-color-gray-200/60 hover:bg-color-gray-200/50'
+							)}
+							onClick={() => setDaysPerWeek(dayNumber)}
+						>
+							{dayNumber}
+						</div>
+					);
+				})}
+			</div>
+		</div>
+	);
+};
+
+const IntervalSection = ({ everyDayInterval, setEveryDayInterval }) => {
+	return (
+		<div className="mt-4">
+			<div className="flex items-center gap-2">
+				<div>Every</div>
+				<CustomInput
+					type="number"
+					min={1}
+					value={everyDayInterval}
+					setValue={setEveryDayInterval}
+					customClasses="max-w-[100px] no-number-arrows"
+				/>
+				<div>{Number(everyDayInterval) === 1 ? 'day' : 'days'}</div>
 			</div>
 		</div>
 	);

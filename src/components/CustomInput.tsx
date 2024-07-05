@@ -3,13 +3,24 @@ import classNames from 'classnames';
 interface CustomInputProps {
 	type?: string;
 	placeholder?: string;
+	min?: number;
+	max?: number;
 	value: any;
 	setValue: React.Dispatch<React.SetStateAction<any>>;
 	customClasses?: string;
 	onChange?: any;
 }
 
-const CustomInput: React.FC<CustomInputProps> = ({ type, placeholder, value, setValue, onChange, customClasses }) => (
+const CustomInput: React.FC<CustomInputProps> = ({
+	type,
+	placeholder,
+	min,
+	max,
+	value,
+	setValue,
+	onChange,
+	customClasses,
+}) => (
 	<input
 		type={type || 'text'}
 		className={classNames(
@@ -30,6 +41,8 @@ const CustomInput: React.FC<CustomInputProps> = ({ type, placeholder, value, set
 						setValue(e.target.value);
 					}
 		}
+		min={type === 'number' ? min : undefined}
+		max={type === 'number' ? max : undefined}
 	/>
 );
 
