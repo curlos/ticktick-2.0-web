@@ -7,10 +7,10 @@ import { CSS } from '@dnd-kit/utilities';
 import { arrayToObjectByKey, containsEmoji, getNumberOfTasks } from '../utils/helpers.utils';
 import { IProject } from '../interfaces/interfaces';
 import Icon from './Icon';
-import { useGetTasksQuery } from '../services/api';
 import { SMART_LISTS } from '../utils/smartLists.utils';
 import ContextMenuProjectActions from './ContextMenu/ContextMenuProjectActions';
 import ContextMenuSidebarItemActions from './ContextMenu/ContextMenuSidebarItemActions';
+import { useGetTasksQuery } from '../services/resources/tasksApi';
 
 const DraggableProjects = ({ projects }) => {
 	const [items, setItems] = useState([...projects]);

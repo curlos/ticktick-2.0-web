@@ -2,7 +2,8 @@ import classNames from 'classnames';
 import { IProject } from '../../../interfaces/interfaces';
 import { SMART_LISTS } from '../../../utils/smartLists.utils';
 import Icon from '../../Icon';
-import { useEditTaskMutation, useGetTagsQuery } from '../../../services/api';
+import { useGetTagsQuery } from '../../../services/api';
+import { useEditTaskMutation } from '../../../services/resources/tasksApi';
 
 interface ItemOptionProps {
 	item: IProject;

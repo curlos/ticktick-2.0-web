@@ -32,16 +32,12 @@ import type { FlattenedItem, SensorContext, TreeItems } from './types';
 // TODO: Bring this back to use when I want to work on Accessbility
 import { sortableTreeKeyboardCoordinates } from './keyboardCoordinates';
 import { SortableTreeItem } from './components';
-import {
-	useBulkEditTasksMutation,
-	useFlagTaskMutation,
-	useGetFiltersQuery,
-	useGetTasksQuery,
-} from '../../services/api';
+import { useGetFiltersQuery } from '../../services/api';
 import { getTasksWithFilledInChildren, prepareForBulkEdit } from '../../utils/helpers.utils';
 import { SMART_LISTS } from '../../utils/smartLists.utils';
 import { useParams } from 'react-router-dom';
 import { TaskObj } from '../../interfaces/interfaces';
+import { useBulkEditTasksMutation, useFlagTaskMutation, useGetTasksQuery } from '../../services/resources/tasksApi';
 
 const measuring = {
 	droppable: {

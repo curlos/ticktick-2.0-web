@@ -3,7 +3,7 @@ import Alert from './Alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { setAlertState } from '../../slices/alertSlice';
 import Icon from '../Icon';
-import { useFlagTaskMutation } from '../../services/api';
+import { useFlagTaskMutation } from '../../services/resources/tasksApi';
 
 const AlertFlagged = () => {
 	const alert = useSelector((state) => state.alerts.alerts['AlertFlagged']);

@@ -1,4 +1,4 @@
-import { useEditTaskMutation } from '../services/api';
+import { useEditTaskMutation } from '../services/resources/tasksApi';
 import { useDebouncedCallback } from './useDebounceCallback';
 
 export const useDebouncedEditTask = (delay = 1000) => {

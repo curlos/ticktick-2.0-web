@@ -3,8 +3,8 @@ import { hexToRGBA } from '../utils/helpers.utils';
 import classNames from 'classnames';
 import Icon from './Icon';
 import { useNavigate } from 'react-router';
-import { useEditTaskMutation } from '../services/api';
 import Dropdown from './Dropdown/Dropdown';
+import { useEditTaskMutation } from '../services/resources/tasksApi';
 
 const TagItemForTask = ({ tag, task, selectedTagList, setSelectedTagList, allowDelete = true }) => {
 	const navigate = useNavigate();

@@ -3,7 +3,7 @@ import Icon from '../Icon';
 import { IPriorityItem, PRIORITIES } from '../../utils/priorities.utils';
 import { DropdownProps, TaskObj } from '../../interfaces/interfaces';
 import classNames from 'classnames';
-import { useEditTaskMutation } from '../../services/api';
+import { useEditTaskMutation } from '../../services/resources/tasksApi';
 
 interface DropdownPrioritiesProps extends DropdownProps {
 	priority: number;

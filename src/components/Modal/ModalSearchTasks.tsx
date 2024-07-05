@@ -4,9 +4,9 @@ import { setModalState } from '../../slices/modalSlice';
 import Icon from '../Icon';
 import Fuse from 'fuse.js';
 import { useEffect, useRef, useState } from 'react';
-import { useGetTasksQuery } from '../../services/api';
 import { debounce } from '../../utils/helpers.utils';
 import Task from '../Task';
+import { useGetTasksQuery } from '../../services/resources/tasksApi';
 
 const ModalSearchTasks: React.FC = () => {
 	const modal = useSelector((state) => state.modals.modals['ModalSearchTasks']);

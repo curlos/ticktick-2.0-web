@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from 'react-router';
-import { useGetFiltersQuery, useGetTasksQuery } from '../../services/api';
+import { useGetFiltersQuery } from '../../services/api';
 import { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import Icon from '../Icon';
@@ -7,6 +7,7 @@ import ContextMenuSidebarItemActions from '../ContextMenu/ContextMenuSidebarItem
 import { arrayToObjectByKey } from '../../utils/helpers.utils';
 import { PRIORITIES } from '../../utils/priorities.utils';
 import { filterTasksByFilter } from '../../utils/filters.util';
+import { useGetTasksQuery } from '../../services/resources/tasksApi';
 
 const FilterItem = ({ filter }) => {
 	const navigate = useNavigate();

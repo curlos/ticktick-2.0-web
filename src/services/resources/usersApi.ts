@@ -4,7 +4,6 @@ import { baseAPI, buildQueryString } from '../api';
 
 export const usersApi = baseAPI.injectEndpoints({
 	endpoints: (builder) => ({
-		// Users
 		getUsers: builder.query({
 			query: (queryParams) => {
 				const queryString = buildQueryString(queryParams);

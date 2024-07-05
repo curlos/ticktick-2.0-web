@@ -5,9 +5,9 @@ import Dropdown from '../Dropdown';
 import DropdownStartFocus from './DropdownStartFocus';
 import { useDispatch } from 'react-redux';
 import { useNavigate, useParams } from 'react-router';
-import { useGetTasksQuery, useFlagTaskMutation } from '../../../services/api';
 import { DropdownProps, TaskObj } from '../../../interfaces/interfaces';
 import { setAlertState } from '../../../slices/alertSlice';
+import { useFlagTaskMutation, useGetTasksQuery } from '../../../services/resources/tasksApi';
 
 interface DropdownTaskOptionsProps extends DropdownProps {
 	setIsModalTaskActivitiesOpen: React.Dispatch<React.SetStateAction<boolean>>;

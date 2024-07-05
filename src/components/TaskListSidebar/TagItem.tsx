@@ -1,9 +1,10 @@
 import { useNavigate, useParams } from 'react-router';
-import { useGetTagsQuery, useGetTasksQuery } from '../../services/api';
+import { useGetTagsQuery } from '../../services/api';
 import { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import Icon from '../Icon';
 import ContextMenuSidebarItemActions from '../ContextMenu/ContextMenuSidebarItemActions';
+import { useGetTasksQuery } from '../../services/resources/tasksApi';
 
 const TagItem = ({ tag, isChild }) => {
 	const navigate = useNavigate();

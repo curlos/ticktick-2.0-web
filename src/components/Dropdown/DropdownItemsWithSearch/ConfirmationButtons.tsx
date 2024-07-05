@@ -1,4 +1,5 @@
-import { useAddTagMutation, useEditTaskMutation } from '../../../services/api';
+import { useAddTagMutation } from '../../../services/api';
+import { useEditTaskMutation } from '../../../services/resources/tasksApi';
 
 const ConfirmationButtons = ({
 	type,

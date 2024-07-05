@@ -6,9 +6,9 @@ import DropdownReminder from './DropdownReminder';
 import DropdownRepeat from './DropdownRepeat';
 import SelectCalendar from '../../SelectCalendar';
 import { DropdownProps, TaskObj } from '../../../interfaces/interfaces';
-import { useEditTaskMutation } from '../../../services/api';
 import classNames from 'classnames';
 import { setTimeOnDateString } from '../../../utils/date.utils';
+import { useEditTaskMutation } from '../../../services/resources/tasksApi';
 
 interface BigDateIconOptionProps {
 	iconName: string;

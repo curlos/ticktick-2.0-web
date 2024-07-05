@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react';
 import Icon from './Icon';
 import { TaskObj } from '../interfaces/interfaces';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useGetProjectsQuery, useGetTasksQuery } from '../services/api';
+import { useGetProjectsQuery } from '../services/api';
 import { PRIORITIES } from '../utils/priorities.utils';
 import classNames from 'classnames';
 import TaskDueDateText from './TaskDueDateText';
 import ContextMenuTaskDetails from './ContextMenu/ContextMenuTaskDetails';
+import { useGetTasksQuery } from '../services/resources/tasksApi';
 
 interface TaskProps {
 	taskId: string;

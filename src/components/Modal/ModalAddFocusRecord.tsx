@@ -12,7 +12,6 @@ import {
 	useAddFocusRecordMutation,
 	useEditFocusRecordMutation,
 	useGetFocusRecordsQuery,
-	useGetTasksQuery,
 	usePermanentlyDeleteFocusRecordMutation,
 } from '../../services/api';
 import {
@@ -21,6 +20,7 @@ import {
 	secondsToHoursAndMinutes,
 } from '../../utils/helpers.utils';
 import { formatDateTime } from '../../utils/date.utils';
+import { useGetTasksQuery } from '../../services/resources/tasksApi';
 
 const ModalAddFocusRecord: React.FC = () => {
 	const modal = useSelector((state) => state.modals.modals['ModalAddFocusRecord']);
