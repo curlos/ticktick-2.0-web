@@ -1,10 +1,10 @@
 import { useForm } from 'react-hook-form';
-import { useLoginUserMutation, useRegisterUserMutation } from '../services/api'; // Ensure the correct path
 import Icon from './Icon';
 import { Link, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { setModalState } from '../slices/modalSlice';
+import { useLoginUserMutation, useRegisterUserMutation } from '../services/resources/usersApi';
 
 const UserForm = ({ mode }) => {
 	const dispatch = useDispatch();

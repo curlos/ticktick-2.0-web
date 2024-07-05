@@ -1,4 +1,5 @@
-import { useGetUsersQuery, usePermanentlyDeleteCommentMutation } from '../../services/api';
+import { usePermanentlyDeleteCommentMutation } from '../../services/api';
+import { useGetUsersQuery } from '../../services/resources/usersApi';
 import Icon from '../Icon';
 
 const CommentList = ({ taskComments, setCommentToEdit, setShowAddCommentInput, setCurrentComment }) => {

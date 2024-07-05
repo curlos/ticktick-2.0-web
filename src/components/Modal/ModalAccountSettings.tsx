@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import ModalChangePassword from './ModalChangePassword';
 import Dropdown from '../Dropdown/Dropdown';
 import ModalChangeEmail from './ModalChangeEmail';
-import { useGetLoggedInUserQuery } from '../../services/api';
+import { useGetLoggedInUserQuery } from '../../services/resources/usersApi';
 
 const ModalAccountSettings: React.FC = () => {
 	const { data: loggedInUser, error, isLoading } = useGetLoggedInUserQuery();
