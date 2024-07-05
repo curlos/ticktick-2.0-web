@@ -1,5 +1,5 @@
 import React from 'react';
-import AlertCopied from './AlertCopied';
+import AlertGeneralMessage from './AlertGeneralMessage';
 import AlertFlagged from './AlertFlagged';
 
 /**
@@ -8,7 +8,7 @@ import AlertFlagged from './AlertFlagged';
 const GlobalAlertList = () => {
 	return (
 		<React.Fragment>
-			<AlertCopied />
+			<AlertGeneralMessage />
 			<AlertFlagged />
 		</React.Fragment>
 	);

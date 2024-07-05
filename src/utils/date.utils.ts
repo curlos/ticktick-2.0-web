@@ -201,6 +201,18 @@ export function areDatesEqual(date1: Date | null, date2: Date | null) {
 	);
 }
 
+export function areTimesEqual(time1: Date | null, time2: Date | null): boolean {
+	if (!time1 || !time2) {
+		return false;
+	}
+
+	return (
+		time1.getHours() === time2.getHours() &&
+		time1.getMinutes() === time2.getMinutes() &&
+		time1.getSeconds() === time2.getSeconds()
+	);
+}
+
 export const getMonthAndDay = (date) => {
 	// Convert the date to a string with the format "Month day"
 	return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });

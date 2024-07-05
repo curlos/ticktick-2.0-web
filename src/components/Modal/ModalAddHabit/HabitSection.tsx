@@ -91,7 +91,7 @@ const DropdownHabitSection = ({
 		>
 			<div className="p-1">
 				{sectionOptions.map((sectionOption) => (
-					<SectionOption sectionOption={sectionOption} />
+					<SectionOption key={sectionOption} sectionOption={sectionOption} />
 				))}
 
 				<div className="relative">

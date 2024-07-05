@@ -324,7 +324,13 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 						onClick={() => {
 							copyTextToClipboard(window.location.href);
 							onCloseContextMenu();
-							dispatch(setAlertState({ alertId: 'AlertCopied', isOpen: true }));
+							dispatch(
+								setAlertState({
+									alertId: 'AlertGeneralMessage',
+									isOpen: true,
+									props: { message: 'Copied!' },
+								})
+							);
 						}}
 					/>
 					<TaskAction

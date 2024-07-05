@@ -100,7 +100,7 @@ const DropdownGoalDays = ({
 		>
 			<div className="p-1">
 				{goalDayOptions.map((goalDayOption) => (
-					<GoalDayOption goalDayOption={goalDayOption} />
+					<GoalDayOption key={goalDayOption} goalDayOption={goalDayOption} />
 				))}
 
 				<div className="relative">
