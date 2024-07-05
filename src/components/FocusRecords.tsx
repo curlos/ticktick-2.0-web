@@ -8,9 +8,9 @@ import useSticky from '../hooks/useSticky';
 import ModalAddFocusRecord from './Modal/ModalAddFocusRecord';
 import { setModalState } from '../slices/modalSlice';
 import { useDispatch } from 'react-redux';
-import { useGetFocusRecordsQuery } from '../services/api';
 import { formatDateTime, groupByEndTimeDay } from '../utils/date.utils';
 import { useGetTasksQuery } from '../services/resources/tasksApi';
+import { useGetFocusRecordsQuery } from '../services/resources/focusRecordsApi';
 
 interface StatsOverviewProps {
 	overviewData: object;

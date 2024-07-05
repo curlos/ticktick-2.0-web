@@ -9,18 +9,18 @@ import DropdownTimeCalendar from '../Dropdown/DropdownsAddFocusRecord/DropdownTi
 import DropdownSetTask from '../Dropdown/DropdownsAddFocusRecord/DropdownSetTask';
 import classNames from 'classnames';
 import {
-	useAddFocusRecordMutation,
-	useEditFocusRecordMutation,
-	useGetFocusRecordsQuery,
-	usePermanentlyDeleteFocusRecordMutation,
-} from '../../services/api';
-import {
 	formatTimeToHoursMinutesSeconds,
 	getFormattedDuration,
 	secondsToHoursAndMinutes,
 } from '../../utils/helpers.utils';
 import { formatDateTime } from '../../utils/date.utils';
 import { useGetTasksQuery } from '../../services/resources/tasksApi';
+import {
+	useAddFocusRecordMutation,
+	useEditFocusRecordMutation,
+	usePermanentlyDeleteFocusRecordMutation,
+	useGetFocusRecordsQuery,
+} from '../../services/resources/focusRecordsApi';
 
 const ModalAddFocusRecord: React.FC = () => {
 	const modal = useSelector((state) => state.modals.modals['ModalAddFocusRecord']);

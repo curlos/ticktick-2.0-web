@@ -17,9 +17,9 @@ import DropdownSetTask from './Dropdown/DropdownsAddFocusRecord/DropdownSetTask'
 import Icon from './Icon';
 import { formatSeconds } from '../utils/helpers.utils';
 import ModalAddFocusNote from './Modal/ModalAddFocusNote';
-import { useBulkAddFocusRecordsMutation } from '../services/api';
 import { setModalState } from '../slices/modalSlice';
 import PixelArtTimer from './PixelArtTimer';
+import { useBulkAddFocusRecordsMutation } from '../services/resources/focusRecordsApi';
 
 const bgThemeColor = 'bg-[#4772F9]';
 const textThemeColor = 'text-[#4772F9]';
