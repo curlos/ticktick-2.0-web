@@ -7,6 +7,7 @@ import CustomInput from '../../CustomInput';
 import { useState } from 'react';
 import useHandleError from '../../../hooks/useHandleError';
 import FrequencySection from './FrequencySection';
+import GoalSection from './GoalSection';
 
 const ModalAddHabit: React.FC = () => {
 	const modal = useSelector((state) => state.modals.modals['ModalAddHabit']);
@@ -50,6 +51,7 @@ const ModalAddHabit: React.FC = () => {
 						/>
 
 						<FrequencySection />
+						<GoalSection />
 					</div>
 
 					{/* Close and Save buttons */}
