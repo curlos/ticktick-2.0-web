@@ -3,25 +3,6 @@ import Dropdown from '../Dropdown';
 import classNames from 'classnames';
 import InfiniteScrollSelector from '../../InfiniteScrollSelector';
 
-function extractTimeDetails(timeStr) {
-	if (!timeStr) {
-		return {
-			hours: '',
-			minutes: '',
-			period: '',
-		};
-	}
-
-	const [time, period] = timeStr.split(' ');
-	const [hours, minutes] = time.split(':');
-
-	return {
-		hours: String(hours),
-		minutes: minutes ? String(minutes).padStart(2, '0') : '',
-		period: period,
-	};
-}
-
 const DropdownTime = ({ toggleRef, isVisible, setIsVisible, selectedTime, setSelectedTime, customClasses }) => {
 	const defaultTime = extractTimeDetails(selectedTime);
 
@@ -113,17 +94,21 @@ const DropdownTime = ({ toggleRef, isVisible, setIsVisible, selectedTime, setSel
 
 export default DropdownTime;
 
-const getCurrentTimeInESTInterval = () => {
-	const now = new Date();
-	const estTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
-	const minutes = estTime.getMinutes();
-	const nearest30 = minutes >= 30 ? 30 : 0;
-	estTime.setMinutes(nearest30, 0, 0);
-	const formatter = new Intl.DateTimeFormat('en-US', {
-		hour: '2-digit',
-		minute: '2-digit',
-		timeZone: 'America/New_York',
-		hour12: true,
-	});
-	return formatter.format(estTime);
+const extractTimeDetails = (timeStr) => {
+	if (!timeStr) {
+		return {
+			hours: '',
+			minutes: '',
+			period: '',
+		};
+	}
+
+	const [time, period] = timeStr.split(' ');
+	const [hours, minutes] = time.split(':');
+
+	return {
+		hours: String(hours),
+		minutes: minutes ? String(minutes).padStart(2, '0') : '',
+		period: period,
+	};
 };

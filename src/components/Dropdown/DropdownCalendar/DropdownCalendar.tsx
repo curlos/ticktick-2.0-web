@@ -247,13 +247,6 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({
 				<div className="px-1 mb-4">
 					{/* Time */}
 					<div className="relative">
-						<DropdownTime
-							toggleRef={dropdownTimeRef}
-							isVisible={isDropdownTimeVisible}
-							setIsVisible={setIsDropdownTimeVisible}
-							selectedTime={selectedTime}
-							setSelectedTime={setSelectedTime}
-						/>
 						<TimeOption
 							toggleRef={dropdownTimeRef}
 							name={selectedTime ? selectedTime : 'Time'}
@@ -264,10 +257,24 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({
 								setIsDropdownTimeVisible(!isDropdownTimeVisible);
 							}}
 						/>
+
+						<DropdownTime
+							toggleRef={dropdownTimeRef}
+							isVisible={isDropdownTimeVisible}
+							setIsVisible={setIsDropdownTimeVisible}
+							selectedTime={selectedTime}
+							setSelectedTime={setSelectedTime}
+						/>
 					</div>
 
 					{/* Reminder */}
 					<div className="relative">
+						<TimeOption
+							toggleRef={dropdownReminderRef}
+							name="Reminder"
+							iconName="alarm"
+							onClick={() => setIsDropdownReminderVisible(!isDropdownReminderVisible)}
+						/>
 						<DropdownReminder
 							toggleRef={dropdownReminderRef}
 							isVisible={isDropdownReminderVisible}
@@ -275,28 +282,22 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({
 							reminder={reminder}
 							setReminder={setReminder}
 						/>
-						<TimeOption
-							toggleRef={dropdownReminderRef}
-							name="Reminder"
-							iconName="alarm"
-							onClick={() => setIsDropdownReminderVisible(!isDropdownReminderVisible)}
-						/>
 					</div>
 
 					{/* Repeat */}
 					<div className="relative">
+						<TimeOption
+							toggleRef={dropdownRepeatRef}
+							name="Repeat"
+							iconName="repeat"
+							onClick={() => setIsDropdownRepeatVisible(!isDropdownRepeatVisible)}
+						/>
 						<DropdownRepeat
 							toggleRef={dropdownRepeatRef}
 							isVisible={isDropdownRepeatVisible}
 							setIsVisible={setIsDropdownRepeatVisible}
 							repeat={repeat}
 							setRepeat={setRepeat}
-						/>
-						<TimeOption
-							toggleRef={dropdownRepeatRef}
-							name="Repeat"
-							iconName="repeat"
-							onClick={() => setIsDropdownRepeatVisible(!isDropdownRepeatVisible)}
 						/>
 					</div>
 				</div>
