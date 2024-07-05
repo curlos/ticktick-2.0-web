@@ -450,6 +450,7 @@ const TimeOption = ({ dropdownRef, isDropdownVisible, setIsDropdownVisible, time
 					setIsVisible={setIsDropdownVisible}
 					date={time}
 					setDate={setTime}
+					showTime={true}
 				/>
 			</div>
 		</div>

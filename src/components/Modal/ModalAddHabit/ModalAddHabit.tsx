@@ -8,6 +8,7 @@ import { useState } from 'react';
 import useHandleError from '../../../hooks/useHandleError';
 import FrequencySection from './FrequencySection';
 import GoalSection from './GoalSection';
+import StartDateSection from './StartDateSection';
 
 const ModalAddHabit: React.FC = () => {
 	const modal = useSelector((state) => state.modals.modals['ModalAddHabit']);
@@ -52,6 +53,7 @@ const ModalAddHabit: React.FC = () => {
 
 						<FrequencySection />
 						<GoalSection />
+						<StartDateSection />
 					</div>
 
 					{/* Close and Save buttons */}

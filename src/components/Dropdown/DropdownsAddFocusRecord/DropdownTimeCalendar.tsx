@@ -16,6 +16,7 @@ const DropdownTimeCalendar: React.FC<DropdownTimeCalendarProps> = ({
 	setIsVisible,
 	date,
 	setDate,
+	showTime = true,
 }) => {
 	// TODO: Get default date of today
 	const [selectedTime, setSelectedTime] = useState(getCurrentTimeString());
@@ -34,27 +35,29 @@ const DropdownTimeCalendar: React.FC<DropdownTimeCalendarProps> = ({
 				<SelectCalendar dueDate={selectedDate} setDueDate={setSelectedDate} time={selectedTime} />
 			</div>
 
-			<div className="relative">
-				<div className="mb-2 px-2">
-					<div
-						ref={dropdownTimeRef}
-						className="text-center text-[14px] p-1 bg-color-gray-200 placeholder:text-[#7C7C7C] mb-0 w-full resize-none outline-none rounded hover:outline-blue-500 cursor-pointer"
-						onClick={() => setIsDropdownTimeVisible(!isDropdownTimeVisible)}
-					>
-						{selectedTime}
+			{showTime && (
+				<div className="relative">
+					<div className="mb-2 px-2">
+						<div
+							ref={dropdownTimeRef}
+							className="text-center text-[14px] p-1 bg-color-gray-200 placeholder:text-[#7C7C7C] mb-0 w-full resize-none outline-none rounded hover:outline-blue-500 cursor-pointer"
+							onClick={() => setIsDropdownTimeVisible(!isDropdownTimeVisible)}
+						>
+							{selectedTime}
+						</div>
 					</div>
-				</div>
 
-				<DropdownTime
-					toggleRef={dropdownTimeRef}
-					isVisible={isDropdownTimeVisible}
-					setIsVisible={setIsDropdownTimeVisible}
-					selectedTime={selectedTime}
-					setSelectedTime={setSelectedTime}
-					showTimeZoneOption={false}
-					customClasses="mt-[10px]"
-				/>
-			</div>
+					<DropdownTime
+						toggleRef={dropdownTimeRef}
+						isVisible={isDropdownTimeVisible}
+						setIsVisible={setIsDropdownTimeVisible}
+						selectedTime={selectedTime}
+						setSelectedTime={setSelectedTime}
+						showTimeZoneOption={false}
+						customClasses="mt-[10px]"
+					/>
+				</div>
+			)}
 
 			<div className="grid grid-cols-2 gap-2 p-2">
 				<button

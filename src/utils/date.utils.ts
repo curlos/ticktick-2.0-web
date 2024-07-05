@@ -205,3 +205,18 @@ export const getMonthAndDay = (date) => {
 	// Convert the date to a string with the format "Month day"
 	return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
 };
+
+export const formatDateBasedOnYear = (inputDate) => {
+	const currentDate = new Date(); // Get the current date
+	const inputYear = inputDate.getFullYear(); // Extract the year from the input date
+	const currentYear = currentDate.getFullYear(); // Extract the current year
+
+	// Compare the input date's year with the current year
+	if (inputYear < currentYear) {
+		// If the input date is from a previous year, format it as "Month day, year"
+		return inputDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+	} else {
+		// If the input date is from the current year, format it as "Month day"
+		return inputDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+	}
+};
