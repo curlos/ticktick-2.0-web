@@ -1,5 +1,4 @@
 import { useNavigate, useParams } from 'react-router';
-import { useGetFiltersQuery } from '../../services/api';
 import { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import Icon from '../Icon';
@@ -8,6 +7,7 @@ import { arrayToObjectByKey } from '../../utils/helpers.utils';
 import { PRIORITIES } from '../../utils/priorities.utils';
 import { filterTasksByFilter } from '../../utils/filters.util';
 import { useGetTasksQuery } from '../../services/resources/tasksApi';
+import { useGetFiltersQuery } from '../../services/resources/filtersApi';
 
 const FilterItem = ({ filter }) => {
 	const navigate = useNavigate();

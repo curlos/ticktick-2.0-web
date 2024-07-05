@@ -6,7 +6,6 @@ import { TaskObj } from '../interfaces/interfaces';
 import AddTaskForm from '../components/AddTaskForm';
 import TaskListByCategory from '../components/TaskListByGroup';
 import { SortableTree } from '../components/SortableTest/SortableTree';
-import { useGetFiltersQuery } from '../services/api';
 import { fillInChildren, getTasksWithNoParent } from '../utils/helpers.utils';
 import { useParams } from 'react-router';
 import { SMART_LISTS } from '../utils/smartLists.utils';
@@ -14,6 +13,7 @@ import { filterTasksByFilter } from '../utils/filters.util';
 import { useGetTasksQuery } from '../services/resources/tasksApi';
 import { useGetProjectsQuery } from '../services/resources/projectsApi';
 import { useGetTagsQuery } from '../services/resources/tagsApi';
+import { useGetFiltersQuery } from '../services/resources/filtersApi';
 
 const TaskListPage = () => {
 	const { projectId, tagId, filterId } = useParams();
