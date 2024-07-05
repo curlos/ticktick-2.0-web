@@ -4,26 +4,24 @@ import Dropdown from '../../Dropdown/Dropdown';
 import classNames from 'classnames';
 import CustomInput from '../../CustomInput';
 
-const GoalDaysSection = () => {
-	const dropdownGoalDaysRef = useRef(null);
-	const [isDropdownGoalDaysVisible, setIsDropdownGoalDaysVisible] = useState(false);
-	const [selectedGoalDays, setSelectedGoalDays] = useState(Infinity);
+const HabitSection = () => {
+	const dropdownHabitSectionRef = useRef(null);
+	const [isDropdownHabitSectionVisible, setIsDropdownHabitSectionVisible] = useState(false);
+	const [selectedSection, setSelectedSection] = useState('Others');
 
 	return (
 		<div>
 			<div className="flex items-center">
-				<div className="w-[96px]">Goal Days</div>
+				<div className="w-[96px]">Section</div>
 				<div className="flex-1 relative">
 					<div
-						ref={dropdownGoalDaysRef}
+						ref={dropdownHabitSectionRef}
 						className="border border-color-gray-200 rounded p-1 px-2 flex justify-between items-center hover:border-blue-500 rounded-md cursor-pointer"
 						onClick={() => {
-							setIsDropdownGoalDaysVisible(!isDropdownGoalDaysVisible);
+							setIsDropdownHabitSectionVisible(!isDropdownHabitSectionVisible);
 						}}
 					>
-						<div style={{ wordBreak: 'break-word' }}>
-							{selectedGoalDays === Infinity ? 'Forever' : `${selectedGoalDays} days`}
-						</div>
+						<div style={{ wordBreak: 'break-word' }}>{selectedSection}</div>
 						<Icon
 							name="expand_more"
 							fill={0}
@@ -31,12 +29,12 @@ const GoalDaysSection = () => {
 						/>
 					</div>
 
-					<DropdownGoalDays
-						toggleRef={dropdownGoalDaysRef}
-						isVisible={isDropdownGoalDaysVisible}
-						setIsVisible={setIsDropdownGoalDaysVisible}
-						selectedGoalDays={selectedGoalDays}
-						setSelectedGoalDays={setSelectedGoalDays}
+					<DropdownHabitSection
+						toggleRef={dropdownHabitSectionRef}
+						isVisible={isDropdownHabitSectionVisible}
+						setIsVisible={setIsDropdownHabitSectionVisible}
+						selectedSection={selectedSection}
+						setSelectedSection={setSelectedSection}
 					/>
 				</div>
 			</div>
@@ -44,21 +42,20 @@ const GoalDaysSection = () => {
 	);
 };
 
-const DropdownGoalDays = ({
+const DropdownHabitSection = ({
 	toggleRef,
 	isVisible,
 	setIsVisible,
 	customClasses,
-	selectedGoalDays,
-	setSelectedGoalDays,
+	selectedSection,
+	setSelectedSection,
 }) => {
-	const goalDayOptions = [Infinity, 7, 21, 30, 100, 365];
+	const sectionOptions = ['Morning', 'Afternoon', 'Night', 'Others'];
 	const dropdownCustomGoalDaysRef = useRef(null);
 	const [isDropdownCustomGoalDaysVisible, setIsDropdownCustomGoalDaysVisible] = useState(false);
 
-	const GoalDayOption = ({ goalDayOption }) => {
-		const isCustomGoalDays = !goalDayOptions.includes(selectedGoalDays);
-		const isSelected = goalDayOption === 'Custom' ? isCustomGoalDays : selectedGoalDays === goalDayOption;
+	const SectionOption = ({ sectionOption }) => {
+		const isSelected = selectedSection === sectionOption;
 
 		return (
 			<div
@@ -67,19 +64,13 @@ const DropdownGoalDays = ({
 					isSelected ? 'text-blue-500' : ''
 				)}
 				onClick={() => {
-					if (goalDayOption !== 'Custom') {
-						setSelectedGoalDays(goalDayOption);
+					if (sectionOption !== 'Add Section') {
+						setSelectedSection(sectionOption);
 						setIsVisible(false);
 					}
 				}}
 			>
-				<div>
-					{goalDayOption === Infinity
-						? 'Forever'
-						: goalDayOption === 'Custom'
-							? 'Custom'
-							: `${goalDayOption} days`}
-				</div>
+				<div>{sectionOption}</div>
 				{isSelected && (
 					<Icon
 						name="check"
@@ -99,8 +90,8 @@ const DropdownGoalDays = ({
 			customClasses={classNames('shadow-2xl border border-color-gray-200 rounded-lg w-[200px]', customClasses)}
 		>
 			<div className="p-1">
-				{goalDayOptions.map((goalDayOption) => (
-					<GoalDayOption goalDayOption={goalDayOption} />
+				{sectionOptions.map((sectionOption) => (
+					<SectionOption sectionOption={sectionOption} />
 				))}
 
 				<div className="relative">
@@ -108,15 +99,15 @@ const DropdownGoalDays = ({
 						ref={dropdownCustomGoalDaysRef}
 						onClick={() => setIsDropdownCustomGoalDaysVisible(!isDropdownCustomGoalDaysVisible)}
 					>
-						<GoalDayOption goalDayOption="Custom" />
+						<SectionOption sectionOption="Add Section" />
 					</div>
 
-					<DropdownCustomGoalDays
+					<DropdownCustomSection
 						toggleRef={dropdownCustomGoalDaysRef}
 						isVisible={isDropdownCustomGoalDaysVisible}
 						setIsVisible={setIsDropdownCustomGoalDaysVisible}
-						selectedGoalDays={selectedGoalDays}
-						setSelectedGoalDays={setSelectedGoalDays}
+						selectedSection={selectedSection}
+						setSelectedSection={setSelectedSection}
 					/>
 				</div>
 			</div>
@@ -124,15 +115,15 @@ const DropdownGoalDays = ({
 	);
 };
 
-const DropdownCustomGoalDays = ({
+const DropdownCustomSection = ({
 	toggleRef,
 	isVisible,
 	setIsVisible,
 	customClasses,
-	selectedGoalDays,
-	setSelectedGoalDays,
+	selectedSection,
+	setSelectedSection,
 }) => {
-	const [localGoalDays, setLocalGoalDays] = useState(selectedGoalDays !== Infinity ? selectedGoalDays : 7);
+	const [localSection, setLocalSection] = useState('');
 
 	return (
 		<Dropdown
@@ -144,13 +135,11 @@ const DropdownCustomGoalDays = ({
 			<div className="p-3">
 				<div className="flex items-center gap-2">
 					<CustomInput
-						type="number"
-						min={1}
-						value={localGoalDays}
-						setValue={setLocalGoalDays}
+						placeholder="New Section"
+						value={localSection}
+						setValue={setLocalSection}
 						customClasses="!text-left"
 					/>
-					<span>days</span>
 				</div>
 
 				<div className="grid grid-cols-2 gap-2 mt-6">
@@ -163,7 +152,8 @@ const DropdownCustomGoalDays = ({
 					<button
 						className="bg-blue-500 rounded py-1 cursor-pointer hover:bg-blue-600"
 						onClick={() => {
-							setSelectedGoalDays(Number(localGoalDays));
+							// TODO: Possibly will have to make API Call here to add a section and get a list of sections in the habits. Will have to see though what exactly should be done. For now, just leave it as is but need to come back later.
+							setSelectedSection(localSection);
 							setIsVisible(false);
 						}}
 					>
@@ -175,4 +165,4 @@ const DropdownCustomGoalDays = ({
 	);
 };
 
-export default GoalDaysSection;
+export default HabitSection;

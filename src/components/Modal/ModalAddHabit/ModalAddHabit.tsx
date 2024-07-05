@@ -10,6 +10,7 @@ import FrequencySection from './FrequencySection';
 import GoalSection from './GoalSection';
 import StartDateSection from './StartDateSection';
 import GoalDaysSection from './GoalDaysSection';
+import HabitSection from './HabitSection';
 
 const ModalAddHabit: React.FC = () => {
 	const modal = useSelector((state) => state.modals.modals['ModalAddHabit']);
@@ -56,6 +57,7 @@ const ModalAddHabit: React.FC = () => {
 						<GoalSection />
 						<StartDateSection />
 						<GoalDaysSection />
+						<HabitSection />
 					</div>
 
 					{/* Close and Save buttons */}
