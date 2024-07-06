@@ -8,26 +8,55 @@ import CustomInput from '../../CustomInput';
 interface FrequencySectionProps {
 	selectedInterval: string;
 	setSelectedInterval: (interval: string) => void;
-	selectedDays: string[];
-	setSelectedDays: (days: string[]) => void;
+	daysOfWeek: string[];
+	setDaysOfWeek: (days: string[]) => void;
 	daysPerWeek: number;
 	setDaysPerWeek: (days: number) => void;
-	everyDayInterval: number;
-	setEveryDayInterval: (interval: number) => void;
+	everyXDays: number;
+	setEveryXDays: (interval: number) => void;
 }
 
 const FrequencySection: React.FC<FrequencySectionProps> = ({
 	selectedInterval,
 	setSelectedInterval,
-	selectedDays,
-	setSelectedDays,
+	daysOfWeek,
+	setDaysOfWeek,
 	daysPerWeek,
 	setDaysPerWeek,
-	everyDayInterval,
-	setEveryDayInterval,
+	everyXDays,
+	setEveryXDays,
 }) => {
 	const dropdownFrequencyRef = useRef(null);
 	const [isDropdownFrequencyVisible, setIsDropdownFrequencyVisible] = useState(false);
+
+	const getSectionTitle = () => {
+		const selectedIntervalLowercase = selectedInterval.toLowerCase();
+
+		if (selectedIntervalLowercase === 'daily') {
+			const everyDayIsSelected = daysOfWeek.every((day) => day.selected);
+
+			if (everyDayIsSelected) {
+				return 'Daily';
+			}
+
+			const allSelectedDays = daysOfWeek.filter((day) => day.selected);
+			const allSelectedDaysString = allSelectedDays.map((day) => day.shortName).join(', ');
+
+			return `Every ${allSelectedDaysString}`;
+		} else if (selectedIntervalLowercase === 'weekly') {
+			if (daysPerWeek === 7) {
+				return 'Daily';
+			}
+
+			return `${daysPerWeek} days per week`;
+		} else {
+			if (everyXDays === 1) {
+				return 'Daily';
+			}
+
+			return `Every ${everyXDays} days`;
+		}
+	};
 
 	return (
 		<div>
@@ -41,7 +70,7 @@ const FrequencySection: React.FC<FrequencySectionProps> = ({
 							setIsDropdownFrequencyVisible(!isDropdownFrequencyVisible);
 						}}
 					>
-						<div style={{ wordBreak: 'break-word' }}>Daily</div>
+						<div style={{ wordBreak: 'break-word' }}>{getSectionTitle()}</div>
 						<Icon
 							name="expand_more"
 							fill={0}
@@ -56,12 +85,12 @@ const FrequencySection: React.FC<FrequencySectionProps> = ({
 						customClasses="ml-[0px]"
 						selectedInterval={selectedInterval}
 						setSelectedInterval={setSelectedInterval}
-						selectedDays={selectedDays}
-						setSelectedDays={setSelectedDays}
+						daysOfWeek={daysOfWeek}
+						setDaysOfWeek={setDaysOfWeek}
 						daysPerWeek={daysPerWeek}
 						setDaysPerWeek={setDaysPerWeek}
-						everyDayInterval={everyDayInterval}
-						setEveryDayInterval={setEveryDayInterval}
+						everyXDays={everyXDays}
+						setEveryXDays={setEveryXDays}
 					/>
 				</div>
 			</div>
@@ -78,15 +107,20 @@ const DropdownFrequency: React.FC<DropdownFrequencyProps> = ({
 	customClasses,
 	selectedInterval,
 	setSelectedInterval,
-	selectedDays,
-	setSelectedDays,
+	daysOfWeek,
+	setDaysOfWeek,
 	daysPerWeek,
 	setDaysPerWeek,
-	everyDayInterval,
-	setEveryDayInterval,
+	everyXDays,
+	setEveryXDays,
 }) => {
+	const [localSelectedInterval, setLocalSelectedInterval] = useState(selectedInterval);
+	const [localDaysOfWeek, setLocalDaysOfWeek] = useState(daysOfWeek);
+	const [localDaysPerWeek, setLocalDaysPerWeek] = useState(daysPerWeek);
+	const [localEveryXDays, setLocalEveryXDays] = useState(everyXDays);
+
 	const TopButton = ({ name }) => {
-		const isSelected = selectedInterval.toLowerCase() === name.toLowerCase();
+		const isSelected = localSelectedInterval.toLowerCase() === name.toLowerCase();
 
 		return (
 			<div
@@ -96,7 +130,7 @@ const DropdownFrequency: React.FC<DropdownFrequencyProps> = ({
 						? 'bg-[#222735] text-[#4671F7] font-semibold'
 						: 'bg-color-gray-200/60 text-color-gray-100 hover:bg-color-gray-200/40'
 				)}
-				onClick={() => setSelectedInterval(name)}
+				onClick={() => setLocalSelectedInterval(name)}
 			>
 				{name}
 			</div>
@@ -117,16 +151,16 @@ const DropdownFrequency: React.FC<DropdownFrequencyProps> = ({
 					<TopButton name="Interval" />
 				</div>
 
-				{selectedInterval.toLowerCase() === 'daily' && (
-					<DailySection selectedDays={selectedDays} setSelectedDays={setSelectedDays} />
+				{localSelectedInterval.toLowerCase() === 'daily' && (
+					<DailySection localDaysOfWeek={localDaysOfWeek} setLocalDaysOfWeek={setLocalDaysOfWeek} />
 				)}
 
-				{selectedInterval.toLowerCase() === 'weekly' && (
-					<WeeklySection daysPerWeek={daysPerWeek} setDaysPerWeek={setDaysPerWeek} />
+				{localSelectedInterval.toLowerCase() === 'weekly' && (
+					<WeeklySection localDaysPerWeek={localDaysPerWeek} setLocalDaysPerWeek={setLocalDaysPerWeek} />
 				)}
 
-				{selectedInterval.toLowerCase() === 'interval' && (
-					<IntervalSection everyDayInterval={everyDayInterval} setEveryDayInterval={setEveryDayInterval} />
+				{localSelectedInterval.toLowerCase() === 'interval' && (
+					<IntervalSection localEveryXDays={localEveryXDays} setLocalEveryXDays={setLocalEveryXDays} />
 				)}
 
 				<div className="grid grid-cols-2 gap-2 mt-6">
@@ -138,7 +172,14 @@ const DropdownFrequency: React.FC<DropdownFrequencyProps> = ({
 					</button>
 					<button
 						className="bg-blue-500 rounded py-1 cursor-pointer hover:bg-blue-600"
-						onClick={() => setIsVisible(false)}
+						onClick={() => {
+							setSelectedInterval(localSelectedInterval);
+							setDaysOfWeek(localDaysOfWeek);
+							setDaysPerWeek(Number(localDaysPerWeek));
+							setEveryXDays(Number(localEveryXDays));
+
+							setIsVisible(false);
+						}}
 					>
 						Ok
 					</button>
@@ -148,24 +189,14 @@ const DropdownFrequency: React.FC<DropdownFrequencyProps> = ({
 	);
 };
 
-const DailySection = ({ selectedDays, setSelectedDays }) => {
-	const daysOfWeek = [
-		{ fullName: 'Monday', shortName: 'Mon' },
-		{ fullName: 'Tuesday', shortName: 'Tue' },
-		{ fullName: 'Wednesday', shortName: 'Wed' },
-		{ fullName: 'Thursday', shortName: 'Thu' },
-		{ fullName: 'Friday', shortName: 'Fri' },
-		{ fullName: 'Saturday', shortName: 'Sat' },
-		{ fullName: 'Sunday', shortName: 'Sun' },
-	];
-
+const DailySection = ({ localDaysOfWeek, setLocalDaysOfWeek }) => {
 	return (
 		<div className="mt-4">
 			<div className="text-color-gray-100">Pick Days</div>
 
 			<div className="flex gap-2 mt-3">
-				{daysOfWeek.map((day) => {
-					const isSelected = selectedDays.includes(day.shortName);
+				{localDaysOfWeek.map((day) => {
+					const isSelected = day.selected;
 
 					return (
 						<div
@@ -176,7 +207,21 @@ const DailySection = ({ selectedDays, setSelectedDays }) => {
 									? 'bg-blue-500 hover:bg-blue-500/90'
 									: 'bg-color-gray-200/60 hover:bg-color-gray-200/50'
 							)}
-							onClick={() => setSelectedDays()}
+							onClick={() => {
+								const newDaysOfWeek = localDaysOfWeek.map((newDay) => {
+									const clickedDay = newDay.fullName === day.fullName;
+
+									if (clickedDay) {
+										return {
+											...newDay,
+											selected: !newDay.selected,
+										};
+									}
+
+									return newDay;
+								});
+								setLocalDaysOfWeek(newDaysOfWeek);
+							}}
 						>
 							{day.shortName}
 						</div>
@@ -187,16 +232,16 @@ const DailySection = ({ selectedDays, setSelectedDays }) => {
 	);
 };
 
-const WeeklySection = ({ daysPerWeek, setDaysPerWeek }) => {
+const WeeklySection = ({ localDaysPerWeek, setLocalDaysPerWeek }) => {
 	return (
 		<div className="mt-4">
 			<div className="text-color-gray-100">
-				{daysPerWeek} {daysPerWeek === 1 ? 'day' : 'days'} per week
+				{localDaysPerWeek} {localDaysPerWeek === 1 ? 'day' : 'days'} per week
 			</div>
 
 			<div className="flex gap-2 mt-3">
 				{[1, 2, 3, 4, 5, 6, 7].map((dayNumber) => {
-					const isSelected = dayNumber === daysPerWeek;
+					const isSelected = dayNumber === localDaysPerWeek;
 
 					return (
 						<div
@@ -207,7 +252,7 @@ const WeeklySection = ({ daysPerWeek, setDaysPerWeek }) => {
 									? 'bg-blue-500 hover:bg-blue-500/90'
 									: 'bg-color-gray-200/60 hover:bg-color-gray-200/50'
 							)}
-							onClick={() => setDaysPerWeek(dayNumber)}
+							onClick={() => setLocalDaysPerWeek(dayNumber)}
 						>
 							{dayNumber}
 						</div>
@@ -218,7 +263,7 @@ const WeeklySection = ({ daysPerWeek, setDaysPerWeek }) => {
 	);
 };
 
-const IntervalSection = ({ everyDayInterval, setEveryDayInterval }) => {
+const IntervalSection = ({ localEveryXDays, setLocalEveryXDays }) => {
 	return (
 		<div className="mt-4">
 			<div className="flex items-center gap-2">
@@ -226,11 +271,11 @@ const IntervalSection = ({ everyDayInterval, setEveryDayInterval }) => {
 				<CustomInput
 					type="number"
 					min={1}
-					value={everyDayInterval}
-					setValue={setEveryDayInterval}
+					value={localEveryXDays}
+					setValue={setLocalEveryXDays}
 					customClasses="max-w-[100px] no-number-arrows"
 				/>
-				<div>{Number(everyDayInterval) === 1 ? 'day' : 'days'}</div>
+				<div>{Number(localEveryXDays) === 1 ? 'day' : 'days'}</div>
 			</div>
 		</div>
 	);

@@ -7,9 +7,9 @@ const HeaderSection = () => {
 	const dispatch = useDispatch();
 
 	// TODO: Remove this after finishing the "Add Habit" modal.
-	// useEffect(() => {
-	// 	dispatch(setModalState({ modalId: 'ModalAddHabit', isOpen: true }));
-	// }, []);
+	useEffect(() => {
+		dispatch(setModalState({ modalId: 'ModalAddHabit', isOpen: true }));
+	}, []);
 
 	const iconClass =
 		'text-color-gray-100 !text-[21px] hover:text-white cursor-pointer rounded hover:bg-color-gray-300 p-1';

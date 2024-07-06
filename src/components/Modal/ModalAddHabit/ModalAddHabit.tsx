@@ -14,6 +14,16 @@ import HabitSection from './HabitSection';
 import ReminderSection from './ReminderSection';
 import { useAddHabitMutation } from '../../../services/resources/habitsApi';
 
+const DEFAULT_DAYS_OF_WEEK = [
+	{ fullName: 'Monday', shortName: 'Mon', selected: true },
+	{ fullName: 'Tuesday', shortName: 'Tue', selected: true },
+	{ fullName: 'Wednesday', shortName: 'Wed', selected: true },
+	{ fullName: 'Thursday', shortName: 'Thu', selected: true },
+	{ fullName: 'Friday', shortName: 'Fri', selected: true },
+	{ fullName: 'Saturday', shortName: 'Sat', selected: true },
+	{ fullName: 'Sunday', shortName: 'Sun', selected: true },
+];
+
 const ModalAddHabit: React.FC = () => {
 	const modal = useSelector((state) => state.modals.modals['ModalAddHabit']);
 	const dispatch = useDispatch();
@@ -25,9 +35,14 @@ const ModalAddHabit: React.FC = () => {
 
 	// States - Frequency Section
 	const [selectedInterval, setSelectedInterval] = useState('Daily');
-	const [selectedDays, setSelectedDays] = useState(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']);
+	const [daysOfWeek, setDaysOfWeek] = useState(DEFAULT_DAYS_OF_WEEK);
 	const [daysPerWeek, setDaysPerWeek] = useState(2);
-	const [everyDayInterval, setEveryDayInterval] = useState(2);
+	const [everyXDays, setEveryXDays] = useState(2);
+
+	console.log(selectedInterval);
+	console.log(daysOfWeek);
+	console.log(daysPerWeek);
+	console.log(everyXDays);
 
 	if (!modal) {
 		return null;
@@ -66,12 +81,12 @@ const ModalAddHabit: React.FC = () => {
 						<FrequencySection
 							selectedInterval={selectedInterval}
 							setSelectedInterval={setSelectedInterval}
-							selectedDays={selectedDays}
-							setSelectedDays={setSelectedDays}
+							daysOfWeek={daysOfWeek}
+							setDaysOfWeek={setDaysOfWeek}
 							daysPerWeek={daysPerWeek}
 							setDaysPerWeek={setDaysPerWeek}
-							everyDayInterval={everyDayInterval}
-							setEveryDayInterval={setEveryDayInterval}
+							everyXDays={everyXDays}
+							setEveryXDays={setEveryXDays}
 						/>
 
 						<GoalSection />
@@ -94,7 +109,26 @@ const ModalAddHabit: React.FC = () => {
 							onClick={() => {
 								// TODO: CREATE HABIT!
 
-								const payload = {};
+								const payload = {
+									name,
+									frequency: {
+										daily: {
+											selected: selectedInterval.toLowerCase() === 'daily',
+											daysOfWeek,
+										},
+										weekly: {
+											selected: selectedInterval.toLowerCase() === 'weekly',
+											daysPerWeek: Number,
+										},
+										interval: {
+											selected: selectedInterval.toLowerCase() === 'interval',
+											everyXDays: everyXDays,
+										},
+									},
+								};
+
+								console.log(payload);
+								debugger;
 
 								// handleError(async () => {
 								// 	await addHabit(payload).unwrap();
