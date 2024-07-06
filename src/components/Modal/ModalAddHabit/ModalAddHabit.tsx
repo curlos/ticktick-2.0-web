@@ -39,10 +39,24 @@ const ModalAddHabit: React.FC = () => {
 	const [daysPerWeek, setDaysPerWeek] = useState(2);
 	const [everyXDays, setEveryXDays] = useState(2);
 
-	console.log(selectedInterval);
-	console.log(daysOfWeek);
-	console.log(daysPerWeek);
-	console.log(everyXDays);
+	// States - Goal Section
+	const [goalType, setGoalType] = useState('achieveItAll');
+	const [dailyValue, setDailyValue] = useState(1);
+	const [dailyUnit, setDailyUnit] = useState('Count');
+	const [whenChecking, setWhenChecking] = useState('Auto');
+
+	// States - Start Date
+	const [startDate, setStartDate] = useState(new Date());
+
+	// achieveItAll: {
+	// 	selected: { type: Boolean },
+	// },
+	// reachCertainAmount: {
+	// 	selected: { type: Boolean },
+	// 	dailyValue: { type: Number },
+	// 	dailyUnit: { type: String },
+	// 	whenChecking: { type: String },
+	// },
 
 	if (!modal) {
 		return null;
@@ -89,8 +103,17 @@ const ModalAddHabit: React.FC = () => {
 							setEveryXDays={setEveryXDays}
 						/>
 
-						<GoalSection />
-						<StartDateSection />
+						<GoalSection
+							goalType={goalType}
+							setGoalType={setGoalType}
+							dailyValue={dailyValue}
+							setDailyValue={setDailyValue}
+							dailyUnit={dailyUnit}
+							setDailyUnit={setDailyUnit}
+							whenChecking={whenChecking}
+							setWhenChecking={setWhenChecking}
+						/>
+						<StartDateSection startDate={startDate} setStartDate={setStartDate} />
 						<GoalDaysSection />
 						<HabitSection />
 						<ReminderSection />
@@ -125,6 +148,18 @@ const ModalAddHabit: React.FC = () => {
 											everyXDays: everyXDays,
 										},
 									},
+									goal: {
+										achieveItAll: {
+											selected: goalType === 'achieveItAll',
+										},
+										reachCertainAmount: {
+											selected: goalType === 'reachCertainAmount',
+											dailyValue: Number(dailyValue),
+											dailyUnit,
+											whenChecking,
+										},
+									},
+									startDate,
 								};
 
 								console.log(payload);

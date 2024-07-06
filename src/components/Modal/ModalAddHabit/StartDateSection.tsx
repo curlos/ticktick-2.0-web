@@ -3,10 +3,9 @@ import Icon from '../../Icon';
 import DropdownTimeCalendar from '../../Dropdown/DropdownsAddFocusRecord/DropdownTimeCalendar';
 import { formatDateBasedOnYear } from '../../../utils/date.utils';
 
-const StartDateSection = () => {
+const StartDateSection = ({ startDate, setStartDate }) => {
 	const dropdownTimeCalenderRef = useRef(null);
 	const [isDropdownTimeCalendarVisible, setIsDropdownTimeCalendarVisible] = useState(false);
-	const [startDate, setStartDate] = useState(new Date());
 
 	return (
 		<div>

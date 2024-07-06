@@ -5,7 +5,16 @@ import Dropdown from '../../Dropdown/Dropdown';
 import classNames from 'classnames';
 import CustomInput from '../../CustomInput';
 
-const GoalSection = () => {
+const GoalSection = ({
+	goalType,
+	setGoalType,
+	dailyValue,
+	setDailyValue,
+	dailyUnit,
+	setDailyUnit,
+	whenChecking,
+	setWhenChecking,
+}) => {
 	const dropdownGoalRef = useRef(null);
 	const [isDropdownGoalVisible, setIsDropdownGoalVisible] = useState(false);
 	const [goalName, setGoalName] = useState('Achieve it all');
@@ -30,12 +39,20 @@ const GoalSection = () => {
 						/>
 					</div>
 
-					<DropdownFrequency
+					<DropdownGoal
 						toggleRef={dropdownGoalRef}
 						isVisible={isDropdownGoalVisible}
 						setIsVisible={setIsDropdownGoalVisible}
 						customClasses="ml-[0px]"
 						setGoalName={setGoalName}
+						goalType={goalType}
+						setGoalType={setGoalType}
+						dailyValue={dailyValue}
+						setDailyValue={setDailyValue}
+						dailyUnit={dailyUnit}
+						setDailyUnit={setDailyUnit}
+						whenChecking={whenChecking}
+						setWhenChecking={setWhenChecking}
 					/>
 				</div>
 			</div>
@@ -43,27 +60,32 @@ const GoalSection = () => {
 	);
 };
 
-interface DropdownFrequencyProps extends DropdownProps {}
+interface DropdownGoalProps extends DropdownProps {}
 
-const DropdownFrequency: React.FC<DropdownFrequencyProps> = ({
+const DropdownGoal: React.FC<DropdownGoalProps> = ({
 	toggleRef,
 	isVisible,
 	setIsVisible,
 	customClasses,
 	setGoalName,
+	goalType,
+	setGoalType,
+	dailyValue,
+	setDailyValue,
+	dailyUnit,
+	setDailyUnit,
+	whenChecking,
+	setWhenChecking,
 }) => {
-	const [goalType, setGoalType] = useState('achieve it all');
-
 	const dropdownReachAmountRef = useRef(null);
 	const [isDropdownReachAmountVisible, setIsDropdownReachAmountVisible] = useState(false);
 
-	const canAccessDropdownReachAmount = goalType.toLowerCase() === 'reach a certain amount';
+	const canAccessDropdownReachAmount = goalType === 'reachCertainAmount';
 
-	const [dailyValue, setDailyValue] = useState(1);
-	const [dailyUnit, setDailyUnit] = useState('Count');
+	const [localDailyValue, setLocalDailyValue] = useState(1);
+	const [localDailyUnit, setLocalDailyUnit] = useState('Count');
 
-	const getGoalName = () =>
-		goalType.toLowerCase() === 'reach a certain amount' ? `${dailyValue} ${dailyUnit}/Day` : 'Achieve it all';
+	const getGoalName = () => (goalType === 'reachCertainAmount' ? `${dailyValue} ${dailyUnit}/Day` : 'Achieve it all');
 
 	return (
 		<Dropdown
@@ -75,13 +97,15 @@ const DropdownFrequency: React.FC<DropdownFrequencyProps> = ({
 			<div className="p-3">
 				<CustomCheckbox
 					goalName="Achieve it all"
-					isChecked={goalType.toLowerCase() === 'achieve it all'}
+					isChecked={goalType === 'achieveItAll'}
+					goalTypeName="achieveItAll"
 					setGoalType={setGoalType}
 				/>
 
 				<CustomCheckbox
 					goalName="Reach a certain amount"
-					isChecked={goalType.toLowerCase() === 'reach a certain amount'}
+					isChecked={goalType === 'reachCertainAmount'}
+					goalTypeName="reachCertainAmount"
 					setGoalType={setGoalType}
 				/>
 
@@ -119,6 +143,8 @@ const DropdownFrequency: React.FC<DropdownFrequencyProps> = ({
 						setDailyValue={setDailyValue}
 						dailyUnit={dailyUnit}
 						setDailyUnit={setDailyUnit}
+						whenChecking={whenChecking}
+						setWhenChecking={setWhenChecking}
 					/>
 				</div>
 
@@ -144,13 +170,26 @@ const DropdownFrequency: React.FC<DropdownFrequencyProps> = ({
 	);
 };
 
-const CustomCheckbox = ({ goalName, isChecked, setGoalType }) => {
+const CustomCheckbox = ({ goalName, isChecked, goalTypeName, setGoalType }) => {
+	// Function to handle change when the div or checkbox is clicked
+	const handleChange = () => {
+		// Toggle the current checked state
+		setGoalType(goalTypeName);
+	};
+
 	return (
 		<div
 			className="flex items-center gap-2 cursor-pointer hover:bg-color-gray-300 py-1 rounded"
-			onClick={() => setGoalType(goalName.toLowerCase())}
+			onClick={handleChange}
 		>
-			<input type="checkbox" name="Achieve it all" className="accent-blue-500" checked={isChecked} />
+			<input
+				type="checkbox"
+				name="Achieve it all"
+				className="accent-blue-500"
+				checked={isChecked}
+				onChange={handleChange} // Using the same handleChange function for consistency
+				onClick={(e) => e.stopPropagation()} // Prevent the event from bubbling up to the div's onClick
+			/>
 			<span className={isChecked ? 'text-blue-500' : ''}>{goalName}</span>
 		</div>
 	);
@@ -167,11 +206,11 @@ const DropdownReachAmount: React.FC<DropdownReachAmountProps> = ({
 	setDailyValue,
 	dailyUnit,
 	setDailyUnit,
+	whenChecking,
+	setWhenChecking,
 }) => {
 	const dropdownWhenCheckingRef = useRef(null);
 	const [isDropdownWhenCheckingVisible, setIsDropdownWhenCheckingVisible] = useState(false);
-
-	const [selectedCheckingType, setSelectedCheckingType] = useState('Auto');
 
 	return (
 		<Dropdown
@@ -202,7 +241,7 @@ const DropdownReachAmount: React.FC<DropdownReachAmountProps> = ({
 							}}
 						>
 							<div className="max-w-[70px] truncate" style={{ wordBreak: 'break-word' }}>
-								{selectedCheckingType}
+								{whenChecking}
 							</div>
 							<Icon
 								name="expand_more"
@@ -215,8 +254,8 @@ const DropdownReachAmount: React.FC<DropdownReachAmountProps> = ({
 							toggleRef={dropdownWhenCheckingRef}
 							isVisible={isDropdownWhenCheckingVisible}
 							setIsVisible={setIsDropdownWhenCheckingVisible}
-							selectedCheckingType={selectedCheckingType}
-							setSelectedCheckingType={setSelectedCheckingType}
+							whenChecking={whenChecking}
+							setWhenChecking={setWhenChecking}
 						/>
 					</div>
 				</div>
@@ -247,8 +286,8 @@ const DropdownWhenChecking: React.FC<DropdownWhenCheckingProps> = ({
 	isVisible,
 	setIsVisible,
 	customClasses,
-	selectedCheckingType,
-	setSelectedCheckingType,
+	whenChecking,
+	setWhenChecking,
 }) => {
 	const whenCheckingTypes = ['Auto', 'Manual', 'Complete all'];
 
@@ -262,17 +301,18 @@ const DropdownWhenChecking: React.FC<DropdownWhenCheckingProps> = ({
 			<div className="p-1">
 				{whenCheckingTypes.map((checkingType) => (
 					<div
+						key={checkingType}
 						className={classNames(
 							'flex items-center justify-between hover:bg-color-gray-300 p-2 rounded-lg cursor-pointer',
-							selectedCheckingType === checkingType ? 'text-blue-500' : ''
+							whenChecking === checkingType ? 'text-blue-500' : ''
 						)}
 						onClick={() => {
-							setSelectedCheckingType(checkingType);
+							setWhenChecking(checkingType);
 							setIsVisible(false);
 						}}
 					>
 						<div>{checkingType}</div>
-						{selectedCheckingType === checkingType && (
+						{whenChecking === checkingType && (
 							<Icon
 								name="check"
 								fill={0}
