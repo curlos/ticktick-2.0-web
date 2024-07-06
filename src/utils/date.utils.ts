@@ -199,8 +199,6 @@ export function areDatesEqual(date1: Date | null, date2: Date | null) {
 		date1.getMonth() === date2.getMonth() &&
 		date1.getFullYear() === date2.getFullYear();
 
-	console.log(datesEqual);
-
 	return datesEqual;
 }
 

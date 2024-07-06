@@ -5,6 +5,8 @@ import { CircularProgressbarWithChildren, buildStyles } from 'react-circular-pro
 import classNames from 'classnames';
 import { getDayNameAbbreviation, getLast7Days, getMonthAndDay } from '../../utils/date.utils';
 import { areDatesEqual } from '../../utils/date.utils';
+import { useGetHabitsQuery } from '../../services/resources/habitsApi';
+import { useGetHabitSectionsQuery } from '../../services/resources/habitSectionsApi';
 
 const HabitList = () => {
 	// TODO: Use last seven days to find which habits have been completed in those 7 days
@@ -12,6 +14,22 @@ const HabitList = () => {
 	const [selectedDay, setSelectedDay] = useState(lastSevenDays[lastSevenDays.length - 1]);
 
 	const monthAndDay = getMonthAndDay(selectedDay);
+
+	// Habits
+	const { data: fetchedHabits, isLoading: isLoadingGetHabits, error: errorGetHabits } = useGetHabitsQuery();
+	const { habits, habitsById } = fetchedHabits || {};
+
+	// Habit Sections
+	const {
+		data: fetchedHabitSections,
+		isLoading: isLoadingGetHabitSections,
+		error: errorGetHabitSections,
+	} = useGetHabitSectionsQuery();
+	const { habitSections } = fetchedHabitSections || {};
+
+	if (!habits || !habitSections) {
+		return null;
+	}
 
 	return (
 		<div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700 border-l border-r border-color-gray-200">
@@ -38,15 +56,31 @@ const HabitList = () => {
 					/>
 				</div>
 
-				<HabitListByCategory categoryHabits={['No Coke', 'No Coke']} />
-				<HabitListByCategory categoryHabits={['No Coke', 'No Coke']} />
-				<HabitListByCategory categoryHabits={['No Coke', 'No Coke']} />
+				{habitSections.map((habitSection) => {
+					const { habitIds } = habitSection;
+
+					if (habitIds.length === 0) {
+						return null;
+					}
+
+					const habitsForThisSection = habitIds.map((habitId) => habitsById[habitId]);
+
+					return (
+						<HabitListByCategory
+							key={habitSection._id}
+							habitSection={habitSection}
+							habitsForThisSection={habitsForThisSection}
+						/>
+					);
+				})}
 			</div>
 		</div>
 	);
 };
 
-const HabitListByCategory = ({ categoryHabits }) => {
+const HabitListByCategory = ({ habitSection, habitsForThisSection }) => {
+	const { name } = habitSection;
+
 	return (
 		<div>
 			<div className="mt-5">
@@ -56,21 +90,23 @@ const HabitListByCategory = ({ categoryHabits }) => {
 						fill={0}
 						customClass={'text-color-gray-100 hover:text-color-gray-50 !text-[16px] cursor-pointer'}
 					/>
-					<div className="font-bold">Morning</div>
+					<div className="font-bold">{name}</div>
 					<div className="ml-1 text-color-gray-100">2</div>
 				</div>
 			</div>
 
 			<div className="space-y-3 mt-3">
-				{categoryHabits.map((categoryHabit) => (
-					<HabitCard key={categoryHabit + Math.random() * 1000} categoryHabit={categoryHabit} />
+				{habitsForThisSection.map((habit) => (
+					<HabitCard key={habit._id} habit={habit} />
 				))}
 			</div>
 		</div>
 	);
 };
 
-const HabitCard = ({ categoryHabit }) => {
+const HabitCard = ({ habit }) => {
+	const { name } = habit;
+
 	const lastSevenDays = getLast7Days();
 
 	return (
@@ -81,7 +117,7 @@ const HabitCard = ({ categoryHabit }) => {
 				</div>
 
 				<div>
-					<div>No Fast Food</div>
+					<div>{name}</div>
 					<div className="flex items-center gap-2">
 						<div className="flex gap-1">
 							<Icon name="bolt" fill={1} customClass={'text-cyan-400 !text-[18px] cursor-pointer'} />

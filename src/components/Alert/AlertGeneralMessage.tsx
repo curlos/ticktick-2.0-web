@@ -7,8 +7,6 @@ const AlertGeneralMessage = () => {
 	const alert = useSelector((state) => state.alerts.alerts['AlertGeneralMessage']);
 	const dispatch = useDispatch();
 
-	console.log(alert);
-
 	const { isOpen } = alert;
 
 	useEffect(() => {

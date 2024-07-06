@@ -5,7 +5,27 @@ import Dropdown from '../../Dropdown/Dropdown';
 import classNames from 'classnames';
 import CustomInput from '../../CustomInput';
 
-const FrequencySection = () => {
+interface FrequencySectionProps {
+	selectedInterval: string;
+	setSelectedInterval: (interval: string) => void;
+	selectedDays: string[];
+	setSelectedDays: (days: string[]) => void;
+	daysPerWeek: number;
+	setDaysPerWeek: (days: number) => void;
+	everyDayInterval: number;
+	setEveryDayInterval: (interval: number) => void;
+}
+
+const FrequencySection: React.FC<FrequencySectionProps> = ({
+	selectedInterval,
+	setSelectedInterval,
+	selectedDays,
+	setSelectedDays,
+	daysPerWeek,
+	setDaysPerWeek,
+	everyDayInterval,
+	setEveryDayInterval,
+}) => {
 	const dropdownFrequencyRef = useRef(null);
 	const [isDropdownFrequencyVisible, setIsDropdownFrequencyVisible] = useState(false);
 
@@ -34,6 +54,14 @@ const FrequencySection = () => {
 						isVisible={isDropdownFrequencyVisible}
 						setIsVisible={setIsDropdownFrequencyVisible}
 						customClasses="ml-[0px]"
+						selectedInterval={selectedInterval}
+						setSelectedInterval={setSelectedInterval}
+						selectedDays={selectedDays}
+						setSelectedDays={setSelectedDays}
+						daysPerWeek={daysPerWeek}
+						setDaysPerWeek={setDaysPerWeek}
+						everyDayInterval={everyDayInterval}
+						setEveryDayInterval={setEveryDayInterval}
 					/>
 				</div>
 			</div>
@@ -41,11 +69,22 @@ const FrequencySection = () => {
 	);
 };
 
-interface DropdownFrequencyProps extends DropdownProps {}
+interface DropdownFrequencyProps extends DropdownProps, FrequencySectionProps {}
 
-const DropdownFrequency: React.FC<DropdownFrequencyProps> = ({ toggleRef, isVisible, setIsVisible, customClasses }) => {
-	const [selectedInterval, setSelectedInterval] = useState('Daily');
-
+const DropdownFrequency: React.FC<DropdownFrequencyProps> = ({
+	toggleRef,
+	isVisible,
+	setIsVisible,
+	customClasses,
+	selectedInterval,
+	setSelectedInterval,
+	selectedDays,
+	setSelectedDays,
+	daysPerWeek,
+	setDaysPerWeek,
+	everyDayInterval,
+	setEveryDayInterval,
+}) => {
 	const TopButton = ({ name }) => {
 		const isSelected = selectedInterval.toLowerCase() === name.toLowerCase();
 
@@ -63,10 +102,6 @@ const DropdownFrequency: React.FC<DropdownFrequencyProps> = ({ toggleRef, isVisi
 			</div>
 		);
 	};
-
-	const [selectedDays, setSelectedDays] = useState(['Mon', 'Tue', 'Sat']);
-	const [daysPerWeek, setDaysPerWeek] = useState(1);
-	const [everyDayInterval, setEveryDayInterval] = useState(1);
 
 	return (
 		<Dropdown
@@ -134,12 +169,14 @@ const DailySection = ({ selectedDays, setSelectedDays }) => {
 
 					return (
 						<div
+							key={day.shortName}
 							className={classNames(
 								'rounded-full text-white h-[35px] w-[35px] flex items-center justify-center cursor-pointer',
 								isSelected
 									? 'bg-blue-500 hover:bg-blue-500/90'
 									: 'bg-color-gray-200/60 hover:bg-color-gray-200/50'
 							)}
+							onClick={() => setSelectedDays()}
 						>
 							{day.shortName}
 						</div>
@@ -163,6 +200,7 @@ const WeeklySection = ({ daysPerWeek, setDaysPerWeek }) => {
 
 					return (
 						<div
+							key={dayNumber}
 							className={classNames(
 								'rounded-full text-white h-[35px] w-[35px] flex items-center justify-center cursor-pointer',
 								isSelected

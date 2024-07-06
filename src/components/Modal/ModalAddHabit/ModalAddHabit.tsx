@@ -12,13 +12,22 @@ import StartDateSection from './StartDateSection';
 import GoalDaysSection from './GoalDaysSection';
 import HabitSection from './HabitSection';
 import ReminderSection from './ReminderSection';
+import { useAddHabitMutation } from '../../../services/resources/habitsApi';
 
 const ModalAddHabit: React.FC = () => {
 	const modal = useSelector((state) => state.modals.modals['ModalAddHabit']);
 	const dispatch = useDispatch();
 	const handleError = useHandleError();
 
+	const [addHabit] = useAddHabitMutation();
+
 	const [name, setName] = useState('');
+
+	// States - Frequency Section
+	const [selectedInterval, setSelectedInterval] = useState('Daily');
+	const [selectedDays, setSelectedDays] = useState(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']);
+	const [daysPerWeek, setDaysPerWeek] = useState(2);
+	const [everyDayInterval, setEveryDayInterval] = useState(2);
 
 	if (!modal) {
 		return null;
@@ -54,7 +63,17 @@ const ModalAddHabit: React.FC = () => {
 							customClasses="!text-left  p-[6px] px-3"
 						/>
 
-						<FrequencySection />
+						<FrequencySection
+							selectedInterval={selectedInterval}
+							setSelectedInterval={setSelectedInterval}
+							selectedDays={selectedDays}
+							setSelectedDays={setSelectedDays}
+							daysPerWeek={daysPerWeek}
+							setDaysPerWeek={setDaysPerWeek}
+							everyDayInterval={everyDayInterval}
+							setEveryDayInterval={setEveryDayInterval}
+						/>
+
 						<GoalSection />
 						<StartDateSection />
 						<GoalDaysSection />
@@ -72,7 +91,15 @@ const ModalAddHabit: React.FC = () => {
 						</button>
 						<button
 							className="bg-blue-500 rounded py-1 cursor-pointer hover:bg-blue-600 min-w-[114px]"
-							onClick={() => console.log('')}
+							onClick={() => {
+								// TODO: CREATE HABIT!
+
+								const payload = {};
+
+								// handleError(async () => {
+								// 	await addHabit(payload).unwrap();
+								// });
+							}}
 						>
 							Save
 						</button>
