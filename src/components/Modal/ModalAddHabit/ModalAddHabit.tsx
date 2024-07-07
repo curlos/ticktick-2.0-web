@@ -180,12 +180,26 @@ const ModalAddHabit: React.FC = () => {
 					</div>
 
 					<div className="flex flex-col gap-2">
-						<CustomInput
-							value={name}
-							placeholder="Name"
-							setValue={setName}
-							customClasses="!text-left  p-[6px] px-3"
-						/>
+						<div className="flex items-center">
+							<div className="w-[96px] flex items-end cursor-pointer group">
+								<img src={HADES_KEEPSAKE_ICON_URLS[13]} className="w-[50px] h-[50px]" />
+								<Icon
+									name="edit"
+									customClass={
+										'!text-[20px] text-color-gray-100 group-hover:text-white cursor-pointer'
+									}
+								/>
+							</div>
+
+							<div className="flex-1">
+								<CustomInput
+									value={name}
+									placeholder="Name"
+									setValue={setName}
+									customClasses="!text-left  p-[6px] px-3"
+								/>
+							</div>
+						</div>
 
 						<FrequencySection
 							selectedInterval={selectedInterval}
