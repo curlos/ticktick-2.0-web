@@ -1,7 +1,7 @@
 import { arrayToObjectByKey } from '../../utils/helpers.utils';
 import { baseAPI, buildQueryString } from '../api';
 
-export const habitsApi = baseAPI.injectEndpoints({
+export const habitSectionsApi = baseAPI.injectEndpoints({
 	endpoints: (builder) => ({
 		getHabitSections: builder.query({
 			query: (queryParams) => {
@@ -50,4 +50,4 @@ export const {
 	useAddHabitSectionMutation,
 	useEditHabitSectionMutation,
 	usePermanentlyDeleteHabitSectionMutation,
-} = habitsApi;
+} = habitSectionsApi;

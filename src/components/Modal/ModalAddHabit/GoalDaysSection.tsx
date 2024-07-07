@@ -20,9 +20,7 @@ const GoalDaysSection = ({ goalDays, setGoalDays }) => {
 							setIsDropdownGoalDaysVisible(!isDropdownGoalDaysVisible);
 						}}
 					>
-						<div style={{ wordBreak: 'break-word' }}>
-							{goalDays === Infinity ? 'Forever' : `${goalDays} days`}
-						</div>
+						<div style={{ wordBreak: 'break-word' }}>{!goalDays ? 'Forever' : `${goalDays} days`}</div>
 						<Icon
 							name="expand_more"
 							fill={0}
@@ -44,7 +42,7 @@ const GoalDaysSection = ({ goalDays, setGoalDays }) => {
 };
 
 const DropdownGoalDays = ({ toggleRef, isVisible, setIsVisible, customClasses, goalDays, setGoalDays }) => {
-	const goalDayOptions = [Infinity, 7, 21, 30, 100, 365];
+	const goalDayOptions = [null, 7, 21, 30, 100, 365];
 	const dropdownCustomGoalDaysRef = useRef(null);
 	const [isDropdownCustomGoalDaysVisible, setIsDropdownCustomGoalDaysVisible] = useState(false);
 
@@ -66,7 +64,7 @@ const DropdownGoalDays = ({ toggleRef, isVisible, setIsVisible, customClasses, g
 				}}
 			>
 				<div>
-					{goalDayOption === Infinity
+					{goalDayOption === null
 						? 'Forever'
 						: goalDayOption === 'Custom'
 							? 'Custom'
@@ -117,7 +115,7 @@ const DropdownGoalDays = ({ toggleRef, isVisible, setIsVisible, customClasses, g
 };
 
 const DropdownCustomGoalDays = ({ toggleRef, isVisible, setIsVisible, customClasses, goalDays, setGoalDays }) => {
-	const [localGoalDays, setLocalGoalDays] = useState(goalDays !== Infinity ? goalDays : 7);
+	const [localGoalDays, setLocalGoalDays] = useState(goalDays ? goalDays : 7);
 
 	return (
 		<Dropdown

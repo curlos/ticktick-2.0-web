@@ -12,7 +12,7 @@ import StartDateSection from './StartDateSection';
 import GoalDaysSection from './GoalDaysSection';
 import HabitSection from './HabitSection';
 import ReminderSection from './ReminderSection';
-import { useAddHabitMutation } from '../../../services/resources/habitsApi';
+import { useAddHabitMutation, useEditHabitMutation } from '../../../services/resources/habitsApi';
 import { useGetHabitSectionsQuery } from '../../../services/resources/habitSectionsApi';
 
 const DEFAULT_DAYS_OF_WEEK = [
@@ -32,6 +32,7 @@ const ModalAddHabit: React.FC = () => {
 
 	// Habits
 	const [addHabit] = useAddHabitMutation();
+	const [editHabit] = useEditHabitMutation();
 
 	// Habit Sections
 	const {
@@ -39,7 +40,7 @@ const ModalAddHabit: React.FC = () => {
 		isLoading: isLoadingGetHabitSections,
 		error: errorGetHabitSections,
 	} = useGetHabitSectionsQuery();
-	const { habitSections } = fetchedHabitSections || {};
+	const { habitSections, habitSectionsById } = fetchedHabitSections || {};
 
 	const [name, setName] = useState('');
 
@@ -59,7 +60,7 @@ const ModalAddHabit: React.FC = () => {
 	const [startDate, setStartDate] = useState(new Date());
 
 	// States - Goal Days
-	const [goalDays, setGoalDays] = useState(Infinity);
+	const [goalDays, setGoalDays] = useState(null);
 
 	// States - Section
 	const [section, setSection] = useState({});
@@ -68,12 +69,56 @@ const ModalAddHabit: React.FC = () => {
 	const [reminderList, setReminderList] = useState([]);
 
 	useEffect(() => {
-		const sectionIsEmpty = !section || Object.keys(section).length === 0;
-
-		if (habitSections && sectionIsEmpty) {
-			setSection(habitSections[0]);
+		if (!habitSections) {
+			return;
 		}
-	}, [habitSections]);
+
+		// TODO: Might have to reincoporate some of the old logic here so that when a new section is added, it uses that new section first and doesn't always just reset it to "Morning" upon adding a new section.
+		// const sectionIsEmpty = !section || Object.keys(section).length === 0;
+		const editingExistingHabit = modal?.props?.habit;
+
+		if (editingExistingHabit) {
+			const habit = editingExistingHabit;
+
+			const { name, frequency, goal, startDate, goalDays, habitSectionId, reminders } = habit;
+
+			setName(name);
+
+			// States - Frequency Section
+			setSelectedInterval(
+				frequency.daily.selected
+					? 'Daily'
+					: frequency.weekly.selected
+						? 'Weekly'
+						: frequency.internval.selected
+							? 'Interval'
+							: 'Daily'
+			);
+			setDaysOfWeek(frequency.daily.daysOfWeek);
+			setDaysPerWeek(frequency.weekly.daysPerWeek);
+			setEveryXDays(frequency.interval.everyXDays);
+
+			// States - Goal Section
+			setGoalType(goal.achieveItAll.selected ? 'achieveItAll' : 'reachCertainAmount');
+			setDailyValue(goal.reachCertainAmount.dailyValue);
+			setDailyUnit(goal.reachCertainAmount.dailyUnit);
+			setWhenChecking(goal.reachCertainAmount.whenChecking);
+
+			// States - Start Date
+			setStartDate(startDate ? new Date(startDate) : new Date());
+
+			// States - Goal Days
+			setGoalDays(goalDays);
+
+			// States - Section
+			setSection(habitSectionId ? habitSectionsById[habitSectionId] : habitSections[0]);
+
+			// States - Reminder
+			setReminderList(reminders.map((reminder) => new Date(reminder)));
+		} else {
+			resetAllStates();
+		}
+	}, [habitSections, modal?.props?.habit]);
 
 	const resetAllStates = () => {
 		setName('');
@@ -94,7 +139,7 @@ const ModalAddHabit: React.FC = () => {
 		setStartDate(new Date());
 
 		// States - Goal Days
-		setGoalDays(Infinity);
+		setGoalDays(null);
 
 		// States - Section
 		setSection(habitSections ? habitSections[0] : {});
@@ -113,15 +158,17 @@ const ModalAddHabit: React.FC = () => {
 
 	const {
 		isOpen,
-		props: { item },
+		props: { habit },
 	} = modal;
+
+	const editingExistingHabit = habit;
 
 	return (
 		<Modal isOpen={isOpen} onClose={closeModal} positionClasses="!items-start mt-[150px]" customClasses="my-[2px]">
 			<div className="rounded-xl shadow-lg bg-color-gray-600">
 				<div className={classNames('p-5')}>
 					<div className="flex items-center justify-between mb-4">
-						<h3 className="font-bold text-[16px]">Create Habit</h3>
+						<h3 className="font-bold text-[16px]">{editingExistingHabit ? 'Edit' : 'Create'} Habit</h3>
 						<Icon
 							name="close"
 							customClass={'!text-[20px] text-color-gray-100 hover:text-white cursor-pointer'}
@@ -176,8 +223,6 @@ const ModalAddHabit: React.FC = () => {
 							disabled={!name}
 							className="bg-blue-500 rounded py-1 cursor-pointer hover:bg-blue-600 min-w-[114px] disabled:opacity-50 disabled:cursor-not-allowed"
 							onClick={() => {
-								// TODO: CREATE HABIT!
-
 								const payload = {
 									name,
 									frequency: {
@@ -206,7 +251,7 @@ const ModalAddHabit: React.FC = () => {
 										},
 									},
 									startDate,
-									goalDays,
+									goalDays: goalDays,
 									habitSectionId: section._id,
 									reminders: reminderList,
 								};
@@ -215,7 +260,14 @@ const ModalAddHabit: React.FC = () => {
 								debugger;
 
 								handleError(async () => {
-									await addHabit(payload).unwrap();
+									if (editingExistingHabit) {
+										const { _id } = modal.props.habit;
+										await editHabit({ habitId: _id, payload }).unwrap();
+									} else {
+										// Create new habit
+										await addHabit(payload).unwrap();
+									}
+
 									// Reset all the data to the defaults and close the modal
 									resetAllStates();
 									dispatch(setModalState({ modalId: 'ModalAddHabit', isOpen: false }));

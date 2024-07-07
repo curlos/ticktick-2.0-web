@@ -48,7 +48,7 @@ export const tasksApi = baseAPI.injectEndpoints({
 		}),
 		flagTask: builder.mutation({
 			query: ({ taskId, parentId, property, value }) => ({
-				url: `/tasks/flag-task/${taskId}`,
+				url: `/tasks/flag/${taskId}`,
 				method: 'PATCH',
 				body: {
 					property: property, // This could be 'isDeleted' or any other property

@@ -38,13 +38,13 @@ const HabitDetails = () => {
 
 		const newHabit = habitsById[habitId];
 		setHabit(newHabit);
-	}, [habitId, isLoadingGetHabits, isLoadingGetHabitSections]);
+	}, [habitId, habits, habitsById]);
 
 	console.log(habitId);
 	console.log(habit);
 
 	if (!habit) {
-		return 'Habit Details';
+		return <EmptyHabit />;
 	}
 
 	return (
@@ -62,5 +62,17 @@ const HabitDetails = () => {
 		</div>
 	);
 };
+
+const EmptyHabit = () => (
+	<div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700 flex justify-center items-center text-[18px] text-color-gray-100">
+		<div className="text-center space-y-5">
+			<Icon
+				name="ads_click"
+				customClass={'text-color-gray-100 text-blue-500 !text-[50px] hover:text-white cursor-pointer'}
+			/>
+			<div>Click habit to view the details</div>
+		</div>
+	</div>
+);
 
 export default HabitDetails;

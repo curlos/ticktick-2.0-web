@@ -35,6 +35,18 @@ export const habitsApi = baseAPI.injectEndpoints({
 			}),
 			invalidatesTags: (result, error, habitId) => ['Habit', 'HabitSection'],
 		}),
+		flagHabit: builder.mutation({
+			query: ({ taskId, parentId, property, value }) => ({
+				url: `/habits/flag/${taskId}`,
+				method: 'PATCH',
+				body: {
+					property: property, // This could be 'isDeleted' or any other property
+					value: value, // This is typically true for isDeleted, but can be any value
+					parentId: parentId, // Optional: Include parentId if needed to update the parent document
+				},
+			}),
+			invalidatesTags: ['Habit', 'HabitSection'],
+		}),
 		permanentlyDeleteHabit: builder.mutation({
 			query: ({ habitId }) => ({
 				url: `/habits/delete/${habitId}`,
@@ -45,5 +57,10 @@ export const habitsApi = baseAPI.injectEndpoints({
 	}),
 });
 
-export const { useGetHabitsQuery, useAddHabitMutation, useEditHabitMutation, usePermanentlyDeleteHabitMutation } =
-	habitsApi;
+export const {
+	useGetHabitsQuery,
+	useAddHabitMutation,
+	useEditHabitMutation,
+	useFlagHabitMutation,
+	usePermanentlyDeleteHabitMutation,
+} = habitsApi;
