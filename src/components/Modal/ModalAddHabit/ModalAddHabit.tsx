@@ -14,6 +14,7 @@ import HabitSection from './HabitSection';
 import ReminderSection from './ReminderSection';
 import { useAddHabitMutation, useEditHabitMutation } from '../../../services/resources/habitsApi';
 import { useGetHabitSectionsQuery } from '../../../services/resources/habitSectionsApi';
+import { HADES_KEEPSAKE_ICON_URLS } from '../../../utils/hadesIcons.utils';
 
 const DEFAULT_DAYS_OF_WEEK = [
 	{ fullName: 'Monday', shortName: 'Mon', selected: true },
@@ -162,6 +163,8 @@ const ModalAddHabit: React.FC = () => {
 	} = modal;
 
 	const editingExistingHabit = habit;
+
+	console.log(HADES_KEEPSAKE_ICON_URLS);
 
 	return (
 		<Modal isOpen={isOpen} onClose={closeModal} positionClasses="!items-start mt-[150px]" customClasses="my-[2px]">

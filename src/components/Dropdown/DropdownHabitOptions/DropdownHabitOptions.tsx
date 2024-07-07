@@ -6,8 +6,13 @@ import { useDispatch } from 'react-redux';
 import { useNavigate, useParams } from 'react-router';
 import { DropdownProps, TaskObj } from '../../../interfaces/interfaces';
 import { setAlertState } from '../../../slices/alertSlice';
-import { useFlagHabitMutation, useGetHabitsQuery } from '../../../services/resources/habitsApi';
+import {
+	useFlagHabitMutation,
+	useGetHabitsQuery,
+	usePermanentlyDeleteHabitMutation,
+} from '../../../services/resources/habitsApi';
 import DropdownStartFocus from '../DropdownTaskOptions/DropdownStartFocus';
+import useHandleError from '../../../hooks/useHandleError';
 
 interface DropdownHabitOptionsProps extends DropdownProps {
 	habit: Object;
@@ -16,8 +21,7 @@ interface DropdownHabitOptionsProps extends DropdownProps {
 // TODO: CHANGE EVERYTHING HERE FROM TASK TO HABIT RELATED
 
 const DropdownHabitOptions: React.FC<DropdownHabitOptionsProps> = ({ toggleRef, isVisible, setIsVisible, habit }) => {
-	console.log(isVisible);
-
+	const handleError = useHandleError();
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const { projectId } = useParams();
@@ -27,15 +31,20 @@ const DropdownHabitOptions: React.FC<DropdownHabitOptionsProps> = ({ toggleRef, 
 	const { habits, habitsById } = fetchedHabits || {};
 
 	const [flagHabit] = useFlagHabitMutation();
+	const [permanentlyDeleteHabit] = usePermanentlyDeleteHabitMutation();
 
 	const [isDropdownStartFocusVisible, setIsDropdownStartFocusVisible] = useState(false);
 
 	const dropdownStartFocusRef = useRef(null);
 
 	const handleArchive = () => {
-		try {
+		handleError(async () => {
 			const isDeletedTime = new Date().toISOString();
-			flagHabit({ habitId: habit._id, property: 'isArchived', value: !habit.isArchived ? isDeletedTime : null });
+			await flagHabit({
+				habitId: habit._id,
+				property: 'isArchived',
+				value: !habit.isArchived ? isDeletedTime : null,
+			}).unwrap();
 			setIsVisible(false);
 
 			// Only show the alert if the task is about to be archived and we want to give the user the option to undo the archival.
@@ -55,9 +64,15 @@ const DropdownHabitOptions: React.FC<DropdownHabitOptionsProps> = ({ toggleRef, 
 			} else {
 				navigate(`/habits/${habit._id}`);
 			}
-		} catch (error) {
-			throw new Error(error);
-		}
+		});
+	};
+
+	const handlePermanentlyDelete = () => {
+		handleError(async () => {
+			await permanentlyDeleteHabit({ habitId: habit._id }).unwrap();
+			setIsVisible(false);
+			navigate('/habits');
+		});
 	};
 
 	const { isArchived } = habit;
@@ -127,6 +142,20 @@ const DropdownHabitOptions: React.FC<DropdownHabitOptionsProps> = ({ toggleRef, 
 						fill={0}
 					/>
 					<div>{isArchived ? 'Pick up habit' : 'Archive'}</div>
+				</div>
+
+				<div
+					className="p-1 flex items-center gap-[2px] hover:bg-color-gray-300 cursor-pointer"
+					onClick={handlePermanentlyDelete}
+				>
+					<Icon
+						name="delete"
+						customClass={
+							'text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer'
+						}
+						fill={0}
+					/>
+					<div>Delete</div>
 				</div>
 			</div>
 		</Dropdown>
