@@ -4,8 +4,10 @@ import Icon from '../Icon';
 import Dropdown from '../Dropdown/Dropdown';
 import { useRef, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
+import classNames from 'classnames';
 
-const HeaderSection = () => {
+const HeaderSection = ({ viewType, setViewType }) => {
+	const location = useLocation();
 	const dispatch = useDispatch();
 
 	const dropdownHabitTypesRef = useRef(null);
@@ -14,14 +16,16 @@ const HeaderSection = () => {
 	const iconClass =
 		'text-color-gray-100 !text-[21px] hover:text-white cursor-pointer rounded hover:bg-color-gray-300 p-1';
 
+	const inArchivedRoute = location.pathname.includes('/habits/archived');
+
 	return (
-		<div className="flex justify-between items-center">
+		<div className="flex justify-between items-center mb-4">
 			<div className="relative">
 				<div
 					className="flex items-center gap-1 hover:bg-color-gray-300 p-1 rounded cursor-pointer"
 					onClick={() => setIsDropdownHabitTypesVisible(!isDropdownHabitTypesVisible)}
 				>
-					<span className="text-[18px] font-medium">Habit</span>
+					<span className="text-[18px] font-medium">{inArchivedRoute ? 'Archived Habits' : 'Habits'}</span>
 					<Icon name="expand_more" fill={1} customClass={'text-color-gray-100 !text-[18px] cursor-pointer'} />
 				</div>
 
@@ -33,7 +37,18 @@ const HeaderSection = () => {
 			</div>
 
 			<div className="flex items-center gap-2">
-				<Icon name="grid_view" fill={0} customClass={iconClass} />
+				<Icon
+					name={viewType === 'grid' ? 'list' : 'grid_view'}
+					fill={0}
+					customClass={iconClass}
+					onClick={() => {
+						if (viewType === 'grid') {
+							setViewType('list');
+						} else {
+							setViewType('grid');
+						}
+					}}
+				/>
 
 				<Icon
 					name="add"
@@ -51,11 +66,6 @@ const HeaderSection = () => {
 const DropdownHabitTypes = ({ toggleRef, isVisible, setIsVisible }) => {
 	const navigate = useNavigate();
 	const location = useLocation();
-	const { habitId } = useParams();
-
-	const selectedHabitType = 'archived';
-
-	console.log(location);
 
 	const SelectOption = ({ name, isSelected, onClick }) => {
 		return (

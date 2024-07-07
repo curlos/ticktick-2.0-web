@@ -35,6 +35,7 @@ function App() {
 						<Route path="/habits" element={<HabitsPage />}></Route>
 						<Route path="/habits/:habitId" element={<HabitsPage />}></Route>
 						<Route path="/habits/archived" element={<HabitsPage />}></Route>
+						<Route path="/habits/archived/:habitId" element={<HabitsPage />}></Route>
 
 						<Route path="/focus" element={<FocusPage />}></Route>
 						<Route path="/stats" element={<FocusStatsPage />}></Route>

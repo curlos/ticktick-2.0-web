@@ -51,7 +51,9 @@ const DropdownHabitOptions: React.FC<DropdownHabitOptionsProps> = ({ toggleRef, 
 					})
 				);
 
-				navigate(`/habits`);
+				navigate(`/habits/archived/${habit._id}`);
+			} else {
+				navigate(`/habits/${habit._id}`);
 			}
 		} catch (error) {
 			throw new Error(error);

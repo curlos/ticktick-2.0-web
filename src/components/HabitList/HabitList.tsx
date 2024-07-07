@@ -13,6 +13,8 @@ const HabitList = () => {
 	// TODO: Use last seven days to find which habits have been completed in those 7 days
 	const lastSevenDays = getLast7Days();
 	const [selectedDay, setSelectedDay] = useState(lastSevenDays[lastSevenDays.length - 1]);
+	// Can be "list" or "grid"
+	const [viewType, setViewType] = useState('list');
 
 	const monthAndDay = getMonthAndDay(selectedDay);
 
@@ -37,7 +39,7 @@ const HabitList = () => {
 	return (
 		<div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700 border-l border-r border-color-gray-200">
 			<div className="p-4 h-full">
-				<HeaderSection />
+				<HeaderSection viewType={viewType} setViewType={setViewType} />
 
 				{!showOnlyArchivedHabits && (
 					<div className="grid grid-cols-7 gap-4 my-2">
@@ -63,41 +65,55 @@ const HabitList = () => {
 					</div>
 				)}
 
-				{habitSections.map((habitSection) => {
-					const { habitIds } = habitSection;
+				{!showOnlyArchivedHabits &&
+					habitSections.map((habitSection) => {
+						const { habitIds } = habitSection;
 
-					if (habitIds.length === 0) {
-						return null;
-					}
-
-					const habitsForThisSection = habitIds.flatMap((habitId) => {
-						const habit = habitsById[habitId];
-
-						if (habit) {
-							if (showOnlyArchivedHabits) {
-								return habit.isArchived ? habitsById[habitId] : [];
-							} else {
-								return !habit.isArchived ? habitsById[habitId] : [];
-							}
+						if (habitIds.length === 0) {
+							return null;
 						}
 
-						return [];
-					});
+						const habitsForThisSection = habitIds.flatMap((habitId) => {
+							const habit = habitsById[habitId];
 
-					return (
-						<HabitListByCategory
-							key={habitSection._id}
-							habitSection={habitSection}
-							habitsForThisSection={habitsForThisSection}
-						/>
-					);
-				})}
+							if (habit) {
+								if (showOnlyArchivedHabits) {
+									return habit.isArchived ? habitsById[habitId] : [];
+								} else {
+									return !habit.isArchived ? habitsById[habitId] : [];
+								}
+							}
+
+							return [];
+						});
+
+						return (
+							<HabitListByCategory
+								key={habitSection._id}
+								habitSection={habitSection}
+								habitsForThisSection={habitsForThisSection}
+								viewType={viewType}
+							/>
+						);
+					})}
+
+				{showOnlyArchivedHabits && (
+					<div className={classNames('gap-3', viewType === 'grid' ? 'grid grid-cols-2' : 'grid')}>
+						{habits.map((habit) => {
+							if (!habit.isArchived || !habit) {
+								return null;
+							}
+
+							return <HabitCard habit={habit} />;
+						})}
+					</div>
+				)}
 			</div>
 		</div>
 	);
 };
 
-const HabitListByCategory = ({ habitSection, habitsForThisSection }) => {
+const HabitListByCategory = ({ habitSection, habitsForThisSection, viewType }) => {
 	const { name } = habitSection;
 
 	return (
@@ -114,14 +130,16 @@ const HabitListByCategory = ({ habitSection, habitsForThisSection }) => {
 				</div>
 			</div>
 
-			<div className="space-y-3 mt-3">
-				{habitsForThisSection.map((habit) => habit && <HabitCard key={habit._id} habit={habit} />)}
+			<div className={classNames('mt-3 grid gap-3', viewType === 'grid' ? 'grid-cols-2' : '')}>
+				{habitsForThisSection.map(
+					(habit) => habit && <HabitCard key={habit._id} habit={habit} viewType={viewType} />
+				)}
 			</div>
 		</div>
 	);
 };
 
-const HabitCard = ({ habit }) => {
+const HabitCard = ({ habit, viewType }) => {
 	const navigate = useNavigate();
 	const { habitId } = useParams();
 
@@ -131,10 +149,17 @@ const HabitCard = ({ habit }) => {
 	return (
 		<div
 			className={classNames(
-				'flex justify-between items-center bg-color-gray-600 rounded-lg p-3 cursor-pointer border-2',
-				habitId && habit._id === habitId ? 'border-blue-500' : 'border-transparent'
+				'bg-color-gray-600 rounded-lg p-3 cursor-pointer border-2',
+				habitId && habit._id === habitId ? 'border-blue-500' : 'border-transparent',
+				viewType === 'grid' ? 'space-y-4' : 'flex justify-between items-center'
 			)}
-			onClick={() => navigate(`/habits/${habit._id}`)}
+			onClick={() => {
+				if (habit.isArchived) {
+					navigate(`/habits/archived/${habit._id}`);
+				} else {
+					navigate(`/habits/${habit._id}`);
+				}
+			}}
 		>
 			<div className="flex items-center gap-2">
 				<div>
@@ -160,31 +185,33 @@ const HabitCard = ({ habit }) => {
 				</div>
 			</div>
 
-			<div className="flex gap-2">
-				{lastSevenDays.map((day, i) => {
-					// TODO: This "isChecked" logic is made up for now by me and not real. It's just meant to simulate the scenario where it's not checked and to render that. Remove after real backend data comes in.
-					const isChecked = i !== 0 && i !== 2;
+			{!habit.isArchived && (
+				<div className={classNames('flex items-center gap-2', viewType === 'grid' ? 'justify-between' : '')}>
+					{lastSevenDays.map((day, i) => {
+						// TODO: This "isChecked" logic is made up for now by me and not real. It's just meant to simulate the scenario where it's not checked and to render that. Remove after real backend data comes in.
+						const isChecked = i !== 0 && i !== 2;
 
-					return (
-						<div
-							key={day}
-							className={classNames(
-								'h-[20px] w-[20px] rounded-full flex justify-center items-center',
-								isChecked ? 'bg-blue-500' : 'bg-color-gray-100/30'
-							)}
-						>
-							<Icon
-								name="check"
-								fill={1}
-								customClass={classNames(
-									'text-white !text-[18px] cursor-pointer',
-									!isChecked ? 'invisible' : ''
+						return (
+							<div
+								key={day}
+								className={classNames(
+									'h-[20px] w-[20px] rounded-full flex justify-center items-center',
+									isChecked ? 'bg-blue-500' : 'bg-color-gray-100/30'
 								)}
-							/>
-						</div>
-					);
-				})}
-			</div>
+							>
+								<Icon
+									name="check"
+									fill={1}
+									customClass={classNames(
+										'text-white !text-[18px] cursor-pointer',
+										!isChecked ? 'invisible' : ''
+									)}
+								/>
+							</div>
+						);
+					})}
+				</div>
+			)}
 		</div>
 	);
 };
