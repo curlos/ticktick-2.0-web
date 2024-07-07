@@ -4,7 +4,7 @@ import Icon from '../../Icon';
 import { useDispatch, useSelector } from 'react-redux';
 import { setModalState } from '../../../slices/modalSlice';
 import CustomInput from '../../CustomInput';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useHandleError from '../../../hooks/useHandleError';
 import FrequencySection from './FrequencySection';
 import GoalSection from './GoalSection';
@@ -13,6 +13,7 @@ import GoalDaysSection from './GoalDaysSection';
 import HabitSection from './HabitSection';
 import ReminderSection from './ReminderSection';
 import { useAddHabitMutation } from '../../../services/resources/habitsApi';
+import { useGetHabitSectionsQuery } from '../../../services/resources/habitSectionsApi';
 
 const DEFAULT_DAYS_OF_WEEK = [
 	{ fullName: 'Monday', shortName: 'Mon', selected: true },
@@ -29,7 +30,16 @@ const ModalAddHabit: React.FC = () => {
 	const dispatch = useDispatch();
 	const handleError = useHandleError();
 
+	// Habits
 	const [addHabit] = useAddHabitMutation();
+
+	// Habit Sections
+	const {
+		data: fetchedHabitSections,
+		isLoading: isLoadingGetHabitSections,
+		error: errorGetHabitSections,
+	} = useGetHabitSectionsQuery();
+	const { habitSections } = fetchedHabitSections || {};
 
 	const [name, setName] = useState('');
 
@@ -48,15 +58,48 @@ const ModalAddHabit: React.FC = () => {
 	// States - Start Date
 	const [startDate, setStartDate] = useState(new Date());
 
-	// achieveItAll: {
-	// 	selected: { type: Boolean },
-	// },
-	// reachCertainAmount: {
-	// 	selected: { type: Boolean },
-	// 	dailyValue: { type: Number },
-	// 	dailyUnit: { type: String },
-	// 	whenChecking: { type: String },
-	// },
+	// States - Goal Days
+	const [goalDays, setGoalDays] = useState(Infinity);
+
+	// States - Section
+	const [section, setSection] = useState({});
+
+	// States - Reminder
+	const [reminderList, setReminderList] = useState([]);
+
+	useEffect(() => {
+		const sectionIsEmpty = !section || Object.keys(section).length === 0;
+
+		if (habitSections && sectionIsEmpty) {
+			setSection(habitSections[0]);
+		}
+	}, [habitSections]);
+
+	const resetAllStates = () => {
+		// States - Frequency Section
+		setSelectedInterval('Daily');
+		setDaysOfWeek(DEFAULT_DAYS_OF_WEEK);
+		setDaysPerWeek(2);
+		setEveryXDays(2);
+
+		// States - Goal Section
+		setGoalType('achieveItAll');
+		setDailyValue(1);
+		setDailyUnit('Count');
+		setWhenChecking('Auto');
+
+		// States - Start Date
+		setStartDate(new Date());
+
+		// States - Goal Days
+		setGoalDays(Infinity);
+
+		// States - Section
+		setSection({});
+
+		// States - Reminder
+		setReminderList([]);
+	};
 
 	if (!modal) {
 		return null;
@@ -114,9 +157,9 @@ const ModalAddHabit: React.FC = () => {
 							setWhenChecking={setWhenChecking}
 						/>
 						<StartDateSection startDate={startDate} setStartDate={setStartDate} />
-						<GoalDaysSection />
-						<HabitSection />
-						<ReminderSection />
+						<GoalDaysSection goalDays={goalDays} setGoalDays={setGoalDays} />
+						<HabitSection section={section} setSection={setSection} />
+						<ReminderSection reminderList={reminderList} setReminderList={setReminderList} />
 					</div>
 
 					{/* Close and Save buttons */}
@@ -160,14 +203,20 @@ const ModalAddHabit: React.FC = () => {
 										},
 									},
 									startDate,
+									goalDays,
+									habitSectionId: section._id,
+									reminders: reminderList,
 								};
 
 								console.log(payload);
 								debugger;
 
-								// handleError(async () => {
-								// 	await addHabit(payload).unwrap();
-								// });
+								handleError(async () => {
+									await addHabit(payload).unwrap();
+									// Reset all the data to the defaults and close the modal
+									resetAllStates();
+									dispatch(setModalState({ modalId: 'ModalAddHabit', isOpen: false }));
+								});
 							}}
 						>
 							Save

@@ -4,10 +4,9 @@ import Dropdown from '../../Dropdown/Dropdown';
 import classNames from 'classnames';
 import CustomInput from '../../CustomInput';
 
-const GoalDaysSection = () => {
+const GoalDaysSection = ({ goalDays, setGoalDays }) => {
 	const dropdownGoalDaysRef = useRef(null);
 	const [isDropdownGoalDaysVisible, setIsDropdownGoalDaysVisible] = useState(false);
-	const [selectedGoalDays, setSelectedGoalDays] = useState(Infinity);
 
 	return (
 		<div>
@@ -22,7 +21,7 @@ const GoalDaysSection = () => {
 						}}
 					>
 						<div style={{ wordBreak: 'break-word' }}>
-							{selectedGoalDays === Infinity ? 'Forever' : `${selectedGoalDays} days`}
+							{goalDays === Infinity ? 'Forever' : `${goalDays} days`}
 						</div>
 						<Icon
 							name="expand_more"
@@ -35,8 +34,8 @@ const GoalDaysSection = () => {
 						toggleRef={dropdownGoalDaysRef}
 						isVisible={isDropdownGoalDaysVisible}
 						setIsVisible={setIsDropdownGoalDaysVisible}
-						selectedGoalDays={selectedGoalDays}
-						setSelectedGoalDays={setSelectedGoalDays}
+						goalDays={goalDays}
+						setGoalDays={setGoalDays}
 					/>
 				</div>
 			</div>
@@ -44,21 +43,14 @@ const GoalDaysSection = () => {
 	);
 };
 
-const DropdownGoalDays = ({
-	toggleRef,
-	isVisible,
-	setIsVisible,
-	customClasses,
-	selectedGoalDays,
-	setSelectedGoalDays,
-}) => {
+const DropdownGoalDays = ({ toggleRef, isVisible, setIsVisible, customClasses, goalDays, setGoalDays }) => {
 	const goalDayOptions = [Infinity, 7, 21, 30, 100, 365];
 	const dropdownCustomGoalDaysRef = useRef(null);
 	const [isDropdownCustomGoalDaysVisible, setIsDropdownCustomGoalDaysVisible] = useState(false);
 
 	const GoalDayOption = ({ goalDayOption }) => {
-		const isCustomGoalDays = !goalDayOptions.includes(selectedGoalDays);
-		const isSelected = goalDayOption === 'Custom' ? isCustomGoalDays : selectedGoalDays === goalDayOption;
+		const isCustomGoalDays = !goalDayOptions.includes(goalDays);
+		const isSelected = goalDayOption === 'Custom' ? isCustomGoalDays : goalDays === goalDayOption;
 
 		return (
 			<div
@@ -68,7 +60,7 @@ const DropdownGoalDays = ({
 				)}
 				onClick={() => {
 					if (goalDayOption !== 'Custom') {
-						setSelectedGoalDays(goalDayOption);
+						setGoalDays(goalDayOption);
 						setIsVisible(false);
 					}
 				}}
@@ -115,8 +107,8 @@ const DropdownGoalDays = ({
 						toggleRef={dropdownCustomGoalDaysRef}
 						isVisible={isDropdownCustomGoalDaysVisible}
 						setIsVisible={setIsDropdownCustomGoalDaysVisible}
-						selectedGoalDays={selectedGoalDays}
-						setSelectedGoalDays={setSelectedGoalDays}
+						goalDays={goalDays}
+						setGoalDays={setGoalDays}
 					/>
 				</div>
 			</div>
@@ -124,15 +116,8 @@ const DropdownGoalDays = ({
 	);
 };
 
-const DropdownCustomGoalDays = ({
-	toggleRef,
-	isVisible,
-	setIsVisible,
-	customClasses,
-	selectedGoalDays,
-	setSelectedGoalDays,
-}) => {
-	const [localGoalDays, setLocalGoalDays] = useState(selectedGoalDays !== Infinity ? selectedGoalDays : 7);
+const DropdownCustomGoalDays = ({ toggleRef, isVisible, setIsVisible, customClasses, goalDays, setGoalDays }) => {
+	const [localGoalDays, setLocalGoalDays] = useState(goalDays !== Infinity ? goalDays : 7);
 
 	return (
 		<Dropdown
@@ -163,7 +148,7 @@ const DropdownCustomGoalDays = ({
 					<button
 						className="bg-blue-500 rounded py-1 cursor-pointer hover:bg-blue-600"
 						onClick={() => {
-							setSelectedGoalDays(Number(localGoalDays));
+							setGoalDays(Number(localGoalDays));
 							setIsVisible(false);
 						}}
 					>

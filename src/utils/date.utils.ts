@@ -129,6 +129,26 @@ export const getCurrentTimeString = () => {
 	return `${hours}:${minutesStr} ${ampm}`;
 };
 
+export const getFormattedTimeString = (inputDate) => {
+	// Ensure inputDate is a valid Date object
+	const date = inputDate instanceof Date ? inputDate : new Date();
+
+	// Extract time components
+	let hours = date.getHours();
+	const minutes = date.getMinutes();
+	const ampm = hours >= 12 ? 'PM' : 'AM';
+
+	// Convert hours from 24-hour time to 12-hour time
+	hours = hours % 12;
+	hours = hours ? hours : 12; // the hour '0' should be '12'
+
+	// Ensure minutes are two digits
+	const minutesStr = minutes < 10 ? '0' + minutes : minutes;
+
+	// Format the time in AM/PM notation
+	return `${hours}:${minutesStr} ${ampm}`;
+};
+
 export const formatDateTime = (dateTimeStr) => {
 	const date = new Date(dateTimeStr);
 

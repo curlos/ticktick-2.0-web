@@ -1,15 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
 import Icon from '../../Icon';
-import { areTimesEqual, getCurrentTimeString, setTimeOnDateString } from '../../../utils/date.utils';
+import {
+	areTimesEqual,
+	getCurrentTimeString,
+	getFormattedTimeString,
+	setTimeOnDateString,
+} from '../../../utils/date.utils';
 import DropdownTime from '../../Dropdown/DropdownCalendar/DropdownTime';
 import classNames from 'classnames';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { setAlertState } from '../../../slices/alertSlice';
 
-const ReminderSection = () => {
+const ReminderSection = ({ reminderList, setReminderList }) => {
 	const dispatch = useDispatch();
-	const [reminderList, setReminderList] = useState([]);
 
 	const TimeOptionWithDropdown = ({ reminderTime }) => {
 		const isNewReminder = !reminderTime;
@@ -17,9 +21,13 @@ const ReminderSection = () => {
 		const dropdownTimeRef = useRef(null);
 		const [isDropdownTimeVisible, setIsDropdownTimeVisible] = useState(false);
 		const [dropdownTimeWasVisible, setDropdownTimeWasVisible] = useState(false);
-		const [selectedTime, setSelectedTime] = useState(getCurrentTimeString());
+		const [selectedTime, setSelectedTime] = useState(
+			reminderTime ? getFormattedTimeString(reminderTime) : getCurrentTimeString()
+		);
 		const [isHovering, setIsHovering] = useState(false);
 		const [showPlus, setShowPlus] = useState(isNewReminder);
+
+		console.log(reminderList);
 
 		const TimeOption = () => {
 			useEffect(() => {

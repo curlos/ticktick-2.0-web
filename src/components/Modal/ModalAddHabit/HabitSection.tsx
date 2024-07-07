@@ -3,11 +3,12 @@ import Icon from '../../Icon';
 import Dropdown from '../../Dropdown/Dropdown';
 import classNames from 'classnames';
 import CustomInput from '../../CustomInput';
+import { useAddHabitSectionMutation, useGetHabitSectionsQuery } from '../../../services/resources/habitSectionsApi';
+import useHandleError from '../../../hooks/useHandleError';
 
-const HabitSection = () => {
+const HabitSection = ({ section, setSection }) => {
 	const dropdownHabitSectionRef = useRef(null);
 	const [isDropdownHabitSectionVisible, setIsDropdownHabitSectionVisible] = useState(false);
-	const [selectedSection, setSelectedSection] = useState('Others');
 
 	return (
 		<div>
@@ -21,7 +22,7 @@ const HabitSection = () => {
 							setIsDropdownHabitSectionVisible(!isDropdownHabitSectionVisible);
 						}}
 					>
-						<div style={{ wordBreak: 'break-word' }}>{selectedSection}</div>
+						<div style={{ wordBreak: 'break-word' }}>{section.name}</div>
 						<Icon
 							name="expand_more"
 							fill={0}
@@ -33,8 +34,8 @@ const HabitSection = () => {
 						toggleRef={dropdownHabitSectionRef}
 						isVisible={isDropdownHabitSectionVisible}
 						setIsVisible={setIsDropdownHabitSectionVisible}
-						selectedSection={selectedSection}
-						setSelectedSection={setSelectedSection}
+						section={section}
+						setSection={setSection}
 					/>
 				</div>
 			</div>
@@ -42,20 +43,22 @@ const HabitSection = () => {
 	);
 };
 
-const DropdownHabitSection = ({
-	toggleRef,
-	isVisible,
-	setIsVisible,
-	customClasses,
-	selectedSection,
-	setSelectedSection,
-}) => {
+const DropdownHabitSection = ({ toggleRef, isVisible, setIsVisible, customClasses, section, setSection }) => {
+	// Habit Sections
+	const {
+		data: fetchedHabitSections,
+		isLoading: isLoadingGetHabitSections,
+		error: errorGetHabitSections,
+	} = useGetHabitSectionsQuery();
+	const { habitSections } = fetchedHabitSections || {};
+
 	const sectionOptions = ['Morning', 'Afternoon', 'Night', 'Others'];
 	const dropdownCustomGoalDaysRef = useRef(null);
 	const [isDropdownCustomGoalDaysVisible, setIsDropdownCustomGoalDaysVisible] = useState(false);
 
-	const SectionOption = ({ sectionOption }) => {
-		const isSelected = selectedSection === sectionOption;
+	const SectionOption = ({ habitSection }) => {
+		const { name } = habitSection;
+		const isSelected = habitSection._id === section._id;
 
 		return (
 			<div
@@ -64,13 +67,11 @@ const DropdownHabitSection = ({
 					isSelected ? 'text-blue-500' : ''
 				)}
 				onClick={() => {
-					if (sectionOption !== 'Add Section') {
-						setSelectedSection(sectionOption);
-						setIsVisible(false);
-					}
+					setSection(habitSection);
+					setIsVisible(false);
 				}}
 			>
-				<div>{sectionOption}</div>
+				<div>{name}</div>
 				{isSelected && (
 					<Icon
 						name="check"
@@ -82,6 +83,10 @@ const DropdownHabitSection = ({
 		);
 	};
 
+	if (!habitSections) {
+		return null;
+	}
+
 	return (
 		<Dropdown
 			toggleRef={toggleRef}
@@ -90,24 +95,32 @@ const DropdownHabitSection = ({
 			customClasses={classNames('shadow-2xl border border-color-gray-200 rounded-lg w-[200px]', customClasses)}
 		>
 			<div className="p-1">
-				{sectionOptions.map((sectionOption) => (
-					<SectionOption key={sectionOption} sectionOption={sectionOption} />
-				))}
+				<div className="max-h-[220px] overflow-auto gray-scrollbar">
+					{habitSections.map((habitSection) => (
+						<SectionOption key={habitSection._id} habitSection={habitSection} />
+					))}
+				</div>
 
-				<div className="relative">
+				<div className="relative border-t border-color-gray-200">
 					<div
 						ref={dropdownCustomGoalDaysRef}
 						onClick={() => setIsDropdownCustomGoalDaysVisible(!isDropdownCustomGoalDaysVisible)}
 					>
-						<SectionOption sectionOption="Add Section" />
+						<div
+							className={
+								'flex items-center justify-between hover:bg-color-gray-300 p-2 rounded-lg cursor-pointer'
+							}
+						>
+							<div>Add Section</div>
+						</div>
 					</div>
 
 					<DropdownCustomSection
 						toggleRef={dropdownCustomGoalDaysRef}
 						isVisible={isDropdownCustomGoalDaysVisible}
 						setIsVisible={setIsDropdownCustomGoalDaysVisible}
-						selectedSection={selectedSection}
-						setSelectedSection={setSelectedSection}
+						section={section}
+						setSection={setSection}
 					/>
 				</div>
 			</div>
@@ -115,15 +128,26 @@ const DropdownHabitSection = ({
 	);
 };
 
-const DropdownCustomSection = ({
-	toggleRef,
-	isVisible,
-	setIsVisible,
-	customClasses,
-	selectedSection,
-	setSelectedSection,
-}) => {
-	const [localSection, setLocalSection] = useState('');
+const DropdownCustomSection = ({ toggleRef, isVisible, setIsVisible, customClasses, section, setSection }) => {
+	const handleError = useHandleError();
+
+	// Habit Sections
+	const {
+		data: fetchedHabitSections,
+		isLoading: isLoadingGetHabitSections,
+		error: errorGetHabitSections,
+	} = useGetHabitSectionsQuery();
+	const { habitSections } = fetchedHabitSections || {};
+
+	const [addHabitSection] = useAddHabitSectionMutation();
+
+	const [sectionName, setSectionName] = useState('');
+
+	console.log(habitSections);
+
+	const doesSectionAlreadyExist = habitSections.find((existingSection) => existingSection.name === sectionName);
+
+	console.log(doesSectionAlreadyExist);
 
 	return (
 		<Dropdown
@@ -136,8 +160,8 @@ const DropdownCustomSection = ({
 				<div className="flex items-center gap-2">
 					<CustomInput
 						placeholder="New Section"
-						value={localSection}
-						setValue={setLocalSection}
+						value={sectionName}
+						setValue={setSectionName}
 						customClasses="!text-left"
 					/>
 				</div>
@@ -150,11 +174,20 @@ const DropdownCustomSection = ({
 						Cancel
 					</button>
 					<button
-						className="bg-blue-500 rounded py-1 cursor-pointer hover:bg-blue-600"
+						disabled={doesSectionAlreadyExist ? true : false}
+						className="bg-blue-500 rounded py-1 cursor-pointer hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
 						onClick={() => {
-							// TODO: Possibly will have to make API Call here to add a section and get a list of sections in the habits. Will have to see though what exactly should be done. For now, just leave it as is but need to come back later.
-							setSelectedSection(localSection);
-							setIsVisible(false);
+							handleError(async () => {
+								const payload = {
+									name: sectionName,
+								};
+
+								const response = await addHabitSection(payload).unwrap();
+
+								setSection(response);
+								setSectionName('');
+								setIsVisible(false);
+							});
 						}}
 					>
 						Ok
