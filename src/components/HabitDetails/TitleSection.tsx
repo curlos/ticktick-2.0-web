@@ -1,6 +1,6 @@
 import Icon from '../Icon';
 
-const TitleSection = () => (
+const TitleSection = ({ habit }) => (
 	<div className="flex items-center justify-between">
 		<div className="flex items-center gap-1">
 			<Icon
@@ -9,7 +9,7 @@ const TitleSection = () => (
 				customClass={'text-color-gray-50 !text-[30px] hover:text-white cursor-pointer'}
 			/>
 
-			<h2 className="text-[18px] font-medium">No Coke</h2>
+			<h2 className="text-[18px] font-medium">{habit.name}</h2>
 		</div>
 
 		<Icon

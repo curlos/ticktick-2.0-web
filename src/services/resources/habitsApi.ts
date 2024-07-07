@@ -25,7 +25,7 @@ export const habitsApi = baseAPI.injectEndpoints({
 					body: payload,
 				};
 			},
-			invalidatesTags: ['Habit'],
+			invalidatesTags: ['Habit', 'HabitSection'],
 		}),
 		editHabit: builder.mutation({
 			query: ({ habitId, payload }) => ({
@@ -33,7 +33,7 @@ export const habitsApi = baseAPI.injectEndpoints({
 				method: 'PUT',
 				body: payload,
 			}),
-			invalidatesTags: (result, error, habitId) => ['Habit'],
+			invalidatesTags: (result, error, habitId) => ['Habit', 'HabitSection'],
 		}),
 		permanentlyDeleteHabit: builder.mutation({
 			query: ({ habitId }) => ({

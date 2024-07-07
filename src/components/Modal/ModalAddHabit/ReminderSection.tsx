@@ -27,24 +27,15 @@ const ReminderSection = ({ reminderList, setReminderList }) => {
 		const [isHovering, setIsHovering] = useState(false);
 		const [showPlus, setShowPlus] = useState(isNewReminder);
 
-		console.log(reminderList);
-
 		const TimeOption = () => {
 			useEffect(() => {
 				// If the user is adding a NEW reminder and the dropdown time was just closed (I know it's just closed if "isDropdownTimeVisible" === false and dropdownTimeWasVisible === true because "dropdownTimeWasVisible" is one state behind "isDropdownTimeVisible".) I have to do it this way in the useEffect because the dropdown is only closed when the user clicks outside of it, not by clicking a button. So, unless I go into the "Dropdown" code itself where it's detecting outside clicks, that'll be impossible.
 				if (isNewReminder && !isDropdownTimeVisible && dropdownTimeWasVisible) {
 					const newDate = new Date();
 					const newDateObject = setTimeOnDateString(newDate, selectedTime);
-
-					// TODO: Verify that this duplicate logic accurately works. Sometimes, it seems like it doesn't work.
 					const isDuplicate = reminderList.find((reminder) => areTimesEqual(reminder, newDateObject));
 
-					console.log(reminderList);
-					console.log(newDateObject);
-					console.log(isDuplicate);
-
 					if (isDuplicate) {
-						console.log('DUPLICATE BUM');
 						setReminderList([...reminderList]);
 
 						dispatch(

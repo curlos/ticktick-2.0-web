@@ -7,6 +7,7 @@ import { getDayNameAbbreviation, getLast7Days, getMonthAndDay } from '../../util
 import { areDatesEqual } from '../../utils/date.utils';
 import { useGetHabitsQuery } from '../../services/resources/habitsApi';
 import { useGetHabitSectionsQuery } from '../../services/resources/habitSectionsApi';
+import { useNavigate, useParams } from 'react-router';
 
 const HabitList = () => {
 	// TODO: Use last seven days to find which habits have been completed in those 7 days
@@ -27,7 +28,7 @@ const HabitList = () => {
 	} = useGetHabitSectionsQuery();
 	const { habitSections } = fetchedHabitSections || {};
 
-	if (!habits || !habitSections) {
+	if (!habits || !habitSections || !habitsById) {
 		return null;
 	}
 
@@ -96,21 +97,27 @@ const HabitListByCategory = ({ habitSection, habitsForThisSection }) => {
 			</div>
 
 			<div className="space-y-3 mt-3">
-				{habitsForThisSection.map((habit) => (
-					<HabitCard key={habit._id} habit={habit} />
-				))}
+				{habitsForThisSection.map((habit) => habit && <HabitCard key={habit._id} habit={habit} />)}
 			</div>
 		</div>
 	);
 };
 
 const HabitCard = ({ habit }) => {
-	const { name } = habit;
+	const navigate = useNavigate();
+	const { habitId } = useParams();
 
+	const { name } = habit;
 	const lastSevenDays = getLast7Days();
 
 	return (
-		<div className="flex justify-between items-center bg-color-gray-600 rounded-lg p-3">
+		<div
+			className={classNames(
+				'flex justify-between items-center bg-color-gray-600 rounded-lg p-3 cursor-pointer border-2',
+				habitId && habit._id === habitId ? 'border-blue-500' : 'border-transparent'
+			)}
+			onClick={() => navigate(`/habits/${habit._id}`)}
+		>
 			<div className="flex items-center gap-2">
 				<div>
 					<img src="/Food.webp" alt="" className="h-[40px]" />

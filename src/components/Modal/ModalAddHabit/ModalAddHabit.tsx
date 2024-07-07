@@ -76,6 +76,8 @@ const ModalAddHabit: React.FC = () => {
 	}, [habitSections]);
 
 	const resetAllStates = () => {
+		setName('');
+
 		// States - Frequency Section
 		setSelectedInterval('Daily');
 		setDaysOfWeek(DEFAULT_DAYS_OF_WEEK);
@@ -95,7 +97,7 @@ const ModalAddHabit: React.FC = () => {
 		setGoalDays(Infinity);
 
 		// States - Section
-		setSection({});
+		setSection(habitSections ? habitSections[0] : {});
 
 		// States - Reminder
 		setReminderList([]);
@@ -171,7 +173,8 @@ const ModalAddHabit: React.FC = () => {
 							Close
 						</button>
 						<button
-							className="bg-blue-500 rounded py-1 cursor-pointer hover:bg-blue-600 min-w-[114px]"
+							disabled={!name}
+							className="bg-blue-500 rounded py-1 cursor-pointer hover:bg-blue-600 min-w-[114px] disabled:opacity-50 disabled:cursor-not-allowed"
 							onClick={() => {
 								// TODO: CREATE HABIT!
 
