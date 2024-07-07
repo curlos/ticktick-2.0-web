@@ -32,30 +32,36 @@ const HabitList = () => {
 		return null;
 	}
 
+	const showOnlyArchivedHabits = location.pathname.includes('/habits/archived');
+
 	return (
 		<div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700 border-l border-r border-color-gray-200">
 			<div className="p-4 h-full">
 				<HeaderSection />
 
-				<div className="grid grid-cols-7 gap-4 my-2">
-					{lastSevenDays.map((day, index) => (
-						<HabitDay key={index} day={day} selectedDay={selectedDay} setSelectedDay={setSelectedDay} />
-					))}
-				</div>
+				{!showOnlyArchivedHabits && (
+					<div className="grid grid-cols-7 gap-4 my-2">
+						{lastSevenDays.map((day, index) => (
+							<HabitDay key={index} day={day} selectedDay={selectedDay} setSelectedDay={setSelectedDay} />
+						))}
+					</div>
+				)}
 
-				<div className="flex items-center gap-1 text-color-gray-100">
-					<Icon
-						name="filter_alt"
-						fill={0}
-						customClass={'text-color-gray-100 !text-[16px] hover:text-white cursor-pointer'}
-					/>
-					<div className="text-[14px]">{monthAndDay}</div>
-					<Icon
-						name="close"
-						fill={0}
-						customClass={'text-color-gray-100 hover:text-color-gray-50 !text-[16px] cursor-pointer'}
-					/>
-				</div>
+				{!showOnlyArchivedHabits && (
+					<div className="flex items-center gap-1 text-color-gray-100">
+						<Icon
+							name="filter_alt"
+							fill={0}
+							customClass={'text-color-gray-100 !text-[16px] hover:text-white cursor-pointer'}
+						/>
+						<div className="text-[14px]">{monthAndDay}</div>
+						<Icon
+							name="close"
+							fill={0}
+							customClass={'text-color-gray-100 hover:text-color-gray-50 !text-[16px] cursor-pointer'}
+						/>
+					</div>
+				)}
 
 				{habitSections.map((habitSection) => {
 					const { habitIds } = habitSection;
@@ -64,7 +70,19 @@ const HabitList = () => {
 						return null;
 					}
 
-					const habitsForThisSection = habitIds.map((habitId) => habitsById[habitId]);
+					const habitsForThisSection = habitIds.flatMap((habitId) => {
+						const habit = habitsById[habitId];
+
+						if (habit) {
+							if (showOnlyArchivedHabits) {
+								return habit.isArchived ? habitsById[habitId] : [];
+							} else {
+								return !habit.isArchived ? habitsById[habitId] : [];
+							}
+						}
+
+						return [];
+					});
 
 					return (
 						<HabitListByCategory
