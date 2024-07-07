@@ -4,7 +4,7 @@ import Icon from '../../Icon';
 import { useDispatch, useSelector } from 'react-redux';
 import { setModalState } from '../../../slices/modalSlice';
 import CustomInput from '../../CustomInput';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import useHandleError from '../../../hooks/useHandleError';
 import FrequencySection from './FrequencySection';
 import GoalSection from './GoalSection';
@@ -15,6 +15,7 @@ import ReminderSection from './ReminderSection';
 import { useAddHabitMutation, useEditHabitMutation } from '../../../services/resources/habitsApi';
 import { useGetHabitSectionsQuery } from '../../../services/resources/habitSectionsApi';
 import { HADES_KEEPSAKE_ICON_URLS } from '../../../utils/hadesIcons.utils';
+import DropdownHabitIcons from '../../Dropdown/DropdownHabitIcons';
 
 const DEFAULT_DAYS_OF_WEEK = [
 	{ fullName: 'Monday', shortName: 'Mon', selected: true },
@@ -43,7 +44,11 @@ const ModalAddHabit: React.FC = () => {
 	} = useGetHabitSectionsQuery();
 	const { habitSections, habitSectionsById } = fetchedHabitSections || {};
 
+	// States - Name and Icon
 	const [name, setName] = useState('');
+	const [selectedIcon, setSelectedIcon] = useState(HADES_KEEPSAKE_ICON_URLS[13]);
+	const dropdownHabitIconsRef = useRef(null);
+	const [isDropdownHabitIconsVisible, setIsDropdownHabitIconsVisible] = useState(false);
 
 	// States - Frequency Section
 	const [selectedInterval, setSelectedInterval] = useState('Daily');
@@ -164,8 +169,6 @@ const ModalAddHabit: React.FC = () => {
 
 	const editingExistingHabit = habit;
 
-	console.log(HADES_KEEPSAKE_ICON_URLS);
-
 	return (
 		<Modal isOpen={isOpen} onClose={closeModal} positionClasses="!items-start mt-[150px]" customClasses="my-[2px]">
 			<div className="rounded-xl shadow-lg bg-color-gray-600">
@@ -181,13 +184,26 @@ const ModalAddHabit: React.FC = () => {
 
 					<div className="flex flex-col gap-2">
 						<div className="flex items-center">
-							<div className="w-[96px] flex items-end cursor-pointer group">
-								<img src={HADES_KEEPSAKE_ICON_URLS[13]} className="w-[50px] h-[50px]" />
-								<Icon
-									name="edit"
-									customClass={
-										'!text-[20px] text-color-gray-100 group-hover:text-white cursor-pointer'
-									}
+							<div className="w-[96px] relative">
+								<div
+									className="flex items-end cursor-pointer group"
+									onClick={() => setIsDropdownHabitIconsVisible(!isDropdownHabitIconsVisible)}
+								>
+									<img src={selectedIcon} className="w-[50px] h-[50px]" />
+									<Icon
+										name="edit"
+										customClass={
+											'!text-[20px] text-color-gray-100 group-hover:text-white cursor-pointer'
+										}
+									/>
+								</div>
+
+								<DropdownHabitIcons
+									toggleRef={dropdownHabitIconsRef}
+									isVisible={isDropdownHabitIconsVisible}
+									setIsVisible={setIsDropdownHabitIconsVisible}
+									selectedIcon={selectedIcon}
+									setSelectedIcon={setSelectedIcon}
 								/>
 							</div>
 
