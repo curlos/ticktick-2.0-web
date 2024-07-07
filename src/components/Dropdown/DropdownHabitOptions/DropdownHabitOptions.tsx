@@ -32,14 +32,13 @@ const DropdownHabitOptions: React.FC<DropdownHabitOptionsProps> = ({ toggleRef, 
 
 	const dropdownStartFocusRef = useRef(null);
 
-	const handleDelete = () => {
-		// Delete the task and then the redirect to the list of tasks in the project as the current task has been delete and thus the page is not accessible anymore.
+	const handleArchive = () => {
 		try {
 			const isDeletedTime = new Date().toISOString();
-			flagHabit({ habitId: habit._id, property: 'isArchived', value: isDeletedTime });
+			flagHabit({ habitId: habit._id, property: 'isArchived', value: !habit.isArchived ? isDeletedTime : null });
 			setIsVisible(false);
 
-			// Only show the alert if the task is about to be deleted and we want to give the user the option to undo the deletion.
+			// Only show the alert if the task is about to be archived and we want to give the user the option to undo the archival.
 			if (!habit.isArchived) {
 				dispatch(
 					setAlertState({
@@ -51,13 +50,15 @@ const DropdownHabitOptions: React.FC<DropdownHabitOptionsProps> = ({ toggleRef, 
 						},
 					})
 				);
-			}
 
-			navigate(`/habits`);
+				navigate(`/habits`);
+			}
 		} catch (error) {
 			throw new Error(error);
 		}
 	};
+
+	const { isArchived } = habit;
 
 	return (
 		<Dropdown
@@ -114,7 +115,7 @@ const DropdownHabitOptions: React.FC<DropdownHabitOptionsProps> = ({ toggleRef, 
 				/>
 				<div
 					className="p-1 flex items-center gap-[2px] hover:bg-color-gray-300 cursor-pointer"
-					onClick={handleDelete}
+					onClick={handleArchive}
 				>
 					<Icon
 						name="delete"
@@ -123,7 +124,7 @@ const DropdownHabitOptions: React.FC<DropdownHabitOptionsProps> = ({ toggleRef, 
 						}
 						fill={0}
 					/>
-					<div>Delete</div>
+					<div>{isArchived ? 'Pick up habit' : 'Archive'}</div>
 				</div>
 			</div>
 		</Dropdown>

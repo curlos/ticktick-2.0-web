@@ -36,13 +36,12 @@ export const habitsApi = baseAPI.injectEndpoints({
 			invalidatesTags: (result, error, habitId) => ['Habit', 'HabitSection'],
 		}),
 		flagHabit: builder.mutation({
-			query: ({ taskId, parentId, property, value }) => ({
-				url: `/habits/flag/${taskId}`,
+			query: ({ habitId, property, value }) => ({
+				url: `/habits/flag/${habitId}`,
 				method: 'PATCH',
 				body: {
-					property: property, // This could be 'isDeleted' or any other property
-					value: value, // This is typically true for isDeleted, but can be any value
-					parentId: parentId, // Optional: Include parentId if needed to update the parent document
+					property: property,
+					value: value,
 				},
 			}),
 			invalidatesTags: ['Habit', 'HabitSection'],

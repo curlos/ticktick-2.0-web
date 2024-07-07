@@ -4,13 +4,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setAlertState } from '../../slices/alertSlice';
 import Icon from '../Icon';
 import { useFlagTaskMutation } from '../../services/resources/tasksApi';
+import { useFlagHabitMutation } from '../../services/resources/habitsApi';
+import useHandleError from '../../hooks/useHandleError';
 
 const AlertFlagged = () => {
+	const handleError = useHandleError();
+
 	const alert = useSelector((state) => state.alerts.alerts['AlertFlagged']);
+
 	const [flagTask] = useFlagTaskMutation();
+	const [flagHabit] = useFlagHabitMutation();
+
 	const dispatch = useDispatch();
 
-	// TODO: Pass in a task to the props and use that to undo the task as well as get the task's name.
 	const { isOpen, props } = alert;
 
 	useEffect(() => {
@@ -23,7 +29,7 @@ const AlertFlagged = () => {
 		}
 	}, [isOpen]);
 
-	if (!alert || !props || !props.task) {
+	if (!alert || !props || (!props.task && !props.habit)) {
 		return null;
 	}
 
@@ -32,23 +38,37 @@ const AlertFlagged = () => {
 		close: 3,
 	};
 
-	const { task, parentId, flaggedPropertyName } = props;
+	const { task, parentId, habit, flaggedPropertyName } = props;
 
 	const getMessage = () => {
 		let message = '';
-		switch (flaggedPropertyName) {
-			case 'isDeleted':
-				message += 'Deleted';
-				break;
-			case 'willNotDo':
-				message += "Won't do";
-				break;
-			default:
-				message += '';
-				break;
-		}
 
-		message += ` "${task.title}"`;
+		if (task) {
+			switch (flaggedPropertyName) {
+				case 'isDeleted':
+					message += 'Deleted';
+					break;
+				case 'willNotDo':
+					message += "Won't do";
+					break;
+				default:
+					message += '';
+					break;
+			}
+
+			message += ` "${task.title}"`;
+		} else if (habit) {
+			switch (flaggedPropertyName) {
+				case 'isArchived':
+					message += 'Archived';
+					break;
+				default:
+					message += '';
+					break;
+			}
+
+			message += ` "${habit.name}"`;
+		}
 
 		return message;
 	};
@@ -67,12 +87,24 @@ const AlertFlagged = () => {
 					fill={0}
 					customClass={'text-color-gray-50 !text-[20px] hover:text-white cursor-pointer text-yellow-500'}
 					onClick={() => {
-						flagTask({
-							taskId: task._id,
-							parentId,
-							property: flaggedPropertyName,
-							value: null,
-						});
+						if (task) {
+							handleError(async () => {
+								await flagTask({
+									taskId: task._id,
+									parentId,
+									property: flaggedPropertyName,
+									value: null,
+								}).unwrap();
+							});
+						} else if (habit) {
+							handleError(async () => {
+								await flagHabit({
+									habitId: habit._id,
+									property: flaggedPropertyName,
+									value: null,
+								}).unwrap();
+							});
+						}
 						dispatch(setAlertState({ alertId: 'AlertFlagged', isOpen: false }));
 					}}
 				/>

@@ -29,10 +29,11 @@ const HabitDetails = () => {
 
 	useEffect(() => {
 		if (!habitId) {
+			setHabit(null);
 			return;
 		}
 
-		if (isLoadingGetHabits || isLoadingGetHabitSections) {
+		if (!habits) {
 			return;
 		}
 

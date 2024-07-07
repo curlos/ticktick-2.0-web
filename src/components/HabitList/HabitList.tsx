@@ -92,7 +92,7 @@ const HabitListByCategory = ({ habitSection, habitsForThisSection }) => {
 						customClass={'text-color-gray-100 hover:text-color-gray-50 !text-[16px] cursor-pointer'}
 					/>
 					<div className="font-bold">{name}</div>
-					<div className="ml-1 text-color-gray-100">2</div>
+					<div className="ml-1 text-color-gray-100">{habitsForThisSection.length}</div>
 				</div>
 			</div>
 
