@@ -14,8 +14,8 @@ import HabitSection from './HabitSection';
 import ReminderSection from './ReminderSection';
 import { useAddHabitMutation, useEditHabitMutation } from '../../../services/resources/habitsApi';
 import { useGetHabitSectionsQuery } from '../../../services/resources/habitSectionsApi';
-import { HADES_KEEPSAKE_ICON_URLS } from '../../../utils/hadesIcons.utils';
 import DropdownHabitIcons from '../../Dropdown/DropdownHabitIcons';
+import { HADES_KEEPSAKE_ICON_URLS } from '../../../utils/hadesIcons/keepsake';
 
 const DEFAULT_DAYS_OF_WEEK = [
 	{ fullName: 'Monday', shortName: 'Mon', selected: true },
@@ -189,7 +189,7 @@ const ModalAddHabit: React.FC = () => {
 									className="flex items-end cursor-pointer group"
 									onClick={() => setIsDropdownHabitIconsVisible(!isDropdownHabitIconsVisible)}
 								>
-									<img src={selectedIcon} className="w-[50px] h-[50px]" />
+									<img src={selectedIcon} className="h-[60px]" />
 									<Icon
 										name="edit"
 										customClass={
