@@ -1,9 +1,14 @@
 import { useEffect, useState } from 'react';
-import { areDatesEqual } from '../../utils/date.utils';
+import { areDatesEqual, formatCheckedInDayDate } from '../../utils/date.utils';
 import Icon from '../Icon';
 import classNames from 'classnames';
+import { useEditHabitMutation } from '../../services/resources/habitsApi';
+import useHandleError from '../../hooks/useHandleError';
 
-const HabitCalendar = ({ currentDate, setCurrentDate }) => {
+const HabitCalendar = ({ habit, currentDate, setCurrentDate }) => {
+	const handleError = useHandleError();
+	const [editHabit] = useEditHabitMutation();
+
 	function getCalendarMonth(year, month) {
 		const calendar = [];
 		const firstDayOfMonth = new Date(year, month, 1);
@@ -40,7 +45,9 @@ const HabitCalendar = ({ currentDate, setCurrentDate }) => {
 
 	const DayCircle = ({ day, index }) => {
 		// TODO: Currently, this does work on the Frontend but changed this "checked" to also check for the backend first to see if it's been initially checked.
-		const [isChecked, setIsChecked] = useState(false);
+		const checkedInDayKey = formatCheckedInDayDate(day);
+		const checkedInDay = habit.checkedInDays[checkedInDayKey];
+		const [isChecked, setIsChecked] = useState(checkedInDay && checkedInDay.isAchieved ? true : false);
 
 		const isCurrentMonth = day.getMonth() === currentDate.getMonth();
 		const isDayToday = areDatesEqual(new Date(), day);
@@ -61,10 +68,42 @@ const HabitCalendar = ({ currentDate, setCurrentDate }) => {
 		}
 
 		const handleClick = () => {
-			// setCurrentDate(new Date(day.getFullYear(), day.getMonth(), 1));
+			// If it's currently checked, then we need to uncheck it (set it to null)
+			if (isChecked) {
+				const currentCheckedInDay = habit.checkedInDays[checkedInDayKey];
 
+				payload = {
+					checkedInDays: {
+						...habit.checkedInDays,
+						[checkedInDayKey]: currentCheckedInDay
+							? { ...currentCheckedInDay, isAchieved: null }
+							: { isAchieved: new Date() },
+					},
+				};
+			}
+
+			const currentCheckedInDay = habit.checkedInDays[checkedInDayKey];
+			const newAchievedValue = isChecked ? null : new Date();
+
+			const payload = {
+				checkedInDays: {
+					...habit.checkedInDays,
+					[checkedInDayKey]: currentCheckedInDay
+						? { ...currentCheckedInDay, isAchieved: newAchievedValue }
+						: { isAchieved: new Date() },
+				},
+			};
+
+			// setCurrentDate(new Date(day.getFullYear(), day.getMonth(), 1));
 			// TODO: Make API Call to check or uncheck the habit for the chosen day.
 			setIsChecked(!isChecked);
+
+			console.log(payload);
+			debugger;
+
+			handleError(async () => {
+				await editHabit({ habitId: habit._id, payload }).unwrap();
+			});
 		};
 
 		return (

@@ -56,7 +56,7 @@ const HabitDetails = () => {
 				</div>
 				<div className="flex flex-col gap-3 overflow-auto gray-scrollbar pb-10">
 					<OverviewStatsSection />
-					<HabitCalendar currentDate={currentDate} setCurrentDate={setCurrentDate} />
+					<HabitCalendar habit={habit} currentDate={currentDate} setCurrentDate={setCurrentDate} />
 					<HabitLogSection currentDate={currentDate} />
 				</div>
 			</div>

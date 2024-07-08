@@ -253,3 +253,7 @@ export const formatDateBasedOnYear = (inputDate) => {
 		return inputDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
 	}
 };
+
+export const formatCheckedInDayDate = (inputDate) => {
+	return inputDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+};
