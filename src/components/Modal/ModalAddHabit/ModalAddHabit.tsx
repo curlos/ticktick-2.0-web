@@ -86,9 +86,10 @@ const ModalAddHabit: React.FC = () => {
 		if (editingExistingHabit) {
 			const habit = editingExistingHabit;
 
-			const { name, frequency, goal, startDate, goalDays, habitSectionId, reminders } = habit;
+			const { name, frequency, goal, startDate, goalDays, habitSectionId, reminders, icon } = habit;
 
 			setName(name);
+			setSelectedIcon(icon ? icon : HADES_KEEPSAKE_ICON_URLS[13]);
 
 			// States - Frequency Section
 			setSelectedInterval(
@@ -128,6 +129,7 @@ const ModalAddHabit: React.FC = () => {
 
 	const resetAllStates = () => {
 		setName('');
+		setSelectedIcon(HADES_KEEPSAKE_ICON_URLS[13]);
 
 		// States - Frequency Section
 		setSelectedInterval('Daily');
@@ -287,10 +289,8 @@ const ModalAddHabit: React.FC = () => {
 									goalDays: goalDays,
 									habitSectionId: section._id,
 									reminders: reminderList,
+									icon: selectedIcon,
 								};
-
-								console.log(payload);
-								debugger;
 
 								handleError(async () => {
 									if (editingExistingHabit) {

@@ -143,7 +143,7 @@ const HabitCard = ({ habit, viewType }) => {
 	const navigate = useNavigate();
 	const { habitId } = useParams();
 
-	const { name } = habit;
+	const { name, icon } = habit;
 	const lastSevenDays = getLast7Days();
 
 	return (
@@ -163,7 +163,7 @@ const HabitCard = ({ habit, viewType }) => {
 		>
 			<div className="flex items-center gap-2">
 				<div>
-					<img src="/Food.webp" alt="" className="h-[40px]" />
+					<img src={icon ? icon : '/Food.webp'} alt="" className="h-[40px]" />
 				</div>
 
 				<div>
