@@ -24,7 +24,7 @@ const AlertFlagged = () => {
 			// Set a timer to hide the alert after 1 second
 			const timer = setTimeout(() => {
 				dispatch(setAlertState({ alertId: 'AlertFlagged', isOpen: false }));
-			}, 1500);
+			}, 2500);
 			return () => clearTimeout(timer);
 		}
 	}, [isOpen]);

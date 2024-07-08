@@ -13,6 +13,7 @@ import {
 } from '../../../services/resources/habitsApi';
 import DropdownStartFocus from '../DropdownTaskOptions/DropdownStartFocus';
 import useHandleError from '../../../hooks/useHandleError';
+import classNames from 'classnames';
 
 interface DropdownHabitOptionsProps extends DropdownProps {
 	habit: Object;
@@ -20,11 +21,19 @@ interface DropdownHabitOptionsProps extends DropdownProps {
 
 // TODO: CHANGE EVERYTHING HERE FROM TASK TO HABIT RELATED
 
-const DropdownHabitOptions: React.FC<DropdownHabitOptionsProps> = ({ toggleRef, isVisible, setIsVisible, habit }) => {
+const DropdownHabitOptions: React.FC<DropdownHabitOptionsProps> = ({
+	toggleRef,
+	isVisible,
+	setIsVisible,
+	habit,
+	onCloseContextMenu,
+	customClasses,
+	customStyling,
+}) => {
 	const handleError = useHandleError();
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
-	const { projectId } = useParams();
+	const { habitId } = useParams();
 
 	// Habits
 	const { data: fetchedHabits, isLoading: isLoadingGetHabits, error: errorGetHabits } = useGetHabitsQuery();
@@ -37,6 +46,12 @@ const DropdownHabitOptions: React.FC<DropdownHabitOptionsProps> = ({ toggleRef, 
 
 	const dropdownStartFocusRef = useRef(null);
 
+	const handleCloseContextMenu = () => {
+		if (onCloseContextMenu) {
+			onCloseContextMenu();
+		}
+	};
+
 	const handleArchive = () => {
 		handleError(async () => {
 			const isDeletedTime = new Date().toISOString();
@@ -46,6 +61,7 @@ const DropdownHabitOptions: React.FC<DropdownHabitOptionsProps> = ({ toggleRef, 
 				value: !habit.isArchived ? isDeletedTime : null,
 			}).unwrap();
 			setIsVisible(false);
+			handleCloseContextMenu();
 
 			// Only show the alert if the task is about to be archived and we want to give the user the option to undo the archival.
 			if (!habit.isArchived) {
@@ -60,9 +76,9 @@ const DropdownHabitOptions: React.FC<DropdownHabitOptionsProps> = ({ toggleRef, 
 					})
 				);
 
-				navigate(`/habits/archived/${habit._id}`);
+				navigate(`/habits/${habitId !== habit._id ? habitId : ''}`);
 			} else {
-				navigate(`/habits/${habit._id}`);
+				navigate(`/habits/archived/${habitId !== habit._id ? habitId : ''}`);
 			}
 		});
 	};
@@ -71,23 +87,31 @@ const DropdownHabitOptions: React.FC<DropdownHabitOptionsProps> = ({ toggleRef, 
 		handleError(async () => {
 			await permanentlyDeleteHabit({ habitId: habit._id }).unwrap();
 			setIsVisible(false);
+			handleCloseContextMenu();
 			navigate('/habits');
 		});
 	};
 
 	const { isArchived } = habit;
 
+	console.log(habit);
+
 	return (
 		<Dropdown
 			toggleRef={toggleRef}
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
-			customClasses={'shadow-2xl border border-color-gray-200 rounded ml-[-210px]'}
+			customClasses={classNames(
+				'shadow-2xl border border-color-gray-200 rounded ml-[-210px]',
+				customClasses ? customClasses : ''
+			)}
+			customStyling={customStyling ? customStyling : null}
 		>
 			<div className="w-[232px] p-1 rounded text-[13px]" onClick={(e) => e.stopPropagation()}>
 				<div
 					className="p-1 flex items-center gap-[2px] hover:bg-color-gray-300 cursor-pointer"
 					onClick={() => {
+						handleCloseContextMenu();
 						dispatch(setModalState({ modalId: 'ModalAddHabit', isOpen: true, props: { habit } }));
 					}}
 				>

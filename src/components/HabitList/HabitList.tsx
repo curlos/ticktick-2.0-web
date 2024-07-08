@@ -8,6 +8,7 @@ import { areDatesEqual } from '../../utils/date.utils';
 import { useGetHabitsQuery } from '../../services/resources/habitsApi';
 import { useGetHabitSectionsQuery } from '../../services/resources/habitSectionsApi';
 import { useNavigate, useParams } from 'react-router';
+import ContextMenuHabitActions from '../ContextMenu/ContextMenuHabitActions';
 
 const HabitList = () => {
 	// TODO: Use last seven days to find which habits have been completed in those 7 days
@@ -142,75 +143,105 @@ const HabitListByCategory = ({ habitSection, habitsForThisSection, viewType }) =
 const HabitCard = ({ habit, viewType }) => {
 	const navigate = useNavigate();
 	const { habitId } = useParams();
-
 	const { name, icon } = habit;
 	const lastSevenDays = getLast7Days();
 
-	return (
-		<div
-			className={classNames(
-				'bg-color-gray-600 rounded-lg p-3 cursor-pointer border-2',
-				habitId && habit._id === habitId ? 'border-blue-500' : 'border-transparent',
-				viewType === 'grid' ? 'space-y-4' : 'flex justify-between items-center'
-			)}
-			onClick={() => {
-				if (habit.isArchived) {
-					navigate(`/habits/archived/${habit._id}`);
-				} else {
-					navigate(`/habits/${habit._id}`);
-				}
-			}}
-		>
-			<div className="flex items-center gap-2">
-				<div>
-					<img src={icon ? icon : '/Food.webp'} alt="" className="h-[40px]" />
-				</div>
+	const [contextMenu, setContextMenu] = useState(null);
 
-				<div>
-					<div>{name}</div>
-					<div className="flex items-center gap-2">
-						<div className="flex gap-1">
-							<Icon name="bolt" fill={1} customClass={'text-cyan-400 !text-[18px] cursor-pointer'} />
-							<div className="text-color-gray-100">1 Day</div>
-						</div>
-						<div className="flex gap-1">
-							<Icon
-								name="local_fire_department"
-								fill={1}
-								customClass={'text-orange-400 !text-[18px] cursor-pointer'}
-							/>
-							<div className="text-color-gray-100">1 Day</div>
+	const handleContextMenu = (event) => {
+		event.preventDefault(); // Prevent the default context menu
+
+		setContextMenu({
+			xPos: event.pageX, // X coordinate of the mouse pointer
+			yPos: event.pageY, // Y coordinate of the mouse pointer
+		});
+
+		// navigate(`/habits/${habit._id}`);
+	};
+
+	const handleClose = () => {
+		setContextMenu(null);
+	};
+
+	return (
+		<div>
+			<div
+				onContextMenu={handleContextMenu}
+				className={classNames(
+					'bg-color-gray-600 rounded-lg p-3 cursor-pointer border-2',
+					habitId && habit._id === habitId ? 'border-blue-500' : 'border-transparent',
+					viewType === 'grid' ? 'space-y-4' : 'flex justify-between items-center'
+				)}
+				onClick={() => {
+					if (habit.isArchived) {
+						navigate(`/habits/archived/${habit._id}`);
+					} else {
+						navigate(`/habits/${habit._id}`);
+					}
+				}}
+			>
+				<div className="flex items-center gap-2">
+					<div>
+						<img src={icon ? icon : '/Food.webp'} alt="" className="h-[40px]" />
+					</div>
+
+					<div>
+						<div>{name}</div>
+						<div className="flex items-center gap-2">
+							<div className="flex gap-1">
+								<Icon name="bolt" fill={1} customClass={'text-cyan-400 !text-[18px] cursor-pointer'} />
+								<div className="text-color-gray-100">1 Day</div>
+							</div>
+							<div className="flex gap-1">
+								<Icon
+									name="local_fire_department"
+									fill={1}
+									customClass={'text-orange-400 !text-[18px] cursor-pointer'}
+								/>
+								<div className="text-color-gray-100">1 Day</div>
+							</div>
 						</div>
 					</div>
 				</div>
+
+				{!habit.isArchived && (
+					<div
+						className={classNames('flex items-center gap-2', viewType === 'grid' ? 'justify-between' : '')}
+					>
+						{lastSevenDays.map((day, i) => {
+							// TODO: This "isChecked" logic is made up for now by me and not real. It's just meant to simulate the scenario where it's not checked and to render that. Remove after real backend data comes in.
+							const isChecked = i !== 0 && i !== 2;
+
+							return (
+								<div
+									key={day}
+									className={classNames(
+										'h-[20px] w-[20px] rounded-full flex justify-center items-center',
+										isChecked ? 'bg-blue-500' : 'bg-color-gray-100/30'
+									)}
+								>
+									<Icon
+										name="check"
+										fill={1}
+										customClass={classNames(
+											'text-white !text-[18px] cursor-pointer',
+											!isChecked ? 'invisible' : ''
+										)}
+									/>
+								</div>
+							);
+						})}
+					</div>
+				)}
 			</div>
 
-			{!habit.isArchived && (
-				<div className={classNames('flex items-center gap-2', viewType === 'grid' ? 'justify-between' : '')}>
-					{lastSevenDays.map((day, i) => {
-						// TODO: This "isChecked" logic is made up for now by me and not real. It's just meant to simulate the scenario where it's not checked and to render that. Remove after real backend data comes in.
-						const isChecked = i !== 0 && i !== 2;
-
-						return (
-							<div
-								key={day}
-								className={classNames(
-									'h-[20px] w-[20px] rounded-full flex justify-center items-center',
-									isChecked ? 'bg-blue-500' : 'bg-color-gray-100/30'
-								)}
-							>
-								<Icon
-									name="check"
-									fill={1}
-									customClass={classNames(
-										'text-white !text-[18px] cursor-pointer',
-										!isChecked ? 'invisible' : ''
-									)}
-								/>
-							</div>
-						);
-					})}
-				</div>
+			{contextMenu && (
+				<ContextMenuHabitActions
+					xPos={contextMenu.xPos}
+					yPos={contextMenu.yPos}
+					onClose={handleClose}
+					habit={habit}
+				/>
 			)}
 		</div>
 	);
