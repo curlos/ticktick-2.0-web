@@ -59,31 +59,6 @@ const DropdownHabitIcons: React.FC<DropdownHabitIconsProps> = ({
 		setFilteredIconList(searchedItems.map((result) => result.item));
 	}, 1000);
 
-	const IconList = ({ iconList }) => (
-		<div className="grid grid-cols-6 gap-2 overflow-auto gray-scrollbar max-h-[200px] pb-2">
-			{iconList.map((icon) => {
-				const iconUrl = typeof icon === 'string' ? icon : icon.name;
-				const isSelected = iconUrl === localSelectedIcon;
-
-				return (
-					<div className="cursor-pointer flex items-end" onClick={() => setLocalSelectedIcon(iconUrl)}>
-						<img src={iconUrl} className="w-[60px]" />
-						{isSelected && (
-							<div className="ml-[-20px]">
-								<div className="bg-blue-500 rounded-full h-[20px] w-[20px] flex items-center justify-center">
-									<Icon
-										name="check"
-										customClass={'!text-[20px] text-white group-hover:text-white cursor-pointer'}
-									/>
-								</div>
-							</div>
-						)}
-					</div>
-				);
-			})}
-		</div>
-	);
-
 	return (
 		<Dropdown
 			toggleRef={toggleRef}
@@ -118,9 +93,21 @@ const DropdownHabitIcons: React.FC<DropdownHabitIconsProps> = ({
 						))}
 					</div>
 				)}
-				{!searchText && <IconList iconList={selectedIconList} />}
+				{!searchText && (
+					<IconList
+						iconList={selectedIconList}
+						localSelectedIcon={localSelectedIcon}
+						setLocalSelectedIcon={setLocalSelectedIcon}
+					/>
+				)}
 
-				{searchText && <IconList iconList={filteredIconList} />}
+				{searchText && (
+					<IconList
+						iconList={filteredIconList}
+						localSelectedIcon={localSelectedIcon}
+						setLocalSelectedIcon={setLocalSelectedIcon}
+					/>
+				)}
 
 				<div className="pt-3 border-t border-color-gray-200 flex gap-2">
 					<button
@@ -164,6 +151,37 @@ const TopButton = ({ name, selectedIconSection, setSelectedIconSection, setSelec
 		</div>
 	);
 };
+
+const IconList = ({ iconList, localSelectedIcon, setLocalSelectedIcon }) => (
+	<div className="grid grid-cols-6 gap-2 overflow-auto gray-scrollbar max-h-[200px] pb-2">
+		{iconList.map((icon) => {
+			const iconUrl = typeof icon === 'string' ? icon : icon.name;
+			const isSelected = iconUrl === localSelectedIcon;
+
+			return (
+				<div
+					className="cursor-pointer flex items-end"
+					onClick={(e) => {
+						e.stopPropagation();
+						setLocalSelectedIcon(iconUrl);
+					}}
+				>
+					<img src={iconUrl} className="w-[60px]" />
+					{isSelected && (
+						<div className="ml-[-20px]">
+							<div className="bg-blue-500 rounded-full h-[20px] w-[20px] flex items-center justify-center">
+								<Icon
+									name="check"
+									customClass={'!text-[20px] text-white group-hover:text-white cursor-pointer'}
+								/>
+							</div>
+						</div>
+					)}
+				</div>
+			);
+		})}
+	</div>
+);
 
 const getHadesIcons = (iconSectionName) => {
 	switch (iconSectionName.toLowerCase()) {
