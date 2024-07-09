@@ -9,6 +9,7 @@ import { useGetHabitsQuery } from '../../services/resources/habitsApi';
 import { useGetHabitSectionsQuery } from '../../services/resources/habitSectionsApi';
 import { useNavigate, useParams } from 'react-router';
 import ContextMenuHabitActions from '../ContextMenu/ContextMenuHabitActions';
+import { getCheckInsPerMonth, getStreaks } from '../../utils/habits.util';
 
 const HabitList = () => {
 	// TODO: Use last seven days to find which habits have been completed in those 7 days
@@ -163,6 +164,12 @@ const HabitCard = ({ habit, viewType }) => {
 		setContextMenu(null);
 	};
 
+	const result = getStreaks(habit);
+	const { longestStreak, currentStreak } = result;
+
+	// const checkInsPerMonth = getCheckInsPerMonth(habit);
+	// console.log(checkInsPerMonth);
+
 	return (
 		<div>
 			<div
@@ -189,8 +196,14 @@ const HabitCard = ({ habit, viewType }) => {
 						<div>{name}</div>
 						<div className="flex items-center gap-2">
 							<div className="flex gap-1">
-								<Icon name="bolt" fill={1} customClass={'text-cyan-400 !text-[18px] cursor-pointer'} />
-								<div className="text-color-gray-100">1 Day</div>
+								<Icon
+									name="sword_rose"
+									fill={1}
+									customClass={'text-purple-400 !text-[18px] cursor-pointer'}
+								/>
+								<div className="text-color-gray-100">
+									{longestStreak} {longestStreak > 1 ? 'Days' : 'Day'}
+								</div>
 							</div>
 							<div className="flex gap-1">
 								<Icon
@@ -198,7 +211,9 @@ const HabitCard = ({ habit, viewType }) => {
 									fill={1}
 									customClass={'text-orange-400 !text-[18px] cursor-pointer'}
 								/>
-								<div className="text-color-gray-100">1 Day</div>
+								<div className="text-color-gray-100">
+									{currentStreak} {currentStreak > 1 ? 'Days' : 'Day'}
+								</div>
 							</div>
 						</div>
 					</div>

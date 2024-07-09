@@ -171,8 +171,6 @@ const ModalAddHabit: React.FC = () => {
 
 	const editingExistingHabit = habit;
 
-	console.log(everyXDays);
-
 	return (
 		<Modal isOpen={isOpen} onClose={closeModal} positionClasses="!items-start mt-[150px]" customClasses="my-[2px]">
 			<div className="rounded-xl shadow-lg bg-color-gray-600">
@@ -296,9 +294,6 @@ const ModalAddHabit: React.FC = () => {
 
 								handleError(async () => {
 									dispatch(setModalState({ modalId: 'ModalAddHabit', isOpen: false }));
-
-									// console.log(payload);
-									// debugger;
 
 									if (editingExistingHabit) {
 										const { _id } = modal.props.habit;

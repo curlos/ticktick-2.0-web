@@ -1,8 +1,9 @@
 import classNames from 'classnames';
 import { useState } from 'react';
 import Icon from '../Icon';
+import { getAchievedDays, getCheckInsPerMonth, getStreaks } from '../../utils/habits.util';
 
-const OverviewStatsSection = () => {
+const OverviewStatsSection = ({ habit }) => {
 	const OverviewStatCard = ({
 		name,
 		iconName,
@@ -42,6 +43,13 @@ const OverviewStatsSection = () => {
 		);
 	};
 
+	const result = getStreaks(habit);
+	const { longestStreak, currentStreak } = result;
+	const totalCheckIns = getAchievedDays(habit);
+
+	const checkInsPerMonth = getCheckInsPerMonth(habit);
+	console.log(checkInsPerMonth);
+
 	return (
 		<div className="grid grid-cols-2 gap-3">
 			<OverviewStatCard name="Monthly Check-ins" iconName="check_circle" unitValue={1} unitType="Day" />
@@ -49,8 +57,8 @@ const OverviewStatsSection = () => {
 				name="Total Check-ins"
 				iconName="bolt"
 				iconColor="text-cyan-300"
-				unitValue={1}
-				unitType="Day"
+				unitValue={totalCheckIns}
+				unitType={totalCheckIns > 1 ? 'Days' : 'Day'}
 			/>
 			<OverviewStatCard
 				name="Monthly Check-in Rate"
@@ -63,8 +71,8 @@ const OverviewStatsSection = () => {
 				name="Current Streak"
 				iconName="local_fire_department"
 				iconColor="text-orange-400"
-				unitValue={1}
-				unitType="Day"
+				unitValue={currentStreak}
+				unitType={currentStreak > 1 ? 'Days' : 'Day'}
 				isCurrentStreak={true}
 			/>
 		</div>
