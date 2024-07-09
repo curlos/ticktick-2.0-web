@@ -41,9 +41,6 @@ const HabitDetails = () => {
 		setHabit(newHabit);
 	}, [habitId, habits, habitsById]);
 
-	console.log(habitId);
-	console.log(habit);
-
 	if (!habit) {
 		return <EmptyHabit />;
 	}

@@ -86,6 +86,9 @@ const ModalAddHabit: React.FC = () => {
 		if (editingExistingHabit) {
 			const habit = editingExistingHabit;
 
+			console.log(habit);
+			debugger;
+
 			const { name, frequency, goal, startDate, goalDays, habitSectionId, reminders, icon } = habit;
 
 			setName(name);
@@ -97,7 +100,7 @@ const ModalAddHabit: React.FC = () => {
 					? 'Daily'
 					: frequency.weekly.selected
 						? 'Weekly'
-						: frequency.internval.selected
+						: frequency.interval.selected
 							? 'Interval'
 							: 'Daily'
 			);
@@ -170,6 +173,8 @@ const ModalAddHabit: React.FC = () => {
 	} = modal;
 
 	const editingExistingHabit = habit;
+
+	console.log(everyXDays);
 
 	return (
 		<Modal isOpen={isOpen} onClose={closeModal} positionClasses="!items-start mt-[150px]" customClasses="my-[2px]">
@@ -267,11 +272,11 @@ const ModalAddHabit: React.FC = () => {
 										},
 										weekly: {
 											selected: selectedInterval.toLowerCase() === 'weekly',
-											daysPerWeek: Number,
+											daysPerWeek: Number(daysPerWeek),
 										},
 										interval: {
 											selected: selectedInterval.toLowerCase() === 'interval',
-											everyXDays: everyXDays,
+											everyXDays: Number(everyXDays),
 										},
 									},
 									goal: {
@@ -285,7 +290,7 @@ const ModalAddHabit: React.FC = () => {
 											whenChecking,
 										},
 									},
-									startDate,
+									startDate: startDate.toISOString(),
 									goalDays: goalDays,
 									habitSectionId: section._id,
 									reminders: reminderList,
@@ -293,6 +298,11 @@ const ModalAddHabit: React.FC = () => {
 								};
 
 								handleError(async () => {
+									dispatch(setModalState({ modalId: 'ModalAddHabit', isOpen: false }));
+
+									// console.log(payload);
+									// debugger;
+
 									if (editingExistingHabit) {
 										const { _id } = modal.props.habit;
 										await editHabit({ habitId: _id, payload }).unwrap();
@@ -303,7 +313,6 @@ const ModalAddHabit: React.FC = () => {
 
 									// Reset all the data to the defaults and close the modal
 									resetAllStates();
-									dispatch(setModalState({ modalId: 'ModalAddHabit', isOpen: false }));
 								});
 							}}
 						>

@@ -33,6 +33,30 @@ export const habitsApi = baseAPI.injectEndpoints({
 				method: 'PUT',
 				body: payload,
 			}),
+			// Adding optimistic update logic
+			// Adding optimistic update logic
+			onQueryStarted: async ({ habitId, payload }, { dispatch, queryFulfilled, getState }) => {
+				// Optimistically update the cache
+				const patchResult = dispatch(
+					habitsApi.util.updateQueryData('getHabits', undefined, (draft) => {
+						const habit = draft.habitsById[habitId];
+						if (habit) {
+							// Overwrite habit properties with those from payload
+							// This will update habit with all the properties from payload
+							// Existing properties in habit that are also in the payload will be overwritten
+							Object.assign(habit, payload);
+						}
+					})
+				);
+
+				try {
+					// Wait for the mutation to resolve
+					await queryFulfilled;
+				} catch {
+					// If the mutation fails, undo the optimistic update
+					patchResult.undo();
+				}
+			},
 			invalidatesTags: (result, error, habitId) => ['Habit', 'HabitSection'],
 		}),
 		flagHabit: builder.mutation({

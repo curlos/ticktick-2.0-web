@@ -94,8 +94,6 @@ const DropdownHabitOptions: React.FC<DropdownHabitOptionsProps> = ({
 
 	const { isArchived } = habit;
 
-	console.log(habit);
-
 	return (
 		<Dropdown
 			toggleRef={toggleRef}

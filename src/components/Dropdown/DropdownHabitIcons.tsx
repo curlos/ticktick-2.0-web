@@ -85,6 +85,7 @@ const DropdownHabitIcons: React.FC<DropdownHabitIconsProps> = ({
 					<div className="grid grid-cols-4 gap-3 mb-2">
 						{['Items', 'Keepsake', 'Fish', 'Contractor'].map((name) => (
 							<TopButton
+								key={name}
 								name={name}
 								selectedIconSection={selectedIconSection}
 								setSelectedIconSection={setSelectedIconSection}
@@ -160,6 +161,7 @@ const IconList = ({ iconList, localSelectedIcon, setLocalSelectedIcon }) => (
 
 			return (
 				<div
+					key={iconUrl}
 					className="cursor-pointer flex items-end"
 					onClick={(e) => {
 						e.stopPropagation();
