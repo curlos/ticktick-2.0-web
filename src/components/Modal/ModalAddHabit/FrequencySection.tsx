@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Icon from '../../Icon';
 import { DropdownProps } from '../../../interfaces/interfaces';
 import Dropdown from '../../Dropdown/Dropdown';
@@ -118,6 +118,26 @@ const DropdownFrequency: React.FC<DropdownFrequencyProps> = ({
 	const [localDaysOfWeek, setLocalDaysOfWeek] = useState(daysOfWeek);
 	const [localDaysPerWeek, setLocalDaysPerWeek] = useState(daysPerWeek);
 	const [localEveryXDays, setLocalEveryXDays] = useState(everyXDays);
+
+	useEffect(() => {
+		setLocalSelectedInterval(selectedInterval);
+	}, [selectedInterval]);
+
+	useEffect(() => {
+		setLocalDaysOfWeek(daysOfWeek);
+	}, [daysOfWeek]);
+
+	useEffect(() => {
+		setLocalDaysPerWeek(daysPerWeek);
+	}, [daysPerWeek]);
+
+	useEffect(() => {
+		setLocalEveryXDays(everyXDays);
+	}, [everyXDays]);
+
+	useEffect(() => {
+		setLocalEveryXDays(everyXDays);
+	}, [everyXDays]);
 
 	const TopButton = ({ name }) => {
 		const isSelected = localSelectedInterval.toLowerCase() === name.toLowerCase();

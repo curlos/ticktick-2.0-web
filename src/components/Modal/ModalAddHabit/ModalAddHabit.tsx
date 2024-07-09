@@ -86,9 +86,6 @@ const ModalAddHabit: React.FC = () => {
 		if (editingExistingHabit) {
 			const habit = editingExistingHabit;
 
-			console.log(habit);
-			debugger;
-
 			const { name, frequency, goal, startDate, goalDays, habitSectionId, reminders, icon } = habit;
 
 			setName(name);
@@ -293,7 +290,7 @@ const ModalAddHabit: React.FC = () => {
 									startDate: startDate.toISOString(),
 									goalDays: goalDays,
 									habitSectionId: section._id,
-									reminders: reminderList,
+									reminders: reminderList.map((reminder) => reminder.toISOString()),
 									icon: selectedIcon,
 								};
 

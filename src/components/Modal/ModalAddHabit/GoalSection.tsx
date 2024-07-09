@@ -17,7 +17,9 @@ const GoalSection = ({
 }) => {
 	const dropdownGoalRef = useRef(null);
 	const [isDropdownGoalVisible, setIsDropdownGoalVisible] = useState(false);
-	const [goalName, setGoalName] = useState('Achieve it all');
+	const [goalName, setGoalName] = useState(
+		goalType === 'reachCertainAmount' ? `${dailyValue} ${dailyUnit}/Day` : 'Achieve it all'
+	);
 
 	return (
 		<div>
@@ -79,11 +81,7 @@ const DropdownGoal: React.FC<DropdownGoalProps> = ({
 }) => {
 	const dropdownReachAmountRef = useRef(null);
 	const [isDropdownReachAmountVisible, setIsDropdownReachAmountVisible] = useState(false);
-
 	const canAccessDropdownReachAmount = goalType === 'reachCertainAmount';
-
-	const [localDailyValue, setLocalDailyValue] = useState(1);
-	const [localDailyUnit, setLocalDailyUnit] = useState('Count');
 
 	const getGoalName = () => (goalType === 'reachCertainAmount' ? `${dailyValue} ${dailyUnit}/Day` : 'Achieve it all');
 

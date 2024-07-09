@@ -143,7 +143,7 @@ const ReminderSection = ({ reminderList, setReminderList }) => {
 				<div className="flex-1">
 					<div className="grid grid-cols-3 gap-2">
 						{reminderList.map((reminder) => (
-							<TimeOptionWithDropdown key={reminder.toLocaleDateString()} reminderTime={reminder} />
+							<TimeOptionWithDropdown key={reminder.toISOString()} reminderTime={reminder} />
 						))}
 
 						{/* New Reminder with "+" icon. */}
