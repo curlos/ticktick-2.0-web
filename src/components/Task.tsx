@@ -1,13 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Icon from './Icon';
 import { TaskObj } from '../interfaces/interfaces';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PRIORITIES } from '../utils/priorities.utils';
 import classNames from 'classnames';
 import TaskDueDateText from './TaskDueDateText';
-import ContextMenuTaskDetails from './ContextMenu/ContextMenuTaskDetails';
 import { useGetTasksQuery } from '../services/resources/tasksApi';
 import { useGetProjectsQuery } from '../services/resources/projectsApi';
+import ContextMenuGeneric from './ContextMenu/ContextMenuGeneric';
+import DropdownTaskDetails from './Dropdown/DropdownTaskDetails';
 
 interface TaskProps {
 	taskId: string;
@@ -38,6 +39,9 @@ const Task: React.FC<TaskProps> = ({
 	let { taskId: taskIdFromUrl } = useParams();
 	const [project, setProject] = useState(null);
 	const [taskContextMenu, setTaskContextMenu] = useState(null);
+
+	const [isDropdownTaskDetailsVisible, setIsDropdownTaskDetailsVisible] = useState(true);
+	const dropdownTaskDetailsRef = useRef(null);
 
 	const handleContextMenu = (event) => {
 		event.preventDefault(); // Prevent the default context menu
@@ -204,13 +208,27 @@ const Task: React.FC<TaskProps> = ({
 			)}
 
 			{taskContextMenu && (
-				<ContextMenuTaskDetails
-					taskContextMenu={taskContextMenu}
+				<ContextMenuGeneric
 					xPos={taskContextMenu.xPos}
 					yPos={taskContextMenu.yPos}
 					onClose={handleClose}
-					task={task}
-				/>
+					isDropdownVisible={isDropdownTaskDetailsVisible}
+					setIsDropdownVisible={setIsDropdownTaskDetailsVisible}
+				>
+					<DropdownTaskDetails
+						toggleRef={dropdownTaskDetailsRef}
+						isVisible={true}
+						setIsVisible={setIsDropdownTaskDetailsVisible}
+						customClasses=" !ml-[0px] mt-[15px]"
+						customStyling={{
+							position: 'absolute',
+							top: `${taskContextMenu.yPos}px`,
+							left: `${taskContextMenu.xPos}px`,
+						}}
+						onCloseContextMenu={handleClose}
+						task={task}
+					/>
+				</ContextMenuGeneric>
 			)}
 		</div>
 	);
