@@ -3,7 +3,7 @@ import Icon from '../Icon';
 import HeaderSection from './HeaderSection';
 import { CircularProgressbarWithChildren, buildStyles } from 'react-circular-progressbar';
 import classNames from 'classnames';
-import { getDayNameAbbreviation, getLast7Days, getMonthAndDay } from '../../utils/date.utils';
+import { formatCheckedInDayDate, getDayNameAbbreviation, getLast7Days, getMonthAndDay } from '../../utils/date.utils';
 import { areDatesEqual } from '../../utils/date.utils';
 import { useGetHabitsQuery } from '../../services/resources/habitsApi';
 import { useGetHabitSectionsQuery } from '../../services/resources/habitSectionsApi';
@@ -14,6 +14,7 @@ import { getCheckInsPerMonth, getStreaks } from '../../utils/habits.util';
 const HabitList = () => {
 	// TODO: Use last seven days to find which habits have been completed in those 7 days
 	const lastSevenDays = getLast7Days();
+	const formattedLastSevenDays = lastSevenDays.map((day) => formatCheckedInDayDate(day));
 	const [selectedDay, setSelectedDay] = useState(lastSevenDays[lastSevenDays.length - 1]);
 	// Can be "list" or "grid"
 	const [viewType, setViewType] = useState('list');
@@ -95,6 +96,7 @@ const HabitList = () => {
 								habitSection={habitSection}
 								habitsForThisSection={habitsForThisSection}
 								viewType={viewType}
+								formattedLastSevenDays={formattedLastSevenDays}
 							/>
 						);
 					})}
@@ -115,7 +117,7 @@ const HabitList = () => {
 	);
 };
 
-const HabitListByCategory = ({ habitSection, habitsForThisSection, viewType }) => {
+const HabitListByCategory = ({ habitSection, habitsForThisSection, viewType, formattedLastSevenDays }) => {
 	const { name } = habitSection;
 
 	return (
@@ -134,18 +136,25 @@ const HabitListByCategory = ({ habitSection, habitsForThisSection, viewType }) =
 
 			<div className={classNames('mt-3 grid gap-3', viewType === 'grid' ? 'grid-cols-2' : '')}>
 				{habitsForThisSection.map(
-					(habit) => habit && <HabitCard key={habit._id} habit={habit} viewType={viewType} />
+					(habit) =>
+						habit && (
+							<HabitCard
+								key={habit._id}
+								habit={habit}
+								viewType={viewType}
+								formattedLastSevenDays={formattedLastSevenDays}
+							/>
+						)
 				)}
 			</div>
 		</div>
 	);
 };
 
-const HabitCard = ({ habit, viewType }) => {
+const HabitCard = ({ habit, viewType, formattedLastSevenDays }) => {
 	const navigate = useNavigate();
 	const { habitId } = useParams();
-	const { name, icon } = habit;
-	const lastSevenDays = getLast7Days();
+	const { name, icon, checkedInDays } = habit;
 
 	const [contextMenu, setContextMenu] = useState(null);
 
@@ -169,6 +178,8 @@ const HabitCard = ({ habit, viewType }) => {
 
 	// const checkInsPerMonth = getCheckInsPerMonth(habit);
 	// console.log(checkInsPerMonth);
+	console.log(formattedLastSevenDays);
+	console.log(checkedInDays);
 
 	return (
 		<div>
@@ -223,13 +234,15 @@ const HabitCard = ({ habit, viewType }) => {
 					<div
 						className={classNames('flex items-center gap-2', viewType === 'grid' ? 'justify-between' : '')}
 					>
-						{lastSevenDays.map((day, i) => {
+						{formattedLastSevenDays.map((day, i) => {
+							console.log(day);
+
 							// TODO: This "isChecked" logic is made up for now by me and not real. It's just meant to simulate the scenario where it's not checked and to render that. Remove after real backend data comes in.
-							const isChecked = i !== 0 && i !== 2;
+							const isChecked = checkedInDays[day]?.isAchieved;
 
 							return (
 								<div
-									key={day}
+									key={`${habit._id} ${day}`}
 									className={classNames(
 										'h-[20px] w-[20px] rounded-full flex justify-center items-center',
 										isChecked ? 'bg-blue-500' : 'bg-color-gray-100/30'

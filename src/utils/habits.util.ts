@@ -21,7 +21,7 @@ export const getStreaks = (habit) => {
 		if (previousDate && entry.date - previousDate === 86400000) {
 			currentStreak++;
 		} else {
-			currentStreak = 1; // Reset current streak if not consecutive
+			currentStreak = 1; // Reset current streak if dates are not consecutive
 		}
 
 		// Update longest streak found
@@ -30,12 +30,21 @@ export const getStreaks = (habit) => {
 		}
 
 		// Determine if the current streak is active
-		if (entry.date.getTime() === today.getTime() - 86400000) {
+		if (entry.date.getTime() === today.getTime() || entry.date.getTime() === today.getTime() - 86400000) {
 			isCurrentStreakActive = true;
 		}
 
 		previousDate = entry.date; // Update the previous date to the current date
 	});
+
+	// Check if today is checked in but not necessarily part of a longer streak
+	if (sortedDates.length > 0 && sortedDates[sortedDates.length - 1].date.getTime() === today.getTime()) {
+		isCurrentStreakActive = true;
+	} else if (sortedDates.length === 0 && checkedInDays[today.toISOString().slice(0, 10)]) {
+		// If no sorted dates but today is marked as achieved, count it as a streak of 1
+		currentStreak = 1;
+		isCurrentStreakActive = true;
+	}
 
 	return {
 		longestStreak,
