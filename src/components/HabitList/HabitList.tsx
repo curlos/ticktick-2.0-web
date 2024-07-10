@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Icon from '../Icon';
 import HeaderSection from './HeaderSection';
 import { CircularProgressbarWithChildren, buildStyles } from 'react-circular-progressbar';
@@ -12,6 +12,7 @@ import ContextMenuHabitActions from '../ContextMenu/ContextMenuHabitActions';
 import { getCheckInsPerMonth, getStreaks } from '../../utils/habits.util';
 import Dropdown from '../Dropdown/Dropdown';
 import useHandleError from '../../hooks/useHandleError';
+import AlertTooltip from '../Alert/AlertTooltip';
 
 const HabitList = () => {
 	// TODO: Use last seven days to find which habits have been completed in those 7 days
@@ -165,8 +166,6 @@ const HabitListByCategory = ({ habitSection, habitsForThisSection, viewType, for
 const HabitCard = ({ habit, viewType, formattedLastSevenDays, selectedDay }) => {
 	const navigate = useNavigate();
 	const { habitId } = useParams();
-	const handleError = useHandleError();
-	const [editHabit] = useEditHabitMutation();
 	const { name, icon, checkedInDays } = habit;
 
 	const [contextMenu, setContextMenu] = useState(null);
@@ -193,86 +192,6 @@ const HabitCard = ({ habit, viewType, formattedLastSevenDays, selectedDay }) => 
 
 	const result = getStreaks(habit);
 	const { longestStreak, currentStreak } = result;
-
-	const DayCheckCircle = ({ isChecked, day }) => {
-		const checkedInDayKey = day;
-		const [isTooltipDayVisible, setIsTooltipDayVisible] = useState(false);
-
-		const tooltipDayRef = useRef(null);
-
-		const handleClick = () => {
-			let payload = null;
-			// If it's currently checked, then we need to uncheck it (set it to null)
-			if (isChecked) {
-				const currentCheckedInDay = habit.checkedInDays[checkedInDayKey];
-
-				payload = {
-					checkedInDays: {
-						...habit.checkedInDays,
-						[checkedInDayKey]: currentCheckedInDay
-							? { ...currentCheckedInDay, isAchieved: null }
-							: { isAchieved: new Date().toISOString() },
-					},
-				};
-			}
-
-			const currentCheckedInDay = habit.checkedInDays[checkedInDayKey];
-			const newAchievedValue = isChecked ? null : new Date().toISOString();
-
-			payload = {
-				checkedInDays: {
-					...habit.checkedInDays,
-					[checkedInDayKey]: currentCheckedInDay
-						? { ...currentCheckedInDay, isAchieved: newAchievedValue }
-						: { isAchieved: new Date().toISOString() },
-				},
-			};
-
-			handleError(async () => {
-				await editHabit({ habitId: habit._id, payload }).unwrap();
-			});
-		};
-
-		return (
-			<div className="relative">
-				<div
-					ref={tooltipDayRef}
-					key={`${habit._id} ${day}`}
-					className={classNames(
-						'h-[20px] w-[20px] rounded-full flex justify-center items-center',
-						isChecked ? 'bg-blue-500' : 'bg-color-gray-100/30'
-					)}
-					onClick={handleClick}
-					onMouseOver={() => setIsTooltipDayVisible(true)}
-					onMouseLeave={() => setIsTooltipDayVisible(false)}
-				>
-					<Icon
-						name="check"
-						fill={1}
-						customClass={classNames(
-							'text-white !text-[18px] cursor-pointer',
-							!isChecked ? 'invisible' : ''
-						)}
-					/>
-				</div>
-
-				<Dropdown
-					toggleRef={tooltipDayRef}
-					isVisible={isTooltipDayVisible}
-					setIsVisible={setIsTooltipDayVisible}
-					customClasses={'!bg-black'}
-				>
-					<div className="p-2 text-[12px] text-nowrap">
-						{new Date(day).toLocaleDateString('en-US', {
-							weekday: 'short', // "Mon" for Monday
-							month: 'long', // "July"
-							day: 'numeric', // "8"
-						})}
-					</div>
-				</Dropdown>
-			</div>
-		);
-	};
 
 	const formattedSelectedDay = selectedDay && formatCheckedInDayDate(selectedDay);
 
@@ -370,12 +289,13 @@ const HabitCard = ({ habit, viewType, formattedLastSevenDays, selectedDay }) => 
 							<DayCheckCircle
 								isChecked={checkedInDays[formattedSelectedDay]?.isAchieved}
 								day={formattedSelectedDay}
+								habit={habit}
 							/>
 						) : (
 							formattedLastSevenDays.map((day, i) => {
 								const isChecked = checkedInDays[day]?.isAchieved;
 
-								return <DayCheckCircle isChecked={isChecked} day={day} />;
+								return <DayCheckCircle isChecked={isChecked} day={day} habit={habit} />;
 							})
 						)}
 					</div>
@@ -390,6 +310,99 @@ const HabitCard = ({ habit, viewType, formattedLastSevenDays, selectedDay }) => 
 					habit={habit}
 				/>
 			)}
+		</div>
+	);
+};
+
+const DayCheckCircle = ({ isChecked, day, habit }) => {
+	const handleError = useHandleError();
+	const [editHabit] = useEditHabitMutation();
+	const checkedInDayKey = day;
+	const [isTooltipDayVisible, setIsTooltipDayVisible] = useState(false);
+	const [isAlertTooltipOpen, setIsAlertTooltipOpen] = useState(false);
+
+	const tooltipDayRef = useRef(null);
+
+	const handleClick = () => {
+		let payload = null;
+		// If it's currently checked, then we need to uncheck it (set it to null)
+		if (isChecked) {
+			const currentCheckedInDay = habit.checkedInDays[checkedInDayKey];
+
+			payload = {
+				checkedInDays: {
+					...habit.checkedInDays,
+					[checkedInDayKey]: currentCheckedInDay
+						? { ...currentCheckedInDay, isAchieved: null }
+						: { isAchieved: new Date().toISOString() },
+				},
+			};
+		}
+
+		const currentCheckedInDay = habit.checkedInDays[checkedInDayKey];
+		const newAchievedValue = isChecked ? null : new Date().toISOString();
+
+		payload = {
+			checkedInDays: {
+				...habit.checkedInDays,
+				[checkedInDayKey]: currentCheckedInDay
+					? { ...currentCheckedInDay, isAchieved: newAchievedValue }
+					: { isAchieved: new Date().toISOString() },
+			},
+		};
+
+		if (!isChecked) {
+			setIsAlertTooltipOpen(true);
+		}
+
+		handleError(async () => {
+			await editHabit({ habitId: habit._id, payload }).unwrap();
+		});
+	};
+
+	return (
+		<div>
+			<AlertTooltip isOpen={isAlertTooltipOpen} setIsOpen={setIsAlertTooltipOpen}>
+				Done!
+			</AlertTooltip>
+
+			<div className="relative">
+				<div
+					ref={tooltipDayRef}
+					key={`${habit._id} ${day}`}
+					className={classNames(
+						'h-[20px] w-[20px] rounded-full flex justify-center items-center',
+						isChecked ? 'bg-blue-500' : 'bg-color-gray-100/30'
+					)}
+					onClick={handleClick}
+					// onMouseOver={() => setIsTooltipDayVisible(true)}
+					// onMouseLeave={() => setIsTooltipDayVisible(false)}
+				>
+					<Icon
+						name="check"
+						fill={1}
+						customClass={classNames(
+							'text-white !text-[18px] cursor-pointer',
+							!isChecked ? 'invisible' : ''
+						)}
+					/>
+				</div>
+
+				<Dropdown
+					toggleRef={tooltipDayRef}
+					isVisible={isTooltipDayVisible}
+					setIsVisible={setIsTooltipDayVisible}
+					customClasses={'!bg-black'}
+				>
+					<div className="p-2 text-[12px] text-nowrap">
+						{new Date(day).toLocaleDateString('en-US', {
+							weekday: 'short', // "Mon" for Monday
+							month: 'long', // "July"
+							day: 'numeric', // "8"
+						})}
+					</div>
+				</Dropdown>
+			</div>
 		</div>
 	);
 };

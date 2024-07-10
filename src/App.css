@@ -203,3 +203,14 @@
 .no-number-arrows {
   -moz-appearance: textfield;
 }
+
+.tooltip-triangle::after {
+    content: "";
+    position: absolute;
+    top: 100%; /* Adjusted to position below the tooltip */
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #3b82f6 transparent transparent transparent;
+}
