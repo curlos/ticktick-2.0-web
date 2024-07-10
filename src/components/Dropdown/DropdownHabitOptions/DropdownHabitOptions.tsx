@@ -110,6 +110,7 @@ const DropdownHabitOptions: React.FC<DropdownHabitOptionsProps> = ({
 					className="p-1 flex items-center gap-[2px] hover:bg-color-gray-300 cursor-pointer"
 					onClick={() => {
 						handleCloseContextMenu();
+						setIsVisible(false);
 						dispatch(setModalState({ modalId: 'ModalAddHabit', isOpen: true, props: { habit } }));
 					}}
 				>

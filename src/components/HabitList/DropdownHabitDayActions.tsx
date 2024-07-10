@@ -4,6 +4,8 @@ import Dropdown from '../Dropdown/Dropdown';
 import Icon from '../Icon';
 import useHandleError from '../../hooks/useHandleError';
 import { useEditHabitMutation } from '../../services/resources/habitsApi';
+import { setModalState } from '../../slices/modalSlice';
+import { useDispatch } from 'react-redux';
 
 interface IDropdownHabitDayActions extends DropdownProps {}
 
@@ -16,6 +18,7 @@ const DropdownHabitDayActions: React.FC<IDropdownHabitDayActions> = ({
 	habit,
 	checkedInDayKey,
 }) => {
+	const dispatch = useDispatch();
 	const handleError = useHandleError();
 	const [editHabit] = useEditHabitMutation();
 
@@ -38,10 +41,6 @@ const DropdownHabitDayActions: React.FC<IDropdownHabitDayActions> = ({
 					name={isChecked ? 'Unachieved' : 'Achieved'}
 					iconName={isChecked ? 'cancel' : 'check'}
 					onClick={() => {
-						// TODO: Edit the habit so that it's unachieved
-						console.log(checkedInDay);
-						debugger;
-
 						handleError(async () => {
 							setIsVisible(false);
 
@@ -65,6 +64,18 @@ const DropdownHabitDayActions: React.FC<IDropdownHabitDayActions> = ({
 					iconName="edit"
 					onClick={() => {
 						// TODO: Open the "Habit Log" modal where the habit's log for that day can be added or edited.
+						setIsVisible(false);
+						dispatch(
+							setModalState({
+								modalId: 'ModalAddHabitLog',
+								isOpen: true,
+								props: {
+									habit,
+									checkedInDay,
+									checkedInDayKey,
+								},
+							})
+						);
 					}}
 				/>
 			</div>

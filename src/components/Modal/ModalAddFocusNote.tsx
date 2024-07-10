@@ -3,7 +3,6 @@ import Icon from '../Icon';
 import Modal from './Modal';
 import TextareaAutosize from 'react-textarea-autosize';
 import { useDispatch, useSelector } from 'react-redux';
-import { setModalState } from '../../slices/modalSlice';
 import classNames from 'classnames';
 import { setFocusNote } from '../../slices/timerSlice';
 
