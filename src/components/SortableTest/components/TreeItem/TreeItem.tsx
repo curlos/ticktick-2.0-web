@@ -18,6 +18,8 @@ import Dropdown from '../../../Dropdown/Dropdown';
 import { useEditTaskMutation } from '../../../../services/resources/tasksApi';
 import { useGetProjectsQuery } from '../../../../services/resources/projectsApi';
 import { useGetTagsQuery } from '../../../../services/resources/tagsApi';
+import ContextMenuGeneric from '../../../ContextMenu/ContextMenuGeneric';
+import DropdownTaskActions from '../../../Dropdown/DropdownTaskActions/DropdownTaskActions';
 
 export interface Props extends HTMLAttributes<HTMLLIElement> {
 	childCount?: number;
@@ -83,8 +85,10 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 		const [project, setProject] = useState(null);
 		const [taskContextMenu, setTaskContextMenu] = useState(null);
 		const [isDropdownCalendarVisible, setIsDropdownCalendarVisible] = useState(false);
+		const [isDropdownTaskActionsVisible, setIsDropdownTaskActionsVisible] = useState(true);
 
 		const dropdownCalendarToggleRef = useRef(null);
+		const dropdownTaskActionsToggleRef = useRef(null);
 
 		const categoryIconClass =
 			' text-color-gray-100 !text-[16px] hover:text-white' + (children?.length >= 1 ? '' : ' invisible');
@@ -253,12 +257,26 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 					</div>
 
 					{taskContextMenu && (
-						<ContextMenuTaskActions
-							taskContextMenu={taskContextMenu}
+						<ContextMenuGeneric
 							xPos={taskContextMenu.xPos}
 							yPos={taskContextMenu.yPos}
 							onClose={handleClose}
-						/>
+							isDropdownVisible={isDropdownTaskActionsVisible}
+							setIsDropdownVisible={setIsDropdownTaskActionsVisible}
+						>
+							<DropdownTaskActions
+								toggleRef={dropdownTaskActionsToggleRef}
+								isVisible={isDropdownTaskActionsVisible}
+								setIsVisible={setIsDropdownTaskActionsVisible}
+								customClasses=" !ml-[0px] mt-[15px]"
+								customStyling={{
+									position: 'absolute',
+									top: `${taskContextMenu.yPos}px`,
+									left: `${taskContextMenu.xPos}px`,
+								}}
+								onCloseContextMenu={handleClose}
+							/>
+						</ContextMenuGeneric>
 					)}
 				</div>
 			</li>

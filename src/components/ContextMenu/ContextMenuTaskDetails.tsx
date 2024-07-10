@@ -39,14 +39,6 @@ const ContextMenuTaskDetails: React.FC<IContextMenuTaskDetails> = ({ xPos, yPos,
 				onCloseContextMenu={onClose}
 				task={task}
 			/>
-			{/* <DropdownTaskActions
-				toggleRef={dropdownTaskDetailsRef}
-				isVisible={isDropdownTaskDetailsVisible}
-				setIsVisible={setIsDropdownTaskDetailsVisible}
-				customClasses=" !ml-[0px] mt-[15px]"
-				customStyling={{ position: 'absolute', top: `${yPos}px`, left: `${xPos}px` }}
-				onCloseContextMenu={onClose}
-			/> */}
 		</div>,
 		document.body
 	);
