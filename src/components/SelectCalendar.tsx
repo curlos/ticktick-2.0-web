@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Icon from './Icon';
-import { areDatesEqual } from '../utils/date.utils';
+import { areDatesEqual, getCalendarMonth } from '../utils/date.utils';
 import { setTimeOnDateString } from '../utils/date.utils';
 
 interface CalendarProps {
@@ -24,29 +24,6 @@ const SelectCalendar: React.FC<CalendarProps> = ({ dueDate, setDueDate, time }) 
 			setCurrentDate(newDueDate);
 		}
 	}, [dueDate]);
-
-	function getCalendarMonth(year, month) {
-		const calendar = [];
-		const firstDayOfMonth = new Date(year, month, 1);
-		let currentDay = new Date(firstDayOfMonth);
-		const dayOfWeek = currentDay.getDay();
-		currentDay.setDate(currentDay.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
-
-		// This will ensure we always start the calendar with 7 rows of 7 days
-		const weeksInCalendar = 6; // The number of weeks you want to show
-
-		for (let week = 0; week < weeksInCalendar; week++) {
-			const days = [];
-			for (let i = 0; i < 7; i++) {
-				// 7 days per week
-				days.push(new Date(currentDay));
-				currentDay.setDate(currentDay.getDate() + 1);
-			}
-			calendar.push(days);
-		}
-
-		return calendar;
-	}
 
 	const goToPreviousMonth = () => {
 		setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));

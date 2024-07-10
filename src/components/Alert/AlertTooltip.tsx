@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import classNames from 'classnames';
 
 interface IAlert {
 	isOpen: boolean;
@@ -10,7 +11,15 @@ interface IAlert {
 	duration?: Object;
 }
 
-const AlertTooltip: React.FC<IAlert> = ({ isOpen, setIsOpen, position, customClasses, children, duration }) => {
+const AlertTooltip: React.FC<IAlert> = ({
+	isOpen,
+	setIsOpen,
+	position,
+	customClasses,
+	customTopClasses,
+	children,
+	duration,
+}) => {
 	useEffect(() => {
 		if (isOpen) {
 			// Set a timer to hide the alert after 1 second
@@ -46,13 +55,17 @@ const AlertTooltip: React.FC<IAlert> = ({ isOpen, setIsOpen, position, customCla
 		<AnimatePresence>
 			{isOpen && (
 				<motion.div
-					className={`absolute mt-[-35px] ml-[-10px] z-50 flex items-end ${position === 'center' ? 'justify-center' : ''}`}
+					className={classNames(
+						`absolute mt-[-35px] ml-[-10px] z-50 flex items-end`,
+						position === 'center' ? 'justify-center' : '',
+						customTopClasses ? customTopClasses : ''
+					)}
 					initial="closed"
 					animate="open"
 					exit="closed"
 					variants={variants}
 				>
-					<div className={`${containerClasses} ${customClasses || ''} tooltip-triangle`}>{children}</div>
+					<div className={`tooltip-triangle ${containerClasses} ${customClasses || ''}`}>{children}</div>
 				</motion.div>
 			)}
 		</AnimatePresence>

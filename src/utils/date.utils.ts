@@ -257,3 +257,26 @@ export const formatDateBasedOnYear = (inputDate) => {
 export const formatCheckedInDayDate = (inputDate) => {
 	return inputDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 };
+
+export const getCalendarMonth = (year, month) => {
+	const calendar = [];
+	const firstDayOfMonth = new Date(year, month, 1);
+	const currentDay = new Date(firstDayOfMonth);
+	const dayOfWeek = currentDay.getDay();
+	currentDay.setDate(currentDay.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
+
+	// This will ensure we always start the calendar with 7 rows of 7 days
+	const weeksInCalendar = 6; // The number of weeks you want to show
+
+	for (let week = 0; week < weeksInCalendar; week++) {
+		const days = [];
+		for (let i = 0; i < 7; i++) {
+			// 7 days per week
+			days.push(new Date(currentDay));
+			currentDay.setDate(currentDay.getDate() + 1);
+		}
+		calendar.push(days);
+	}
+
+	return calendar;
+};
