@@ -16,11 +16,11 @@ const HabitList = () => {
 	// TODO: Use last seven days to find which habits have been completed in those 7 days
 	const lastSevenDays = getLast7Days();
 	const formattedLastSevenDays = lastSevenDays.map((day) => formatCheckedInDayDate(day));
-	const [selectedDay, setSelectedDay] = useState(lastSevenDays[lastSevenDays.length - 1]);
+	const [selectedDay, setSelectedDay] = useState(null);
 	// Can be "list" or "grid"
 	const [viewType, setViewType] = useState('list');
 
-	const monthAndDay = getMonthAndDay(selectedDay);
+	const monthAndDay = selectedDay && getMonthAndDay(selectedDay);
 
 	// Habits
 	const { data: fetchedHabits, isLoading: isLoadingGetHabits, error: errorGetHabits } = useGetHabitsQuery();
@@ -48,12 +48,18 @@ const HabitList = () => {
 				{!showOnlyArchivedHabits && (
 					<div className="grid grid-cols-7 gap-4 my-2">
 						{lastSevenDays.map((day, index) => (
-							<HabitDay key={index} day={day} selectedDay={selectedDay} setSelectedDay={setSelectedDay} />
+							<HabitDay
+								key={index}
+								day={day}
+								selectedDay={selectedDay}
+								setSelectedDay={setSelectedDay}
+								habits={habits}
+							/>
 						))}
 					</div>
 				)}
 
-				{!showOnlyArchivedHabits && (
+				{!showOnlyArchivedHabits && selectedDay && (
 					<div className="flex items-center gap-1 text-color-gray-100">
 						<Icon
 							name="filter_alt"
@@ -65,6 +71,7 @@ const HabitList = () => {
 							name="close"
 							fill={0}
 							customClass={'text-color-gray-100 hover:text-color-gray-50 !text-[16px] cursor-pointer'}
+							onClick={() => setSelectedDay(null)}
 						/>
 					</div>
 				)}
@@ -98,6 +105,7 @@ const HabitList = () => {
 								habitsForThisSection={habitsForThisSection}
 								viewType={viewType}
 								formattedLastSevenDays={formattedLastSevenDays}
+								selectedDay={selectedDay}
 							/>
 						);
 					})}
@@ -109,7 +117,7 @@ const HabitList = () => {
 								return null;
 							}
 
-							return <HabitCard habit={habit} />;
+							return <HabitCard key={habit._id} habit={habit} />;
 						})}
 					</div>
 				)}
@@ -118,7 +126,7 @@ const HabitList = () => {
 	);
 };
 
-const HabitListByCategory = ({ habitSection, habitsForThisSection, viewType, formattedLastSevenDays }) => {
+const HabitListByCategory = ({ habitSection, habitsForThisSection, viewType, formattedLastSevenDays, selectedDay }) => {
 	const { name } = habitSection;
 
 	return (
@@ -144,6 +152,7 @@ const HabitListByCategory = ({ habitSection, habitsForThisSection, viewType, for
 								habit={habit}
 								viewType={viewType}
 								formattedLastSevenDays={formattedLastSevenDays}
+								selectedDay={selectedDay}
 							/>
 						)
 				)}
@@ -152,7 +161,7 @@ const HabitListByCategory = ({ habitSection, habitsForThisSection, viewType, for
 	);
 };
 
-const HabitCard = ({ habit, viewType, formattedLastSevenDays }) => {
+const HabitCard = ({ habit, viewType, formattedLastSevenDays, selectedDay }) => {
 	const navigate = useNavigate();
 	const { habitId } = useParams();
 	const { name, icon, checkedInDays } = habit;
@@ -181,6 +190,26 @@ const HabitCard = ({ habit, viewType, formattedLastSevenDays }) => {
 
 	const result = getStreaks(habit);
 	const { longestStreak, currentStreak } = result;
+
+	const DayCheckCircle = ({ isChecked, day }) => {
+		return (
+			<div
+				key={`${habit._id} ${day}`}
+				className={classNames(
+					'h-[20px] w-[20px] rounded-full flex justify-center items-center',
+					isChecked ? 'bg-blue-500' : 'bg-color-gray-100/30'
+				)}
+			>
+				<Icon
+					name="check"
+					fill={1}
+					customClass={classNames('text-white !text-[18px] cursor-pointer', !isChecked ? 'invisible' : '')}
+				/>
+			</div>
+		);
+	};
+
+	const formattedSelectedDay = selectedDay && formatCheckedInDayDate(selectedDay);
 
 	return (
 		<div>
@@ -272,28 +301,18 @@ const HabitCard = ({ habit, viewType, formattedLastSevenDays }) => {
 					<div
 						className={classNames('flex items-center gap-2', viewType === 'grid' ? 'justify-between' : '')}
 					>
-						{formattedLastSevenDays.map((day, i) => {
-							const isChecked = checkedInDays[day]?.isAchieved;
+						{selectedDay ? (
+							<DayCheckCircle
+								isChecked={checkedInDays[formattedSelectedDay]?.isAchieved}
+								day={formattedSelectedDay}
+							/>
+						) : (
+							formattedLastSevenDays.map((day, i) => {
+								const isChecked = checkedInDays[day]?.isAchieved;
 
-							return (
-								<div
-									key={`${habit._id} ${day}`}
-									className={classNames(
-										'h-[20px] w-[20px] rounded-full flex justify-center items-center',
-										isChecked ? 'bg-blue-500' : 'bg-color-gray-100/30'
-									)}
-								>
-									<Icon
-										name="check"
-										fill={1}
-										customClass={classNames(
-											'text-white !text-[18px] cursor-pointer',
-											!isChecked ? 'invisible' : ''
-										)}
-									/>
-								</div>
-							);
-						})}
+								return <DayCheckCircle isChecked={isChecked} day={day} />;
+							})
+						)}
 					</div>
 				)}
 			</div>
@@ -310,10 +329,19 @@ const HabitCard = ({ habit, viewType, formattedLastSevenDays }) => {
 	);
 };
 
-const HabitDay = ({ day, selectedDay, setSelectedDay }) => {
+const HabitDay = ({ day, selectedDay, setSelectedDay, habits }) => {
+	const formattedCheckedInDay = formatCheckedInDayDate(day);
+	const activeHabits = habits.filter((habit) => !habit.isArchived);
+	const habitsCheckedInForThisDay = activeHabits.filter(
+		(habit) => habit.checkedInDays[formattedCheckedInDay]?.isAchieved
+	);
+
+	console.log(habitsCheckedInForThisDay);
+	console.log(activeHabits);
+
 	// I think the percentage on TickTick 1.0 is just the percentage of habits you completed in a day from all your habits. Implement real values later.
 	const getPercentage = () => {
-		return 30;
+		return (habitsCheckedInForThisDay.length / activeHabits.length) * 100;
 	};
 
 	const dayName = getDayNameAbbreviation(day);
@@ -329,7 +357,13 @@ const HabitDay = ({ day, selectedDay, setSelectedDay }) => {
 				isSelectedDay ? 'bg-blue-500/40' : 'bg-color-gray-300',
 				isDayToday ? 'text-blue-500' : 'text-color-gray-100'
 			)}
-			onClick={() => setSelectedDay(day)}
+			onClick={() => {
+				if (areDatesEqual(selectedDay, day)) {
+					setSelectedDay(null);
+				} else {
+					setSelectedDay(day);
+				}
+			}}
 		>
 			<div>{dayName}</div>
 			<div className={classNames('font-bold')}>{dayOfMonth}</div>
