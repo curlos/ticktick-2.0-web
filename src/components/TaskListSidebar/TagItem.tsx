@@ -1,10 +1,11 @@
 import { useNavigate, useParams } from 'react-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 import Icon from '../Icon';
-import ContextMenuSidebarItemActions from '../ContextMenu/ContextMenuSidebarItemActions';
 import { useGetTasksQuery } from '../../services/resources/tasksApi';
 import { useGetTagsQuery } from '../../services/resources/tagsApi';
+import ContextMenuGeneric from '../ContextMenu/ContextMenuGeneric';
+import DropdownSidebarItemActions from '../Dropdown/DropdownSidebarItemActions';
 
 const TagItem = ({ tag, isChild }) => {
 	const navigate = useNavigate();
@@ -24,6 +25,8 @@ const TagItem = ({ tag, isChild }) => {
 	const displayName = name;
 	const [numberOfTasks, setNumberOfTasks] = useState(0);
 	const [taskContextMenu, setTaskContextMenu] = useState(null);
+	const [isDropdownSidebarItemActionsVisible, setIsDropdownSidebarItemActionsVisible] = useState(true);
+	const dropdownSidebarItemActionsRef = useRef(null);
 
 	const isParent = false;
 
@@ -96,14 +99,27 @@ const TagItem = ({ tag, isChild }) => {
 				childTags.map((childTag) => <TagItem key={childTag._id} tag={childTag} isChild={true} />)}
 
 			{taskContextMenu && (
-				<ContextMenuSidebarItemActions
-					taskContextMenu={taskContextMenu}
+				<ContextMenuGeneric
 					xPos={taskContextMenu.xPos}
 					yPos={taskContextMenu.yPos}
 					onClose={handleClose}
-					item={tag}
-					type="tag"
-				/>
+					isDropdownVisible={isDropdownSidebarItemActionsVisible}
+					setIsDropdownVisible={setIsDropdownSidebarItemActionsVisible}
+				>
+					<DropdownSidebarItemActions
+						toggleRef={dropdownSidebarItemActionsRef}
+						isVisible={isDropdownSidebarItemActionsVisible}
+						setIsVisible={setIsDropdownSidebarItemActionsVisible}
+						customClasses=" !ml-[0px] mt-[15px]"
+						customStyling={{
+							position: 'absolute',
+							top: `${taskContextMenu.yPos}px`,
+							left: `${taskContextMenu.xPos}px`,
+						}}
+						item={tag}
+						type="tag"
+					/>
+				</ContextMenuGeneric>
 			)}
 		</div>
 	);

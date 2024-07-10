@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { DndContext, closestCenter } from '@dnd-kit/core';
 import { arrayMove, useSortable } from '@dnd-kit/sortable';
@@ -8,9 +8,9 @@ import { arrayToObjectByKey, containsEmoji, getNumberOfTasks } from '../utils/he
 import { IProject } from '../interfaces/interfaces';
 import Icon from './Icon';
 import { SMART_LISTS } from '../utils/smartLists.utils';
-import ContextMenuProjectActions from './ContextMenu/ContextMenuProjectActions';
-import ContextMenuSidebarItemActions from './ContextMenu/ContextMenuSidebarItemActions';
 import { useGetTasksQuery } from '../services/resources/tasksApi';
+import DropdownSidebarItemActions from './Dropdown/DropdownSidebarItemActions';
+import ContextMenuGeneric from './ContextMenu/ContextMenuGeneric';
 
 const DraggableProjects = ({ projects }) => {
 	const [items, setItems] = useState([...projects]);
@@ -82,6 +82,9 @@ export const ProjectItem: React.FC<ProjectItemProps> = ({ project, projectsWithG
 	const displayName = emoji ? name.split(' ')[1] : name;
 	const [numberOfTasks, setNumberOfTasks] = useState(0);
 	const [taskContextMenu, setTaskContextMenu] = useState(null);
+
+	const [isDropdownSidebarItemActionsVisible, setIsDropdownSidebarItemActionsVisible] = useState(true);
+	const dropdownSidebarItemActionsRef = useRef(null);
 
 	useEffect(() => {
 		if (!tasks) {
@@ -187,14 +190,27 @@ export const ProjectItem: React.FC<ProjectItemProps> = ({ project, projectsWithG
             })} */}
 
 			{taskContextMenu && (
-				<ContextMenuSidebarItemActions
-					taskContextMenu={taskContextMenu}
+				<ContextMenuGeneric
 					xPos={taskContextMenu.xPos}
 					yPos={taskContextMenu.yPos}
 					onClose={handleClose}
-					item={project}
-					type="project"
-				/>
+					isDropdownVisible={isDropdownSidebarItemActionsVisible}
+					setIsDropdownVisible={setIsDropdownSidebarItemActionsVisible}
+				>
+					<DropdownSidebarItemActions
+						toggleRef={dropdownSidebarItemActionsRef}
+						isVisible={isDropdownSidebarItemActionsVisible}
+						setIsVisible={setIsDropdownSidebarItemActionsVisible}
+						customClasses=" !ml-[0px] mt-[15px]"
+						customStyling={{
+							position: 'absolute',
+							top: `${taskContextMenu.yPos}px`,
+							left: `${taskContextMenu.xPos}px`,
+						}}
+						item={project}
+						type="project"
+					/>
+				</ContextMenuGeneric>
 			)}
 		</div>
 	);

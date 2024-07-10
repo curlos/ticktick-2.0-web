@@ -1,13 +1,12 @@
 import { useNavigate, useParams } from 'react-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 import Icon from '../Icon';
-import ContextMenuSidebarItemActions from '../ContextMenu/ContextMenuSidebarItemActions';
-import { arrayToObjectByKey } from '../../utils/helpers.utils';
-import { PRIORITIES } from '../../utils/priorities.utils';
 import { filterTasksByFilter } from '../../utils/filters.util';
 import { useGetTasksQuery } from '../../services/resources/tasksApi';
 import { useGetFiltersQuery } from '../../services/resources/filtersApi';
+import ContextMenuGeneric from '../ContextMenu/ContextMenuGeneric';
+import DropdownSidebarItemActions from '../Dropdown/DropdownSidebarItemActions';
 
 const FilterItem = ({ filter }) => {
 	const navigate = useNavigate();
@@ -27,6 +26,8 @@ const FilterItem = ({ filter }) => {
 	const displayName = name;
 	const [numberOfTasks, setNumberOfTasks] = useState(0);
 	const [taskContextMenu, setTaskContextMenu] = useState(null);
+	const [isDropdownSidebarItemActionsVisible, setIsDropdownSidebarItemActionsVisible] = useState(true);
+	const dropdownSidebarItemActionsRef = useRef(null);
 
 	useEffect(() => {
 		if (!tasks) {
@@ -88,14 +89,27 @@ const FilterItem = ({ filter }) => {
 			</div>
 
 			{taskContextMenu && (
-				<ContextMenuSidebarItemActions
-					taskContextMenu={taskContextMenu}
+				<ContextMenuGeneric
 					xPos={taskContextMenu.xPos}
 					yPos={taskContextMenu.yPos}
 					onClose={handleClose}
-					item={filter}
-					type="filter"
-				/>
+					isDropdownVisible={isDropdownSidebarItemActionsVisible}
+					setIsDropdownVisible={setIsDropdownSidebarItemActionsVisible}
+				>
+					<DropdownSidebarItemActions
+						toggleRef={dropdownSidebarItemActionsRef}
+						isVisible={isDropdownSidebarItemActionsVisible}
+						setIsVisible={setIsDropdownSidebarItemActionsVisible}
+						customClasses=" !ml-[0px] mt-[15px]"
+						customStyling={{
+							position: 'absolute',
+							top: `${taskContextMenu.yPos}px`,
+							left: `${taskContextMenu.xPos}px`,
+						}}
+						item={filter}
+						type="filter"
+					/>
+				</ContextMenuGeneric>
 			)}
 		</div>
 	);
