@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Icon from '../Icon';
 import HeaderSection from './HeaderSection';
 import { CircularProgressbarWithChildren, buildStyles } from 'react-circular-progressbar';
@@ -10,6 +10,7 @@ import { useGetHabitSectionsQuery } from '../../services/resources/habitSections
 import { useNavigate, useParams } from 'react-router';
 import ContextMenuHabitActions from '../ContextMenu/ContextMenuHabitActions';
 import { getCheckInsPerMonth, getStreaks } from '../../utils/habits.util';
+import Dropdown from '../Dropdown/Dropdown';
 
 const HabitList = () => {
 	// TODO: Use last seven days to find which habits have been completed in those 7 days
@@ -157,6 +158,11 @@ const HabitCard = ({ habit, viewType, formattedLastSevenDays }) => {
 	const { name, icon, checkedInDays } = habit;
 
 	const [contextMenu, setContextMenu] = useState(null);
+	const [isTooltipLongestStreakVisible, setIsTooltipLongestStreakVisible] = useState(false);
+	const [isTooltipCurrentStreakVisible, setIsTooltipCurrentStreakVisible] = useState(false);
+
+	const tooltipLongestStreakRef = useRef(null);
+	const tooltipCurrentStreakRef = useRef(null);
 
 	const handleContextMenu = (event) => {
 		event.preventDefault(); // Prevent the default context menu
@@ -175,11 +181,6 @@ const HabitCard = ({ habit, viewType, formattedLastSevenDays }) => {
 
 	const result = getStreaks(habit);
 	const { longestStreak, currentStreak } = result;
-
-	// const checkInsPerMonth = getCheckInsPerMonth(habit);
-	// console.log(checkInsPerMonth);
-	console.log(formattedLastSevenDays);
-	console.log(checkedInDays);
 
 	return (
 		<div>
@@ -206,25 +207,62 @@ const HabitCard = ({ habit, viewType, formattedLastSevenDays }) => {
 					<div>
 						<div>{name}</div>
 						<div className="flex items-center gap-2">
-							<div className="flex gap-1">
-								<Icon
-									name="sword_rose"
-									fill={1}
-									customClass={'text-purple-400 !text-[18px] cursor-pointer'}
-								/>
-								<div className="text-color-gray-100">
-									{longestStreak} {longestStreak > 1 ? 'Days' : 'Day'}
+							<div className="relative">
+								<div
+									ref={tooltipCurrentStreakRef}
+									className="flex gap-1"
+									onMouseOver={() => setIsTooltipCurrentStreakVisible(true)}
+									onMouseLeave={() => setIsTooltipCurrentStreakVisible(false)}
+								>
+									<Icon
+										name="local_fire_department"
+										fill={1}
+										customClass={'text-orange-400 !text-[18px] cursor-pointer'}
+									/>
+									<div className="text-color-gray-100">
+										{currentStreak} {currentStreak !== 1 ? 'Days' : 'Day'}
+									</div>
 								</div>
+
+								<Dropdown
+									toggleRef={tooltipCurrentStreakRef}
+									isVisible={isTooltipCurrentStreakVisible}
+									setIsVisible={setIsTooltipCurrentStreakVisible}
+									customClasses={'!bg-black'}
+								>
+									<div className="p-2 text-[12px] text-nowrap">
+										Current Streak: {currentStreak} {currentStreak !== 1 ? 'Days' : 'Day'}
+									</div>
+								</Dropdown>
 							</div>
-							<div className="flex gap-1">
-								<Icon
-									name="local_fire_department"
-									fill={1}
-									customClass={'text-orange-400 !text-[18px] cursor-pointer'}
-								/>
-								<div className="text-color-gray-100">
-									{currentStreak} {currentStreak > 1 ? 'Days' : 'Day'}
+
+							<div className="relative">
+								<div
+									ref={tooltipLongestStreakRef}
+									className="flex gap-1"
+									onMouseOver={() => setIsTooltipLongestStreakVisible(true)}
+									onMouseLeave={() => setIsTooltipLongestStreakVisible(false)}
+								>
+									<Icon
+										name="sword_rose"
+										fill={1}
+										customClass={'text-purple-400 !text-[18px] cursor-pointer'}
+									/>
+									<div className="text-color-gray-100">
+										{longestStreak} {longestStreak !== 1 ? 'Days' : 'Day'}
+									</div>
 								</div>
+
+								<Dropdown
+									toggleRef={tooltipLongestStreakRef}
+									isVisible={isTooltipLongestStreakVisible}
+									setIsVisible={setIsTooltipLongestStreakVisible}
+									customClasses={'!bg-black'}
+								>
+									<div className="p-2 text-[12px] text-nowrap">
+										Longest Streak: {longestStreak} {longestStreak !== 1 ? 'Days' : 'Day'}
+									</div>
+								</Dropdown>
 							</div>
 						</div>
 					</div>
@@ -235,9 +273,6 @@ const HabitCard = ({ habit, viewType, formattedLastSevenDays }) => {
 						className={classNames('flex items-center gap-2', viewType === 'grid' ? 'justify-between' : '')}
 					>
 						{formattedLastSevenDays.map((day, i) => {
-							console.log(day);
-
-							// TODO: This "isChecked" logic is made up for now by me and not real. It's just meant to simulate the scenario where it's not checked and to render that. Remove after real backend data comes in.
 							const isChecked = checkedInDays[day]?.isAchieved;
 
 							return (

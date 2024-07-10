@@ -50,30 +50,40 @@ const OverviewStatsSection = ({ habit }) => {
 	const checkInsPerMonth = getCheckInsPerMonth(habit);
 	console.log(checkInsPerMonth);
 
+	// This is for the current month
+	const today = new Date();
+	const todaysMonth = today.toLocaleString('default', { month: 'long', year: 'numeric' });
+	const currentMonthCheckIns = checkInsPerMonth[todaysMonth];
+
 	return (
 		<div className="grid grid-cols-2 gap-3">
-			<OverviewStatCard name="Monthly Check-ins" iconName="check_circle" unitValue={1} unitType="Day" />
-			<OverviewStatCard
-				name="Total Check-ins"
-				iconName="bolt"
-				iconColor="text-cyan-300"
-				unitValue={totalCheckIns}
-				unitType={totalCheckIns > 1 ? 'Days' : 'Day'}
-			/>
-			<OverviewStatCard
-				name="Monthly Check-in Rate"
-				iconName="sword_rose"
-				iconColor="text-purple-400"
-				unitValue={3}
-				unitType="%"
-			/>
 			<OverviewStatCard
 				name="Current Streak"
 				iconName="local_fire_department"
 				iconColor="text-orange-400"
 				unitValue={currentStreak}
-				unitType={currentStreak > 1 ? 'Days' : 'Day'}
+				unitType={currentStreak !== 1 ? 'Days' : 'Day'}
 				isCurrentStreak={true}
+			/>
+			<OverviewStatCard
+				name="Longest Streak"
+				iconName="sword_rose"
+				iconColor="text-purple-400"
+				unitValue={longestStreak}
+				unitType={longestStreak !== 1 ? 'Days' : 'Day'}
+			/>
+			<OverviewStatCard
+				name="Monthly Check-ins"
+				iconName="check_circle"
+				unitValue={currentMonthCheckIns}
+				unitType={currentMonthCheckIns !== 1 ? 'Days' : 'Day'}
+			/>
+			<OverviewStatCard
+				name="Total Check-ins"
+				iconName="bolt"
+				iconColor="text-cyan-300"
+				unitValue={totalCheckIns}
+				unitType={totalCheckIns !== 1 ? 'Days' : 'Day'}
 			/>
 		</div>
 	);
