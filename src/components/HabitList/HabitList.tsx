@@ -196,6 +196,9 @@ const HabitCard = ({ habit, viewType, formattedLastSevenDays, selectedDay }) => 
 
 	const DayCheckCircle = ({ isChecked, day }) => {
 		const checkedInDayKey = day;
+		const [isTooltipDayVisible, setIsTooltipDayVisible] = useState(false);
+
+		const tooltipDayRef = useRef(null);
 
 		const handleClick = () => {
 			let payload = null;
@@ -231,19 +234,42 @@ const HabitCard = ({ habit, viewType, formattedLastSevenDays, selectedDay }) => 
 		};
 
 		return (
-			<div
-				key={`${habit._id} ${day}`}
-				className={classNames(
-					'h-[20px] w-[20px] rounded-full flex justify-center items-center',
-					isChecked ? 'bg-blue-500' : 'bg-color-gray-100/30'
-				)}
-				onClick={handleClick}
-			>
-				<Icon
-					name="check"
-					fill={1}
-					customClass={classNames('text-white !text-[18px] cursor-pointer', !isChecked ? 'invisible' : '')}
-				/>
+			<div className="relative">
+				<div
+					ref={tooltipDayRef}
+					key={`${habit._id} ${day}`}
+					className={classNames(
+						'h-[20px] w-[20px] rounded-full flex justify-center items-center',
+						isChecked ? 'bg-blue-500' : 'bg-color-gray-100/30'
+					)}
+					onClick={handleClick}
+					onMouseOver={() => setIsTooltipDayVisible(true)}
+					onMouseLeave={() => setIsTooltipDayVisible(false)}
+				>
+					<Icon
+						name="check"
+						fill={1}
+						customClass={classNames(
+							'text-white !text-[18px] cursor-pointer',
+							!isChecked ? 'invisible' : ''
+						)}
+					/>
+				</div>
+
+				<Dropdown
+					toggleRef={tooltipDayRef}
+					isVisible={isTooltipDayVisible}
+					setIsVisible={setIsTooltipDayVisible}
+					customClasses={'!bg-black'}
+				>
+					<div className="p-2 text-[12px] text-nowrap">
+						{new Date(day).toLocaleDateString('en-US', {
+							weekday: 'short', // "Mon" for Monday
+							month: 'long', // "July"
+							day: 'numeric', // "8"
+						})}
+					</div>
+				</Dropdown>
 			</div>
 		);
 	};
