@@ -2,6 +2,8 @@ import classNames from 'classnames';
 import { DropdownProps } from '../../interfaces/interfaces';
 import Dropdown from '../Dropdown/Dropdown';
 import Icon from '../Icon';
+import useHandleError from '../../hooks/useHandleError';
+import { useEditHabitMutation } from '../../services/resources/habitsApi';
 
 interface IDropdownHabitDayActions extends DropdownProps {}
 
@@ -11,8 +13,15 @@ const DropdownHabitDayActions: React.FC<IDropdownHabitDayActions> = ({
 	setIsVisible,
 	customClasses,
 	customStyling,
-	task,
+	habit,
+	checkedInDayKey,
 }) => {
+	const handleError = useHandleError();
+	const [editHabit] = useEditHabitMutation();
+
+	const checkedInDay = habit.checkedInDays[checkedInDayKey];
+	const isChecked = checkedInDay && checkedInDay.isAchieved;
+
 	return (
 		<Dropdown
 			toggleRef={toggleRef}
@@ -26,10 +35,29 @@ const DropdownHabitDayActions: React.FC<IDropdownHabitDayActions> = ({
 		>
 			<div className="w-[200px] rounded p-1">
 				<ActionItem
-					name="Unachieved"
-					iconName="cancel"
+					name={isChecked ? 'Unachieved' : 'Achieved'}
+					iconName={isChecked ? 'cancel' : 'check'}
 					onClick={() => {
 						// TODO: Edit the habit so that it's unachieved
+						console.log(checkedInDay);
+						debugger;
+
+						handleError(async () => {
+							setIsVisible(false);
+
+							await editHabit({
+								habitId: habit._id,
+								payload: {
+									checkedInDays: {
+										...habit.checkedInDays,
+										[checkedInDayKey]: {
+											...checkedInDay,
+											isAchieved: isChecked ? false : new Date().toISOString(),
+										},
+									},
+								},
+							}).unwrap();
+						});
 					}}
 				/>
 				<ActionItem

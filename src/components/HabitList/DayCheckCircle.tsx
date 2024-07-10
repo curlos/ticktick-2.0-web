@@ -12,6 +12,7 @@ const DayCheckCircle = ({ isChecked, day, habit, type = 'small' }) => {
 	const handleError = useHandleError();
 	const [editHabit] = useEditHabitMutation();
 	const checkedInDayKey = day;
+	const checkedInDay = habit.checkedInDays[checkedInDayKey];
 	const [contextMenu, setContextMenu] = useState(null);
 	const [isTooltipDayVisible, setIsTooltipDayVisible] = useState(false);
 	const [isAlertTooltipOpen, setIsAlertTooltipOpen] = useState(false);
@@ -24,13 +25,11 @@ const DayCheckCircle = ({ isChecked, day, habit, type = 'small' }) => {
 		let payload = null;
 		// If it's currently checked, then we need to uncheck it (set it to null)
 		if (isChecked) {
-			const currentCheckedInDay = habit.checkedInDays[checkedInDayKey];
-
 			payload = {
 				checkedInDays: {
 					...habit.checkedInDays,
-					[checkedInDayKey]: currentCheckedInDay
-						? { ...currentCheckedInDay, isAchieved: null }
+					[checkedInDayKey]: checkedInDay
+						? { ...checkedInDay, isAchieved: null }
 						: { isAchieved: new Date().toISOString() },
 				},
 			};
@@ -59,6 +58,7 @@ const DayCheckCircle = ({ isChecked, day, habit, type = 'small' }) => {
 
 	const handleContextMenu = (event) => {
 		event.preventDefault(); // Prevent the default context menu
+		event.stopPropagation();
 
 		setContextMenu({
 			xPos: event.pageX, // X coordinate of the mouse pointer
@@ -94,14 +94,21 @@ const DayCheckCircle = ({ isChecked, day, habit, type = 'small' }) => {
 					onMouseOver={() => setIsTooltipDayVisible(true)}
 					onMouseLeave={() => setIsTooltipDayVisible(false)}
 				>
-					<Icon
-						name="check"
-						fill={1}
-						customClass={classNames(
-							'text-white !text-[18px] cursor-pointer',
-							!isChecked ? 'invisible' : ''
-						)}
-					/>
+					{isChecked && (
+						<Icon
+							name="check"
+							fill={1}
+							customClass={classNames('text-white !text-[18px] cursor-pointer')}
+						/>
+					)}
+
+					{checkedInDay && checkedInDay.isAchieved === false && (
+						<Icon
+							name="close"
+							fill={1}
+							customClass={classNames('text-red-500 !text-[18px] cursor-pointer mr-[-1px]')}
+						/>
+					)}
 				</div>
 
 				<Dropdown
@@ -138,6 +145,8 @@ const DayCheckCircle = ({ isChecked, day, habit, type = 'small' }) => {
 								left: `${contextMenu.xPos}px`,
 							}}
 							onCloseContextMenu={handleCloseContextMenu}
+							habit={habit}
+							checkedInDayKey={checkedInDayKey}
 						/>
 					</ContextMenuGeneric>
 				)}
