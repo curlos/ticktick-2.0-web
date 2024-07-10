@@ -13,6 +13,8 @@ import { getCheckInsPerMonth, getStreaks } from '../../utils/habits.util';
 import Dropdown from '../Dropdown/Dropdown';
 import useHandleError from '../../hooks/useHandleError';
 import AlertTooltip from '../Alert/AlertTooltip';
+import DropdownHabitOptions from '../Dropdown/DropdownHabitOptions/DropdownHabitOptions';
+import ContextMenuGeneric from '../ContextMenu/ContextMenuGeneric';
 
 const HabitList = () => {
 	// TODO: Use last seven days to find which habits have been completed in those 7 days
@@ -171,9 +173,11 @@ const HabitCard = ({ habit, viewType, formattedLastSevenDays, selectedDay }) => 
 	const [contextMenu, setContextMenu] = useState(null);
 	const [isTooltipLongestStreakVisible, setIsTooltipLongestStreakVisible] = useState(false);
 	const [isTooltipCurrentStreakVisible, setIsTooltipCurrentStreakVisible] = useState(false);
+	const [isDropdownHabitOptionsVisible, setIsDropdownHabitOptionsVisible] = useState(true);
 
 	const tooltipLongestStreakRef = useRef(null);
 	const tooltipCurrentStreakRef = useRef(null);
+	const dropdownTaskActionsToggleRef = useRef(null);
 
 	const handleContextMenu = (event) => {
 		event.preventDefault(); // Prevent the default context menu
@@ -194,6 +198,7 @@ const HabitCard = ({ habit, viewType, formattedLastSevenDays, selectedDay }) => 
 	const { longestStreak, currentStreak } = result;
 
 	const formattedSelectedDay = selectedDay && formatCheckedInDayDate(selectedDay);
+	const { xPos, yPos } = contextMenu || {};
 
 	return (
 		<div>
@@ -303,12 +308,23 @@ const HabitCard = ({ habit, viewType, formattedLastSevenDays, selectedDay }) => 
 			</div>
 
 			{contextMenu && (
-				<ContextMenuHabitActions
-					xPos={contextMenu.xPos}
-					yPos={contextMenu.yPos}
+				<ContextMenuGeneric
+					xPos={xPos}
+					yPos={yPos}
 					onClose={handleClose}
-					habit={habit}
-				/>
+					isDropdownVisible={isDropdownHabitOptionsVisible}
+					setIsDropdownVisible={setIsDropdownHabitOptionsVisible}
+				>
+					<DropdownHabitOptions
+						toggleRef={dropdownTaskActionsToggleRef}
+						isVisible={isDropdownHabitOptionsVisible}
+						setIsVisible={setIsDropdownHabitOptionsVisible}
+						customClasses=" !ml-[0px] mt-[15px]"
+						customStyling={{ position: 'absolute', top: `${yPos}px`, left: `${xPos}px` }}
+						onCloseContextMenu={handleClose}
+						habit={habit}
+					/>
+				</ContextMenuGeneric>
 			)}
 		</div>
 	);
@@ -375,8 +391,8 @@ const DayCheckCircle = ({ isChecked, day, habit }) => {
 						isChecked ? 'bg-blue-500' : 'bg-color-gray-100/30'
 					)}
 					onClick={handleClick}
-					// onMouseOver={() => setIsTooltipDayVisible(true)}
-					// onMouseLeave={() => setIsTooltipDayVisible(false)}
+					onMouseOver={() => setIsTooltipDayVisible(true)}
+					onMouseLeave={() => setIsTooltipDayVisible(false)}
 				>
 					<Icon
 						name="check"
