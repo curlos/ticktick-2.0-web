@@ -1,7 +1,5 @@
-import { areDatesEqual, formatCheckedInDayDate, getCalendarMonth } from '../../utils/date.utils';
+import { getCalendarMonth } from '../../utils/date.utils';
 import Icon from '../Icon';
-import classNames from 'classnames';
-import DayCheckCircle from '../HabitList/DayCheckCircle';
 import DayCircle from './DayCircle';
 
 const HabitCalendar = ({ habit, currentDate, setCurrentDate }) => {

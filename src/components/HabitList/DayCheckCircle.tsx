@@ -5,15 +5,20 @@ import { useEditHabitMutation } from '../../services/resources/habitsApi';
 import AlertTooltip from '../Alert/AlertTooltip';
 import Dropdown from '../Dropdown/Dropdown';
 import Icon from '../Icon';
+import ContextMenuGeneric from '../ContextMenu/ContextMenuGeneric';
+import DropdownHabitDayActions from './DropdownHabitDayActions';
 
 const DayCheckCircle = ({ isChecked, day, habit, type = 'small' }) => {
 	const handleError = useHandleError();
 	const [editHabit] = useEditHabitMutation();
 	const checkedInDayKey = day;
+	const [contextMenu, setContextMenu] = useState(null);
 	const [isTooltipDayVisible, setIsTooltipDayVisible] = useState(false);
 	const [isAlertTooltipOpen, setIsAlertTooltipOpen] = useState(false);
+	const [isDropdownHabitDayActionsVisible, setIsDropdownHabitDayActionsVisible] = useState(true);
 
 	const tooltipDayRef = useRef(null);
+	const dropdownHabitDayActionsRef = useRef(null);
 
 	const handleClick = () => {
 		let payload = null;
@@ -52,6 +57,19 @@ const DayCheckCircle = ({ isChecked, day, habit, type = 'small' }) => {
 		});
 	};
 
+	const handleContextMenu = (event) => {
+		event.preventDefault(); // Prevent the default context menu
+
+		setContextMenu({
+			xPos: event.pageX, // X coordinate of the mouse pointer
+			yPos: event.pageY, // Y coordinate of the mouse pointer
+		});
+	};
+
+	const handleCloseContextMenu = () => {
+		setContextMenu(null);
+	};
+
 	return (
 		<div>
 			<AlertTooltip
@@ -71,6 +89,7 @@ const DayCheckCircle = ({ isChecked, day, habit, type = 'small' }) => {
 						isChecked ? 'bg-blue-500' : 'bg-color-gray-100/30',
 						type === 'small' ? 'h-[20px] w-[20px]' : 'h-[30px] w-[30px]'
 					)}
+					onContextMenu={handleContextMenu}
 					onClick={handleClick}
 					onMouseOver={() => setIsTooltipDayVisible(true)}
 					onMouseLeave={() => setIsTooltipDayVisible(false)}
@@ -99,6 +118,29 @@ const DayCheckCircle = ({ isChecked, day, habit, type = 'small' }) => {
 						})}
 					</div>
 				</Dropdown>
+
+				{contextMenu && (
+					<ContextMenuGeneric
+						xPos={contextMenu.xPos}
+						yPos={contextMenu.yPos}
+						onClose={handleCloseContextMenu}
+						isDropdownVisible={isDropdownHabitDayActionsVisible}
+						setIsDropdownVisible={setIsDropdownHabitDayActionsVisible}
+					>
+						<DropdownHabitDayActions
+							toggleRef={dropdownHabitDayActionsRef}
+							isVisible={isDropdownHabitDayActionsVisible}
+							setIsVisible={setIsDropdownHabitDayActionsVisible}
+							customClasses=" !ml-[0px] mt-[15px]"
+							customStyling={{
+								position: 'absolute',
+								top: `${contextMenu.yPos}px`,
+								left: `${contextMenu.xPos}px`,
+							}}
+							onCloseContextMenu={handleCloseContextMenu}
+						/>
+					</ContextMenuGeneric>
+				)}
 			</div>
 		</div>
 	);
