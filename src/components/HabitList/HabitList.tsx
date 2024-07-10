@@ -5,12 +5,13 @@ import { CircularProgressbarWithChildren, buildStyles } from 'react-circular-pro
 import classNames from 'classnames';
 import { formatCheckedInDayDate, getDayNameAbbreviation, getLast7Days, getMonthAndDay } from '../../utils/date.utils';
 import { areDatesEqual } from '../../utils/date.utils';
-import { useGetHabitsQuery } from '../../services/resources/habitsApi';
+import { useEditHabitMutation, useGetHabitsQuery } from '../../services/resources/habitsApi';
 import { useGetHabitSectionsQuery } from '../../services/resources/habitSectionsApi';
 import { useNavigate, useParams } from 'react-router';
 import ContextMenuHabitActions from '../ContextMenu/ContextMenuHabitActions';
 import { getCheckInsPerMonth, getStreaks } from '../../utils/habits.util';
 import Dropdown from '../Dropdown/Dropdown';
+import useHandleError from '../../hooks/useHandleError';
 
 const HabitList = () => {
 	// TODO: Use last seven days to find which habits have been completed in those 7 days
@@ -164,6 +165,8 @@ const HabitListByCategory = ({ habitSection, habitsForThisSection, viewType, for
 const HabitCard = ({ habit, viewType, formattedLastSevenDays, selectedDay }) => {
 	const navigate = useNavigate();
 	const { habitId } = useParams();
+	const handleError = useHandleError();
+	const [editHabit] = useEditHabitMutation();
 	const { name, icon, checkedInDays } = habit;
 
 	const [contextMenu, setContextMenu] = useState(null);
@@ -192,6 +195,41 @@ const HabitCard = ({ habit, viewType, formattedLastSevenDays, selectedDay }) => 
 	const { longestStreak, currentStreak } = result;
 
 	const DayCheckCircle = ({ isChecked, day }) => {
+		const checkedInDayKey = day;
+
+		const handleClick = () => {
+			let payload = null;
+			// If it's currently checked, then we need to uncheck it (set it to null)
+			if (isChecked) {
+				const currentCheckedInDay = habit.checkedInDays[checkedInDayKey];
+
+				payload = {
+					checkedInDays: {
+						...habit.checkedInDays,
+						[checkedInDayKey]: currentCheckedInDay
+							? { ...currentCheckedInDay, isAchieved: null }
+							: { isAchieved: new Date().toISOString() },
+					},
+				};
+			}
+
+			const currentCheckedInDay = habit.checkedInDays[checkedInDayKey];
+			const newAchievedValue = isChecked ? null : new Date().toISOString();
+
+			payload = {
+				checkedInDays: {
+					...habit.checkedInDays,
+					[checkedInDayKey]: currentCheckedInDay
+						? { ...currentCheckedInDay, isAchieved: newAchievedValue }
+						: { isAchieved: new Date().toISOString() },
+				},
+			};
+
+			handleError(async () => {
+				await editHabit({ habitId: habit._id, payload }).unwrap();
+			});
+		};
+
 		return (
 			<div
 				key={`${habit._id} ${day}`}
@@ -199,6 +237,7 @@ const HabitCard = ({ habit, viewType, formattedLastSevenDays, selectedDay }) => 
 					'h-[20px] w-[20px] rounded-full flex justify-center items-center',
 					isChecked ? 'bg-blue-500' : 'bg-color-gray-100/30'
 				)}
+				onClick={handleClick}
 			>
 				<Icon
 					name="check"

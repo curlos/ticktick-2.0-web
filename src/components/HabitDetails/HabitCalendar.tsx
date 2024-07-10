@@ -95,10 +95,6 @@ const HabitCalendar = ({ habit, currentDate, setCurrentDate }) => {
 				},
 			};
 
-			// setCurrentDate(new Date(day.getFullYear(), day.getMonth(), 1));
-			// TODO: Make API Call to check or uncheck the habit for the chosen day.
-			setIsChecked(!isChecked);
-
 			handleError(async () => {
 				await editHabit({ habitId: habit._id, payload }).unwrap();
 			});
