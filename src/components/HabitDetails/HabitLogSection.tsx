@@ -5,11 +5,13 @@ import Icon from '../Icon';
 import { useState } from 'react';
 import classNames from 'classnames';
 import { getMonthAndYear, getSortedObjectsByDate, groupByMonthAndYear } from '../../utils/date.utils';
-import { useGetHabitLogQuery } from '../../services/resources/habitLogsApi';
+import { useGetHabitLogQuery, usePermanentlyDeleteHabitLogMutation } from '../../services/resources/habitLogsApi';
 import { setModalState } from '../../slices/modalSlice';
 import { useDispatch } from 'react-redux';
+import useHandleError from '../../hooks/useHandleError';
 
 const HabitLogSection = ({ currentDate, habit }) => {
+	// RTK Query - Habit Logs
 	const { data: fetchedHabitLogs } = useGetHabitLogQuery();
 	const { habitLogsById } = fetchedHabitLogs || {};
 
@@ -23,8 +25,6 @@ const HabitLogSection = ({ currentDate, habit }) => {
 	const sortedCheckedInDays = checkedInDaysForTheMonth && getSortedObjectsByDate(checkedInDaysForTheMonth);
 	const habitLogsForTheMonth =
 		sortedCheckedInDays && sortedCheckedInDays.filter((checkedInDay) => checkedInDay.habitLogId);
-
-	console.log(habitLogsForTheMonth);
 
 	return (
 		<div className="bg-color-gray-600 rounded-lg p-3">
@@ -50,6 +50,8 @@ const HabitLogSection = ({ currentDate, habit }) => {
 
 const HabitLogDay = ({ checkedInDay, isLastInList, habitLogsById, habit }) => {
 	const dispatch = useDispatch();
+	const handleError = useHandleError();
+	const [permanentlyDeleteHabitLog] = usePermanentlyDeleteHabitLogMutation();
 
 	const isChecked = checkedInDay.isAchieved;
 	const { habitLogId, date, isAchieved } = checkedInDay;
@@ -61,21 +63,39 @@ const HabitLogDay = ({ checkedInDay, isLastInList, habitLogsById, habit }) => {
 		habitLogContent = habitLog.content;
 	}
 
+	const iconStyleClass =
+		'text-color-gray-100 hover:bg-color-gray-200 p-1 rounded !text-[18px] cursor-pointer mr-[-2px]';
+
+	const handleShowEditHabitLogModal = (e) => {
+		e.stopPropagation();
+
+		dispatch(
+			setModalState({
+				modalId: 'ModalAddHabitLog',
+				isOpen: true,
+				props: { habit, checkedInDay, checkedInDayKey: date },
+			})
+		);
+	};
+
+	const handleDelete = (e) => {
+		e.stopPropagation();
+
+		// handleError(async () => {
+		// 	const objToSend = { habitLogId: habitLog._id, habitId: habit._id, checkedInDayKey: date };
+		// 	console.log(objToSend);
+		// 	debugger;
+
+		// 	await permanentlyDeleteHabitLog(objToSend).unwrap();
+		// });
+	};
+
 	return (
 		<li
 			key={date}
 			className="relative m-0 list-none last:mb-[4px] mt-[12px] cursor-pointer"
 			style={{ minHeight: '54px' }}
-			onClick={() => {
-				// habit
-				dispatch(
-					setModalState({
-						modalId: 'ModalAddHabitLog',
-						isOpen: true,
-						props: { habit, checkedInDay, checkedInDayKey: date },
-					})
-				);
-			}}
+			onClick={handleShowEditHabitLogModal}
 		>
 			{!isLastInList && (
 				<div
@@ -102,11 +122,19 @@ const HabitLogDay = ({ checkedInDay, isLastInList, habitLogsById, habit }) => {
 					)}
 				</div>
 
-				<div>
-					<div className="font-medium">{date}</div>
+				<div className="flex justify-between">
+					<div>
+						<div className="font-medium">{date}</div>
 
-					<div className="text-color-gray-100 max-w-[350px] break-words">
-						<ReactMarkdown remarkPlugins={[remarkGfm]}>{habitLogContent}</ReactMarkdown>
+						<div className="text-color-gray-100 max-w-[350px] break-words">
+							<ReactMarkdown remarkPlugins={[remarkGfm]}>{habitLogContent}</ReactMarkdown>
+						</div>
+					</div>
+
+					<div className="flex items-center gap-1">
+						<Icon name="edit" fill={0} customClass={iconStyleClass} onClick={handleShowEditHabitLogModal} />
+
+						<Icon name="delete" fill={0} customClass={iconStyleClass} onClick={handleDelete} />
 					</div>
 				</div>
 			</div>
