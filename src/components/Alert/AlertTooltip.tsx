@@ -30,7 +30,7 @@ const AlertTooltip: React.FC<IAlert> = ({
 		}
 	}, [isOpen]);
 
-	let containerClasses = `relative z-50 transition-all duration-1000 ease-in-out transform p-1 max-w-full  bg-blue-500 rounded-lg text-[12px]`;
+	let containerClasses = `z-50 transition-all duration-1000 ease-in-out transform p-1 max-w-full  bg-blue-500 rounded-lg text-[12px]`;
 
 	// Animation classes based on position
 	const positionClasses = {

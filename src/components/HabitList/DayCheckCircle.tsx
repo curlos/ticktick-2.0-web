@@ -71,7 +71,7 @@ const DayCheckCircle = ({ isChecked, day, habit, type = 'small' }) => {
 	};
 
 	return (
-		<div>
+		<div className="relative">
 			<AlertTooltip
 				isOpen={isAlertTooltipOpen}
 				setIsOpen={setIsAlertTooltipOpen}

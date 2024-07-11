@@ -6,6 +6,8 @@ import { useState } from 'react';
 import classNames from 'classnames';
 import { getMonthAndYear, getSortedObjectsByDate, groupByMonthAndYear } from '../../utils/date.utils';
 import { useGetHabitLogQuery } from '../../services/resources/habitLogsApi';
+import { setModalState } from '../../slices/modalSlice';
+import { useDispatch } from 'react-redux';
 
 const HabitLogSection = ({ currentDate, habit }) => {
 	const { data: fetchedHabitLogs } = useGetHabitLogQuery();
@@ -19,18 +21,23 @@ const HabitLogSection = ({ currentDate, habit }) => {
 	const monthAndYearKey = getMonthAndYear(currentDate);
 	const checkedInDaysForTheMonth = groupedByMonthYear[monthAndYearKey];
 	const sortedCheckedInDays = checkedInDaysForTheMonth && getSortedObjectsByDate(checkedInDaysForTheMonth);
+	const habitLogsForTheMonth =
+		sortedCheckedInDays && sortedCheckedInDays.filter((checkedInDay) => checkedInDay.habitLogId);
+
+	console.log(habitLogsForTheMonth);
 
 	return (
 		<div className="bg-color-gray-600 rounded-lg p-3">
 			<div className="mb-5 font-medium text-[14px]">Habit Log for {monthName}</div>
-			{habitLogsById && sortedCheckedInDays?.length > 0 ? (
+			{habitLogsById && habitLogsForTheMonth?.length > 0 ? (
 				<div>
-					{sortedCheckedInDays.map((checkedInDay, index) => (
+					{habitLogsForTheMonth.map((checkedInDay, index) => (
 						<HabitLogDay
 							key={index}
 							checkedInDay={checkedInDay}
-							isLastInList={index === sortedCheckedInDays.length - 1}
+							isLastInList={index === habitLogsForTheMonth.length - 1}
 							habitLogsById={habitLogsById}
+							habit={habit}
 						/>
 					))}
 				</div>
@@ -41,26 +48,34 @@ const HabitLogSection = ({ currentDate, habit }) => {
 	);
 };
 
-const HabitLogDay = ({ checkedInDay, isLastInList, habitLogsById }) => {
+const HabitLogDay = ({ checkedInDay, isLastInList, habitLogsById, habit }) => {
+	const dispatch = useDispatch();
+
 	const isChecked = checkedInDay.isAchieved;
 	const { habitLogId, date, isAchieved } = checkedInDay;
 	let habitLogContent = '';
 
-	if (habitLogId) {
-		const habitLog = habitLogsById[habitLogId];
+	const habitLog = habitLogsById[habitLogId];
 
-		if (habitLog) {
-			habitLogContent = habitLog.content;
-		}
-	} else {
-		return null;
+	if (habitLog) {
+		habitLogContent = habitLog.content;
 	}
 
 	return (
 		<li
-			key={'June 30'}
+			key={date}
 			className="relative m-0 list-none last:mb-[4px] mt-[12px] cursor-pointer"
 			style={{ minHeight: '54px' }}
+			onClick={() => {
+				// habit
+				dispatch(
+					setModalState({
+						modalId: 'ModalAddHabitLog',
+						isOpen: true,
+						props: { habit, checkedInDay, checkedInDayKey: date },
+					})
+				);
+			}}
 		>
 			{!isLastInList && (
 				<div

@@ -23,7 +23,7 @@ const DropdownHabitDayActions: React.FC<IDropdownHabitDayActions> = ({
 	const [editHabit] = useEditHabitMutation();
 
 	const checkedInDay = habit.checkedInDays[checkedInDayKey];
-	const isChecked = checkedInDay && checkedInDay.isAchieved;
+	const isUnachieved = checkedInDay && checkedInDay.isAchieved === false;
 
 	return (
 		<Dropdown
@@ -38,8 +38,8 @@ const DropdownHabitDayActions: React.FC<IDropdownHabitDayActions> = ({
 		>
 			<div className="w-[200px] rounded p-1">
 				<ActionItem
-					name={isChecked ? 'Unachieved' : 'Achieved'}
-					iconName={isChecked ? 'cancel' : 'check'}
+					name={isUnachieved ? 'Achieved' : 'Unachieved'}
+					iconName={isUnachieved ? 'check' : 'cancel'}
 					onClick={() => {
 						handleError(async () => {
 							setIsVisible(false);
@@ -51,7 +51,7 @@ const DropdownHabitDayActions: React.FC<IDropdownHabitDayActions> = ({
 										...habit.checkedInDays,
 										[checkedInDayKey]: {
 											...checkedInDay,
-											isAchieved: isChecked ? false : new Date().toISOString(),
+											isAchieved: isUnachieved ? new Date().toISOString() : false,
 										},
 									},
 								},
