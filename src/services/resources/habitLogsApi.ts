@@ -28,16 +28,16 @@ export const habitLogsApi = baseAPI.injectEndpoints({
 			invalidatesTags: ['HabitLog', 'Habit'],
 		}),
 		editHabitLog: builder.mutation({
-			query: ({ habitSectionId, payload }) => ({
-				url: `/habit-logs/edit/${habitSectionId}`,
+			query: ({ habitLogPayload, habitLogId, habitId, checkedInDayKey }) => ({
+				url: `/habit-logs/edit/${habitLogId}`,
 				method: 'PUT',
-				body: payload,
+				body: { habitLogPayload, habitId, checkedInDayKey },
 			}),
-			invalidatesTags: (result, error, habitSectionId) => ['HabitLog', 'Habit'],
+			invalidatesTags: (result, error, habitLogId) => ['HabitLog', 'Habit'],
 		}),
 		permanentlyDeleteHabitLog: builder.mutation({
-			query: ({ habitSectionId }) => ({
-				url: `/habit-logs/delete/${habitSectionId}`,
+			query: ({ habitLogId }) => ({
+				url: `/habit-logs/delete/${habitLogId}`,
 				method: 'DELETE',
 			}),
 			invalidatesTags: ['HabitLog', 'Habit'],

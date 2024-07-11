@@ -3,10 +3,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setModalState } from '../../slices/modalSlice';
 import TextareaAutosize from 'react-textarea-autosize';
 import Icon from '../Icon';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useHandleError from '../../hooks/useHandleError';
 import { useEditHabitMutation } from '../../services/resources/habitsApi';
-import { useAddHabitLogMutation, useEditHabitLogMutation } from '../../services/resources/habitLogsApi';
+import {
+	useAddHabitLogMutation,
+	useEditHabitLogMutation,
+	useGetHabitLogQuery,
+} from '../../services/resources/habitLogsApi';
 
 const ModalAddHabitLog: React.FC = () => {
 	const modal = useSelector((state) => state.modals.modals['ModalAddHabitLog']);
@@ -15,8 +19,25 @@ const ModalAddHabitLog: React.FC = () => {
 	const [editHabit] = useEditHabitMutation();
 	const [addHabitLog] = useAddHabitLogMutation();
 	const [editHabitLog] = useEditHabitLogMutation();
+	const { data: fetchedHabitLogs } = useGetHabitLogQuery();
+	const { habitLogsById } = fetchedHabitLogs || {};
 
-	const [habitLogContent, setHabitLogContext] = useState('');
+	const [habitLogContent, setHabitLogContent] = useState('');
+
+	useEffect(() => {
+		if (modal?.props?.habit && habitLogsById) {
+			const { habit, checkedInDay, checkedInDayKey } = modal.props;
+
+			console.log(habitLogsById);
+			console.log(checkedInDay);
+
+			if (checkedInDay && checkedInDay.habitLogId) {
+				const habitLog = habitLogsById[checkedInDay.habitLogId];
+				console.log(habitLog);
+				setHabitLogContent(habitLog.content);
+			}
+		}
+	}, [modal?.props?.habit, habitLogsById]);
 
 	if (!modal) {
 		return null;
@@ -68,7 +89,7 @@ const ModalAddHabitLog: React.FC = () => {
 							className="flex-1 text-[13px] placeholder:text-[#7C7C7C] mt-2 mb-4 bg-transparent outline-none resize-none border border-color-gray-200 rounded p-2 hover:border-blue-500 min-h-[200px] max-h-[300px] overflow-auto gray-scrollbar"
 							placeholder="What do you have in mind?"
 							value={habitLogContent}
-							onChange={(e) => setHabitLogContext(e.target.value)}
+							onChange={(e) => setHabitLogContent(e.target.value)}
 						></TextareaAutosize>
 					</div>
 				</div>
@@ -102,9 +123,26 @@ const ModalAddHabitLog: React.FC = () => {
 											habitId: habit._id,
 											checkedInDayKey,
 										}).unwrap();
+										setHabitLogContent('');
 									});
-								} else if (checkedDay?.habitLogId) {
+								} else if (checkedInDay?.habitLogId) {
 									// If the checked day exists AND a habit log exists, then EDIT the EXISTING habit log.
+									debugger;
+
+									handleError(async () => {
+										const payload = {
+											habitLogPayload: {
+												content: habitLogContent,
+											},
+											habitLogId: checkedInDay.habitLogId,
+											habitId: habit._id,
+											checkedInDayKey,
+										};
+										console.log(payload);
+										debugger;
+										await editHabitLog(payload).unwrap();
+										setHabitLogContent('');
+									});
 								}
 							});
 						}}
