@@ -17,15 +17,15 @@ export const habitLogsApi = baseAPI.injectEndpoints({
 			},
 		}),
 		addHabitLog: builder.mutation({
-			query: (payload) => {
-				const url = '/habit-sections/add';
+			query: ({ habitLogPayload, habitId, checkedInDayKey }) => {
+				const url = '/habit-logs/add';
 				return {
 					url,
 					method: 'POST',
-					body: payload,
+					body: { habitLogPayload, habitId, checkedInDayKey },
 				};
 			},
-			invalidatesTags: ['HabitLog'],
+			invalidatesTags: ['HabitLog', 'Habit'],
 		}),
 		editHabitLog: builder.mutation({
 			query: ({ habitSectionId, payload }) => ({
@@ -33,14 +33,14 @@ export const habitLogsApi = baseAPI.injectEndpoints({
 				method: 'PUT',
 				body: payload,
 			}),
-			invalidatesTags: (result, error, habitSectionId) => ['HabitLog'],
+			invalidatesTags: (result, error, habitSectionId) => ['HabitLog', 'Habit'],
 		}),
 		permanentlyDeleteHabitLog: builder.mutation({
 			query: ({ habitSectionId }) => ({
 				url: `/habit-logs/delete/${habitSectionId}`,
 				method: 'DELETE',
 			}),
-			invalidatesTags: ['HabitLog'],
+			invalidatesTags: ['HabitLog', 'Habit'],
 		}),
 	}),
 });

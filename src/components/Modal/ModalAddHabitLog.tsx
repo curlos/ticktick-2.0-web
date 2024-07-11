@@ -6,12 +6,15 @@ import Icon from '../Icon';
 import { useState } from 'react';
 import useHandleError from '../../hooks/useHandleError';
 import { useEditHabitMutation } from '../../services/resources/habitsApi';
+import { useAddHabitLogMutation, useEditHabitLogMutation } from '../../services/resources/habitLogsApi';
 
 const ModalAddHabitLog: React.FC = () => {
 	const modal = useSelector((state) => state.modals.modals['ModalAddHabitLog']);
 	const dispatch = useDispatch();
 	const handleError = useHandleError();
 	const [editHabit] = useEditHabitMutation();
+	const [addHabitLog] = useAddHabitLogMutation();
+	const [editHabitLog] = useEditHabitLogMutation();
 
 	const [habitLogContent, setHabitLogContext] = useState('');
 
@@ -89,28 +92,20 @@ const ModalAddHabitLog: React.FC = () => {
 								console.log(checkedInDayKey);
 								debugger;
 
-								// First, we either have to edit or add a habit log to a checked day.
-
-								// If the checked day does not exist or it does exist but no habit log has been added for it yet, then add a new habit log.
-								
-
-								// If the checked day exists AND a habit log exists, then edit the existing habit log.
-
-
-								// If checkedInDay is undefined, then we first have to chck
-
-								await editHabit({
-									habitId: habit._id,
-									payload: {
-										checkedInDays: {
-											...habit.checkedInDays,
-											[checkedInDayKey]: {
-												...checkedInDay,
-												habitLogId: 
+								// If the checked day does not exist or it does exist but no habit log has been added for it yet, then ADD a NEW habit log.
+								if (!checkedInDay || !checkedInDay.habitLogId) {
+									handleError(async () => {
+										await addHabitLog({
+											habitLogPayload: {
+												content: habitLogContent,
 											},
-										},
-									},
-								}).unwrap();
+											habitId: habit._id,
+											checkedInDayKey,
+										}).unwrap();
+									});
+								} else if (checkedDay?.habitLogId) {
+									// If the checked day exists AND a habit log exists, then EDIT the EXISTING habit log.
+								}
 							});
 						}}
 					>
