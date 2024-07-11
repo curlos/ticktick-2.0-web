@@ -18,20 +18,18 @@ const HabitLogSection = ({ currentDate, habit }) => {
 	const groupedByMonthYear = groupByMonthAndYear(checkedInDays);
 	const monthAndYearKey = getMonthAndYear(currentDate);
 	const checkedInDaysForTheMonth = groupedByMonthYear[monthAndYearKey];
-	const sortedCheckedInDays = getSortedObjectsByDate(checkedInDaysForTheMonth);
-
-	const [habitLogsForTheMonth, setHabitLogsForTheMonth] = useState(sortedCheckedInDays);
+	const sortedCheckedInDays = checkedInDaysForTheMonth && getSortedObjectsByDate(checkedInDaysForTheMonth);
 
 	return (
 		<div className="bg-color-gray-600 rounded-lg p-3">
 			<div className="mb-5 font-medium text-[14px]">Habit Log for {monthName}</div>
-			{habitLogsById && habitLogsForTheMonth?.length > 0 ? (
+			{habitLogsById && sortedCheckedInDays?.length > 0 ? (
 				<div>
-					{habitLogsForTheMonth.map((checkedInDay, index) => (
+					{sortedCheckedInDays.map((checkedInDay, index) => (
 						<HabitLogDay
 							key={index}
 							checkedInDay={checkedInDay}
-							isLastInList={index === habitLogsForTheMonth.length - 1}
+							isLastInList={index === sortedCheckedInDays.length - 1}
 							habitLogsById={habitLogsById}
 						/>
 					))}
@@ -44,7 +42,6 @@ const HabitLogSection = ({ currentDate, habit }) => {
 };
 
 const HabitLogDay = ({ checkedInDay, isLastInList, habitLogsById }) => {
-	// TODO: Get from backend!
 	const isChecked = checkedInDay.isAchieved;
 	const { habitLogId, date, isAchieved } = checkedInDay;
 	let habitLogContent = '';
@@ -58,8 +55,6 @@ const HabitLogDay = ({ checkedInDay, isLastInList, habitLogsById }) => {
 	} else {
 		return null;
 	}
-
-	console.log(checkedInDay);
 
 	return (
 		<li

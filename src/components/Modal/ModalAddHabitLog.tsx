@@ -28,9 +28,6 @@ const ModalAddHabitLog: React.FC = () => {
 		if (modal?.props?.habit && habitLogsById) {
 			const { habit, checkedInDay, checkedInDayKey } = modal.props;
 
-			console.log(habitLogsById);
-			console.log(checkedInDay);
-
 			if (checkedInDay && checkedInDay.habitLogId) {
 				const habitLog = habitLogsById[checkedInDay.habitLogId];
 				console.log(habitLog);
