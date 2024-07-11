@@ -280,3 +280,49 @@ export const getCalendarMonth = (year, month) => {
 
 	return calendar;
 };
+
+export const groupByMonthAndYear = (checkedInDays) => {
+	const grouped = {};
+
+	// Iterate over each entry in the checkedInDays object
+	for (const [key, value] of Object.entries(checkedInDays)) {
+		// Parse the date using the Date constructor and format it to "Month Year"
+		const date = new Date(key + ','); // Adding comma to correct the date string format if needed
+		const monthYear = date.toLocaleString('default', { month: 'long', year: 'numeric' });
+
+		// Check if the grouped object already has this monthYear key, if not initialize it
+		if (!grouped[monthYear]) {
+			grouped[monthYear] = {};
+		}
+
+		// Add the current day's data to the corresponding monthYear key
+		grouped[monthYear][key] = value;
+	}
+
+	return grouped;
+};
+
+export const getSortedObjectsByDate = (checkedInDays) => {
+	// Convert the object into an array of entries
+	const entries = Object.entries(checkedInDays).map(([date, details]) => ({
+		date,
+		...details,
+	}));
+
+	// Sort the array based on the date, most recent first
+	entries.sort((a, b) => {
+		// Convert date strings to Date objects for comparison
+		const dateA = new Date(a.date);
+		const dateB = new Date(b.date);
+		return dateB - dateA; // Descending order
+	});
+
+	return entries;
+};
+
+export const getMonthAndYear = (day) => {
+	const month = day.toLocaleString('default', { month: 'long' }); // Get the full name of the month
+	const year = day.getFullYear(); // Get the full year
+
+	return `${month} ${year}`; // Combine them into a single string
+};

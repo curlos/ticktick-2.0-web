@@ -4,22 +4,35 @@ import { getFormattedDuration } from '../../utils/helpers.utils';
 import Icon from '../Icon';
 import { useState } from 'react';
 import classNames from 'classnames';
+import { getMonthAndYear, getSortedObjectsByDate, groupByMonthAndYear } from '../../utils/date.utils';
+import { useGetHabitLogQuery } from '../../services/resources/habitLogsApi';
 
-const HabitLogSection = ({ currentDate }) => {
+const HabitLogSection = ({ currentDate, habit }) => {
+	const { data: fetchedHabitLogs } = useGetHabitLogQuery();
+	const { habitLogsById } = fetchedHabitLogs || {};
+
 	const monthName = currentDate.toLocaleString('default', { month: 'long' });
 	// TODO: Get list of habits from the backend and show that data instead.
-	const [habitLogsForTheMonth, setHabitLogsForTheMonth] = useState(['hi', 'hi', 'hi', 'hi']);
+	const { checkedInDays } = habit;
+
+	const groupedByMonthYear = groupByMonthAndYear(checkedInDays);
+	const monthAndYearKey = getMonthAndYear(currentDate);
+	const checkedInDaysForTheMonth = groupedByMonthYear[monthAndYearKey];
+	const sortedCheckedInDays = getSortedObjectsByDate(checkedInDaysForTheMonth);
+
+	const [habitLogsForTheMonth, setHabitLogsForTheMonth] = useState(sortedCheckedInDays);
 
 	return (
 		<div className="bg-color-gray-600 rounded-lg p-3">
-			<div className="mb-5 font-medium text-[14px]">Habit Log on {monthName}</div>
-			{habitLogsForTheMonth?.length > 0 ? (
+			<div className="mb-5 font-medium text-[14px]">Habit Log for {monthName}</div>
+			{habitLogsById && habitLogsForTheMonth?.length > 0 ? (
 				<div>
-					{habitLogsForTheMonth.map((habitLogData, index) => (
+					{habitLogsForTheMonth.map((checkedInDay, index) => (
 						<HabitLogDay
 							key={index}
-							habitLogData={habitLogData}
+							checkedInDay={checkedInDay}
 							isLastInList={index === habitLogsForTheMonth.length - 1}
+							habitLogsById={habitLogsById}
 						/>
 					))}
 				</div>
@@ -30,9 +43,23 @@ const HabitLogSection = ({ currentDate }) => {
 	);
 };
 
-const HabitLogDay = ({ habitLogData, isLastInList }) => {
+const HabitLogDay = ({ checkedInDay, isLastInList, habitLogsById }) => {
 	// TODO: Get from backend!
-	const [isChecked, setIsChecked] = useState(true);
+	const isChecked = checkedInDay.isAchieved;
+	const { habitLogId, date, isAchieved } = checkedInDay;
+	let habitLogContent = '';
+
+	if (habitLogId) {
+		const habitLog = habitLogsById[habitLogId];
+
+		if (habitLog) {
+			habitLogContent = habitLog.content;
+		}
+	} else {
+		return null;
+	}
+
+	console.log(checkedInDay);
 
 	return (
 		<li
@@ -54,23 +81,22 @@ const HabitLogDay = ({ habitLogData, isLastInList }) => {
 						isChecked ? 'bg-blue-500' : 'bg-transparent border border-blue-800'
 					)}
 				>
-					<Icon
-						name="check"
-						fill={0}
-						customClass={classNames(
-							'text-white !text-[22px] cursor-pointer',
-							!isChecked ? 'invisible' : ''
-						)}
-					/>
+					{isChecked && <Icon name="check" fill={0} customClass={'text-white !text-[22px] cursor-pointer'} />}
+
+					{isAchieved === false && (
+						<Icon
+							name="close"
+							fill={0}
+							customClass={'text-red-500 !text-[18px] cursor-pointer mr-[-2px]'}
+						/>
+					)}
 				</div>
 
 				<div>
-					<div className="font-medium">Sun, June 30</div>
+					<div className="font-medium">{date}</div>
 
 					<div className="text-color-gray-100 max-w-[350px] break-words">
-						<ReactMarkdown remarkPlugins={[remarkGfm]}>
-							Metroid Prime Remastered is a great game so far!
-						</ReactMarkdown>
+						<ReactMarkdown remarkPlugins={[remarkGfm]}>{habitLogContent}</ReactMarkdown>
 					</div>
 				</div>
 			</div>

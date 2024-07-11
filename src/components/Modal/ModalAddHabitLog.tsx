@@ -5,7 +5,6 @@ import TextareaAutosize from 'react-textarea-autosize';
 import Icon from '../Icon';
 import { useEffect, useState } from 'react';
 import useHandleError from '../../hooks/useHandleError';
-import { useEditHabitMutation } from '../../services/resources/habitsApi';
 import {
 	useAddHabitLogMutation,
 	useEditHabitLogMutation,
@@ -16,7 +15,8 @@ const ModalAddHabitLog: React.FC = () => {
 	const modal = useSelector((state) => state.modals.modals['ModalAddHabitLog']);
 	const dispatch = useDispatch();
 	const handleError = useHandleError();
-	const [editHabit] = useEditHabitMutation();
+
+	// RTK Query - Habit Logs
 	const [addHabitLog] = useAddHabitLogMutation();
 	const [editHabitLog] = useEditHabitLogMutation();
 	const { data: fetchedHabitLogs } = useGetHabitLogQuery();
@@ -107,12 +107,6 @@ const ModalAddHabitLog: React.FC = () => {
 							handleError(async () => {
 								closeModal();
 
-								// TODO: Send API call to Habit Log to udpate that habit log.
-								console.log(habitLogContent);
-								console.log(checkedInDay);
-								console.log(checkedInDayKey);
-								debugger;
-
 								// If the checked day does not exist or it does exist but no habit log has been added for it yet, then ADD a NEW habit log.
 								if (!checkedInDay || !checkedInDay.habitLogId) {
 									handleError(async () => {
@@ -127,7 +121,6 @@ const ModalAddHabitLog: React.FC = () => {
 									});
 								} else if (checkedInDay?.habitLogId) {
 									// If the checked day exists AND a habit log exists, then EDIT the EXISTING habit log.
-									debugger;
 
 									handleError(async () => {
 										const payload = {
@@ -138,8 +131,6 @@ const ModalAddHabitLog: React.FC = () => {
 											habitId: habit._id,
 											checkedInDayKey,
 										};
-										console.log(payload);
-										debugger;
 										await editHabitLog(payload).unwrap();
 										setHabitLogContent('');
 									});
