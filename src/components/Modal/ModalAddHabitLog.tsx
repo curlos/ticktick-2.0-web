@@ -107,13 +107,15 @@ const ModalAddHabitLog: React.FC = () => {
 								// If the checked day does not exist or it does exist but no habit log has been added for it yet, then ADD a NEW habit log.
 								if (!checkedInDay || !checkedInDay.habitLogId) {
 									handleError(async () => {
-										await addHabitLog({
-											habitLogPayload: {
-												content: habitLogContent,
-											},
+										const payload = {
+											content: habitLogContent,
 											habitId: habit._id,
 											checkedInDayKey,
-										}).unwrap();
+										};
+
+										console.log(payload);
+										debugger;
+										await addHabitLog(payload).unwrap();
 										setHabitLogContent('');
 									});
 								} else if (checkedInDay?.habitLogId) {
@@ -121,13 +123,17 @@ const ModalAddHabitLog: React.FC = () => {
 
 									handleError(async () => {
 										const payload = {
+											habitLogId: checkedInDay.habitLogId,
 											habitLogPayload: {
 												content: habitLogContent,
+												habitId: habit._id,
+												checkedInDayKey,
 											},
-											habitLogId: checkedInDay.habitLogId,
-											habitId: habit._id,
-											checkedInDayKey,
 										};
+
+										console.log(payload);
+										debugger;
+
 										await editHabitLog(payload).unwrap();
 										setHabitLogContent('');
 									});

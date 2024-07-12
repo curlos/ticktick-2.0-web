@@ -17,21 +17,21 @@ export const habitLogsApi = baseAPI.injectEndpoints({
 			},
 		}),
 		addHabitLog: builder.mutation({
-			query: ({ habitLogPayload, habitId, checkedInDayKey }) => {
+			query: (payload) => {
 				const url = '/habit-logs/add';
 				return {
 					url,
 					method: 'POST',
-					body: { habitLogPayload, habitId, checkedInDayKey },
+					body: payload,
 				};
 			},
 			invalidatesTags: ['HabitLog', 'Habit'],
 		}),
 		editHabitLog: builder.mutation({
-			query: ({ habitLogPayload, habitLogId, habitId, checkedInDayKey }) => ({
+			query: ({ habitLogId, habitLogPayload }) => ({
 				url: `/habit-logs/edit/${habitLogId}`,
 				method: 'PUT',
-				body: { habitLogPayload, habitId, checkedInDayKey },
+				body: { ...habitLogPayload },
 			}),
 			invalidatesTags: (result, error, habitLogId) => ['HabitLog', 'Habit'],
 		}),
