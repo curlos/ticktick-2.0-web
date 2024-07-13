@@ -81,6 +81,10 @@ const HabitLogDay = ({ checkedInDay, isLastInList, habitLogsById, habit }) => {
 	const handleDelete = (e) => {
 		e.stopPropagation();
 
+		if (habit.isArchived) {
+			return;
+		}
+
 		handleError(async () => {
 			await permanentlyDeleteHabitLog(habitLogId).unwrap();
 		});
@@ -89,7 +93,7 @@ const HabitLogDay = ({ checkedInDay, isLastInList, habitLogsById, habit }) => {
 	return (
 		<li
 			key={date}
-			className="relative m-0 list-none last:mb-[4px] mt-[12px] cursor-pointer"
+			className="group relative m-0 list-none last:mb-[4px] mt-[12px] cursor-pointer"
 			style={{ minHeight: '54px' }}
 			onClick={handleShowEditHabitLogModal}
 		>
@@ -127,8 +131,24 @@ const HabitLogDay = ({ checkedInDay, isLastInList, habitLogsById, habit }) => {
 						</div>
 					</div>
 
-					<div className="flex items-center gap-1">
-						<Icon name="edit" fill={0} customClass={iconStyleClass} onClick={handleShowEditHabitLogModal} />
+					<div
+						className={classNames(
+							'flex items-center gap-1 opacity-0',
+							!habit.isArchived && 'group-hover:opacity-100 transition-opacity duration-100'
+						)}
+					>
+						<Icon
+							name="edit"
+							fill={0}
+							customClass={iconStyleClass}
+							onClick={(e) => {
+								e.stopPropagation();
+
+								if (!habit.isArchived) {
+									handleShowEditHabitLogModal(e);
+								}
+							}}
+						/>
 
 						<Icon name="delete" fill={0} customClass={iconStyleClass} onClick={handleDelete} />
 					</div>

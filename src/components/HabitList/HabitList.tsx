@@ -1,18 +1,15 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import Icon from '../Icon';
 import HeaderSection from './HeaderSection';
 import { CircularProgressbarWithChildren, buildStyles } from 'react-circular-progressbar';
 import classNames from 'classnames';
 import { formatCheckedInDayDate, getDayNameAbbreviation, getLast7Days, getMonthAndDay } from '../../utils/date.utils';
 import { areDatesEqual } from '../../utils/date.utils';
-import { useEditHabitMutation, useGetHabitsQuery } from '../../services/resources/habitsApi';
+import { useGetHabitsQuery } from '../../services/resources/habitsApi';
 import { useGetHabitSectionsQuery } from '../../services/resources/habitSectionsApi';
 import { useNavigate, useParams } from 'react-router';
-import ContextMenuHabitActions from '../ContextMenu/ContextMenuHabitActions';
-import { getCheckInsPerMonth, getStreaks } from '../../utils/habits.util';
+import { getStreaks } from '../../utils/habits.util';
 import Dropdown from '../Dropdown/Dropdown';
-import useHandleError from '../../hooks/useHandleError';
-import AlertTooltip from '../Alert/AlertTooltip';
 import DropdownHabitOptions from '../Dropdown/DropdownHabitOptions/DropdownHabitOptions';
 import ContextMenuGeneric from '../ContextMenu/ContextMenuGeneric';
 import DayCheckCircle from './DayCheckCircle';
@@ -208,7 +205,7 @@ const HabitCard = ({ habit, viewType, formattedLastSevenDays, selectedDay }) => 
 				className={classNames(
 					'bg-color-gray-600 rounded-lg p-3 cursor-pointer border-2',
 					habitId && habit._id === habitId ? 'border-blue-500' : 'border-transparent',
-					viewType === 'grid' ? 'space-y-4' : 'flex justify-between items-center'
+					viewType === 'grid' && !selectedDay ? 'space-y-4' : 'flex justify-between items-center'
 				)}
 				onClick={() => {
 					if (habit.isArchived) {

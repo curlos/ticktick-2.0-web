@@ -10,6 +10,7 @@ import {
 	useEditHabitLogMutation,
 	useGetHabitLogsQuery,
 } from '../../services/resources/habitLogsApi';
+import classNames from 'classnames';
 
 const ModalAddHabitLog: React.FC = () => {
 	const modal = useSelector((state) => state.modals.modals['ModalAddHabitLog']);
@@ -31,7 +32,11 @@ const ModalAddHabitLog: React.FC = () => {
 			if (checkedInDay && checkedInDay.habitLogId) {
 				const habitLog = habitLogsById[checkedInDay.habitLogId];
 				setHabitLogContent(habitLog.content);
+			} else {
+				setHabitLogContent('');
 			}
+		} else {
+			setHabitLogContent('');
 		}
 	}, [modal?.props?.habit, habitLogsById]);
 
@@ -80,62 +85,68 @@ const ModalAddHabitLog: React.FC = () => {
 					{/* Focus Note */}
 					<div className="flex gap-2">
 						<TextareaAutosize
-							className="flex-1 text-[13px] placeholder:text-[#7C7C7C] mt-2 mb-4 bg-transparent outline-none resize-none border border-color-gray-200 rounded p-2 hover:border-blue-500 min-h-[200px] max-h-[300px] overflow-auto gray-scrollbar"
+							className={classNames(
+								'flex-1 text-[13px] placeholder:text-[#7C7C7C] mt-2 mb-4 bg-transparent outline-none resize-none border border-color-gray-200 rounded p-2 min-h-[200px] max-h-[300px] overflow-auto gray-scrollbar',
+								habit.isArchived ? 'cursor-not-allowed' : 'hover:border-blue-500'
+							)}
 							placeholder="What do you have in mind?"
 							value={habitLogContent}
 							onChange={(e) => setHabitLogContent(e.target.value)}
+							readOnly={habit?.isArchived}
 						></TextareaAutosize>
 					</div>
 				</div>
 
-				<div className="flex justify-end gap-2">
-					<button
-						className="border border-color-gray-200 rounded py-1 cursor-pointer hover:bg-color-gray-200 min-w-[114px]"
-						onClick={closeModal}
-					>
-						Close
-					</button>
-					<button
-						className="bg-blue-500 rounded py-1 cursor-pointer hover:bg-blue-600 min-w-[114px]"
-						onClick={() => {
-							handleError(async () => {
-								closeModal();
+				{!habit?.isArchived && (
+					<div className="flex justify-end gap-2">
+						<button
+							className="border border-color-gray-200 rounded py-1 cursor-pointer hover:bg-color-gray-200 min-w-[114px]"
+							onClick={closeModal}
+						>
+							Close
+						</button>
+						<button
+							className="bg-blue-500 rounded py-1 cursor-pointer hover:bg-blue-600 min-w-[114px]"
+							onClick={() => {
+								handleError(async () => {
+									closeModal();
 
-								// If the checked day does not exist or it does exist but no habit log has been added for it yet, then ADD a NEW habit log.
-								if (!checkedInDay || !checkedInDay.habitLogId) {
-									handleError(async () => {
-										const payload = {
-											content: habitLogContent,
-											habitId: habit._id,
-											checkedInDayKey,
-										};
-
-										await addHabitLog(payload).unwrap();
-										setHabitLogContent('');
-									});
-								} else if (checkedInDay?.habitLogId) {
-									// If the checked day exists AND a habit log exists, then EDIT the EXISTING habit log.
-
-									handleError(async () => {
-										const payload = {
-											habitLogId: checkedInDay.habitLogId,
-											habitLogPayload: {
+									// If the checked day does not exist or it does exist but no habit log has been added for it yet, then ADD a NEW habit log.
+									if (!checkedInDay || !checkedInDay.habitLogId) {
+										handleError(async () => {
+											const payload = {
 												content: habitLogContent,
 												habitId: habit._id,
 												checkedInDayKey,
-											},
-										};
+											};
 
-										await editHabitLog(payload).unwrap();
-										setHabitLogContent('');
-									});
-								}
-							});
-						}}
-					>
-						Ok
-					</button>
-				</div>
+											await addHabitLog(payload).unwrap();
+											setHabitLogContent('');
+										});
+									} else if (checkedInDay?.habitLogId) {
+										// If the checked day exists AND a habit log exists, then EDIT the EXISTING habit log.
+
+										handleError(async () => {
+											const payload = {
+												habitLogId: checkedInDay.habitLogId,
+												habitLogPayload: {
+													content: habitLogContent,
+													habitId: habit._id,
+													checkedInDayKey,
+												},
+											};
+
+											await editHabitLog(payload).unwrap();
+											setHabitLogContent('');
+										});
+									}
+								});
+							}}
+						>
+							Ok
+						</button>
+					</div>
+				)}
 			</div>
 		</Modal>
 	);

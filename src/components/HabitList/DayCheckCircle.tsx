@@ -22,6 +22,10 @@ const DayCheckCircle = ({ isChecked, day, habit, type = 'small' }) => {
 	const dropdownHabitDayActionsRef = useRef(null);
 
 	const handleClick = () => {
+		if (habit.isArchived) {
+			return;
+		}
+
 		let payload = null;
 		// If it's currently checked, then we need to uncheck it (set it to null)
 		if (isChecked) {
@@ -60,6 +64,10 @@ const DayCheckCircle = ({ isChecked, day, habit, type = 'small' }) => {
 		event.preventDefault(); // Prevent the default context menu
 		event.stopPropagation();
 
+		if (habit.isArchived) {
+			return;
+		}
+
 		setContextMenu({
 			xPos: event.pageX, // X coordinate of the mouse pointer
 			yPos: event.pageY, // Y coordinate of the mouse pointer
@@ -71,7 +79,7 @@ const DayCheckCircle = ({ isChecked, day, habit, type = 'small' }) => {
 	};
 
 	return (
-		<div className="relative">
+		<div className={classNames('relative')}>
 			<AlertTooltip
 				isOpen={isAlertTooltipOpen}
 				setIsOpen={setIsAlertTooltipOpen}
@@ -85,29 +93,20 @@ const DayCheckCircle = ({ isChecked, day, habit, type = 'small' }) => {
 					ref={tooltipDayRef}
 					key={`${habit._id} ${day}`}
 					className={classNames(
-						'rounded-full flex justify-center items-center cursor-pointer',
+						'rounded-full flex justify-center items-center',
 						isChecked ? 'bg-blue-500' : 'bg-color-gray-100/30',
-						type === 'small' ? 'h-[20px] w-[20px]' : 'h-[30px] w-[30px]'
+						type === 'small' ? 'h-[20px] w-[20px]' : 'h-[30px] w-[30px]',
+						habit.isArchived ? 'cursor-not-allowed' : 'cursor-pointer'
 					)}
 					onContextMenu={handleContextMenu}
 					onClick={handleClick}
 					onMouseOver={() => setIsTooltipDayVisible(true)}
 					onMouseLeave={() => setIsTooltipDayVisible(false)}
 				>
-					{isChecked && (
-						<Icon
-							name="check"
-							fill={1}
-							customClass={classNames('text-white !text-[18px] cursor-pointer')}
-						/>
-					)}
+					{isChecked && <Icon name="check" fill={1} customClass={classNames('text-white !text-[18px]')} />}
 
 					{checkedInDay && checkedInDay.isAchieved === false && (
-						<Icon
-							name="close"
-							fill={1}
-							customClass={classNames('text-red-500 !text-[18px] cursor-pointer mr-[-1px]')}
-						/>
+						<Icon name="close" fill={1} customClass={classNames('text-red-500 !text-[18px] mr-[-1px]')} />
 					)}
 				</div>
 

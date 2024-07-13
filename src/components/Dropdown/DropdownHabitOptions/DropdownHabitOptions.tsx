@@ -106,47 +106,51 @@ const DropdownHabitOptions: React.FC<DropdownHabitOptionsProps> = ({
 			customStyling={customStyling ? customStyling : null}
 		>
 			<div className="w-[232px] p-1 rounded text-[13px]" onClick={(e) => e.stopPropagation()}>
-				<div
-					className="p-1 flex items-center gap-[2px] hover:bg-color-gray-300 cursor-pointer"
-					onClick={() => {
-						handleCloseContextMenu();
-						setIsVisible(false);
-						dispatch(setModalState({ modalId: 'ModalAddHabit', isOpen: true, props: { habit } }));
-					}}
-				>
-					<Icon
-						name="edit"
-						customClass={
-							'text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer'
-						}
-						fill={0}
-					/>
-					<div>Edit</div>
-				</div>
-				<div
-					ref={dropdownStartFocusRef}
-					className="p-1 flex justify-between items-center hover:bg-color-gray-300 cursor-pointer"
-					onClick={() => setIsDropdownStartFocusVisible(!isDropdownStartFocusVisible)}
-				>
-					<div className="flex items-center gap-[2px]">
+				{!habit.isArchived && (
+					<div
+						className="p-1 flex items-center gap-[2px] hover:bg-color-gray-300 cursor-pointer"
+						onClick={() => {
+							handleCloseContextMenu();
+							setIsVisible(false);
+							dispatch(setModalState({ modalId: 'ModalAddHabit', isOpen: true, props: { habit } }));
+						}}
+					>
 						<Icon
-							name="timer"
+							name="edit"
 							customClass={
 								'text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer'
 							}
 							fill={0}
 						/>
-						<div>Start Focus</div>
+						<div>Edit</div>
 					</div>
+				)}
+				{!habit.isArchived && (
+					<div
+						ref={dropdownStartFocusRef}
+						className="p-1 flex justify-between items-center hover:bg-color-gray-300 cursor-pointer"
+						onClick={() => setIsDropdownStartFocusVisible(!isDropdownStartFocusVisible)}
+					>
+						<div className="flex items-center gap-[2px]">
+							<Icon
+								name="timer"
+								customClass={
+									'text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer'
+								}
+								fill={0}
+							/>
+							<div>Start Focus</div>
+						</div>
 
-					<Icon
-						name="chevron_right"
-						customClass={
-							'text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer'
-						}
-						fill={0}
-					/>
-				</div>
+						<Icon
+							name="chevron_right"
+							customClass={
+								'text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer'
+							}
+							fill={0}
+						/>
+					</div>
+				)}
 				{/* Side Dropdown */}
 				<DropdownStartFocus
 					toggleRef={dropdownStartFocusRef}
