@@ -32,7 +32,7 @@ export const usersApi = baseAPI.injectEndpoints({
 			onQueryStarted: async (arg, { queryFulfilled, dispatch }) => {
 				try {
 					const { data } = await queryFulfilled;
-					localStorage.setItem('token', data.token);
+					dispatch(loginUserSuccess(data)); // Update user slice state on successful login
 				} catch (error) {
 					console.error('Registration failed:', error);
 				}

@@ -23,9 +23,7 @@ const DayCheckCircle = ({ isChecked, day, habit, type = 'small' }) => {
 	const dropdownHabitDayActionsRef = useRef(null);
 
 	const dayHasNotHappenedYet = isFutureDate(day);
-	const disableHabitActions = habit.isArchived || dayHasNotHappenedYet
-
-	console.log(day);
+	const disableHabitActions = habit.isArchived || dayHasNotHappenedYet;
 
 	const handleClick = () => {
 		if (disableHabitActions) {
