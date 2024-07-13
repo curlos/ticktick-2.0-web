@@ -45,6 +45,11 @@ const DropdownSetTaskOrHabit: React.FC<DropdownSetTaskOrHabitProps> = ({
 	const [searchText, setSearchText] = useState('');
 	const [filteredTasks, setFilteredTasks] = useState([]);
 	const [isSearchFocused, setIsSearchFocused] = useState(false);
+	const [selectedButton, setSelectedButton] = useState('task');
+
+	const sharedButtonStyle = `py-1 px-4 rounded-3xl cursor-pointer`;
+	const selectedButtonStyle = `${sharedButtonStyle} bg-[#222735] text-[#4671F7] font-semibold`;
+	const unselectedButtonStyle = `${sharedButtonStyle} text-[#666666]`;
 
 	const fuse = new Fuse(tasks, {
 		includeScore: true,
@@ -89,10 +94,7 @@ const DropdownSetTaskOrHabit: React.FC<DropdownSetTaskOrHabitProps> = ({
 		setFilteredTasks(searchedTasks.map((result) => result.item));
 	}, 1000);
 
-	const sharedButtonStyle = `py-1 px-4 rounded-3xl cursor-pointer`;
-	const selectedButtonStyle = `${sharedButtonStyle} bg-[#222735] text-[#4671F7] font-semibold`;
-	const unselectedButtonStyle = `${sharedButtonStyle} text-[#666666]`;
-	const [selectedButton, setSelectedButton] = useState('task');
+	console.log(habits);
 
 	return (
 		<Dropdown
@@ -139,7 +141,7 @@ const DropdownSetTaskOrHabit: React.FC<DropdownSetTaskOrHabitProps> = ({
 				)}
 			</div>
 
-			{!isSearchFocused && !searchText && (
+			{!isSearchFocused && !searchText && selectedButton === 'task' && (
 				<ProjectSelector
 					selectedProject={selectedProject}
 					setSelectedProject={setSelectedProject}
@@ -166,7 +168,11 @@ const DropdownSetTaskOrHabit: React.FC<DropdownSetTaskOrHabitProps> = ({
 							setSelectedFocusRecordTask={setSelectedTask}
 						/>
 					) : (
-						<div></div>
+						<HabitList
+							habits={habits}
+							selectedFocusRecordTask={selectedTask}
+							setSelectedFocusRecordTask={setSelectedTask}
+						/>
 					)
 				) : (
 					<div>
@@ -183,6 +189,42 @@ const DropdownSetTaskOrHabit: React.FC<DropdownSetTaskOrHabitProps> = ({
 				)}
 			</div>
 		</Dropdown>
+	);
+};
+
+const HabitList = ({ habits, selectedFocusRecordTask, setSelectedFocusRecordTask }) => {
+	const MiniHabit = ({ habit }) => {
+		return (
+			<div className="flex items-center gap-2" onClick={() => setSelectedFocusRecordTask(habit)}>
+				<div className="h-[20px]">
+					{selectedFocusRecordTask && selectedFocusRecordTask._id === habit._id ? (
+						<Icon
+							name="radio_button_checked"
+							fill={0}
+							customClass={classNames('!text-[20px] text-color-gray-100 hover:text-white cursor-pointer')}
+						/>
+					) : (
+						<Icon
+							name="radio_button_unchecked"
+							fill={0}
+							customClass={classNames('!text-[18px] text-color-gray-100 hover:text-white cursor-pointer')}
+						/>
+					)}
+				</div>
+
+				<div>{habit.name}</div>
+			</div>
+		);
+	};
+
+	return (
+		<div className="w-full text-left space-y-3">
+			{habits
+				.filter((habit) => !habit.isArchived)
+				.map((habit) => (
+					<MiniHabit habit={habit} />
+				))}
+		</div>
 	);
 };
 

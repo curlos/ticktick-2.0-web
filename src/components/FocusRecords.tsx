@@ -11,6 +11,7 @@ import { useDispatch } from 'react-redux';
 import { formatDateTime, groupByEndTimeDay } from '../utils/date.utils';
 import { useGetTasksQuery } from '../services/resources/tasksApi';
 import { useGetFocusRecordsQuery } from '../services/resources/focusRecordsApi';
+import { useGetHabitsQuery } from '../services/resources/habitsApi';
 
 interface StatsOverviewProps {
 	overviewData: object;
@@ -102,8 +103,13 @@ const FocusRecordList = () => {
 	} = useGetFocusRecordsQuery();
 	const { focusRecords, parentOfFocusRecords } = fetchedFocusRecords || {};
 
+	// RTK Query - Tasks
 	const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
 	const { tasksById } = fetchedTasks || {};
+
+	// RTK Query - Habits
+	const { data: fetchedHabits, isLoading: isLoadingGetHabits, error: errorGetHabits } = useGetHabitsQuery();
+	const { habits, habitsById } = fetchedHabits || {};
 
 	const scrollableRef = useRef(null); // Reference to the scrollable container
 	const stickyRef = useRef(null); // Reference to the sticky element
@@ -161,7 +167,11 @@ const FocusRecordList = () => {
 								tasksById &&
 								sortArrayByEndTime(focusRecordsForTheDay).map((focusRecord) => (
 									<div key={focusRecord._id}>
-										<FocusRecord focusRecord={focusRecord} tasksById={tasksById} />
+										<FocusRecord
+											focusRecord={focusRecord}
+											tasksById={tasksById}
+											habitsById={habitsById}
+										/>
 									</div>
 								))}
 						</div>
@@ -171,7 +181,7 @@ const FocusRecordList = () => {
 	);
 };
 
-const FocusRecord = ({ focusRecord, tasksById }) => {
+const FocusRecord = ({ focusRecord, tasksById, habitsById }) => {
 	const dispatch = useDispatch();
 	const {
 		data: fetchedFocusRecords,
@@ -180,22 +190,23 @@ const FocusRecord = ({ focusRecord, tasksById }) => {
 	} = useGetFocusRecordsQuery();
 	const { focusRecordsById } = fetchedFocusRecords || {};
 
-	const { _id, taskId, note, duration, startTime, endTime, children } = focusRecord;
+	const { _id, taskId, habitId, note, duration, startTime, endTime, children } = focusRecord;
 
 	const task = tasksById[taskId];
+	const habit = habitsById[habitId];
 
 	const startTimeObj = formatDateTime(startTime);
 	const endTimeObj = formatDateTime(endTime);
 
 	const childFocusRecordTaskTitles = new Set();
 
-	const childFocusRecords =
-		children &&
-		children.map((childId) => {
-			const childFocusRecord = focusRecordsById[childId];
-			const childTask = tasksById[childFocusRecord.taskId];
-			childFocusRecordTaskTitles.add(childTask?.title);
-		});
+	children?.forEach((childId) => {
+		const childFocusRecord = focusRecordsById[childId];
+		const isTask = childFocusRecord.taskId;
+
+		const childItem = isTask ? tasksById[childFocusRecord.taskId] : habitsById[childFocusRecord.habitId];
+		childFocusRecordTaskTitles.add(isTask ? childItem?.title : childItem?.name);
+	});
 
 	return (
 		<li
@@ -240,7 +251,10 @@ const FocusRecord = ({ focusRecord, tasksById }) => {
 							))}
 						</div>
 					) : (
-						<div>{task && <div className="font-medium">{task.title}</div>}</div>
+						<div>
+							<div>{task && <div className="font-medium">{task.title}</div>}</div>
+							<div>{habit && <div className="font-medium">{habit.name}</div>}</div>
+						</div>
 					)}
 
 					<div className="text-color-gray-100 mt-1 max-w-[350px] break-words">

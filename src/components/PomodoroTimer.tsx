@@ -74,9 +74,12 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ timerStyle }) => {
 
 		// If it's currently active, then that means that we're pausing the running timer in which case a focus record must be added to the array.
 		if (pressedPause) {
+			const isTask = selectedTask.title;
+
 			dispatch(
 				addFocusRecord({
-					taskId: selectedTask ? selectedTask._id : null,
+					taskId: isTask && selectedTask ? selectedTask._id : null,
+					habitId: !isTask && selectedTask ? selectedTask._id : null,
 					startTime: currentFocusRecord.startTime,
 					endTime: new Date().toISOString(),
 					duration: currentFocusRecord.duration,
@@ -162,8 +165,7 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ timerStyle }) => {
 					className={`text-white mb-4 cursor-pointer flex justify-center items-center group`}
 				>
 					<span className="text-color-gray-100 group-hover:text-white max-w-[260px] truncate">
-						{selectedTask ? selectedTask?.title : 'Focus'}
-						{/* Focus */}
+						{selectedTask ? selectedTask.title || selectedTask.name : 'Focus'}
 					</span>
 					<Icon
 						name="chevron_right"
@@ -179,14 +181,20 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ timerStyle }) => {
 					isVisible={isDropdownSetTaskVisible}
 					setIsVisible={setIsDropdownSetTaskVisible}
 					selectedTask={selectedTask}
-					setSelectedTask={(newTask) => {
+					setSelectedTask={(newItem) => {
+						const isTask = newItem.title;
+
 						if (!selectedTask) {
-							setCurrentFocusRecord({ taskId: newTask._id });
+							setCurrentFocusRecord({
+								taskId: isTask ? newItem._id : null,
+								habitId: !isTask ? newItem._id : null,
+							});
 						} else {
 							if (isActive) {
 								dispatch(
 									addFocusRecord({
-										taskId: selectedTask ? selectedTask._id : null,
+										taskId: isTask && selectedTask ? selectedTask._id : null,
+										habitId: !isTask && selectedTask ? selectedTask._id : null,
 										startTime: currentFocusRecord.startTime,
 										endTime: new Date().toISOString(),
 										duration: currentFocusRecord.duration,
@@ -200,7 +208,7 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ timerStyle }) => {
 							}
 						}
 
-						dispatch(setSelectedTask(newTask));
+						dispatch(setSelectedTask(newItem));
 					}}
 					dropdownProjectsState={{
 						isDropdownVisible: isDropdownProjectsVisible,

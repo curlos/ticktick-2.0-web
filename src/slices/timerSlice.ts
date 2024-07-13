@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialFocusRecord = {
 	taskId: null,
+	habitId: null,
 	startTime: null,
 	endTime: null,
 	duration: 0,
@@ -64,10 +65,11 @@ export const timerSlice = createSlice({
 			state.duration = action.payload;
 		},
 		addFocusRecord: (state, action) => {
-			const { taskId, startTime, endTime, duration, pomos, focusType, note } = action.payload;
+			const { taskId, habitId, startTime, endTime, duration, pomos, focusType, note } = action.payload;
 
 			const newFocusRecord = {
 				taskId: taskId ? taskId : null,
+				habitId: habitId ? habitId : null,
 				startTime: startTime ? startTime : null,
 				endTime: endTime ? endTime : null,
 				duration: duration ? duration : 0,

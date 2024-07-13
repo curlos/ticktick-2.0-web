@@ -17,6 +17,7 @@ import {
 	useGetFocusRecordsQuery,
 } from '../../services/resources/focusRecordsApi';
 import DropdownSetTaskOrHabit from '../Dropdown/DropdownsAddFocusRecord/DropdownSetTaskOrHabit';
+import { useGetHabitsQuery } from '../../services/resources/habitsApi';
 
 const ModalAddFocusRecord: React.FC = () => {
 	const modal = useSelector((state) => state.modals.modals['ModalAddFocusRecord']);
@@ -112,8 +113,11 @@ const ModalAddFocusRecord: React.FC = () => {
 	};
 
 	const handleAddFocusRecord = async () => {
+		const isTask = selectedTask.title;
+
 		const payload = {
-			taskId: selectedTask ? selectedTask._id : null,
+			taskId: isTask && selectedTask ? selectedTask._id : null,
+			habitId: !isTask && selectedTask ? selectedTask._id : null,
 			startTime: startTime,
 			endTime: endTime,
 			duration: getDuration(),
@@ -171,7 +175,7 @@ const ModalAddFocusRecord: React.FC = () => {
 												'max-w-[260px] text-ellipsis text-nowrap overflow-hidden'
 											)}
 										>
-											{selectedTask ? selectedTask.title : 'Set Task'}
+											{selectedTask ? selectedTask.title || selectedTask.name : 'Set Task'}
 										</div>
 										<Icon
 											name="expand_more"
@@ -339,8 +343,13 @@ const FocusRecordChild = ({ childId }) => {
 	} = useGetFocusRecordsQuery();
 	const { focusRecordsById } = fetchedFocusRecords || {};
 
+	// RTK Query - Tasks
 	const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
 	const { tasks, tasksById } = fetchedTasks || {};
+
+	// RTK Query - Habits
+	const { data: fetchedHabits, isLoading: isLoadingGetHabits, error: errorGetHabits } = useGetHabitsQuery();
+	const { habits, habitsById } = fetchedHabits || {};
 
 	const [selectedTask, setSelectedTask] = useState<Object | null>(null);
 	const [isDropdownSetTaskVisible, setIsDropdownSetTaskVisible] = useState(false);
@@ -352,8 +361,9 @@ const FocusRecordChild = ({ childId }) => {
 	}, [selectedTask]);
 
 	const childFocusRecord = focusRecordsById[childId];
-	const { _id, taskId, startTime, endTime, focusType, duration } = childFocusRecord;
-	const task = tasksById[taskId];
+	const { _id, taskId, habitId, startTime, endTime, focusType, duration } = childFocusRecord;
+	const task = taskId && tasksById[taskId];
+	const habit = habitId && habitsById[habitId];
 
 	const dateOptions = {
 		year: 'numeric', // Full year
@@ -373,7 +383,7 @@ const FocusRecordChild = ({ childId }) => {
 				<div className="flex items-center justify-between mb-3">
 					<div className="flex items-center gap-1">
 						<Icon name="nutrition" customClass={'!text-[21px] text-blue-500 cursor-pointer'} fill={1} />
-						<div className="font-bold">{task ? task.title : 'No Task'}</div>
+						<div className="font-bold">{task || habit ? task?.title || habit?.name : 'No Task'}</div>
 					</div>
 
 					<div className="relative">
