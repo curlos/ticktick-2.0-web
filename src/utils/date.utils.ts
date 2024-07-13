@@ -326,3 +326,12 @@ export const getMonthAndYear = (day) => {
 
 	return `${month} ${year}`; // Combine them into a single string
 };
+
+export const isFutureDate = (dateStr) => {
+	const currentDate = new Date();
+	currentDate.setHours(0, 0, 0, 0); // Normalize today's date to midnight for accurate comparison
+
+	const targetDate = typeof dateStr === 'string' ? new Date(dateStr) : dateStr;
+
+	return targetDate > currentDate;
+};

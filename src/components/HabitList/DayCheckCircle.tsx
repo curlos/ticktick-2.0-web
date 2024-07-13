@@ -7,6 +7,7 @@ import Dropdown from '../Dropdown/Dropdown';
 import Icon from '../Icon';
 import ContextMenuGeneric from '../ContextMenu/ContextMenuGeneric';
 import DropdownHabitDayActions from './DropdownHabitDayActions';
+import { isFutureDate } from '../../utils/date.utils';
 
 const DayCheckCircle = ({ isChecked, day, habit, type = 'small' }) => {
 	const handleError = useHandleError();
@@ -21,8 +22,13 @@ const DayCheckCircle = ({ isChecked, day, habit, type = 'small' }) => {
 	const tooltipDayRef = useRef(null);
 	const dropdownHabitDayActionsRef = useRef(null);
 
+	const dayHasNotHappenedYet = isFutureDate(day);
+	const disableHabitActions = habit.isArchived || dayHasNotHappenedYet
+
+	console.log(day);
+
 	const handleClick = () => {
-		if (habit.isArchived) {
+		if (disableHabitActions) {
 			return;
 		}
 
@@ -64,7 +70,7 @@ const DayCheckCircle = ({ isChecked, day, habit, type = 'small' }) => {
 		event.preventDefault(); // Prevent the default context menu
 		event.stopPropagation();
 
-		if (habit.isArchived) {
+		if (disableHabitActions) {
 			return;
 		}
 
@@ -96,7 +102,7 @@ const DayCheckCircle = ({ isChecked, day, habit, type = 'small' }) => {
 						'rounded-full flex justify-center items-center',
 						isChecked ? 'bg-blue-500' : 'bg-color-gray-100/30',
 						type === 'small' ? 'h-[20px] w-[20px]' : 'h-[30px] w-[30px]',
-						habit.isArchived ? 'cursor-not-allowed' : 'cursor-pointer'
+						disableHabitActions ? 'cursor-not-allowed' : 'cursor-pointer'
 					)}
 					onContextMenu={handleContextMenu}
 					onClick={handleClick}
