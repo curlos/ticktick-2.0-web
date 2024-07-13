@@ -30,6 +30,7 @@ export const baseAPI = createApi({
 		'Habit',
 		'HabitSection',
 		'HabitLog',
+		'UserSettings',
 	],
 	endpoints: () => ({}),
 });
