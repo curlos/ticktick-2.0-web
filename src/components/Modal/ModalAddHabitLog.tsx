@@ -8,7 +8,7 @@ import useHandleError from '../../hooks/useHandleError';
 import {
 	useAddHabitLogMutation,
 	useEditHabitLogMutation,
-	useGetHabitLogQuery,
+	useGetHabitLogsQuery,
 } from '../../services/resources/habitLogsApi';
 
 const ModalAddHabitLog: React.FC = () => {
@@ -19,7 +19,7 @@ const ModalAddHabitLog: React.FC = () => {
 	// RTK Query - Habit Logs
 	const [addHabitLog] = useAddHabitLogMutation();
 	const [editHabitLog] = useEditHabitLogMutation();
-	const { data: fetchedHabitLogs } = useGetHabitLogQuery();
+	const { data: fetchedHabitLogs } = useGetHabitLogsQuery();
 	const { habitLogsById } = fetchedHabitLogs || {};
 
 	const [habitLogContent, setHabitLogContent] = useState('');
@@ -30,7 +30,6 @@ const ModalAddHabitLog: React.FC = () => {
 
 			if (checkedInDay && checkedInDay.habitLogId) {
 				const habitLog = habitLogsById[checkedInDay.habitLogId];
-				console.log(habitLog);
 				setHabitLogContent(habitLog.content);
 			}
 		}
@@ -52,8 +51,6 @@ const ModalAddHabitLog: React.FC = () => {
 	const closeModal = () => {
 		dispatch(setModalState({ modalId: 'ModalAddHabitLog', isOpen: false }));
 	};
-
-	console.log(habit);
 
 	return (
 		<Modal
@@ -113,8 +110,6 @@ const ModalAddHabitLog: React.FC = () => {
 											checkedInDayKey,
 										};
 
-										console.log(payload);
-										debugger;
 										await addHabitLog(payload).unwrap();
 										setHabitLogContent('');
 									});
@@ -130,9 +125,6 @@ const ModalAddHabitLog: React.FC = () => {
 												checkedInDayKey,
 											},
 										};
-
-										console.log(payload);
-										debugger;
 
 										await editHabitLog(payload).unwrap();
 										setHabitLogContent('');

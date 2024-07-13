@@ -1,9 +1,10 @@
 import { arrayToObjectByKey } from '../../utils/helpers.utils';
 import { baseAPI, buildQueryString } from '../api';
+import { habitsApi } from './habitsApi';
 
 export const habitLogsApi = baseAPI.injectEndpoints({
 	endpoints: (builder) => ({
-		getHabitLog: builder.query({
+		getHabitLogs: builder.query({
 			query: (queryParams) => {
 				const queryString = buildQueryString(queryParams);
 				return queryString ? `/habit-logs?${queryString}` : '/habit-logs';
@@ -41,12 +42,52 @@ export const habitLogsApi = baseAPI.injectEndpoints({
 				method: 'DELETE',
 			}),
 			invalidatesTags: ['HabitLog', 'Habit'],
+			onQueryStarted: async (habitLogId, { dispatch, queryFulfilled, getState }) => {
+				const state = getState();
+				const cachedGetHabitLogsData = habitLogsApi.endpoints.getHabitLogs.select()(state).data;
+				const { habitLogsById } = cachedGetHabitLogsData;
+				const habitLogToDelete = habitLogsById[habitLogId];
+
+				const patchResultHabitLogs = dispatch(
+					habitLogsApi.util.updateQueryData('getHabitLogs', undefined, (draft) => {
+						// Remove the habit log from the list and map
+						if (draft.habitLogsById[habitLogId]) {
+							delete draft.habitLogsById[habitLogId];
+							const index = draft.habitLogs.findIndex((hl) => hl._id === habitLogId);
+							if (index !== -1) {
+								draft.habitLogs.splice(index, 1);
+							}
+						}
+					})
+				);
+
+				const patchResultHabits = dispatch(
+					habitsApi.util.updateQueryData('getHabits', undefined, (draft) => {
+						const { habitId, checkedInDayKey } = habitLogToDelete;
+						const { habitsById } = draft;
+						const habitToEdit = habitsById[habitId];
+
+						if (habitToEdit.checkedInDays[checkedInDayKey]) {
+							habitToEdit.checkedInDays[checkedInDayKey].habitLogId = null;
+						}
+					})
+				);
+
+				try {
+					await queryFulfilled;
+				} catch (error) {
+					// If the deletion fails, rollback the optimistic update
+					patchResultHabitLogs.undo();
+					patchResultHabits.undo();
+					console.error('Deletion failed:', error);
+				}
+			},
 		}),
 	}),
 });
 
 export const {
-	useGetHabitLogQuery,
+	useGetHabitLogsQuery,
 	useAddHabitLogMutation,
 	useEditHabitLogMutation,
 	usePermanentlyDeleteHabitLogMutation,

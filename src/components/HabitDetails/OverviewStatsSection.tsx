@@ -48,7 +48,6 @@ const OverviewStatsSection = ({ habit }) => {
 	const totalCheckIns = getAchievedDays(habit);
 
 	const checkInsPerMonth = getCheckInsPerMonth(habit);
-	console.log(checkInsPerMonth);
 
 	// This is for the current month
 	const today = new Date();

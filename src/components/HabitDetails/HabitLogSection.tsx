@@ -5,14 +5,14 @@ import Icon from '../Icon';
 import { useState } from 'react';
 import classNames from 'classnames';
 import { getMonthAndYear, getSortedObjectsByDate, groupByMonthAndYear } from '../../utils/date.utils';
-import { useGetHabitLogQuery, usePermanentlyDeleteHabitLogMutation } from '../../services/resources/habitLogsApi';
+import { useGetHabitLogsQuery, usePermanentlyDeleteHabitLogMutation } from '../../services/resources/habitLogsApi';
 import { setModalState } from '../../slices/modalSlice';
 import { useDispatch } from 'react-redux';
 import useHandleError from '../../hooks/useHandleError';
 
 const HabitLogSection = ({ currentDate, habit }) => {
 	// RTK Query - Habit Logs
-	const { data: fetchedHabitLogs } = useGetHabitLogQuery();
+	const { data: fetchedHabitLogs } = useGetHabitLogsQuery();
 	const { habitLogsById } = fetchedHabitLogs || {};
 
 	const monthName = currentDate.toLocaleString('default', { month: 'long' });
