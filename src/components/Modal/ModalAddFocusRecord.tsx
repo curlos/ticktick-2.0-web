@@ -6,13 +6,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setModalState } from '../../slices/modalSlice';
 import DropdownSetFocusTypeAndAmount from '../Dropdown/DropdownsAddFocusRecord/DropdownSetFocusTypeAndAmount';
 import DropdownTimeCalendar from '../Dropdown/DropdownsAddFocusRecord/DropdownTimeCalendar';
-import DropdownSetTask from '../Dropdown/DropdownsAddFocusRecord/DropdownSetTask';
 import classNames from 'classnames';
-import {
-	formatTimeToHoursMinutesSeconds,
-	getFormattedDuration,
-	secondsToHoursAndMinutes,
-} from '../../utils/helpers.utils';
+import { formatTimeToHoursMinutesSeconds, getFormattedDuration } from '../../utils/helpers.utils';
 import { formatDateTime } from '../../utils/date.utils';
 import { useGetTasksQuery } from '../../services/resources/tasksApi';
 import {
@@ -21,6 +16,7 @@ import {
 	usePermanentlyDeleteFocusRecordMutation,
 	useGetFocusRecordsQuery,
 } from '../../services/resources/focusRecordsApi';
+import DropdownSetTaskOrHabit from '../Dropdown/DropdownsAddFocusRecord/DropdownSetTaskOrHabit';
 
 const ModalAddFocusRecord: React.FC = () => {
 	const modal = useSelector((state) => state.modals.modals['ModalAddFocusRecord']);
@@ -186,7 +182,7 @@ const ModalAddFocusRecord: React.FC = () => {
 										/>
 									</div>
 
-									<DropdownSetTask
+									<DropdownSetTaskOrHabit
 										toggleRef={dropdownSetTaskRef}
 										isVisible={isDropdownSetTaskVisible}
 										setIsVisible={setIsDropdownSetTaskVisible}
@@ -389,7 +385,7 @@ const FocusRecordChild = ({ childId }) => {
 							fill={1}
 						/>
 
-						<DropdownSetTask
+						<DropdownSetTaskOrHabit
 							toggleRef={dropdownSetTaskRef}
 							isVisible={isDropdownSetTaskVisible}
 							setIsVisible={setIsDropdownSetTaskVisible}

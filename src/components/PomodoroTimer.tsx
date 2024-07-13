@@ -13,13 +13,13 @@ import {
 } from '../slices/timerSlice';
 import alarmSound from '/clock-alarm-8761.mp3';
 import { CircularProgressbarWithChildren, buildStyles } from 'react-circular-progressbar';
-import DropdownSetTask from './Dropdown/DropdownsAddFocusRecord/DropdownSetTask';
 import Icon from './Icon';
 import { formatSeconds } from '../utils/helpers.utils';
 import ModalAddFocusNote from './Modal/ModalAddFocusNote';
 import { setModalState } from '../slices/modalSlice';
 import PixelArtTimer from './PixelArtTimer';
 import { useBulkAddFocusRecordsMutation } from '../services/resources/focusRecordsApi';
+import DropdownSetTaskOrHabit from './Dropdown/DropdownsAddFocusRecord/DropdownSetTaskOrHabit';
 
 const bgThemeColor = 'bg-[#4772F9]';
 const textThemeColor = 'text-[#4772F9]';
@@ -174,7 +174,7 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ timerStyle }) => {
 					/>
 				</div>
 
-				<DropdownSetTask
+				<DropdownSetTaskOrHabit
 					toggleRef={dropdownSetTaskRef}
 					isVisible={isDropdownSetTaskVisible}
 					setIsVisible={setIsDropdownSetTaskVisible}

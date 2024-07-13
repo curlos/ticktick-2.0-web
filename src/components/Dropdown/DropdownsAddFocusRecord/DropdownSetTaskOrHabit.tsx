@@ -12,7 +12,7 @@ import DropdownItemsWithSearch from '../DropdownItemsWithSearch/DropdownItemsWit
 import { useGetTasksQuery } from '../../../services/resources/tasksApi';
 import { useGetProjectsQuery } from '../../../services/resources/projectsApi';
 
-interface DropdownSetTaskProps extends DropdownProps {
+interface DropdownSetTaskOrHabitProps extends DropdownProps {
 	selectedTask: Object | null;
 	setSelectedTask: React.Dispatch<React.SetStateAction<Object | null>>;
 	dropdownProjectsState?: {
@@ -21,7 +21,7 @@ interface DropdownSetTaskProps extends DropdownProps {
 	};
 }
 
-const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({
+const DropdownSetTaskOrHabit: React.FC<DropdownSetTaskOrHabitProps> = ({
 	toggleRef,
 	isVisible,
 	setIsVisible,
@@ -145,6 +145,11 @@ const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({
 		);
 	};
 
+	const sharedButtonStyle = `py-1 px-4 rounded-3xl cursor-pointer`;
+	const selectedButtonStyle = `${sharedButtonStyle} bg-[#222735] text-[#4671F7] font-semibold`;
+	const unselectedButtonStyle = `${sharedButtonStyle} text-[#666666]`;
+	const [selectedButton, setSelectedButton] = useState('task');
+
 	return (
 		<Dropdown
 			toggleRef={toggleRef}
@@ -155,6 +160,20 @@ const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({
 				customClasses ? customClasses : ''
 			)}
 		>
+			<div className="flex justify-center items-center gap-1 mb-3">
+				<div
+					className={selectedButton === 'task' ? selectedButtonStyle : unselectedButtonStyle}
+					onClick={() => setSelectedButton('task')}
+				>
+					Task
+				</div>
+				<div
+					className={selectedButton === 'habit' ? selectedButtonStyle : unselectedButtonStyle}
+					onClick={() => setSelectedButton('habit')}
+				>
+					Habit
+				</div>
+			</div>
 			<div className="bg-color-gray-200 rounded flex items-center gap-2 p-[6px] mb-2">
 				<Icon name="search" customClass={'!text-[20px] text-color-gray-100 hover:text-white cursor-pointer'} />
 
@@ -213,4 +232,4 @@ const DropdownSetTask: React.FC<DropdownSetTaskProps> = ({
 	);
 };
 
-export default DropdownSetTask;
+export default DropdownSetTaskOrHabit;
