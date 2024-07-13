@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DropdownProps } from '../../../interfaces/interfaces';
 import Icon from '../../Icon';
 import Dropdown from '../Dropdown';
@@ -8,9 +8,9 @@ import Fuse from 'fuse.js';
 import Task from '../../Task';
 import classNames from 'classnames';
 import TaskListByGroup from '../../TaskListByGroup';
-import DropdownItemsWithSearch from '../DropdownItemsWithSearch/DropdownItemsWithSearch';
 import { useGetTasksQuery } from '../../../services/resources/tasksApi';
-import { useGetProjectsQuery } from '../../../services/resources/projectsApi';
+import { useGetHabitsQuery } from '../../../services/resources/habitsApi';
+import ProjectSelector from './ProjectSelector';
 
 interface DropdownSetTaskOrHabitProps extends DropdownProps {
 	selectedTask: Object | null;
@@ -30,25 +30,21 @@ const DropdownSetTaskOrHabit: React.FC<DropdownSetTaskOrHabitProps> = ({
 	dropdownProjectsState,
 	customClasses,
 }) => {
-	// Tasks
+	// RTK Query - Tasks
 	const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
 	const { tasks, tasksById } = fetchedTasks || {};
 
-	// Projects
-	const { data: fetchedProjects, isLoading: isProjectsLoading, error: errorProjects } = useGetProjectsQuery();
-	const { projects, projectsById } = fetchedProjects || {};
+	// RTK Query - Habits
+	const { data: fetchedHabits, isLoading: isLoadingGetHabits, error: errorGetHabits } = useGetHabitsQuery();
+	const { habits, habitsById } = fetchedHabits || {};
 
 	const defaultTodayProject = SMART_LISTS['today'];
 
-	// TODO: Use the top level component above this for timer only otherwise use this one.
-	const [isDropdownProjectsVisible, setIsDropdownProjectsVisible] = useState(false);
 	const [selectedProject, setSelectedProject] = useState(defaultTodayProject);
 	const [tasksWithNoParent, setTasksWithNoParent] = useState([]);
 	const [searchText, setSearchText] = useState('');
 	const [filteredTasks, setFilteredTasks] = useState([]);
 	const [isSearchFocused, setIsSearchFocused] = useState(false);
-
-	const dropdownProjectsRef = useRef(null);
 
 	const fuse = new Fuse(tasks, {
 		includeScore: true,
@@ -92,58 +88,6 @@ const DropdownSetTaskOrHabit: React.FC<DropdownSetTaskOrHabitProps> = ({
 
 		setFilteredTasks(searchedTasks.map((result) => result.item));
 	}, 1000);
-
-	const ProjectSelector = () => {
-		if (!selectedProject) {
-			return null;
-		}
-
-		const smartList = SMART_LISTS[selectedProject.urlName];
-		let iconName = selectedProject.isFolder
-			? 'folder'
-			: smartList
-				? smartList.iconName
-				: selectedProject.isInbox
-					? 'inbox'
-					: 'menu';
-
-		return (
-			<div className="relative">
-				<div
-					ref={dropdownProjectsRef}
-					onClick={() => {
-						if (dropdownProjectsState) {
-							dropdownProjectsState.setIsDropdownVisible(!dropdownProjectsState.isDropdownVisible);
-						} else {
-							setIsDropdownProjectsVisible(!isDropdownProjectsVisible);
-						}
-					}}
-					className="flex items-center gap-[2px] mt-4 mb-3 cursor-pointer"
-				>
-					<Icon name={iconName} customClass={'!text-[20px] text-color-gray-100 hover:text-white'} />
-					<div>{selectedProject.name}</div>
-					<Icon name="chevron_right" customClass={'!text-[20px] text-color-gray-100'} />
-				</div>
-
-				<DropdownItemsWithSearch
-					toggleRef={dropdownProjectsRef}
-					isVisible={
-						dropdownProjectsState ? dropdownProjectsState.isDropdownVisible : isDropdownProjectsVisible
-					}
-					setIsVisible={
-						dropdownProjectsState
-							? dropdownProjectsState.setIsDropdownVisible
-							: setIsDropdownProjectsVisible
-					}
-					selectedItem={selectedProject}
-					setSelectedItem={setSelectedProject}
-					items={projects}
-					showSmartLists={true}
-					type="project"
-				/>
-			</div>
-		);
-	};
 
 	const sharedButtonStyle = `py-1 px-4 rounded-3xl cursor-pointer`;
 	const selectedButtonStyle = `${sharedButtonStyle} bg-[#222735] text-[#4671F7] font-semibold`;
@@ -195,25 +139,35 @@ const DropdownSetTaskOrHabit: React.FC<DropdownSetTaskOrHabitProps> = ({
 				)}
 			</div>
 
-			{!isSearchFocused && !searchText && <ProjectSelector />}
+			{!isSearchFocused && !searchText && (
+				<ProjectSelector
+					selectedProject={selectedProject}
+					setSelectedProject={setSelectedProject}
+					dropdownProjectsState={dropdownProjectsState}
+				/>
+			)}
 
 			<div className="space-y-2 h-[300px] gray-scrollbar overflow-auto">
 				{!isSearchFocused && !searchText ? (
-					<TaskListByGroup
-						tasks={tasksWithNoParent.filter((task) => {
-							if (task.isDeleted) {
-								return false;
-							}
+					selectedButton === 'task' ? (
+						<TaskListByGroup
+							tasks={tasksWithNoParent.filter((task) => {
+								if (task.isDeleted) {
+									return false;
+								}
 
-							if (task.willNotDo) {
-								return false;
-							}
+								if (task.willNotDo) {
+									return false;
+								}
 
-							return true;
-						})}
-						selectedFocusRecordTask={selectedTask}
-						setSelectedFocusRecordTask={setSelectedTask}
-					/>
+								return true;
+							})}
+							selectedFocusRecordTask={selectedTask}
+							setSelectedFocusRecordTask={setSelectedTask}
+						/>
+					) : (
+						<div></div>
+					)
 				) : (
 					<div>
 						{filteredTasks?.map((task) => (

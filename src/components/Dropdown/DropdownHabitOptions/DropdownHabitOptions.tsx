@@ -35,7 +35,7 @@ const DropdownHabitOptions: React.FC<DropdownHabitOptionsProps> = ({
 	const navigate = useNavigate();
 	const { habitId } = useParams();
 
-	// Habits
+	// RTK Query - Habits
 	const { data: fetchedHabits, isLoading: isLoadingGetHabits, error: errorGetHabits } = useGetHabitsQuery();
 	const { habits, habitsById } = fetchedHabits || {};
 
