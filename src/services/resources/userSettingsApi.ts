@@ -1,10 +1,10 @@
 import { baseAPI } from '../api';
 
-export const tagsApi = baseAPI.injectEndpoints({
+export const userSettingsApi = baseAPI.injectEndpoints({
 	endpoints: (builder) => ({
 		getUserSettings: builder.query({
-			query: ({ userId }) => {
-				return `/user-settings/${userId}`;
+			query: () => {
+				return `/user-settings`;
 			},
 			providesTags: ['UserSettings'],
 			transformResponse: (response) => {
@@ -13,8 +13,8 @@ export const tagsApi = baseAPI.injectEndpoints({
 			},
 		}),
 		editUserSettings: builder.mutation({
-			query: ({ userId, payload }) => ({
-				url: `/user-settings/edit/${userId}`,
+			query: (payload) => ({
+				url: `/user-settings/edit`,
 				method: 'PUT',
 				body: payload,
 			}),
@@ -23,4 +23,4 @@ export const tagsApi = baseAPI.injectEndpoints({
 	}),
 });
 
-export const { useGetUserSettingsQuery, useEditUserSettingsMutation } = tagsApi;
+export const { useGetUserSettingsQuery, useEditUserSettingsMutation } = userSettingsApi;
