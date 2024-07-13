@@ -36,7 +36,7 @@ export const habitLogsApi = baseAPI.injectEndpoints({
 			invalidatesTags: (result, error, habitLogId) => ['HabitLog', 'Habit'],
 		}),
 		permanentlyDeleteHabitLog: builder.mutation({
-			query: ({ habitLogId }) => ({
+			query: (habitLogId) => ({
 				url: `/habit-logs/delete/${habitLogId}`,
 				method: 'DELETE',
 			}),

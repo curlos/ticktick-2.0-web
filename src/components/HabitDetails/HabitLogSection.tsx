@@ -81,13 +81,9 @@ const HabitLogDay = ({ checkedInDay, isLastInList, habitLogsById, habit }) => {
 	const handleDelete = (e) => {
 		e.stopPropagation();
 
-		// handleError(async () => {
-		// 	const objToSend = { habitLogId: habitLog._id, habitId: habit._id, checkedInDayKey: date };
-		// 	console.log(objToSend);
-		// 	debugger;
-
-		// 	await permanentlyDeleteHabitLog(objToSend).unwrap();
-		// });
+		handleError(async () => {
+			await permanentlyDeleteHabitLog(habitLogId).unwrap();
+		});
 	};
 
 	return (
