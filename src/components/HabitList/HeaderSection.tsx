@@ -2,7 +2,7 @@ import { useDispatch } from 'react-redux';
 import { setModalState } from '../../slices/modalSlice';
 import Icon from '../Icon';
 import Dropdown from '../Dropdown/Dropdown';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
 import classNames from 'classnames';
 
@@ -17,6 +17,10 @@ const HeaderSection = ({ viewType, setViewType }) => {
 		'text-color-gray-100 !text-[21px] hover:text-white cursor-pointer rounded hover:bg-color-gray-300 p-1';
 
 	const inArchivedRoute = location.pathname.includes('/habits/archived');
+
+	useEffect(() => {
+		dispatch(setModalState({ modalId: 'ModalEditHabitSettings', isOpen: true }));
+	}, []);
 
 	return (
 		<div className="flex justify-between items-center mb-4">
@@ -50,14 +54,21 @@ const HeaderSection = ({ viewType, setViewType }) => {
 					}}
 				/>
 
+				{!inArchivedRoute && (
+					<Icon
+						name="add"
+						fill={1}
+						customClass={iconClass}
+						onClick={() => dispatch(setModalState({ modalId: 'ModalAddHabit', isOpen: true }))}
+					/>
+				)}
+
 				<Icon
-					name="add"
+					name="more_horiz"
 					fill={1}
 					customClass={iconClass}
-					onClick={() => dispatch(setModalState({ modalId: 'ModalAddHabit', isOpen: true }))}
+					onClick={() => dispatch(setModalState({ modalId: 'ModalEditHabitSettings', isOpen: true }))}
 				/>
-
-				<Icon name="more_horiz" fill={1} customClass={iconClass} />
 			</div>
 		</div>
 	);

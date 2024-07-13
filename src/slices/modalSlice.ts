@@ -19,6 +19,7 @@ const MODAL_IDS = [
 	'ModalAddFilterOrEditMatrix',
 	'ModalAddHabit',
 	'ModalAddHabitLog',
+	'ModalEditHabitSettings',
 ];
 
 const initialState = {
