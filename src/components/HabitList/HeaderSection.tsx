@@ -18,9 +18,39 @@ const HeaderSection = ({ viewType, setViewType }) => {
 
 	const inArchivedRoute = location.pathname.includes('/habits/archived');
 
-	useEffect(() => {
-		dispatch(setModalState({ modalId: 'ModalEditHabitSettings', isOpen: true }));
-	}, []);
+	const dropdownSettingsRef = useRef(null);
+	const [isDropdownSettingsVisible, setIsDropdownSettingsVisible] = useState(false);
+
+	const DropdownSettingsExport = () => {
+		const ItemOption = ({ name, iconName, onClick }) => (
+			<div
+				className="p-1 hover:bg-color-gray-600 cursor-pointer flex items-center gap-1 rounded text-[14px]"
+				onClick={onClick}
+			>
+				<Icon name={iconName} customClass={iconClass} fill={0} />
+				<div>{name}</div>
+			</div>
+		);
+
+		return (
+			<Dropdown
+				toggleRef={dropdownSettingsRef}
+				isVisible={isDropdownSettingsVisible}
+				setIsVisible={setIsDropdownSettingsVisible}
+				customClasses="ml-[-170px] w-[200px] border border-color-gray-200 shadow-lg bg-color-gray-650 p-1"
+			>
+				<ItemOption
+					name="Settings"
+					iconName="settings"
+					onClick={() => {
+						dispatch(setModalState({ modalId: 'ModalEditHabitSettings', isOpen: true }));
+						setIsDropdownSettingsVisible(false);
+					}}
+				/>
+				<ItemOption name="Export" iconName="share_windows" />
+			</Dropdown>
+		);
+	};
 
 	return (
 		<div className="flex justify-between items-center mb-4">
@@ -63,12 +93,17 @@ const HeaderSection = ({ viewType, setViewType }) => {
 					/>
 				)}
 
-				<Icon
-					name="more_horiz"
-					fill={1}
-					customClass={iconClass}
-					onClick={() => dispatch(setModalState({ modalId: 'ModalEditHabitSettings', isOpen: true }))}
-				/>
+				<div className="relative">
+					<Icon
+						toggleRef={dropdownSettingsRef}
+						name="more_horiz"
+						fill={1}
+						customClass={iconClass}
+						onClick={() => setIsDropdownSettingsVisible(!isDropdownSettingsVisible)}
+					/>
+
+					<DropdownSettingsExport />
+				</div>
 			</div>
 		</div>
 	);
