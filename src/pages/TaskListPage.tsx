@@ -94,7 +94,7 @@ const TaskListPage = () => {
 
 		const newTasksWithNoParent = getTasksWithNoParent(tasks, tasksById, projectId, isSmartListView, tagId);
 		setTasksWithNoParent(newTasksWithNoParent);
-	}, [fetchedTasks, fetchedProjects, projectId, tagId, filterId]);
+	}, [isLoadingOrErrors, projectId, tagId, filterId]);
 
 	if (isLoadingOrErrors) {
 		return <div>Loading...</div>; // Show loading state
