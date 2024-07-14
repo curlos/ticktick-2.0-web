@@ -1,4 +1,5 @@
 import ActionSidebar from '../components/ActionSidebar';
+import OverviewSection from '../components/StatsPage/OverviewSection/OverviewSection';
 import TopBar from '../components/StatsPage/TopBar';
 
 const StatsPage = () => {
@@ -9,7 +10,12 @@ const StatsPage = () => {
 			</div>
 			<div className="flex-1 bg-color-gray-700 py-8 pl-[150px] pr-[170px]">
 				<TopBar />
+
+				<div className="mt-5">
+					<OverviewSection />
+				</div>
 			</div>
+
 			{/* <div className="flex-[10] bg-blue-500">
 				<FocusTimer />
 			</div>
