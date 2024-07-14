@@ -1,5 +1,5 @@
-import TimeIntervalsButtonAndDropdown from './TimeIntervalsButtonAndDropdown';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Label } from 'recharts';
+import TimeIntervalsButtonAndDropdown from '../TimeIntervalsButtonAndDropdown';
 
 const data = [
 	{

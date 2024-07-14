@@ -1,5 +1,5 @@
-import TimeIntervalsButtonAndDropdown from './TimeIntervalsButtonAndDropdown';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import TimeIntervalsButtonAndDropdown from '../TimeIntervalsButtonAndDropdown';
 
 const data = [
 	{

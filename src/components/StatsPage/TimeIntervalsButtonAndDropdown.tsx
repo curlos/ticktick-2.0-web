@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import Icon from '../../Icon';
+import Icon from '../Icon';
 import DropdownTimeIntervals from './DropdownTimeIntervals';
 
 const TimeIntervalsButtonAndDropdown = () => {

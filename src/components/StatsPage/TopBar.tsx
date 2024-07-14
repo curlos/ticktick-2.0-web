@@ -12,7 +12,7 @@ const TopBar = () => {
 		<div className="flex justify-between items-center gap-2">
 			<h1 className="text-[24px] font-medium">Statistics</h1>
 
-			<div className="flex justify-center gap-1 mr-4">
+			<div className="flex justify-center gap-1 mr-[110px]">
 				<div
 					className={location.pathname.includes('overview') ? selectedButtonStyle : unselectedButtonStyle}
 					onClick={() => navigate('/stats/overview')}
@@ -35,7 +35,8 @@ const TopBar = () => {
 				</div>
 			</div>
 
-			<div className="bg-blue-500 px-8 py-[10px] rounded-md">Done</div>
+			<div></div>
+			{/* <div className="bg-blue-500 px-8 py-[10px] rounded-md">Done</div> */}
 		</div>
 	);
 };
