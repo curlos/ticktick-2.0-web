@@ -34,9 +34,9 @@ const data = [
 
 const MyAchievementScoreCard = () => {
 	return (
-		<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col h-[300px]">
+		<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col h-[350px]">
 			<div className="flex justify-between gap-2">
-				<h3 className="font-medium text-[16px]">My Achievement Score</h3>
+				<h3 className="font-bold text-[16px]">My Achievement Score</h3>
 				<div className="flex items-center gap-2">
 					<div className="text-green-400 font-bold text-[20px]">7559</div>
 					<img

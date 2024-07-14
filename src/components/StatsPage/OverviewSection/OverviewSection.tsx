@@ -36,7 +36,7 @@ const OverviewSection = () => {
 				<MyAchievementScoreCard />
 				<RecentCompletionCurveCard />
 
-				<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col h-[300px]">
+				<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col h-[350px]">
 					<h3 className="font-medium text-[16px]">Overview</h3>
 				</div>
 			</div>

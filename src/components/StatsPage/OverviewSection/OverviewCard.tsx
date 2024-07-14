@@ -1,7 +1,7 @@
 const OverviewCard = () => {
 	return (
-		<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col h-[300px]">
-			<h3 className="font-medium text-[16px]">Overview</h3>
+		<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col h-[350px]">
+			<h3 className="font-bold text-[16px]">Overview</h3>
 
 			<div className="flex-1 flex flex-col justify-center gap-7">
 				<div className="grid grid-cols-3 w-full">
