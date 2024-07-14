@@ -1,9 +1,11 @@
+import MyAchievementScoreSection from './MyAchievementScore';
+
 const OverviewSection = () => {
 	return (
 		<div>
 			<div className="bg-color-gray-600 p-4 rounded-md">
 				<div className="flex justify-between items-center">
-					<div className="grid grid-cols-4 gap-2">
+					<div className="flex gap-6">
 						<div>
 							<span className="font-bold">3135</span> Tasks
 						</div>
@@ -68,8 +70,14 @@ const OverviewSection = () => {
 					</div>
 				</div>
 
-				<div className="">
-					<h3>Overview</h3>
+				<MyAchievementScoreSection />
+
+				<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col h-[300px]">
+					<h3 className="font-medium text-[16px]">Overview</h3>
+				</div>
+
+				<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col h-[300px]">
+					<h3 className="font-medium text-[16px]">Overview</h3>
 				</div>
 			</div>
 		</div>
