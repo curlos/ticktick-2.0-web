@@ -32,7 +32,7 @@ const data = [
 	},
 ];
 
-const MyAchievementScoreSection = () => {
+const MyAchievementScoreCard = () => {
 	return (
 		<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col h-[300px]">
 			<div className="flex justify-between gap-2">
@@ -93,4 +93,4 @@ const MyAchievementScoreSection = () => {
 	);
 };
 
-export default MyAchievementScoreSection;
+export default MyAchievementScoreCard;

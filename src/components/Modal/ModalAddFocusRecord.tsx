@@ -142,9 +142,6 @@ const ModalAddFocusRecord: React.FC = () => {
 
 	const noChildFocusRecords = !focusRecord || focusRecord?.children?.length === 0;
 
-	console.log(focusRecord);
-	debugger;
-
 	return (
 		<Modal isOpen={isOpen} onClose={closeModal} position="top-center">
 			<div className="rounded-xl shadow-lg bg-color-gray-650">
@@ -378,10 +375,6 @@ const FocusRecordChild = ({ childId }) => {
 
 	const startTimeObj = formatDateTime(startTime);
 	const endTimeObj = formatDateTime(endTime);
-
-	console.log(childFocusRecord);
-	console.log(duration);
-	debugger;
 
 	return (
 		childFocusRecord && (

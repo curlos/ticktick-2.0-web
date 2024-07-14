@@ -107,9 +107,6 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId,
 		try {
 			const newTask = await addTask({ payload, parentId }).unwrap();
 
-			console.log(newTask);
-			debugger;
-
 			setTitle('');
 			setDescription('');
 			setCurrDueDate(null);

@@ -15,7 +15,7 @@ const ActionSidebar = () => {
 	const [isDropdownAccountDetailsVisible, setIsDropdownAccountDetailsVisible] = useState(false);
 
 	return (
-		<div className="bg-black h-full flex flex-col justify-between gap-10 h-screen pt-2 pb-3">
+		<div className="bg-black h-full flex flex-col justify-between gap-10 pt-2 pb-3">
 			<div>
 				<div className="relative">
 					<div

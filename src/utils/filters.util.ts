@@ -12,8 +12,6 @@ export const filterTasksByFilter = (tasks, filter) => {
 	const selectedProjectIdsObj = arrayToObjectByKey(selectedProjectIds, null);
 	const selectedTagIdsObj = arrayToObjectByKey(selectedTagIds, null);
 
-	console.log(selectedProjectIdsObj);
-
 	return tasks.filter((task) => {
 		const { projectId, tagIds, priority, dueDate } = task;
 
@@ -26,9 +24,10 @@ export const filterTasksByFilter = (tasks, filter) => {
 		const includesAtLeastOneTag = allTagsSelected || tagIds.find((tagId) => selectedTagIdsObj[tagId]);
 		const includesPriority = allPrioritiesSelected || selectedPriorities[taskPriorityName];
 
-		if (task.title === 'Hey bro') {
-			debugger;
-		}
+		// TODO: Seems like I was possibly doing something here?
+		// if (task.title === 'Hey bro') {
+		// 	debugger;
+		// }
 
 		return includesProject && includesAtLeastOneTag && includesPriority;
 	});
