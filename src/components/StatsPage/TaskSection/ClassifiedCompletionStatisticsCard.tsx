@@ -1,11 +1,9 @@
 import { PieChart, Pie, Cell, Label } from 'recharts';
 
-const CompletionRateDistributionCard = () => {
+const ClassifiedCompletionStatisticsCard = () => {
 	const progressBarData = [
-		{ name: 'Overdue', value: 0, percentage: 0, color: '#1F67E2' },
-		{ name: 'On-Time', value: 1, percentage: 50, color: '#3690E4' },
-		{ name: 'Undated', value: 0, percentage: 0, color: '#E69138' },
-		{ name: 'Uncompleted', value: 1, percentage: 50, color: '#FF7D00' },
+		{ name: 'Inbox', value: 5, percentage: 63, color: '#3690E4' },
+		{ name: 'Hello Mobile', value: 3, percentage: 37, color: '#FF7D00' },
 	];
 
 	const SmallLabel = ({ data }) => {
@@ -27,7 +25,7 @@ const CompletionRateDistributionCard = () => {
 
 	return (
 		<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col h-[280px]">
-			<h3 className="font-bold text-[16px]">Completion Rate Distribution</h3>
+			<h3 className="font-bold text-[16px]">Classified Completion Statistics</h3>
 
 			<div className="flex-1 mt-2 flex items-center gap-10 px-4">
 				<div>
@@ -63,7 +61,7 @@ const CompletionRateDistributionCard = () => {
 												dominantBaseline="central"
 												className="text-[24px] font-bold"
 											>
-												50%
+												8
 											</text>
 											<text
 												x={cx}
@@ -73,7 +71,7 @@ const CompletionRateDistributionCard = () => {
 												dominantBaseline="central"
 												className="text-[14px]"
 											>
-												Completion Rate
+												Completed Tasks
 											</text>
 										</g>
 									);
@@ -94,4 +92,4 @@ const CompletionRateDistributionCard = () => {
 	);
 };
 
-export default CompletionRateDistributionCard;
+export default ClassifiedCompletionStatisticsCard;
