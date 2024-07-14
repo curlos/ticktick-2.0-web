@@ -97,8 +97,6 @@ const DropdownSetTaskOrHabit: React.FC<DropdownSetTaskOrHabitProps> = ({
 		setFilteredTasks(searchedTasks.map((result) => result.item));
 	}, 1000);
 
-	console.log(filteredTasks);
-
 	const filteredRealTasks = filteredTasks?.filter((item) => item.title);
 	const filteredHabits = filteredTasks?.filter((item) => item.name);
 

@@ -75,19 +75,21 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ timerStyle }) => {
 		// If it's currently active, then that means that we're pausing the running timer in which case a focus record must be added to the array.
 		if (pressedPause) {
 			const isTask = selectedTask.title;
+			const newFocusRecord = {
+				taskId: isTask && selectedTask ? selectedTask._id : null,
+				habitId: !isTask && selectedTask ? selectedTask._id : null,
+				startTime: currentFocusRecord.startTime,
+				endTime: new Date().toISOString(),
+				duration: currentFocusRecord.duration,
+				pomos: 0,
+				focusType: focusType,
+				note: focusNote,
+			};
 
-			dispatch(
-				addFocusRecord({
-					taskId: isTask && selectedTask ? selectedTask._id : null,
-					habitId: !isTask && selectedTask ? selectedTask._id : null,
-					startTime: currentFocusRecord.startTime,
-					endTime: new Date().toISOString(),
-					duration: currentFocusRecord.duration,
-					pomos: 0,
-					focusType: focusType,
-					note: focusNote,
-				})
-			);
+			console.log(newFocusRecord);
+			debugger;
+
+			dispatch(addFocusRecord(newFocusRecord));
 		}
 
 		dispatch(setIsActive(!isActive)); // Toggle between starting and pausing the timer
@@ -96,9 +98,10 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ timerStyle }) => {
 	const handleResetTimer = async () => {
 		// By this point, all the local focus records have been added (since this can only be ended and executed if the timer is paused in the first place.)
 
-		// TODO: Add the focus records to the backend. They must be grouped together though, probably with either a shared parent id or the parent focus record must be created with some children or something. I'll probably do it the second way.
-
 		try {
+			console.log(focusRecords);
+			debugger;
+
 			await bulkAddFocusRecords({ focusRecords, focusNote }).unwrap();
 
 			// This function will stop and reset the timer, also exiting the overtime phase if it's active
@@ -182,27 +185,32 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ timerStyle }) => {
 					setIsVisible={setIsDropdownSetTaskVisible}
 					selectedTask={selectedTask}
 					setSelectedTask={(newItem) => {
-						const isTask = newItem.title;
-
 						if (!selectedTask) {
+							const isTask = newItem && newItem.title;
+
 							setCurrentFocusRecord({
 								taskId: isTask ? newItem._id : null,
 								habitId: !isTask ? newItem._id : null,
 							});
 						} else {
 							if (isActive) {
-								dispatch(
-									addFocusRecord({
-										taskId: isTask && selectedTask ? selectedTask._id : null,
-										habitId: !isTask && selectedTask ? selectedTask._id : null,
-										startTime: currentFocusRecord.startTime,
-										endTime: new Date().toISOString(),
-										duration: currentFocusRecord.duration,
-										pomos: 0,
-										focusType: focusType,
-										note: focusNote,
-									})
-								);
+								const isTask = selectedTask && selectedTask.title;
+
+								const newFocusRecord = {
+									taskId: isTask && selectedTask ? selectedTask._id : null,
+									habitId: !isTask && selectedTask ? selectedTask._id : null,
+									startTime: currentFocusRecord.startTime,
+									endTime: new Date().toISOString(),
+									duration: currentFocusRecord.duration,
+									pomos: 0,
+									focusType: focusType,
+									note: focusNote,
+								};
+
+								console.log(newFocusRecord);
+								debugger;
+
+								dispatch(addFocusRecord(newFocusRecord));
 
 								dispatch(setCurrentFocusRecord({ startTime: new Date().toISOString() }));
 							}

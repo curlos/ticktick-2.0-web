@@ -103,12 +103,11 @@ const ModalAddFocusRecord: React.FC = () => {
 	const getDuration = () => {
 		if (focusType === 'pomo') {
 			// TODO: Change later when focus settings is worked on but for now keep it at 45 minutes as the default
-			const defaultPomoLength = 2700000; // 27000000 milliseconds = 45 minutes
+			const defaultPomoLength = 2700; // 2700 seconds = 45 minutes
 			return pomos * defaultPomoLength;
 		} else {
-			// Duration is in milliseconds so multiply the hours and minutes by 60.
-			// I originally made it in seconds but milliseconds is even more precise and is what JS uses to measure dates so it'll be better to match that.
-			return (hours * 60 + minutes) * 60 * 1000;
+			// Duration is in seconds so multiply the hours and minutes by 60.
+			return (hours * 60 + minutes) * 60;
 		}
 	};
 
@@ -126,8 +125,8 @@ const ModalAddFocusRecord: React.FC = () => {
 			note: focusNote,
 		};
 
-		if (payload.duration < 300000) {
-			console.log('Duration must be longer or equal to 300000 milliseconds (5 minutes)');
+		if (payload.duration < 300) {
+			console.log('Duration must be longer or equal to 300 seconds (5 minutes)');
 			return;
 		}
 
@@ -142,6 +141,9 @@ const ModalAddFocusRecord: React.FC = () => {
 	};
 
 	const noChildFocusRecords = !focusRecord || focusRecord?.children?.length === 0;
+
+	console.log(focusRecord);
+	debugger;
 
 	return (
 		<Modal isOpen={isOpen} onClose={closeModal} position="top-center">
@@ -377,6 +379,10 @@ const FocusRecordChild = ({ childId }) => {
 	const startTimeObj = formatDateTime(startTime);
 	const endTimeObj = formatDateTime(endTime);
 
+	console.log(childFocusRecord);
+	console.log(duration);
+	debugger;
+
 	return (
 		childFocusRecord && (
 			<div key={_id} className="">
@@ -412,7 +418,7 @@ const FocusRecordChild = ({ childId }) => {
 
 				<div className="flex items-center gap-1 mt-1 text-color-gray-100">
 					<Icon name="timer" customClass={'!text-[20px] cursor-pointer'} fill={0} />
-					<div>{`${getFormattedDuration(duration)}`}</div>
+					<div>{`${getFormattedDuration(duration)} ${duration}`}</div>
 				</div>
 			</div>
 		)

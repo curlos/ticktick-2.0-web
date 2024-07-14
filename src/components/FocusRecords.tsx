@@ -164,7 +164,7 @@ const FocusRecordList = () => {
 							<div className="text-color-gray-100 text-[13px] mb-3">{day}</div>
 
 							{focusRecords &&
-								tasksById &&
+								tasksById && habitsById &&
 								sortArrayByEndTime(focusRecordsForTheDay).map((focusRecord) => (
 									<div key={focusRecord._id}>
 										<FocusRecord

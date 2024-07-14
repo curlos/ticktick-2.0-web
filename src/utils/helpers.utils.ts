@@ -109,17 +109,15 @@ export function getDateWithOrdinalAndMonth(date: Date, includeMonth = false) {
 	return formattedDay;
 }
 
-export function formatTimeToHoursMinutesSeconds(ms: number) {
-	// Convert milliseconds to total seconds
-	const totalSeconds = Math.floor(ms / 1000);
+export function formatTimeToHoursMinutesSeconds(seconds: number) {
 	// Extract hours
-	const hours = Math.floor(totalSeconds / 3600);
+	const hours = Math.floor(seconds / 3600);
 	// Extract remaining minutes after converting to hours
-	const minutes = Math.floor((totalSeconds % 3600) / 60);
+	const minutes = Math.floor((seconds % 3600) / 60);
 	// Extract remaining seconds after converting to minutes
-	const seconds = totalSeconds % 60;
+	const secondsRemaining = seconds % 60;
 
-	return { hours, minutes, seconds };
+	return { hours, minutes, seconds: secondsRemaining };
 }
 
 export function containsEmoji(text: string) {
@@ -391,6 +389,10 @@ export const getFormattedDuration = (duration) => {
 
 	if (hours === 0 && minutes === 0) {
 		return `${seconds}s`;
+	}
+
+	if (hours === 0 && minutes > 0) {
+		return `${minutes}m`;
 	}
 
 	return `${hours.toLocaleString()}h${minutes}m`;
