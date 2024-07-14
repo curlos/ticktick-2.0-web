@@ -1,5 +1,6 @@
 import MyAchievementScoreCard from './MyAchievementScoreCard';
 import OverviewCard from './OverviewCard';
+import RecentCompletionCurveCard from './RecentCompletionCurveCard';
 
 const OverviewSection = () => {
 	return (
@@ -33,10 +34,7 @@ const OverviewSection = () => {
 			<div className="grid grid-cols-2 gap-5 mt-3">
 				<OverviewCard />
 				<MyAchievementScoreCard />
-
-				<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col h-[300px]">
-					<h3 className="font-medium text-[16px]">Overview</h3>
-				</div>
+				<RecentCompletionCurveCard />
 
 				<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col h-[300px]">
 					<h3 className="font-medium text-[16px]">Overview</h3>
