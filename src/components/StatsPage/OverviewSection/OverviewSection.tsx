@@ -4,6 +4,7 @@ import RecentCompletionCurveCard from './RecentCompletionCurveCard';
 import RecentCompletionRateCurveCard from './RecentCompletionRateCurveCard';
 import RecentFocusedDurationCurveCard from './RecentFocusedDurationCurveCard';
 import RecentPomoCurveCard from './RecentPomoCurveCard';
+import WeeklyHabitStatusCard from './WeeklyHabitStatusCard';
 
 const OverviewSection = () => {
 	return (
@@ -41,6 +42,7 @@ const OverviewSection = () => {
 				<RecentCompletionRateCurveCard />
 				<RecentPomoCurveCard />
 				<RecentFocusedDurationCurveCard />
+				<WeeklyHabitStatusCard />
 			</div>
 		</div>
 	);

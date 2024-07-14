@@ -15,7 +15,6 @@ import ContextMenuGeneric from '../ContextMenu/ContextMenuGeneric';
 import DayCheckCircle from './DayCheckCircle';
 
 const HabitList = () => {
-	// TODO: Use last seven days to find which habits have been completed in those 7 days
 	const lastSevenDays = getLast7Days();
 	const formattedLastSevenDays = lastSevenDays.map((day) => formatCheckedInDayDate(day));
 	const [selectedDay, setSelectedDay] = useState(null);
