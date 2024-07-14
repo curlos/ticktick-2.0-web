@@ -418,7 +418,7 @@ const FocusRecordChild = ({ childId }) => {
 
 				<div className="flex items-center gap-1 mt-1 text-color-gray-100">
 					<Icon name="timer" customClass={'!text-[20px] cursor-pointer'} fill={0} />
-					<div>{`${getFormattedDuration(duration)} ${duration}`}</div>
+					<div>{`${getFormattedDuration(duration)}`}</div>
 				</div>
 			</div>
 		)

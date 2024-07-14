@@ -387,15 +387,11 @@ export const sumProperty = (array, propertyName) => {
 export const getFormattedDuration = (duration) => {
 	const { hours, minutes, seconds } = formatTimeToHoursMinutesSeconds(duration);
 
-	if (hours === 0 && minutes === 0) {
-		return `${seconds}s`;
-	}
+	const hoursStr = hours !== 0 ? `${hours.toLocaleString()}h` : '';
+	const minutesStr = minutes !== 0 ? `${minutes}m` : '';
+	const secondsStr = seconds !== 0 ? `${seconds}s` : '';
 
-	if (hours === 0 && minutes > 0) {
-		return `${minutes}m`;
-	}
-
-	return `${hours.toLocaleString()}h${minutes}m`;
+	return `${hoursStr}${minutesStr}${secondsStr}`;
 };
 
 export const formatSeconds = (seconds: number) => {
