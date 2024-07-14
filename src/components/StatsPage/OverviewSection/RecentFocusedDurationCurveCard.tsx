@@ -1,42 +1,43 @@
+import { getFormattedDuration } from '../../../utils/helpers.utils';
 import TimeIntervalsButtonAndDropdown from './TimeIntervalsButtonAndDropdown';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Label } from 'recharts';
 
 const data = [
 	{
 		name: 'July 8',
-		percent: 100,
+		seconds: 15060,
 	},
 	{
 		name: 'July 9',
-		percent: 100,
+		seconds: 19140,
 	},
 	{
 		name: 'July 10',
-		percent: 0,
+		seconds: 20040,
 	},
 	{
 		name: 'July 11',
-		percent: 100,
+		seconds: 20940,
 	},
 	{
 		name: 'July 12',
-		percent: 100,
+		seconds: 18180,
 	},
 	{
 		name: 'July 13',
-		percent: 0,
+		seconds: 21600,
 	},
 	{
 		name: 'July 14',
-		percent: 50,
+		seconds: 10800,
 	},
 ];
 
-const RecentCompletionRateCurveCard = () => {
+const RecentFocusedDurationCurveCard = () => {
 	return (
 		<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col h-[350px]">
 			<div className="flex justify-between items-center mb-6">
-				<h3 className="font-bold text-[16px]">Recent Pomo Curve</h3>
+				<h3 className="font-bold text-[16px]">Recent Focused Duration Curve</h3>
 
 				<TimeIntervalsButtonAndDropdown />
 			</div>
@@ -55,14 +56,14 @@ const RecentCompletionRateCurveCard = () => {
 					barSize={10}
 				>
 					<XAxis dataKey="name" scale="point" padding={{ left: 10, right: 10 }} />
-					<YAxis dataKey="percent" tickFormatter={(value) => `${value}%`} />
+					<YAxis dataKey="seconds" tickFormatter={(value) => `${getFormattedDuration(value, false)}`} />
 					<Tooltip
 						content={({ payload }) => {
 							// "payload" property is an empty array if the tooltip is not active. Otherwise, if it is active, then it'll show an element in the "payload" array.
 							if (payload && payload[0]) {
-								const { name, percent } = payload[0].payload;
+								const { name, seconds } = payload[0].payload;
 								return (
-									<div className="bg-black text-blue-500 p-2 rounded-md">{`${name}, ${percent}%`}</div>
+									<div className="bg-black text-blue-500 p-2 rounded-md">{`${name}, ${getFormattedDuration(seconds, false)}`}</div>
 								);
 							}
 
@@ -71,7 +72,7 @@ const RecentCompletionRateCurveCard = () => {
 					/>
 					<CartesianGrid strokeDasharray="3 3" opacity={0.2} />
 					<Bar
-						dataKey="percent"
+						dataKey="seconds"
 						fill="#3b82f6"
 						background={{ fill: '#3a3a3a' }}
 						activeBar={{ fill: '#6ca6fc', cursor: 'pointer' }}
@@ -82,4 +83,4 @@ const RecentCompletionRateCurveCard = () => {
 	);
 };
 
-export default RecentCompletionRateCurveCard;
+export default RecentFocusedDurationCurveCard;

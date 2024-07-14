@@ -384,12 +384,12 @@ export const sumProperty = (array, propertyName) => {
 	}, 0);
 };
 
-export const getFormattedDuration = (duration) => {
+export const getFormattedDuration = (duration, includeSeconds = true) => {
 	const { hours, minutes, seconds } = formatTimeToHoursMinutesSeconds(duration);
 
 	const hoursStr = hours !== 0 ? `${hours.toLocaleString()}h` : '';
 	const minutesStr = minutes !== 0 ? `${minutes}m` : '';
-	const secondsStr = seconds !== 0 ? `${seconds}s` : '';
+	const secondsStr = seconds !== 0 && includeSeconds ? `${seconds}s` : '';
 
 	return `${hoursStr}${minutesStr}${secondsStr}`;
 };

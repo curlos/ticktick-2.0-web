@@ -2,6 +2,7 @@ import MyAchievementScoreCard from './MyAchievementScoreCard';
 import OverviewCard from './OverviewCard';
 import RecentCompletionCurveCard from './RecentCompletionCurveCard';
 import RecentCompletionRateCurveCard from './RecentCompletionRateCurveCard';
+import RecentFocusedDurationCurveCard from './RecentFocusedDurationCurveCard';
 import RecentPomoCurveCard from './RecentPomoCurveCard';
 
 const OverviewSection = () => {
@@ -37,10 +38,9 @@ const OverviewSection = () => {
 				<OverviewCard />
 				<MyAchievementScoreCard />
 				<RecentCompletionCurveCard />
-
 				<RecentCompletionRateCurveCard />
-
 				<RecentPomoCurveCard />
+				<RecentFocusedDurationCurveCard />
 			</div>
 		</div>
 	);
