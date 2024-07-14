@@ -8,6 +8,7 @@ import LoginPage from './pages/LoginPage';
 import EisenhowerMatrixPage from './pages/EisenhowerMatrixPage';
 import HabitsPage from './pages/HabitsPage';
 import FocusStatsPage from './pages/FocusStatsPage';
+import StatsPage from './pages/StatsPage';
 
 function App() {
 	return (
@@ -38,8 +39,14 @@ function App() {
 						<Route path="/habits/archived/:habitId" element={<HabitsPage />}></Route>
 
 						<Route path="/focus" element={<FocusPage />}></Route>
-						<Route path="/stats" element={<FocusStatsPage />}></Route>
+						<Route path="/focus-stats" element={<FocusStatsPage />}></Route>
 						<Route path="/matrix" element={<EisenhowerMatrixPage />}></Route>
+
+						{/* Statistics Page with different views */}
+						<Route path="/stats/overview" element={<StatsPage />}></Route>
+						<Route path="/stats/task" element={<StatsPage />}></Route>
+						<Route path="/stats/focus" element={<StatsPage />}></Route>
+
 						{/* Fallback route for 404 Not Found */}
 						<Route path="*" element={<HomePage />} />
 					</Routes>

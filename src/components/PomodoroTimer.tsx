@@ -85,9 +85,6 @@ const PomodoroTimer: React.FC<PomodoroTimerProps> = ({ timerStyle }) => {
 				note: focusNote,
 			};
 
-			console.log(newFocusRecord);
-			debugger;
-
 			dispatch(addFocusRecord(newFocusRecord));
 		}
 
