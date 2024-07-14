@@ -86,7 +86,7 @@ const CompletionRateDistributionCard = () => {
 
 				<div className="space-y-2">
 					{progressBarData.map((data) => (
-						<SmallLabel data={data} />
+						<SmallLabel key={data.name} data={data} />
 					))}
 				</div>
 			</div>

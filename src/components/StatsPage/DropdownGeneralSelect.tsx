@@ -2,25 +2,26 @@ import classNames from 'classnames';
 import Dropdown from '../Dropdown/Dropdown';
 import Icon from '../Icon';
 
-const DropdownTimeIntervals = ({
+const DropdownGeneralSelect = ({
 	toggleRef,
 	isVisible,
 	setIsVisible,
 	customClasses,
-	selectedTimeInterval,
-	setSelectedTimeInterval,
+	selected,
+	setSelected,
+	selectedOptions,
 }) => {
-	const TimeOption = ({ name }) => {
+	const SelectOption = ({ name }) => {
 		return (
 			<div
 				className="flex items-center justify-between hover:bg-color-gray-300 p-2 rounded-md cursor-pointer"
 				onClick={() => {
-					setSelectedTimeInterval(name);
+					setSelected(name);
 					setIsVisible(false);
 				}}
 			>
-				<div className={selectedTimeInterval === name ? 'text-blue-500' : ''}>{name}</div>
-				{selectedTimeInterval === name && (
+				<div className={selected === name ? 'text-blue-500' : ''}>{name}</div>
+				{selected === name && (
 					<Icon
 						name="check"
 						fill={0}
@@ -39,12 +40,12 @@ const DropdownTimeIntervals = ({
 			customClasses={classNames('shadow-2xl border border-color-gray-200 rounded-lg', customClasses)}
 		>
 			<div className="w-[175px] p-1">
-				<TimeOption name="Day" />
-				<TimeOption name="Week" />
-				<TimeOption name="Month" />
+				{selectedOptions.map((name) => (
+					<SelectOption key={name} name={name} />
+				))}
 			</div>
 		</Dropdown>
 	);
 };
 
-export default DropdownTimeIntervals;
+export default DropdownGeneralSelect;

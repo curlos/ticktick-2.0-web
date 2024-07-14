@@ -1,6 +1,7 @@
 import { getFormattedDuration } from '../../../utils/helpers.utils';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Label } from 'recharts';
-import TimeIntervalsButtonAndDropdown from '../TimeIntervalsButtonAndDropdown';
+import GeneralSelectButtonAndDropdown from '../GeneralSelectButtonAndDropdown';
+import { useState } from 'react';
 
 const data = [
 	{
@@ -34,12 +35,19 @@ const data = [
 ];
 
 const RecentFocusedDurationCurveCard = () => {
+	const selectedOptions = ['Day', 'Week', 'Month'];
+	const [selected, setSelected] = useState(selectedOptions[0]);
+
 	return (
 		<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col h-[350px]">
 			<div className="flex justify-between items-center mb-6">
 				<h3 className="font-bold text-[16px]">Recent Focused Duration Curve</h3>
 
-				<TimeIntervalsButtonAndDropdown />
+				<GeneralSelectButtonAndDropdown
+					selected={selected}
+					setSelected={setSelected}
+					selectedOptions={selectedOptions}
+				/>
 			</div>
 
 			<ResponsiveContainer width="100%" height="100%">

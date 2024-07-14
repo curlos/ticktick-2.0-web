@@ -1,4 +1,6 @@
 import { PieChart, Pie, Cell, Label } from 'recharts';
+import GeneralSelectButtonAndDropdown from '../GeneralSelectButtonAndDropdown';
+import { useState } from 'react';
 
 const ClassifiedCompletionStatisticsCard = () => {
 	const progressBarData = [
@@ -23,9 +25,20 @@ const ClassifiedCompletionStatisticsCard = () => {
 		);
 	};
 
+	const selectedOptions = ['List', 'Tag'];
+	const [selected, setSelected] = useState(selectedOptions[0]);
+
 	return (
 		<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col h-[280px]">
-			<h3 className="font-bold text-[16px]">Classified Completion Statistics</h3>
+			<div className="flex justify-between items-center">
+				<h3 className="font-bold text-[16px]">Classified Completion Statistics</h3>
+
+				<GeneralSelectButtonAndDropdown
+					selected={selected}
+					setSelected={setSelected}
+					selectedOptions={selectedOptions}
+				/>
+			</div>
 
 			<div className="flex-1 mt-2 flex items-center gap-10 px-4">
 				<div>
@@ -84,7 +97,7 @@ const ClassifiedCompletionStatisticsCard = () => {
 
 				<div className="space-y-2">
 					{progressBarData.map((data) => (
-						<SmallLabel data={data} />
+						<SmallLabel key={data.name} data={data} />
 					))}
 				</div>
 			</div>
