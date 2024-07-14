@@ -51,9 +51,12 @@ const DropdownSetTaskOrHabit: React.FC<DropdownSetTaskOrHabitProps> = ({
 	const selectedButtonStyle = `${sharedButtonStyle} bg-[#222735] text-[#4671F7] font-semibold`;
 	const unselectedButtonStyle = `${sharedButtonStyle} text-[#666666]`;
 
-	const fuse = new Fuse(tasks, {
+	const defaultTasks = tasks ? [...tasks] : [];
+	const defaultHabits = habits ? [...habits] : [];
+
+	const fuse = new Fuse([...defaultTasks, ...defaultHabits], {
 		includeScore: true,
-		keys: ['title'],
+		keys: ['title', 'name'],
 	});
 
 	useEffect(() => {
@@ -94,7 +97,10 @@ const DropdownSetTaskOrHabit: React.FC<DropdownSetTaskOrHabitProps> = ({
 		setFilteredTasks(searchedTasks.map((result) => result.item));
 	}, 1000);
 
-	console.log(habits);
+	console.log(filteredTasks);
+
+	const filteredRealTasks = filteredTasks?.filter((item) => item.title);
+	const filteredHabits = filteredTasks?.filter((item) => item.name);
 
 	return (
 		<Dropdown
@@ -175,16 +181,36 @@ const DropdownSetTaskOrHabit: React.FC<DropdownSetTaskOrHabitProps> = ({
 						/>
 					)
 				) : (
-					<div>
-						{filteredTasks?.map((task) => (
-							<Task
-								key={task._id}
-								taskId={task._id}
-								selectedFocusRecordTask={selectedTask}
-								setSelectedFocusRecordTask={setSelectedTask}
-								showSubtasks={false}
-							/>
-						))}
+					<div className="text-left">
+						{filteredRealTasks?.length > 0 && (
+							<div>
+								<div className="font-medium mb-2">Tasks</div>
+								{/* Tasks */}
+								{filteredRealTasks.map((task) => (
+									<Task
+										key={task._id}
+										taskId={task._id}
+										selectedFocusRecordTask={selectedTask}
+										setSelectedFocusRecordTask={setSelectedTask}
+										showSubtasks={false}
+									/>
+								))}
+							</div>
+						)}
+
+						<hr className="border-color-gray-200 my-4" />
+
+						{filteredHabits?.length > 0 && (
+							<div>
+								<div className="font-medium mb-2">Habits</div>
+								{/* Habits */}
+								<HabitList
+									habits={filteredHabits}
+									selectedFocusRecordTask={selectedTask}
+									setSelectedFocusRecordTask={setSelectedTask}
+								/>
+							</div>
+						)}
 					</div>
 				)}
 			</div>
@@ -195,7 +221,7 @@ const DropdownSetTaskOrHabit: React.FC<DropdownSetTaskOrHabitProps> = ({
 const HabitList = ({ habits, selectedFocusRecordTask, setSelectedFocusRecordTask }) => {
 	const MiniHabit = ({ habit }) => {
 		return (
-			<div className="flex items-center gap-2" onClick={() => setSelectedFocusRecordTask(habit)}>
+			<div className="flex items-center gap-2 cursor-pointer" onClick={() => setSelectedFocusRecordTask(habit)}>
 				<div className="h-[20px]">
 					{selectedFocusRecordTask && selectedFocusRecordTask._id === habit._id ? (
 						<Icon
