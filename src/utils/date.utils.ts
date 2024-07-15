@@ -335,3 +335,38 @@ export const isFutureDate = (dateStr) => {
 
 	return targetDate > currentDate;
 };
+
+export const getAllDaysInWeekFromDate = (date) => {
+	let result = [];
+	let dayOfWeek = date.getDay(); // Get day of the week (0 is Sunday, 1 is Monday, etc.)
+	let start = new Date(date); // Copy date to avoid mutating the original date
+	let end = new Date(date);
+
+	// Adjust start date to the previous Monday
+	start.setDate(start.getDate() - ((dayOfWeek + 6) % 7));
+
+	// Loop for 7 days from the start date to get the full week
+	for (let i = 0; i < 7; i++) {
+		let day = new Date(start);
+		day.setDate(day.getDate() + i);
+		result.push(day);
+	}
+
+	return result;
+};
+
+export const getAllDaysInMonthFromDate = (date) => {
+	let result = [];
+	let year = date.getFullYear(); // Get the year of the date
+	let month = date.getMonth(); // Get the month of the date (0-indexed)
+
+	// Calculate the number of days in the month
+	let daysInMonth = new Date(year, month + 1, 0).getDate();
+
+	// Loop through all days of the month
+	for (let day = 1; day <= daysInMonth; day++) {
+		result.push(new Date(year, month, day));
+	}
+
+	return result;
+};

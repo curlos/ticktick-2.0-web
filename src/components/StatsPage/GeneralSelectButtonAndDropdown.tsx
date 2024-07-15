@@ -3,7 +3,7 @@ import Icon from '../Icon';
 import DropdownGeneralSelect from './DropdownGeneralSelect';
 
 const GeneralSelectButtonAndDropdown = ({ selected, setSelected, selectedOptions }) => {
-	const dropdownTimeIntervalRef = useRef(null);
+	const dropdownRef = useRef(null);
 	const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
 	return (
@@ -17,7 +17,7 @@ const GeneralSelectButtonAndDropdown = ({ selected, setSelected, selectedOptions
 			</div>
 
 			<DropdownGeneralSelect
-				toggleRef={dropdownTimeIntervalRef}
+				toggleRef={dropdownRef}
 				isVisible={isDropdownVisible}
 				setIsVisible={setIsDropdownVisible}
 				selected={selected}
