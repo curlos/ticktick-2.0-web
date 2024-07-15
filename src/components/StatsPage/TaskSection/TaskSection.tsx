@@ -82,6 +82,7 @@ const TaskSection = () => {
 					/>
 				</div>
 
+				{/* TODO: In the future, it might be a good idea to use the DropdownCalendar to select a range of dates from the calendar in a more custom manner. I think the IOS app lets you do it so should do it that way. */}
 				<div className="flex justify-between gap-3 bg-color-gray-600 py-2 px-2 rounded-md">
 					<Icon
 						name="keyboard_arrow_left"

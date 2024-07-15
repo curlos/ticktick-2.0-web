@@ -3,6 +3,7 @@ import ActionSidebar from '../components/ActionSidebar';
 import OverviewSection from '../components/StatsPage/OverviewSection/OverviewSection';
 import TopBar from '../components/StatsPage/TopBar';
 import TaskSection from '../components/StatsPage/TaskSection/TaskSection';
+import FocusSection from '../components/StatsPage/FocusSection/FocusSection';
 
 const StatsPage = () => {
 	const location = useLocation();
@@ -20,6 +21,7 @@ const StatsPage = () => {
 				<div className="mt-5">
 					{location.pathname.includes('/overview') && <OverviewSection />}
 					{location.pathname.includes('/task') && <TaskSection />}
+					{location.pathname.includes('/focus') && <FocusSection />}
 				</div>
 			</div>
 
