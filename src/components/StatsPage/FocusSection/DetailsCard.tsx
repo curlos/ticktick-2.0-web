@@ -1,8 +1,9 @@
 import { PieChart, Pie, Cell, Label } from 'recharts';
 import GeneralSelectButtonAndDropdown from '../GeneralSelectButtonAndDropdown';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Icon from '../../Icon';
 import ModalPickDateRange from './ModalPickDateRange';
+import { formatCheckedInDayDate, getAllDaysInMonthFromDate, getAllDaysInWeekFromDate } from '../../../utils/date.utils';
 
 const DetailsCard = () => {
 	const progressBarData = [
@@ -13,29 +14,66 @@ const DetailsCard = () => {
 		{ name: 'GFE - Handbook', value: '16h21m', percentage: 2.05, color: '#2dd4bf' },
 	];
 
-	const SmallLabel = ({ data }) => {
-		const { name, value, color } = data;
-
-		return (
-			<div className="flex items-center gap-2">
-				<div
-					className="w-[15px] h-[15px] rounded-full"
-					style={{
-						backgroundColor: color,
-					}}
-				></div>
-				<div className="w-[70px]">{value}</div>
-				<div className="border-l border-color-gray-100 pl-2">{name}</div>
-			</div>
-		);
-	};
-
 	const selectedOptions = ['List', 'Tag', 'Task'];
 	const [selected, setSelected] = useState(selectedOptions[0]);
 
 	const selectedIntervalOptions = ['Day', 'Week', 'Month', 'Custom'];
 	const [selectedInterval, setSelectedInterval] = useState(selectedIntervalOptions[0]);
+	const [selectedDates, setSelectedDates] = useState([new Date()]);
+
+	// Custom
 	const [isModalPickDateRangeOpen, setIsModalPickDateRangeOpen] = useState(false);
+	const [startDate, setStartDate] = useState(new Date('January 1, 2024'));
+	const [endDate, setEndDate] = useState(new Date());
+
+	useEffect(() => {
+		switch (selectedInterval) {
+			case 'Day':
+				setSelectedDates([selectedDates[0]]);
+				break;
+			case 'Week':
+				setSelectedDates(getAllDaysInWeekFromDate(selectedDates[0]));
+				break;
+			case 'Month':
+				setSelectedDates(getAllDaysInMonthFromDate(selectedDates[0]));
+				break;
+		}
+	}, [selectedInterval]);
+
+	const handleArrowClick = (arrowType) => {
+		const date = new Date(selectedDates[0]);
+		switch (selectedInterval) {
+			case 'Day':
+				date.setDate(date.getDate() + (arrowType === 'left' ? -1 : 1));
+				setSelectedDates([date]);
+				break;
+			case 'Week':
+				date.setDate(date.getDate() + (arrowType === 'left' ? -7 : 7));
+				setSelectedDates(getAllDaysInWeekFromDate(date));
+				break;
+			case 'Month':
+				date.setMonth(date.getMonth() + (arrowType === 'left' ? -1 : 1));
+				setSelectedDates(getAllDaysInMonthFromDate(date));
+				break;
+			default:
+				break;
+		}
+	};
+
+	const getFormattedSelectedDates = () => {
+		switch (selectedInterval) {
+			case 'Day':
+				return formatCheckedInDayDate(selectedDates[0]);
+			case 'Week':
+				return `${formatCheckedInDayDate(selectedDates[0])} - ${formatCheckedInDayDate(selectedDates[selectedDates.length - 1])}`;
+			case 'Month':
+				return selectedDates[0].toLocaleString('default', { month: 'long', year: 'numeric' });
+			case 'Custom':
+				return `${formatCheckedInDayDate(startDate)} - ${formatCheckedInDayDate(endDate)}`;
+		}
+	};
+
+	console.log(selectedDates);
 
 	return (
 		<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col h-full">
@@ -67,15 +105,15 @@ const DetailsCard = () => {
 							name="keyboard_arrow_left"
 							customClass="!text-[20px] mt-[2px] cursor-pointer text-color-gray-100"
 							onClick={() => {
-								// handleArrowClick('left')
+								handleArrowClick('left');
 							}}
 						/>
-						<div>Jan 1, 2024 - July 15, 2024</div>
+						<div>{getFormattedSelectedDates()}</div>
 						<Icon
 							name="keyboard_arrow_right"
 							customClass="!text-[20px] mt-[2px] cursor-pointer text-color-gray-100"
 							onClick={() => {
-								// handleArrowClick('right')
+								handleArrowClick('right');
 							}}
 						/>
 					</div>
@@ -142,7 +180,14 @@ const DetailsCard = () => {
 				</div>
 			</div>
 
-			<ModalPickDateRange isModalOpen={isModalPickDateRangeOpen} setIsModalOpen={setIsModalPickDateRangeOpen} />
+			<ModalPickDateRange
+				isModalOpen={isModalPickDateRangeOpen}
+				setIsModalOpen={setIsModalPickDateRangeOpen}
+				startDate={startDate}
+				setStartDate={setStartDate}
+				endDate={endDate}
+				setEndDate={setEndDate}
+			/>
 		</div>
 	);
 };

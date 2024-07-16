@@ -370,3 +370,21 @@ export const getAllDaysInMonthFromDate = (date) => {
 
 	return result;
 };
+
+/**
+ * Generates all dates between two dates inclusively.
+ * @param {Date} startDate - The start date of the range.
+ * @param {Date} endDate - The end date of the range.
+ * @returns {Date[]} An array of all dates between the start and end date.
+ */
+export const getAllDaysInRange = (startDate, endDate) => {
+	const dates = [];
+	let currentDate = new Date(startDate);
+
+	while (currentDate <= endDate) {
+		dates.push(new Date(currentDate));
+		currentDate.setDate(currentDate.getDate() + 1);
+	}
+
+	return dates;
+};
