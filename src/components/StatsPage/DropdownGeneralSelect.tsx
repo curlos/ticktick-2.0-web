@@ -10,6 +10,7 @@ const DropdownGeneralSelect = ({
 	selected,
 	setSelected,
 	selectedOptions,
+	onClick,
 }) => {
 	const SelectOption = ({ name }) => {
 		return (
@@ -18,6 +19,10 @@ const DropdownGeneralSelect = ({
 				onClick={() => {
 					setSelected(name);
 					setIsVisible(false);
+
+					if (onClick) {
+						onClick(name);
+					}
 				}}
 			>
 				<div className={selected === name ? 'text-blue-500' : ''}>{name}</div>

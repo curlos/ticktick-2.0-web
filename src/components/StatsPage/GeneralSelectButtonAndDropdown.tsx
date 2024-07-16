@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import Icon from '../Icon';
 import DropdownGeneralSelect from './DropdownGeneralSelect';
 
-const GeneralSelectButtonAndDropdown = ({ selected, setSelected, selectedOptions }) => {
+const GeneralSelectButtonAndDropdown = ({ selected, setSelected, selectedOptions, onClick }) => {
 	const dropdownRef = useRef(null);
 	const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
@@ -23,6 +23,7 @@ const GeneralSelectButtonAndDropdown = ({ selected, setSelected, selectedOptions
 				selected={selected}
 				setSelected={setSelected}
 				selectedOptions={selectedOptions}
+				onClick={onClick}
 			/>
 		</div>
 	);

@@ -2,6 +2,7 @@ import { PieChart, Pie, Cell, Label } from 'recharts';
 import GeneralSelectButtonAndDropdown from '../GeneralSelectButtonAndDropdown';
 import { useState } from 'react';
 import Icon from '../../Icon';
+import ModalPickDateRange from './ModalPickDateRange';
 
 const DetailsCard = () => {
 	const progressBarData = [
@@ -34,6 +35,7 @@ const DetailsCard = () => {
 
 	const selectedIntervalOptions = ['Day', 'Week', 'Month', 'Custom'];
 	const [selectedInterval, setSelectedInterval] = useState(selectedIntervalOptions[0]);
+	const [isModalPickDateRangeOpen, setIsModalPickDateRangeOpen] = useState(false);
 
 	return (
 		<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col h-full">
@@ -51,6 +53,13 @@ const DetailsCard = () => {
 						selected={selectedInterval}
 						setSelected={setSelectedInterval}
 						selectedOptions={selectedIntervalOptions}
+						onClick={(name) => {
+							if (name?.toLowerCase() !== 'custom') {
+								return;
+							}
+
+							setIsModalPickDateRangeOpen(true);
+						}}
 					/>
 
 					<div className="flex justify-between items-center gap-3 bg-color-gray-600 py-2 rounded-md">
@@ -132,6 +141,8 @@ const DetailsCard = () => {
 					<ProgressBar data={progressBarData} />
 				</div>
 			</div>
+
+			<ModalPickDateRange isModalOpen={isModalPickDateRangeOpen} setIsModalOpen={setIsModalPickDateRangeOpen} />
 		</div>
 	);
 };
