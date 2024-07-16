@@ -1,9 +1,11 @@
 import { PieChart, Pie, Cell, Label } from 'recharts';
 import GeneralSelectButtonAndDropdown from '../GeneralSelectButtonAndDropdown';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Icon from '../../Icon';
 import ModalPickDateRange from './ModalPickDateRange';
 import { formatCheckedInDayDate, getAllDaysInMonthFromDate, getAllDaysInWeekFromDate } from '../../../utils/date.utils';
+import DropdownFocusRankingList from './DropdownFocusRankingList';
+import ProgressBar from './ProgressBar';
 
 const DetailsCard = () => {
 	const progressBarData = [
@@ -176,7 +178,7 @@ const DetailsCard = () => {
 				</div>
 
 				<div className="mt-3 flex flex-col gap-2 w-full">
-					<ProgressBar data={progressBarData} />
+					<ProgressBarList data={progressBarData} />
 				</div>
 			</div>
 
@@ -192,31 +194,36 @@ const DetailsCard = () => {
 	);
 };
 
-interface ProgressBarProps {
+interface ProgressBarListProps {
 	data: Array<any>;
 }
 
-const ProgressBar: React.FC<ProgressBarProps> = ({ data }) => {
+const ProgressBarList: React.FC<ProgressBarListProps> = ({ data }) => {
+	const dropdownFocusRankingListRef = useRef(null);
+	const [isDropdownFocusRankingListVisible, setIsDropdownFocusRankingListVisible] = useState(false);
+
 	return (
 		<div className="space-y-4 w-full">
-			{data.map((item, index) => (
-				<div>
-					<div className="flex justify-between items-center mb-1">
-						<div>{item.name}</div>
-						<div className="text-[#8C8C8C]">
-							{item.value} • {item.percentage}%
-						</div>
-					</div>
-					<div key={index} className="w-full rounded-full dark:bg-[#232323]">
-						<div
-							className={`text-xs font-medium text-blue-100 text-center p-[3px] leading-none rounded-full`}
-							style={{ width: `${item.percentage}%`, backgroundColor: item.color }}
-						/>
-					</div>
-				</div>
+			{data.map((item) => (
+				<ProgressBar item={item} />
 			))}
 
-			<div className="text-color-gray-100 cursor-pointer">View more</div>
+			<div className="relative">
+				<div
+					ref={dropdownFocusRankingListRef}
+					onClick={() => setIsDropdownFocusRankingListVisible(!isDropdownFocusRankingListVisible)}
+					className="text-color-gray-100 cursor-pointer"
+				>
+					View more
+				</div>
+
+				<DropdownFocusRankingList
+					toggleRef={dropdownFocusRankingListRef}
+					isVisible={isDropdownFocusRankingListVisible}
+					setIsVisible={setIsDropdownFocusRankingListVisible}
+					progressData={data}
+				/>
+			</div>
 		</div>
 	);
 };
