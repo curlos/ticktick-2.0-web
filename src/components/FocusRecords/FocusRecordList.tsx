@@ -4,6 +4,7 @@ import { useGetHabitsQuery } from '../../services/resources/habitsApi';
 import { useGetTasksQuery } from '../../services/resources/tasksApi';
 import { groupByEndTimeDay } from '../../utils/date.utils';
 import FocusRecord from './FocusRecord';
+import classNames from 'classnames';
 
 const FocusRecordList = () => {
 	// RTK Query - Focus Records
@@ -43,11 +44,11 @@ const FocusRecordList = () => {
 	return (
 		<div>
 			{groupedRecords &&
-				Object.keys(groupedRecords).map((day) => {
+				Object.keys(groupedRecords).map((day, index) => {
 					const focusRecordsForTheDay = groupedRecords[day];
 
 					return (
-						<div key={day} className="text-[13px] px-5 mt-5">
+						<div key={day} className={classNames('text-[13px]', index !== 0 ? 'mt-5' : '')}>
 							<div className="text-color-gray-100 text-[13px] mb-3">{day}</div>
 
 							{focusRecords &&

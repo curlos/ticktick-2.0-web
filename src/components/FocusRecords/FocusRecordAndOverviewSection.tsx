@@ -131,7 +131,9 @@ const FocusRecordAndOverviewSection = () => {
 				/>
 			</div>
 
-			<FocusRecordList />
+			<div className="px-5 mt-5">
+				<FocusRecordList />
+			</div>
 		</div>
 	);
 };
