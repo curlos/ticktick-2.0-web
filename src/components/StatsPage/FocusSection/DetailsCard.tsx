@@ -75,8 +75,6 @@ const DetailsCard = () => {
 		}
 	};
 
-	console.log(selectedDates);
-
 	return (
 		<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col h-full">
 			<div className="flex justify-between items-center">

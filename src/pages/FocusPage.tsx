@@ -1,4 +1,4 @@
-import FocusRecords from '../components/FocusRecords';
+import FocusRecordAndOverviewSection from '../components/FocusRecords/FocusRecordAndOverviewSection';
 import FocusTimer from '../components/FocusTimer/FocusTimer';
 import ActionSidebar from '../components/ActionSidebar';
 
@@ -12,7 +12,7 @@ const FocusPage = () => {
 				<FocusTimer />
 			</div>
 			<div className="flex-[5] bg-red-500">
-				<FocusRecords />
+				<FocusRecordAndOverviewSection />
 			</div>
 		</div>
 	);

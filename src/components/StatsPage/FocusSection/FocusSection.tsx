@@ -11,7 +11,7 @@ const FocusSection = () => {
 					<DetailsCard />
 				</div>
 
-				<div className="flex-[4] w-full"></div>
+				<div className="flex-[4] w-full">{/* <Focus */}</div>
 			</div>
 		</div>
 	);

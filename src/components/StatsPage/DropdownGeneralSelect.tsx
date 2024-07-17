@@ -16,7 +16,8 @@ const DropdownGeneralSelect = ({
 		return (
 			<div
 				className="flex items-center justify-between hover:bg-color-gray-300 p-2 rounded-md cursor-pointer"
-				onClick={() => {
+				onClick={(e) => {
+					e.stopPropagation();
 					setSelected(name);
 					setIsVisible(false);
 
