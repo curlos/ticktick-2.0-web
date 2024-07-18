@@ -32,6 +32,10 @@ const DateRangePicker = ({ selectedDates, setSelectedDates, selectedInterval, st
 				date.setMonth(date.getMonth() + (arrowType === 'left' ? -1 : 1));
 				setSelectedDates(getAllDaysInMonthFromDate(date));
 				break;
+			case 'Year':
+				date.setFullYear(date.getFullYear() + (arrowType === 'left' ? -1 : 1));
+				setSelectedDates([date]); // Depending on your app's need, adjust this line
+				break;
 			default:
 				break;
 		}
@@ -45,6 +49,8 @@ const DateRangePicker = ({ selectedDates, setSelectedDates, selectedInterval, st
 				return `${formatCheckedInDayDate(selectedDates[0])} - ${formatCheckedInDayDate(selectedDates[selectedDates.length - 1])}`;
 			case 'Month':
 				return selectedDates[0].toLocaleString('default', { month: 'long', year: 'numeric' });
+			case 'Year':
+				return selectedDates[0].toLocaleString('default', { year: 'numeric' });
 			case 'Custom':
 				return `${formatCheckedInDayDate(startDate)} - ${formatCheckedInDayDate(endDate)}`;
 		}

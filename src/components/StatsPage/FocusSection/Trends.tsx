@@ -1,6 +1,8 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import GeneralSelectButtonAndDropdown from '../GeneralSelectButtonAndDropdown';
 import { useState } from 'react';
+import DateRangePicker from './DateRangePicker';
+import ModalPickDateRange from './ModalPickDateRange';
 
 const data = [
 	{
@@ -34,19 +36,45 @@ const data = [
 ];
 
 const Trends = () => {
-	const selectedOptions = ['Day', 'Week', 'Month'];
+	const selectedOptions = ['List', 'Tag', 'Task'];
 	const [selected, setSelected] = useState(selectedOptions[0]);
+
+	const selectedIntervalOptions = ['Day', 'Week', 'Month', 'Year', 'Custom'];
+	const [selectedInterval, setSelectedInterval] = useState(selectedIntervalOptions[0]);
+	const [selectedDates, setSelectedDates] = useState([new Date()]);
+
+	// Custom
+	const [isModalPickDateRangeOpen, setIsModalPickDateRangeOpen] = useState(false);
+	const [startDate, setStartDate] = useState(new Date('January 1, 2024'));
+	const [endDate, setEndDate] = useState(new Date());
 
 	return (
 		<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col h-[350px]">
 			<div className="flex justify-between items-center mb-6">
 				<h3 className="font-bold text-[16px]">Trends</h3>
 
-				<GeneralSelectButtonAndDropdown
-					selected={selected}
-					setSelected={setSelected}
-					selectedOptions={selectedOptions}
-				/>
+				<div className="flex gap-2 items-center">
+					<GeneralSelectButtonAndDropdown
+						selected={selectedInterval}
+						setSelected={setSelectedInterval}
+						selectedOptions={selectedIntervalOptions}
+						onClick={(name) => {
+							if (name?.toLowerCase() !== 'custom') {
+								return;
+							}
+
+							setIsModalPickDateRangeOpen(true);
+						}}
+					/>
+
+					<DateRangePicker
+						selectedDates={selectedDates}
+						setSelectedDates={setSelectedDates}
+						selectedInterval={selectedInterval}
+						startDate={startDate}
+						endDate={endDate}
+					/>
+				</div>
 			</div>
 
 			<ResponsiveContainer width="100%" height="100%">
@@ -94,6 +122,15 @@ const Trends = () => {
 					<Area type="monotone" dataKey="score" stroke="#3b82f6" strokeWidth={3} fill="url(#colorPv)" />
 				</AreaChart>
 			</ResponsiveContainer>
+
+			<ModalPickDateRange
+				isModalOpen={isModalPickDateRangeOpen}
+				setIsModalOpen={setIsModalPickDateRangeOpen}
+				startDate={startDate}
+				setStartDate={setStartDate}
+				endDate={endDate}
+				setEndDate={setEndDate}
+			/>
 		</div>
 	);
 };

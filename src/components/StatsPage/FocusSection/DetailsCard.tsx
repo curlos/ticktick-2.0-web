@@ -18,7 +18,7 @@ const DetailsCard = () => {
 	const selectedOptions = ['List', 'Tag', 'Task'];
 	const [selected, setSelected] = useState(selectedOptions[0]);
 
-	const selectedIntervalOptions = ['Day', 'Week', 'Month', 'Custom'];
+	const selectedIntervalOptions = ['Day', 'Week', 'Month', 'Year', 'Custom'];
 	const [selectedInterval, setSelectedInterval] = useState(selectedIntervalOptions[0]);
 	const [selectedDates, setSelectedDates] = useState([new Date()]);
 
