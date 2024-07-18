@@ -50,7 +50,7 @@ const TrendsCard = () => {
 
 	return (
 		<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col h-[350px]">
-			<div className="flex justify-between items-center mb-6">
+			<div className="flex justify-between items-center mb-4">
 				<h3 className="font-bold text-[16px]">Trends</h3>
 
 				<div className="flex gap-2 items-center">
@@ -76,6 +76,8 @@ const TrendsCard = () => {
 					/>
 				</div>
 			</div>
+
+			<div className="text-color-gray-100 mb-2">Daily Average: 5h36m</div>
 
 			<ResponsiveContainer width="100%" height="100%">
 				<AreaChart
