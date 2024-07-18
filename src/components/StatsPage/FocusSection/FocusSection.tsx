@@ -4,7 +4,8 @@ import FocusRecordList from '../../FocusRecords/FocusRecordList';
 import Icon from '../../Icon';
 import DetailsCard from './DetailsCard';
 import OverviewCard from './OverviewCard';
-import Trends from './Trends';
+import TrendsCard from './TrendsCard';
+import MostFocusedTimeCard from './MostFocusedTimeCard';
 
 const FocusSection = () => {
 	const dispatch = useDispatch();
@@ -41,7 +42,9 @@ const FocusSection = () => {
 			</div>
 
 			<div className="grid grid-cols-2 gap-2 mt-5">
-				<Trends />
+				<TrendsCard />
+				<div></div>
+				<MostFocusedTimeCard />
 			</div>
 		</div>
 	);

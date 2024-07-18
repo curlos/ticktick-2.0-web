@@ -35,7 +35,7 @@ const data = [
 	},
 ];
 
-const Trends = () => {
+const TrendsCard = () => {
 	const selectedOptions = ['List', 'Tag', 'Task'];
 	const [selected, setSelected] = useState(selectedOptions[0]);
 
@@ -135,4 +135,4 @@ const Trends = () => {
 	);
 };
 
-export default Trends;
+export default TrendsCard;
