@@ -1,11 +1,10 @@
 import { PieChart, Pie, Cell, Label } from 'recharts';
 import GeneralSelectButtonAndDropdown from '../GeneralSelectButtonAndDropdown';
-import { useEffect, useRef, useState } from 'react';
-import Icon from '../../Icon';
+import { useRef, useState } from 'react';
 import ModalPickDateRange from './ModalPickDateRange';
-import { formatCheckedInDayDate, getAllDaysInMonthFromDate, getAllDaysInWeekFromDate } from '../../../utils/date.utils';
 import DropdownFocusRankingList from './DropdownFocusRankingList';
 import ProgressBar from './ProgressBar';
+import DateRangePicker from './DateRangePicker';
 
 const DetailsCard = () => {
 	const progressBarData = [
@@ -27,53 +26,6 @@ const DetailsCard = () => {
 	const [isModalPickDateRangeOpen, setIsModalPickDateRangeOpen] = useState(false);
 	const [startDate, setStartDate] = useState(new Date('January 1, 2024'));
 	const [endDate, setEndDate] = useState(new Date());
-
-	useEffect(() => {
-		switch (selectedInterval) {
-			case 'Day':
-				setSelectedDates([selectedDates[0]]);
-				break;
-			case 'Week':
-				setSelectedDates(getAllDaysInWeekFromDate(selectedDates[0]));
-				break;
-			case 'Month':
-				setSelectedDates(getAllDaysInMonthFromDate(selectedDates[0]));
-				break;
-		}
-	}, [selectedInterval]);
-
-	const handleArrowClick = (arrowType) => {
-		const date = new Date(selectedDates[0]);
-		switch (selectedInterval) {
-			case 'Day':
-				date.setDate(date.getDate() + (arrowType === 'left' ? -1 : 1));
-				setSelectedDates([date]);
-				break;
-			case 'Week':
-				date.setDate(date.getDate() + (arrowType === 'left' ? -7 : 7));
-				setSelectedDates(getAllDaysInWeekFromDate(date));
-				break;
-			case 'Month':
-				date.setMonth(date.getMonth() + (arrowType === 'left' ? -1 : 1));
-				setSelectedDates(getAllDaysInMonthFromDate(date));
-				break;
-			default:
-				break;
-		}
-	};
-
-	const getFormattedSelectedDates = () => {
-		switch (selectedInterval) {
-			case 'Day':
-				return formatCheckedInDayDate(selectedDates[0]);
-			case 'Week':
-				return `${formatCheckedInDayDate(selectedDates[0])} - ${formatCheckedInDayDate(selectedDates[selectedDates.length - 1])}`;
-			case 'Month':
-				return selectedDates[0].toLocaleString('default', { month: 'long', year: 'numeric' });
-			case 'Custom':
-				return `${formatCheckedInDayDate(startDate)} - ${formatCheckedInDayDate(endDate)}`;
-		}
-	};
 
 	return (
 		<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col h-full">
@@ -100,23 +52,13 @@ const DetailsCard = () => {
 						}}
 					/>
 
-					<div className="flex justify-between items-center gap-3 bg-color-gray-600 py-2 rounded-md">
-						<Icon
-							name="keyboard_arrow_left"
-							customClass="!text-[20px] mt-[2px] cursor-pointer text-color-gray-100"
-							onClick={() => {
-								handleArrowClick('left');
-							}}
-						/>
-						<div>{getFormattedSelectedDates()}</div>
-						<Icon
-							name="keyboard_arrow_right"
-							customClass="!text-[20px] mt-[2px] cursor-pointer text-color-gray-100"
-							onClick={() => {
-								handleArrowClick('right');
-							}}
-						/>
-					</div>
+					<DateRangePicker
+						selectedDates={selectedDates}
+						setSelectedDates={setSelectedDates}
+						selectedInterval={selectedInterval}
+						startDate={startDate}
+						endDate={endDate}
+					/>
 				</div>
 			</div>
 

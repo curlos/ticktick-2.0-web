@@ -40,7 +40,7 @@ const RecentCompletionRateCurveCard = () => {
 	return (
 		<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col h-[350px]">
 			<div className="flex justify-between items-center mb-6">
-				<h3 className="font-bold text-[16px]">Recent Pomo Curve</h3>
+				<h3 className="font-bold text-[16px]">Recent Completion Rate Curve</h3>
 
 				<GeneralSelectButtonAndDropdown
 					selected={selected}
