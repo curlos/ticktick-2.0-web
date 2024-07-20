@@ -7,6 +7,7 @@ import OverviewCard from './OverviewCard';
 import TrendsCard from './TrendsCard';
 import MostFocusedTimeCard from './MostFocusedTimeCard';
 import CalendarHeatmap from './CalendarHeatmap';
+import YearGridsCard from './YearGridsCard';
 
 const FocusSection = () => {
 	const dispatch = useDispatch();
@@ -46,9 +47,7 @@ const FocusSection = () => {
 				<TrendsCard />
 				<div></div>
 				<MostFocusedTimeCard />
-				<div>
-					<CalendarHeatmap />
-				</div>
+				<YearGridsCard />
 			</div>
 		</div>
 	);

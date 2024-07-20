@@ -388,3 +388,15 @@ export const getAllDaysInRange = (startDate, endDate) => {
 
 	return dates;
 };
+
+export const getAllDatesInYear = (year) => {
+	const startDate = new Date(`${year}-01-01`); // Start of the year
+	const endDate = new Date(`${year}-12-31`); // End of the year
+	const dates = [];
+
+	for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
+		dates.push(new Date(date)); // Add a new Date object to the array
+	}
+
+	return dates;
+};

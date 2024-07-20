@@ -145,7 +145,7 @@ const ProgressBarList: React.FC<ProgressBarListProps> = ({ data }) => {
 	return (
 		<div className="space-y-4 w-full">
 			{data.map((item) => (
-				<ProgressBar item={item} />
+				<ProgressBar key={item.name} item={item} />
 			))}
 
 			<div className="relative">
