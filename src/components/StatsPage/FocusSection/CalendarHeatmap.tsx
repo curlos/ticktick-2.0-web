@@ -33,12 +33,21 @@ const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({ data = [1] }) => {
 		},
 	];
 
+	const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
 	return (
 		<div className="flex gap-2 justify-between items-end">
-			<div className="flex flex-col flex-wrap w-[80%] max-h-[200px]">
-				{allDatesInYear.map((date) => (
-					<CalendarDay date={date} />
-				))}
+			<div>
+				<div className="flex justify-between text-color-gray-100">
+					{monthsShort.map((month) => (
+						<div key={month}>{month}</div>
+					))}
+				</div>
+				<div className="flex flex-col flex-wrap max-h-[210px]">
+					{allDatesInYear.map((date) => (
+						<CalendarDay date={date} />
+					))}
+				</div>
 			</div>
 
 			<div className="space-y-1">
