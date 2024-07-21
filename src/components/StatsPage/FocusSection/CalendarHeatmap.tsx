@@ -10,11 +10,48 @@ interface CalendarHeatmapProps {
 const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({ data = [1] }) => {
 	const allDatesInYear = getAllDatesInYear(2024);
 
+	const durations = [
+		{
+			value: '0m',
+			bgColor: 'bg-transparent',
+		},
+		{
+			value: '0-1h',
+			bgColor: 'bg-gray-300',
+		},
+		{
+			value: '1h-3h',
+			bgColor: 'bg-blue-300',
+		},
+		{
+			value: '3h-5h',
+			bgColor: 'bg-blue-500',
+		},
+		{
+			value: '>5h',
+			bgColor: 'bg-blue-800',
+		},
+	];
+
 	return (
-		<div className="flex flex-wrap rever w-[85%]">
-			{allDatesInYear.map((date) => (
-				<CalendarDay date={date} />
-			))}
+		<div className="flex gap-2 justify-between items-end">
+			<div className="flex flex-col flex-wrap w-[80%] max-h-[200px]">
+				{allDatesInYear.map((date) => (
+					<CalendarDay date={date} />
+				))}
+			</div>
+
+			<div className="space-y-1">
+				{durations.map((duration) => (
+					<div className="flex items-center text-color-gray-100 gap-1">
+						<div
+							key={duration.value}
+							className={classNames(`h-[13px] w-[13px] border border-color-gray-100`, duration.bgColor)}
+						></div>
+						{duration.value}
+					</div>
+				))}
+			</div>
 		</div>
 	);
 };

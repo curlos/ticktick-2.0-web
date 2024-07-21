@@ -390,7 +390,7 @@ export const getAllDaysInRange = (startDate, endDate) => {
 };
 
 export const getAllDatesInYear = (year) => {
-	const startDate = new Date(`${year}-01-01`); // Start of the year
+	const startDate = new Date(`${year}-01-02`); // Start of the year
 	const endDate = new Date(`${year}-12-31`); // End of the year
 	const dates = [];
 
