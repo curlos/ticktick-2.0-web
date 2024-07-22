@@ -214,3 +214,12 @@
     border-style: solid;
     border-color: #3b82f6 transparent transparent transparent;
 }
+
+/* Targeting all text elements in the ApexChart container - adjust selector specificity as needed */
+.apexcharts-menu {
+    background-color: transparent !important;
+}
+
+.apexcharts-legend-text {
+    color: white !important;
+}

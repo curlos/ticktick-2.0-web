@@ -8,6 +8,7 @@ import TrendsCard from './TrendsCard';
 import MostFocusedTimeCard from './MostFocusedTimeCard';
 import YearGridsCard from './YearGridsCard';
 import TimelineChart from './TimelineChart';
+import TimelineCard from './TimelineCard';
 
 const FocusSection = () => {
 	const dispatch = useDispatch();
@@ -45,7 +46,7 @@ const FocusSection = () => {
 
 			<div className="grid grid-cols-2 gap-2 mt-5">
 				<TrendsCard />
-				<TimelineChart />
+				<TimelineCard />
 				<MostFocusedTimeCard />
 				<YearGridsCard />
 			</div>

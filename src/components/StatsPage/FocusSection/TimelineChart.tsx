@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
 
-const TimeHeatMap = () => {
+const TimelineChart = () => {
 	const [series, setSeries] = useState(
 		Array.from({ length: 24 }, (_, i) => ({
 			name: `${i}:00`,
@@ -11,11 +11,12 @@ const TimeHeatMap = () => {
 
 	const [options, setOptions] = useState({
 		chart: {
-			height: 350,
+			height: 250,
 			type: 'heatmap',
 			toolbar: {
-				show: true,
+				show: false,
 			},
+			background: 'transparent', // Dark background for the chart area
 		},
 		plotOptions: {
 			heatmap: {
@@ -24,11 +25,11 @@ const TimeHeatMap = () => {
 				useFillColorAsStroke: true,
 				colorScale: {
 					ranges: [
-						{ from: 0, to: 0.1, color: '#FFFFFF', name: '0m' }, // 'bg-transparent' - Assuming no color as transparent
-						{ from: 0.1, to: 1, color: '#D1D5DB', name: '0-1h' }, // 'bg-gray-300'
-						{ from: 1, to: 3, color: '#BFDBFE', name: '1h-3h' }, // 'bg-blue-300'
-						{ from: 3, to: 5, color: '#3B82F6', name: '3h-5h' }, // 'bg-blue-500'
-						{ from: 5, to: 24, color: '#1E3A8A', name: '>5h' }, // 'bg-blue-800'
+						{ from: 0, to: 0.1, color: '#d1d5db', name: '0m' }, // Adjusted for dark mode visibility
+						{ from: 0.1, to: 3, color: '#93c5fd', name: '0-1h' },
+						{ from: 3, to: 7, color: '#3b82f6', name: '1h-3h' },
+						{ from: 7, to: 12, color: '#2563eb', name: '3h-5h' },
+						{ from: 12, to: 24, color: '#1e40af', name: '>5h' },
 					],
 				},
 			},
@@ -38,29 +39,35 @@ const TimeHeatMap = () => {
 		},
 		xaxis: {
 			type: 'category',
-			categories: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+			categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
 			labels: {
 				style: {
-					colors: '#FFFFFF', // Set x-axis labels to white
+					colors: '#FFFFFF', // White labels for dark mode
 				},
 			},
 		},
 		yaxis: {
 			labels: {
 				style: {
-					colors: '#FFFFFF', // Set y-axis labels to white
+					colors: '#FFFFFF', // White labels for dark mode
 				},
 			},
 		},
-		title: {
-			text: 'Week Activity Heatmap',
-			style: {
-				color: '#FFFFFF', // Set title to white
+		tooltip: {
+			theme: 'dark', // Dark theme for tooltips
+		},
+		legend: {
+			position: 'bottom',
+			horizontalAlign: 'center', // Can be 'left', 'center', or 'right'
+			markers: {
+				width: 12,
+				height: 12,
 			},
+			offsetY: -5,
 		},
 	});
 
-	return <ReactApexChart options={options} series={series} type="heatmap" height={350} />;
+	return <ReactApexChart options={options} series={series} type="heatmap" height={310} />;
 };
 
 // Helper function to generate random data for each hour across the 7 days of the week
@@ -69,4 +76,4 @@ function generateHourData() {
 	return Array.from({ length: 7 }, () => Math.random() * 24);
 }
 
-export default TimeHeatMap;
+export default TimelineChart;
