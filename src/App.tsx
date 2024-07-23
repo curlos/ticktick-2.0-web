@@ -9,6 +9,7 @@ import EisenhowerMatrixPage from './pages/EisenhowerMatrixPage';
 import HabitsPage from './pages/HabitsPage';
 import FocusStatsPage from './pages/FocusStatsPage';
 import StatsPage from './pages/StatsPage';
+import CalendarPage from './pages/CalendarPage';
 
 function App() {
 	return (
@@ -46,6 +47,9 @@ function App() {
 						<Route path="/stats/overview" element={<StatsPage />}></Route>
 						<Route path="/stats/task" element={<StatsPage />}></Route>
 						<Route path="/stats/focus" element={<StatsPage />}></Route>
+
+						{/* Calendar Page */}
+						<Route path="/calendar" element={<CalendarPage />}></Route>
 
 						{/* Fallback route for 404 Not Found */}
 						<Route path="*" element={<HomePage />} />

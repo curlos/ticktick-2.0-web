@@ -44,6 +44,7 @@ const ActionSidebar = () => {
 					<Icon name="grid_view" customClass={iconCustomClass} onClick={() => navigate('/matrix')} />
 					<Icon name="church" customClass={iconCustomClass} onClick={() => navigate('/habits')} />
 					<Icon name="travel" customClass={iconCustomClass} onClick={() => navigate('/stats/overview')} />
+					<Icon name="calendar_today" customClass={iconCustomClass} onClick={() => navigate('/calendar')} />
 					<Icon
 						name="search"
 						customClass={iconCustomClass}
