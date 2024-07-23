@@ -8,12 +8,12 @@ const TimelineCard = () => {
 	return (
 		<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col h-[350px]">
 			<div className="flex justify-between items-center">
-				<h3 className="font-bold text-[16px]">Year Grids</h3>
+				<h3 className="font-bold text-[16px]">Timeline</h3>
 
 				<DateRangePicker
 					selectedDates={selectedDates}
 					setSelectedDates={setSelectedDates}
-					selectedInterval={'Year'}
+					selectedInterval={'Week'}
 				/>
 			</div>
 
