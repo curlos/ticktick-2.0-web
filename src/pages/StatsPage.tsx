@@ -11,11 +11,11 @@ const StatsPage = () => {
 	console.log(location);
 
 	return (
-		<div className="flex max-w-screen">
+		<div className="flex max-w-screen max-h-[100vh]">
 			<div className="">
 				<ActionSidebar />
 			</div>
-			<div className="flex-1 bg-color-gray-700 py-8 pl-[150px] pr-[170px]">
+			<div className="flex-1 bg-color-gray-700 py-8 pl-[150px] pr-[170px] h-[100vh] overflow-scroll">
 				<TopBar />
 
 				<div className="mt-5">
@@ -24,13 +24,6 @@ const StatsPage = () => {
 					{location.pathname.includes('/focus') && <FocusSection />}
 				</div>
 			</div>
-
-			{/* <div className="flex-[10] bg-blue-500">
-				<FocusTimer />
-			</div>
-			<div className="flex-[5] bg-red-500">
-				<FocusRecords />
-			</div> */}
 		</div>
 	);
 };
