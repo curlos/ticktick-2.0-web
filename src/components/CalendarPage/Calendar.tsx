@@ -42,6 +42,18 @@ const Calendar = () => {
 								)}
 							>
 								{day.getDate()}
+
+								<div className="space-y-1 text-white text-[12px]">
+									<div className="bg-red-500 rounded p-1 truncate">
+										3592 - Provisioning and Completed: Review Lines (Setup multiple lines at once)
+									</div>
+									<div className="bg-red-500 rounded p-1 truncate">
+										3592 - Provisioning and Completed: Review Lines (Setup multiple lines at once)
+									</div>
+									<div className="bg-red-500 rounded p-1 truncate">
+										3592 - Provisioning and Completed: Review Lines (Setup multiple lines at once)
+									</div>
+								</div>
 							</div>
 						);
 					})}
