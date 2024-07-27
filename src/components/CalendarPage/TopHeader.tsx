@@ -12,6 +12,7 @@ const TopHeader = () => {
 				<Icon
 					name="add"
 					customClass="text-color-gray-100 !text-[18px] p-1 border border-color-gray-150 rounded cursor-pointer hover:text-blue-500"
+					onClick={() => console.log('e')}
 				/>
 
 				<div>
