@@ -1,6 +1,10 @@
+import { useDispatch } from 'react-redux';
 import Icon from '../Icon';
+import { setModalState } from '../../slices/modalSlice';
 
 const TopHeader = () => {
+	const dispatch = useDispatch();
+
 	return (
 		<div className="p-3 pt-5 flex justify-between items-center">
 			<div className="flex items-center gap-2">
@@ -12,12 +16,12 @@ const TopHeader = () => {
 				<Icon
 					name="add"
 					customClass="text-color-gray-100 !text-[18px] p-1 border border-color-gray-150 rounded cursor-pointer hover:text-blue-500"
-					onClick={() => console.log('e')}
+					onClick={() => dispatch(setModalState({ modalId: 'ModalAddTaskForm', isOpen: true }))}
 				/>
 
 				<div>
 					<div className="border border-color-gray-150 py-1 pl-3 pr-2 rounded hover:text-blue-500 flex items-center gap-[2px] cursor-pointer">
-						<span>6 Weeks</span>
+						<span>Month</span>
 						<Icon name="keyboard_arrow_down" customClass="text-color-gray-100 !text-[18px]" />
 					</div>
 				</div>
