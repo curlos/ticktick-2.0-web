@@ -1,9 +1,15 @@
 import { useDispatch } from 'react-redux';
 import Icon from '../Icon';
 import { setModalState } from '../../slices/modalSlice';
+import DropdownIntervalSelect from './DropdownIntervalSelect';
+import { useRef, useState } from 'react';
 
 const TopHeader = () => {
 	const dispatch = useDispatch();
+
+	const dropdownIntervalSelectRef = useRef(null);
+	const [isDropdownIntervalSelectVisible, setIsDropdownIntervalSelectVisible] = useState(false);
+	const [selectedInterval, setSelectedInterval] = useState('Day');
 
 	return (
 		<div className="p-3 pt-5 flex justify-between items-center">
@@ -19,11 +25,23 @@ const TopHeader = () => {
 					onClick={() => dispatch(setModalState({ modalId: 'ModalAddTaskForm', isOpen: true }))}
 				/>
 
-				<div>
-					<div className="border border-color-gray-150 py-1 pl-3 pr-2 rounded hover:text-blue-500 flex items-center gap-[2px] cursor-pointer">
-						<span>Month</span>
+				<div className="relative">
+					<div
+						ref={dropdownIntervalSelectRef}
+						onClick={() => setIsDropdownIntervalSelectVisible(!isDropdownIntervalSelectVisible)}
+						className="border border-color-gray-150 py-1 pl-3 pr-2 rounded hover:text-blue-500 flex items-center gap-[2px] cursor-pointer"
+					>
+						<span>{selectedInterval}</span>
 						<Icon name="keyboard_arrow_down" customClass="text-color-gray-100 !text-[18px]" />
 					</div>
+
+					<DropdownIntervalSelect
+						toggleRef={dropdownIntervalSelectRef}
+						isVisible={isDropdownIntervalSelectVisible}
+						setIsVisible={setIsDropdownIntervalSelectVisible}
+						selected={selectedInterval}
+						setSelected={setSelectedInterval}
+					/>
 				</div>
 
 				<div>
