@@ -4,9 +4,10 @@ import { areDatesEqual, getCalendarMonth } from '../../utils/date.utils';
 const Calendar = () => {
 	const currentDate = new Date();
 	const calendarMonth = getCalendarMonth(currentDate.getFullYear(), currentDate.getMonth());
+	const shownWeeks = calendarMonth.slice(0, 4);
 
 	return (
-		<div className="h-full">
+		<div className="h-full flex flex-col">
 			<div className="grid grid-cols-7 mb-1">
 				{calendarMonth[0].map((day) => (
 					<div className="text-center text-color-gray-100">
@@ -14,13 +15,14 @@ const Calendar = () => {
 					</div>
 				))}
 			</div>
-			<div className="h-full flex flex-col">
-				{calendarMonth.slice(0, 4).map((week, index) => (
+			<div className="flex-1 flex flex-col">
+				{shownWeeks.map((week, index) => (
 					<div
 						key={`week-${index}`}
 						className={classNames(
-							'grid grid-cols-7 flex-1 border-b border-color-gray-200',
-							index === 0 ? 'border-t' : ''
+							'grid grid-cols-7 flex-1 border-color-gray-200',
+							index === 0 ? 'border-t' : '',
+							index !== shownWeeks.length - 1 ? 'border-b' : ''
 						)}
 					>
 						{week.map((day, index) => {
