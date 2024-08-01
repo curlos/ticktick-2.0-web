@@ -1,6 +1,6 @@
 import classNames from 'classnames';
+import Dropdown from '../../../components/Dropdown/Dropdown';
 import { DropdownProps } from '../../../interfaces/interfaces';
-import Dropdown from '../../Dropdown/Dropdown';
 import ProgressBar from './ProgressBar';
 
 interface DropdownPrioritiesProps extends DropdownProps {

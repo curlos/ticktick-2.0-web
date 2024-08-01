@@ -1,10 +1,10 @@
+import { useState, useRef } from 'react';
 import { PieChart, Pie, Cell, Label } from 'recharts';
 import GeneralSelectButtonAndDropdown from '../GeneralSelectButtonAndDropdown';
-import { useRef, useState } from 'react';
-import ModalPickDateRange from './ModalPickDateRange';
-import DropdownFocusRankingList from './DropdownFocusRankingList';
-import ProgressBar from './ProgressBar';
 import DateRangePicker from './DateRangePicker';
+import DropdownFocusRankingList from './DropdownFocusRankingList';
+import ModalPickDateRange from './ModalPickDateRange';
+import ProgressBar from './ProgressBar';
 
 const DetailsCard = () => {
 	const progressBarData = [

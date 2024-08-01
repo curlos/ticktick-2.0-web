@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import TimelineChart from './TimelineChart';
 import DateRangePicker from './DateRangePicker';
+import TimelineChart from './TimelineChart';
 
 const TimelineCard = () => {
 	const [selectedDates, setSelectedDates] = useState([new Date()]);

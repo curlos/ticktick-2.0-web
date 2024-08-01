@@ -1,9 +1,9 @@
 import { useLocation } from 'react-router';
-import ActionSidebar from '../components/ActionSidebar';
-import OverviewSection from '../components/StatsPage/OverviewSection/OverviewSection';
-import TopBar from '../components/StatsPage/TopBar';
-import TaskSection from '../components/StatsPage/TaskSection/TaskSection';
-import FocusSection from '../components/StatsPage/FocusSection/FocusSection';
+import ActionSidebar from '../../components/ActionSidebar';
+import FocusSection from './FocusSection/FocusSection';
+import OverviewSection from './OverviewSection/OverviewSection';
+import TaskSection from './TaskSection/TaskSection';
+import TopBar from './TopBar';
 
 const StatsPage = () => {
 	const location = useLocation();

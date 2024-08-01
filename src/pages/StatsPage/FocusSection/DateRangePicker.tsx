@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
+import Icon from '../../../components/Icon';
 import { getAllDaysInWeekFromDate, getAllDaysInMonthFromDate, formatCheckedInDayDate } from '../../../utils/date.utils';
-import Icon from '../../Icon';
 
 const DateRangePicker = ({ selectedDates, setSelectedDates, selectedInterval, startDate, endDate }) => {
 	useEffect(() => {

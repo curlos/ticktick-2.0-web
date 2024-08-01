@@ -8,7 +8,7 @@ import LoginPage from './pages/LoginPage';
 import EisenhowerMatrixPage from './pages/EisenhowerMatrixPage';
 import HabitsPage from './pages/HabitsPage';
 import FocusStatsPage from './pages/FocusStatsPage';
-import StatsPage from './pages/StatsPage';
+import StatsPage from './pages/StatsPage/StatsPage';
 import CalendarPage from './pages/CalendarPage/CalendarPage';
 
 function App() {

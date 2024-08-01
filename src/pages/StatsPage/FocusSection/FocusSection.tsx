@@ -1,14 +1,13 @@
 import { useDispatch } from 'react-redux';
+import FocusRecordList from '../../../components/FocusRecords/FocusRecordList';
+import Icon from '../../../components/Icon';
 import { setModalState } from '../../../slices/modalSlice';
-import FocusRecordList from '../../FocusRecords/FocusRecordList';
-import Icon from '../../Icon';
 import DetailsCard from './DetailsCard';
-import OverviewCard from './OverviewCard';
-import TrendsCard from './TrendsCard';
 import MostFocusedTimeCard from './MostFocusedTimeCard';
-import YearGridsCard from './YearGridsCard';
-import TimelineChart from './TimelineChart';
+import OverviewCard from './OverviewCard';
 import TimelineCard from './TimelineCard';
+import TrendsCard from './TrendsCard';
+import YearGridsCard from './YearGridsCard';
 
 const FocusSection = () => {
 	const dispatch = useDispatch();

@@ -1,10 +1,10 @@
-import { useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import classNames from 'classnames';
-import Icon from '../../Icon';
-import Modal from '../../Modal/Modal';
+import { useState, useRef } from 'react';
+import { useDispatch } from 'react-redux';
+import DropdownTimeCalendar from '../../../components/Dropdown/DropdownsAddFocusRecord/DropdownTimeCalendar';
+import Icon from '../../../components/Icon';
+import Modal from '../../../components/Modal/Modal';
 import { formatCheckedInDayDate } from '../../../utils/date.utils';
-import DropdownTimeCalendar from '../../Dropdown/DropdownsAddFocusRecord/DropdownTimeCalendar';
 
 const ModalPickDateRange: React.FC = ({
 	isModalOpen,

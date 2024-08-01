@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
+import Icon from '../../../components/Icon';
+import { getAllDaysInWeekFromDate, getAllDaysInMonthFromDate, formatCheckedInDayDate } from '../../../utils/date.utils';
+import DropdownGeneralSelect from '../DropdownGeneralSelect';
 import ClassifiedCompletionStatisticsCard from './ClassifiedCompletionStatisticsCard';
 import CompletionDistributionCard from './CompletionDistributionCard';
 import CompletionRateDistributionCard from './CompletionRateDistributionCard';
 import OverviewCard from './OverviewCard';
-import DropdownGeneralSelect from '../DropdownGeneralSelect';
-import Icon from '../../Icon';
-import { formatCheckedInDayDate, getAllDaysInMonthFromDate, getAllDaysInWeekFromDate } from '../../../utils/date.utils';
 
 const TaskSection = () => {
 	const dropdownRef = useRef(null);

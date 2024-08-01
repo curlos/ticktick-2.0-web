@@ -1,7 +1,7 @@
-import React, { useRef, useState } from 'react';
-import { getAllDatesInYear } from '../../../utils/date.utils';
 import classNames from 'classnames';
-import Dropdown from '../../Dropdown/Dropdown';
+import { useState, useRef } from 'react';
+import Dropdown from '../../../components/Dropdown/Dropdown';
+import { getAllDatesInYear } from '../../../utils/date.utils';
 
 interface CalendarHeatmapProps {
 	data: number[]; // Array of numbers (0-4)

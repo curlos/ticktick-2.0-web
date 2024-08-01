@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import Icon from '../Icon';
+import Icon from '../../components/Icon';
 import DropdownGeneralSelect from './DropdownGeneralSelect';
 
 const GeneralSelectButtonAndDropdown = ({ selected, setSelected, selectedOptions, onClick }) => {

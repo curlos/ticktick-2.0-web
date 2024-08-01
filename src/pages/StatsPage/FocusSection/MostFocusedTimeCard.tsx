@@ -1,7 +1,6 @@
-import { getFormattedDuration } from '../../../utils/helpers.utils';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Label } from 'recharts';
-import GeneralSelectButtonAndDropdown from '../GeneralSelectButtonAndDropdown';
 import { useState } from 'react';
+import { ResponsiveContainer, BarChart, XAxis, YAxis, Tooltip, CartesianGrid, Bar } from 'recharts';
+import { getFormattedDuration } from '../../../utils/helpers.utils';
 import DateRangePicker from './DateRangePicker';
 
 const data = [
