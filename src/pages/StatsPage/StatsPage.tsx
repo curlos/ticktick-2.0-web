@@ -15,7 +15,7 @@ const StatsPage = () => {
 			<div className="">
 				<ActionSidebar />
 			</div>
-			<div className="flex-1 bg-color-gray-700 py-8 pl-[150px] pr-[170px] h-[100vh] overflow-scroll">
+			<div className="flex-1 bg-color-gray-700 py-8 pl-[150px] pr-[170px] h-[100vh] overflow-scroll gray-scrollbar">
 				<TopBar />
 
 				<div className="mt-5">

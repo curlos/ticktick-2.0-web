@@ -4,7 +4,7 @@ import TopHeader from './TopHeader';
 
 const CalendarPage = () => {
 	return (
-		<div className="flex max-w-screen h-screen">
+		<div className="flex max-w-screen h-full">
 			<div className="">
 				<ActionSidebar />
 			</div>
