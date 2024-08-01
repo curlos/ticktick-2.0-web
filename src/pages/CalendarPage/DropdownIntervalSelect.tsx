@@ -1,6 +1,6 @@
 import classNames from 'classnames';
-import Dropdown from '../Dropdown/Dropdown';
-import Icon from '../Icon';
+import Dropdown from '../../components/Dropdown/Dropdown';
+import Icon from '../../components/Icon';
 
 const DropdownIntervalSelect = ({
 	toggleRef,

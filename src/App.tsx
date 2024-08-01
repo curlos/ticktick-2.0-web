@@ -9,7 +9,7 @@ import EisenhowerMatrixPage from './pages/EisenhowerMatrixPage';
 import HabitsPage from './pages/HabitsPage';
 import FocusStatsPage from './pages/FocusStatsPage';
 import StatsPage from './pages/StatsPage';
-import CalendarPage from './pages/CalendarPage';
+import CalendarPage from './pages/CalendarPage/CalendarPage';
 
 function App() {
 	return (

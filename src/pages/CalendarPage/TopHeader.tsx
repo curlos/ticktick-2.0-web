@@ -1,8 +1,8 @@
+import { useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import Icon from '../Icon';
+import Icon from '../../components/Icon';
 import { setModalState } from '../../slices/modalSlice';
 import DropdownIntervalSelect from './DropdownIntervalSelect';
-import { useRef, useState } from 'react';
 
 const TopHeader = () => {
 	const dispatch = useDispatch();

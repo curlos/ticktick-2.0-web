@@ -1,6 +1,6 @@
-import ActionSidebar from '../components/ActionSidebar';
-import Calendar from '../components/CalendarPage/Calendar';
-import TopHeader from '../components/CalendarPage/TopHeader';
+import ActionSidebar from '../../components/ActionSidebar';
+import Calendar from './Calendar';
+import TopHeader from './TopHeader';
 
 const CalendarPage = () => {
 	return (

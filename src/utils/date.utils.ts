@@ -400,3 +400,19 @@ export const getAllDatesInYear = (year) => {
 
 	return dates;
 };
+
+export const getAllHours = () => {
+	const date = new Date();
+	date.setMinutes(0); // Set minutes to 0
+	date.setSeconds(0); // Set seconds to 0
+	date.setMilliseconds(0); // Set milliseconds to 0
+
+	const hours = [];
+	for (let i = 0; i < 24; i++) {
+		date.setHours(i);
+		// Format to local time string and remove minutes and seconds
+		const formattedHour = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+		hours.push(formattedHour);
+	}
+	return hours;
+};
