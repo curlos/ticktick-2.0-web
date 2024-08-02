@@ -1,9 +1,18 @@
+import { useGetFocusRecordsQuery } from '../../services/resources/focusRecordsApi';
 import { getAllHours } from '../../utils/date.utils';
 
 const DayView = () => {
 	const allHours = getAllHours();
 
-	console.log(allHours);
+	// RTK Query - Focus Records
+	const {
+		data: fetchedFocusRecords,
+		isLoading: isLoadingFocusRecords,
+		error: errorFocusRecords,
+	} = useGetFocusRecordsQuery();
+	const { focusRecords } = fetchedFocusRecords || {};
+
+	console.log(focusRecords);
 
 	return (
 		<div>
