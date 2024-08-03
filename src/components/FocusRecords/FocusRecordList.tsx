@@ -35,7 +35,7 @@ const FocusRecordList = () => {
 	}, [focusRecords]);
 
 	function sortArrayByEndTime(array) {
-		// Create a deep copy of the array to avoid modifying the original
+		// Create a deep copy of the array to avoid modifying the original.
 		const arrayCopy = array.map((item) => ({ ...item }));
 
 		return arrayCopy.sort((a, b) => new Date(b.endTime) - new Date(a.endTime));
