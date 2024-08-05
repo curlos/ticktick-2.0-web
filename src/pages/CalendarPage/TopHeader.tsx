@@ -15,7 +15,7 @@ const TopHeader = () => {
 		<div className="p-3 pt-5 flex justify-between items-center">
 			<div className="flex items-center gap-2">
 				<Icon name="left_panel_open" fill={0} customClass="text-color-gray-100 cursor-pointer" />
-				<div className="text-[18px] font-bold">July 2024</div>
+				<div className="text-[18px] font-bold">July 30, 2024</div>
 			</div>
 
 			<div className="flex items-center gap-3">

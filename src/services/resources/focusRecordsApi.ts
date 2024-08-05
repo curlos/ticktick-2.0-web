@@ -1,3 +1,4 @@
+import { groupByEndTimeDay } from '../../utils/date.utils';
 import {
 	arrayToObjectArrayByKey,
 	arrayToObjectByKey,
@@ -17,10 +18,18 @@ export const focusRecordsApi = baseAPI.injectEndpoints({
 				const focusRecords = response;
 				const focusRecordsByTaskId = arrayToObjectArrayByKey(focusRecords, 'taskId');
 				const focusRecordsById = arrayToObjectByKey(focusRecords, '_id');
-
 				const parentOfFocusRecords = getObjectOfEachFocusRecordsParent(focusRecords);
+				const focusRecordsWithNoParent = focusRecords.filter((record) => !parentOfFocusRecords[record._id]);
 
-				return { focusRecords, focusRecordsByTaskId, focusRecordsById, parentOfFocusRecords };
+				const groupedFocusRecords = groupByEndTimeDay(focusRecordsWithNoParent);
+
+				return {
+					focusRecords,
+					focusRecordsByTaskId,
+					focusRecordsById,
+					parentOfFocusRecords,
+					groupedFocusRecords,
+				};
 			},
 		}),
 		addFocusRecord: builder.mutation({

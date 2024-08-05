@@ -83,7 +83,7 @@ const FocusRecord = ({ focusRecord, tasksById, habitsById }) => {
 						</div>
 					)}
 
-					<div className="text-color-gray-100 mt-1 max-w-[350px] break-words">
+					<div className="text-color-gray-100 mt-1 max-w-[350px] break-words react-markdown">
 						<ReactMarkdown remarkPlugins={[remarkGfm]}>{note}</ReactMarkdown>
 					</div>
 				</div>

@@ -45,16 +45,15 @@ const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({ data = [1] }) => {
 				</div>
 				<div className="flex flex-col flex-wrap max-h-[210px]">
 					{allDatesInYear.map((date) => (
-						<CalendarDay date={date} />
+						<CalendarDay key={date.toLocaleDateString()} date={date} />
 					))}
 				</div>
 			</div>
 
 			<div className="space-y-1">
 				{durations.map((duration) => (
-					<div className="flex items-center text-color-gray-100 gap-1">
+					<div key={duration.value} className="flex items-center text-color-gray-100 gap-1">
 						<div
-							key={duration.value}
 							className={classNames(`h-[13px] w-[13px] border border-color-gray-100`, duration.bgColor)}
 						></div>
 						{duration.value}

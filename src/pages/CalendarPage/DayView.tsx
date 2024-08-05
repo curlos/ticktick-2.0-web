@@ -1,5 +1,6 @@
+import { useEffect, useState } from 'react';
 import { useGetFocusRecordsQuery } from '../../services/resources/focusRecordsApi';
-import { getAllHours } from '../../utils/date.utils';
+import { getAllHours, sortArrayByEndTime } from '../../utils/date.utils';
 
 const DayView = () => {
 	const allHours = getAllHours();
@@ -10,9 +11,24 @@ const DayView = () => {
 		isLoading: isLoadingFocusRecords,
 		error: errorFocusRecords,
 	} = useGetFocusRecordsQuery();
-	const { focusRecords } = fetchedFocusRecords || {};
+	const { focusRecords, groupedFocusRecords } = fetchedFocusRecords || {};
+	const [sortedGroupedFocusRecords, setSortedGroupedFocusRecords] = useState();
 
-	console.log(focusRecords);
+	useEffect(() => {
+		if (groupedFocusRecords && Object.keys(groupedFocusRecords).length > 0) {
+			const sortedGroupedFocusRecordsAsc = {};
+
+			Object.keys(groupedFocusRecords).map((day, index) => {
+				const focusRecordsForTheDay = groupedFocusRecords[day];
+				const sortedFocusRecordsForTheDay = sortArrayByEndTime(focusRecordsForTheDay, 'ascending');
+				sortedGroupedFocusRecordsAsc[day] = sortedFocusRecordsForTheDay;
+			});
+
+			setSortedGroupedFocusRecords(sortedGroupedFocusRecordsAsc);
+		}
+	}, [groupedFocusRecords]);
+
+	console.log(sortedGroupedFocusRecords);
 
 	return (
 		<div>

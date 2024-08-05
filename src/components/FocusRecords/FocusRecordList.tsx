@@ -1,51 +1,31 @@
-import { useState, useEffect } from 'react';
 import { useGetFocusRecordsQuery } from '../../services/resources/focusRecordsApi';
 import { useGetHabitsQuery } from '../../services/resources/habitsApi';
 import { useGetTasksQuery } from '../../services/resources/tasksApi';
-import { groupByEndTimeDay } from '../../utils/date.utils';
+import { sortArrayByEndTime } from '../../utils/date.utils';
 import FocusRecord from './FocusRecord';
 import classNames from 'classnames';
 
 const FocusRecordList = () => {
 	// RTK Query - Focus Records
-	const {
-		data: fetchedFocusRecords,
-		isLoading: isLoadingFocusRecords,
-		error: errorFocusRecords,
-	} = useGetFocusRecordsQuery();
-	const { focusRecords, parentOfFocusRecords } = fetchedFocusRecords || {};
+	const { data: fetchedFocusRecords } = useGetFocusRecordsQuery();
+	const { focusRecords, groupedFocusRecords } = fetchedFocusRecords || {};
 
 	// RTK Query - Tasks
-	const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
+	const { data: fetchedTasks } = useGetTasksQuery();
 	const { tasksById } = fetchedTasks || {};
 
 	// RTK Query - Habits
-	const { data: fetchedHabits, isLoading: isLoadingGetHabits, error: errorGetHabits } = useGetHabitsQuery();
-	const { habits, habitsById } = fetchedHabits || {};
+	const { data: fetchedHabits } = useGetHabitsQuery();
+	const { habitsById } = fetchedHabits || {};
 
-	const [groupedRecords, setGroupedRecords] = useState();
-
-	useEffect(() => {
-		if (focusRecords) {
-			const focusRecordsWithNoParent = focusRecords.filter((record) => !parentOfFocusRecords[record._id]);
-
-			const newGroupedRecords = groupByEndTimeDay(focusRecordsWithNoParent);
-			setGroupedRecords(newGroupedRecords);
-		}
-	}, [focusRecords]);
-
-	function sortArrayByEndTime(array) {
-		// Create a deep copy of the array to avoid modifying the original..
-		const arrayCopy = array.map((item) => ({ ...item }));
-
-		return arrayCopy.sort((a, b) => new Date(b.endTime) - new Date(a.endTime));
-	}
+	console.log(groupedFocusRecords);
 
 	return (
 		<div>
-			{groupedRecords &&
-				Object.keys(groupedRecords).map((day, index) => {
-					const focusRecordsForTheDay = groupedRecords[day];
+			{groupedFocusRecords &&
+				Object.keys(groupedFocusRecords).length > 0 &&
+				Object.keys(groupedFocusRecords).map((day, index) => {
+					const focusRecordsForTheDay = groupedFocusRecords[day];
 
 					return (
 						<div key={day} className={classNames('text-[13px]', index !== 0 ? 'mt-5' : '')}>

@@ -416,3 +416,14 @@ export const getAllHours = () => {
 	}
 	return hours;
 };
+
+export const sortArrayByEndTime = (array, type = 'descending') => {
+	// Create a deep copy of the array to avoid modifying the original
+	const arrayCopy = array.map((item) => ({ ...item }));
+
+	if (type === 'descending') {
+		return arrayCopy.sort((a, b) => new Date(b.endTime) - new Date(a.endTime));
+	}
+
+	return arrayCopy.sort((a, b) => new Date(a.endTime) - new Date(b.endTime));
+};

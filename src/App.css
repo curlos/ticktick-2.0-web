@@ -223,3 +223,7 @@
 .apexcharts-legend-text {
     color: white !important;
 }
+
+.react-markdown li {
+    list-style-type: circle;
+}
