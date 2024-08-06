@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useGetFocusRecordsQuery } from '../../services/resources/focusRecordsApi';
-import { getAllHours, sortArrayByEndTime } from '../../utils/date.utils';
+import { getAllHours, isInSameHour, parseTimeStringAMorPM, sortArrayByEndTime } from '../../utils/date.utils';
 
 const DayView = () => {
 	const allHours = getAllHours();
@@ -11,24 +11,19 @@ const DayView = () => {
 		isLoading: isLoadingFocusRecords,
 		error: errorFocusRecords,
 	} = useGetFocusRecordsQuery();
-	const { focusRecords, groupedFocusRecords } = fetchedFocusRecords || {};
-	const [sortedGroupedFocusRecords, setSortedGroupedFocusRecords] = useState();
+	const { sortedGroupedFocusRecordsAsc } = fetchedFocusRecords || {};
+	const [focusRecordsForTheDay, setFocusRecordsForTheDay] = useState([]);
 
 	useEffect(() => {
-		if (groupedFocusRecords && Object.keys(groupedFocusRecords).length > 0) {
-			const sortedGroupedFocusRecordsAsc = {};
-
-			Object.keys(groupedFocusRecords).map((day, index) => {
-				const focusRecordsForTheDay = groupedFocusRecords[day];
-				const sortedFocusRecordsForTheDay = sortArrayByEndTime(focusRecordsForTheDay, 'ascending');
-				sortedGroupedFocusRecordsAsc[day] = sortedFocusRecordsForTheDay;
-			});
-
-			setSortedGroupedFocusRecords(sortedGroupedFocusRecordsAsc);
+		if (sortedGroupedFocusRecordsAsc) {
+			const newFocusRecordsForTheDay = sortedGroupedFocusRecordsAsc['July 30, 2024'];
+			setFocusRecordsForTheDay(newFocusRecordsForTheDay);
 		}
-	}, [groupedFocusRecords]);
+	}, [sortedGroupedFocusRecordsAsc]);
 
-	console.log(sortedGroupedFocusRecords);
+	console.log(focusRecordsForTheDay);
+
+	const currentFocusRecordIndex = 0;
 
 	return (
 		<div>
@@ -56,30 +51,39 @@ const DayView = () => {
 							))}
 						</div>
 					</div>
-					<div className="absolute top-[4px] left-[4px] text-[12px] w-[99%]">
-						<div>
-							{allHours.map((hour, i) => {
-								const startTime = '12:00 PM';
-								const endTime = '1:00 PM';
+					{focusRecordsForTheDay && focusRecordsForTheDay.length > 0 && (
+						<div className="absolute top-[4px] left-[4px] text-[12px] w-[99%]">
+							<div>
+								{allHours.map((hour, i) => {
+									const currentFocusRecord = focusRecordsForTheDay[currentFocusRecordIndex];
 
-								// TODO: Position this correctly.
-								if (hour !== startTime) {
-									return null;
-								}
+									const hourDate = new Date(
+										parseTimeStringAMorPM(hour, currentFocusRecord.startTime)
+									);
+									const focusRecordDate = new Date(currentFocusRecord.startTime);
 
-								return (
-									<div
-										key={hour}
-										className="p-1 border border-red-500 bg-red-900 rounded opacity-50 w-full"
-									>
-										<div>Prepare for Marco Island</div>
-										<div>12:00PM - 1:00PM</div>
-									</div>
-								);
-							})}
+									const datesInSameHour = isInSameHour(hourDate, focusRecordDate);
+
+									console.log(datesInSameHour);
+
+									// TODO: Position this correctly.
+									if (!datesInSameHour) {
+										return null;
+									}
+
+									return (
+										<div
+											key={hour}
+											className="p-1 border border-red-500 bg-red-900 rounded opacity-50 w-full"
+										>
+											<div>Prepare for Marco Island</div>
+											<div>12:00PM - 1:00PM</div>
+										</div>
+									);
+								})}
+							</div>
 						</div>
-					</div>
-					=
+					)}
 				</div>
 			</div>
 			<div></div>

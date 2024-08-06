@@ -427,3 +427,32 @@ export const sortArrayByEndTime = (array, type = 'descending') => {
 
 	return arrayCopy.sort((a, b) => new Date(a.endTime) - new Date(b.endTime));
 };
+
+export const parseTimeStringAMorPM = (timeStr, baseDateStr) => {
+	const time = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+	if (!time) return null;
+
+	const baseDate = baseDateStr ? new Date(baseDateStr) : new Date();
+	let hours = parseInt(time[1], 10);
+	const minutes = parseInt(time[2], 10);
+	const isPM = time[3].toUpperCase() === 'PM';
+
+	// Handle noon and midnight cases specifically
+	if (hours === 12) {
+		hours = isPM ? 12 : 0;
+	} else if (isPM) {
+		hours += 12;
+	}
+
+	baseDate.setHours(hours, minutes, 0, 0); // Set hours, minutes, seconds, and milliseconds
+	return baseDate;
+};
+
+export const isInSameHour = (date1, date2) => {
+	return (
+		date1.getFullYear() === date2.getFullYear() &&
+		date1.getMonth() === date2.getMonth() &&
+		date1.getDate() === date2.getDate() &&
+		date1.getHours() === date2.getHours()
+	);
+};

@@ -1,4 +1,4 @@
-import { groupByEndTimeDay } from '../../utils/date.utils';
+import { groupByEndTimeDay, sortArrayByEndTime } from '../../utils/date.utils';
 import {
 	arrayToObjectArrayByKey,
 	arrayToObjectByKey,
@@ -23,12 +23,21 @@ export const focusRecordsApi = baseAPI.injectEndpoints({
 
 				const groupedFocusRecords = groupByEndTimeDay(focusRecordsWithNoParent);
 
+				const sortedGroupedFocusRecordsAsc = {};
+
+				Object.keys(groupedFocusRecords).map((day, index) => {
+					const focusRecordsForTheDay = groupedFocusRecords[day];
+					const sortedFocusRecordsForTheDay = sortArrayByEndTime(focusRecordsForTheDay, 'ascending');
+					sortedGroupedFocusRecordsAsc[day] = sortedFocusRecordsForTheDay;
+				});
+
 				return {
 					focusRecords,
 					focusRecordsByTaskId,
 					focusRecordsById,
 					parentOfFocusRecords,
 					groupedFocusRecords,
+					sortedGroupedFocusRecordsAsc,
 				};
 			},
 		}),
