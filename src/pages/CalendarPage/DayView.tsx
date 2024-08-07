@@ -21,8 +21,6 @@ const DayView = () => {
 		}
 	}, [sortedGroupedFocusRecordsAsc]);
 
-	console.log(focusRecordsForTheDay);
-
 	const currentFocusRecordIndex = 0;
 
 	return (
@@ -64,9 +62,7 @@ const DayView = () => {
 
 									const datesInSameHour = isInSameHour(hourDate, focusRecordDate);
 
-									console.log(datesInSameHour);
-
-									// TODO: Position this correctly.
+									// TODO: Position this correctly. Probably will have to use absolute positioning to actually get it precisely positioned.
 									if (!datesInSameHour) {
 										return null;
 									}

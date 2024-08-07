@@ -18,8 +18,6 @@ const FocusRecordList = () => {
 	const { data: fetchedHabits } = useGetHabitsQuery();
 	const { habitsById } = fetchedHabits || {};
 
-	console.log(groupedFocusRecords);
-
 	return (
 		<div>
 			{groupedFocusRecords &&
