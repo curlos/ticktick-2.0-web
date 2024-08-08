@@ -1,9 +1,10 @@
 import classNames from 'classnames';
 import { areDatesEqual, formatCheckedInDayDate, formatDateTime, getCalendarMonth } from '../../utils/date.utils';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useGetFocusRecordsQuery } from '../../services/resources/focusRecordsApi';
 import { useGetHabitsQuery } from '../../services/resources/habitsApi';
 import { useGetTasksQuery } from '../../services/resources/tasksApi';
+import DropdownDayFocusRecords from './DropdownDayFocusRecords';
 
 const MonthView = () => {
 	// RTK Query - Focus Records
@@ -13,14 +14,6 @@ const MonthView = () => {
 		error: errorFocusRecords,
 	} = useGetFocusRecordsQuery();
 	const { sortedGroupedFocusRecordsAsc } = fetchedFocusRecords || {};
-
-	// RTK Query - Tasks
-	const { data: fetchedTasks } = useGetTasksQuery();
-	const { tasksById } = fetchedTasks || {};
-
-	// RTK Query - Habits
-	const { data: fetchedHabits } = useGetHabitsQuery();
-	const { habitsById } = fetchedHabits || {};
 
 	const currentDate = new Date();
 	const calendarMonth = getCalendarMonth(currentDate.getFullYear(), currentDate.getMonth() - 1);
@@ -79,14 +72,11 @@ const MonthView = () => {
 								console.log(emptyRows);
 							}
 
-							const thereAreLeftoverFocusRecords = focusRecordsForTheDay?.length > maxFocusRecords;
-							const shownFocusRecords = focusRecordsForTheDay?.slice(0, maxFocusRecords);
-
 							return (
 								<div
 									key={`day-${index}`}
 									className={classNames(
-										`p-[1px] cursor-pointer w-full`,
+										`p-[1px] w-full`,
 										appliedStyles,
 										index !== 0 ? 'border-l border-color-gray-200' : ''
 									)}
@@ -94,34 +84,10 @@ const MonthView = () => {
 									<span className="pl-1">{day.getDate()}</span>
 
 									<div className="space-y-1 text-white text-[11px] mt-1 px-[2px] w-full">
-										{shownFocusRecords?.map((focusRecord, i) => {
-											const { taskId, habitId, startTime } = focusRecord;
-											const task = tasksById[taskId];
-											const habit = habitsById[habitId];
-											const name = task?.title || habit?.name;
-											const isLastFocusRecord = shownFocusRecords.length - 1 === i;
-
-											return (
-												<div className="flex items-center gap-1 w-full opacity-70">
-													<div
-														className={classNames(
-															'bg-emerald-600 rounded p-1 py-[2px] h-[20px] flex justify-between flex-1',
-															// Necessary for the focus records with "+X" at the end.
-															'w-[88%]'
-														)}
-													>
-														<span className="truncate">{name}</span>
-														<span className="text-gray-200 min-w-[55px]">
-															{formatDateTime(startTime).time}
-														</span>
-													</div>
-
-													{isLastFocusRecord && thereAreLeftoverFocusRecords && (
-														<div className="bg-gray-400/70 p-[2px] rounded">+X</div>
-													)}
-												</div>
-											);
-										})}
+										<DayFocusRecordsList
+											focusRecordsForTheDay={focusRecordsForTheDay}
+											maxFocusRecords={maxFocusRecords}
+										/>
 
 										{emptyRows.map((row) => (
 											<div className="bg-transparent rounded p-1 py-[2px] truncate h-[20px]"></div>
@@ -135,6 +101,67 @@ const MonthView = () => {
 			</div>
 		</div>
 	);
+};
+
+const DayFocusRecordsList = ({ focusRecordsForTheDay, maxFocusRecords }) => {
+	// RTK Query - Tasks
+	const { data: fetchedTasks } = useGetTasksQuery();
+	const { tasksById } = fetchedTasks || {};
+
+	// RTK Query - Habits
+	const { data: fetchedHabits } = useGetHabitsQuery();
+	const { habitsById } = fetchedHabits || {};
+
+	const shownFocusRecords = focusRecordsForTheDay?.slice(0, maxFocusRecords);
+
+	const MiniFocusRecord = ({ focusRecord, index, maxFocusRecords }) => {
+		const { taskId, habitId, startTime } = focusRecord;
+		const task = tasksById[taskId];
+		const habit = habitsById[habitId];
+		const name = task?.title || habit?.name;
+		const isLastFocusRecord = shownFocusRecords.length - 1 === index;
+		const thereAreLeftoverFocusRecords = focusRecordsForTheDay?.length > maxFocusRecords;
+
+		const dropdownDayFocusRecords = useRef(null);
+		const [isDropdownDayFocusRecordsVisible, setIsDropdownDayFocusRecordsVisible] = useState(false);
+
+		return (
+			<div className="flex items-center gap-1 w-full opacity-70">
+				<div
+					className={classNames(
+						'bg-emerald-600 rounded p-1 py-[2px] h-[20px] flex justify-between flex-1 cursor-pointer',
+						// Necessary for the focus records with "+X" at the end.
+						'w-[88%]'
+					)}
+				>
+					<span className="truncate">{name}</span>
+					<span className="text-gray-200 min-w-[55px]">{formatDateTime(startTime).time}</span>
+				</div>
+
+				{isLastFocusRecord && thereAreLeftoverFocusRecords && (
+					<div className="relative">
+						<div
+							ref={dropdownDayFocusRecords}
+							onClick={() => setIsDropdownDayFocusRecordsVisible(!isDropdownDayFocusRecordsVisible)}
+							className="bg-gray-400/70 p-[2px] rounded cursor-pointer"
+						>
+							+X
+						</div>
+
+						<DropdownDayFocusRecords
+							toggleRef={dropdownDayFocusRecords}
+							isVisible={isDropdownDayFocusRecordsVisible}
+							setIsVisible={setIsDropdownDayFocusRecordsVisible}
+						/>
+					</div>
+				)}
+			</div>
+		);
+	};
+
+	return shownFocusRecords?.map((focusRecord, index) => (
+		<MiniFocusRecord focusRecord={focusRecord} index={index} maxFocusRecords={maxFocusRecords} />
+	));
 };
 
 export default MonthView;
