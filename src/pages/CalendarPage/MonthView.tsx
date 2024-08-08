@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { areDatesEqual, formatCheckedInDayDate, getCalendarMonth } from '../../utils/date.utils';
+import { areDatesEqual, formatCheckedInDayDate, formatDateTime, getCalendarMonth } from '../../utils/date.utils';
 import { useState } from 'react';
 import { useGetFocusRecordsQuery } from '../../services/resources/focusRecordsApi';
 import { useGetHabitsQuery } from '../../services/resources/habitsApi';
@@ -92,14 +92,17 @@ const MonthView = () => {
 
 									<div className="space-y-1 text-white text-[11px] mt-1">
 										{focusRecordsForTheDay?.slice(0, maxFocusRecords)?.map((focusRecord) => {
-											const { taskId, habitId } = focusRecord;
+											const { taskId, habitId, startTime } = focusRecord;
 											const task = tasksById[taskId];
 											const habit = habitsById[habitId];
 											const name = task?.title || habit?.name;
 
 											return (
-												<div className="bg-emerald-600 rounded p-1 py-[2px] truncate h-[20px]">
-													{name}
+												<div className="bg-emerald-600 rounded p-1 py-[2px] h-[20px] flex justify-between">
+													<span className="truncate">{name}</span>
+													<span className="text-gray-200 min-w-[55px]">
+														{formatDateTime(startTime).time}
+													</span>
 												</div>
 											);
 										})}
