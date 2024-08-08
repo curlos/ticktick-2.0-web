@@ -79,30 +79,46 @@ const MonthView = () => {
 								console.log(emptyRows);
 							}
 
+							const thereAreLeftoverFocusRecords = focusRecordsForTheDay?.length > maxFocusRecords;
+							const shownFocusRecords = focusRecordsForTheDay?.slice(0, maxFocusRecords);
+
 							return (
 								<div
 									key={`day-${index}`}
 									className={classNames(
-										`p-[1px] cursor-pointer`,
+										`p-[1px] cursor-pointer w-full`,
 										appliedStyles,
 										index !== 0 ? 'border-l border-color-gray-200' : ''
 									)}
 								>
 									<span className="pl-1">{day.getDate()}</span>
 
-									<div className="space-y-1 text-white text-[11px] mt-1">
-										{focusRecordsForTheDay?.slice(0, maxFocusRecords)?.map((focusRecord) => {
+									<div className="space-y-1 text-white text-[11px] mt-1 px-[2px] w-full">
+										{shownFocusRecords?.map((focusRecord, i) => {
 											const { taskId, habitId, startTime } = focusRecord;
 											const task = tasksById[taskId];
 											const habit = habitsById[habitId];
 											const name = task?.title || habit?.name;
+											const isLastFocusRecord = shownFocusRecords.length - 1 === i;
 
 											return (
-												<div className="bg-emerald-600 rounded p-1 py-[2px] h-[20px] flex justify-between">
-													<span className="truncate">{name}</span>
-													<span className="text-gray-200 min-w-[55px]">
-														{formatDateTime(startTime).time}
-													</span>
+												<div className="flex items-center gap-1 w-full opacity-70">
+													<div
+														className={classNames(
+															'bg-emerald-600 rounded p-1 py-[2px] h-[20px] flex justify-between flex-1',
+															// Necessary for the focus records with "+X" at the end.
+															'w-[88%]'
+														)}
+													>
+														<span className="truncate">{name}</span>
+														<span className="text-gray-200 min-w-[55px]">
+															{formatDateTime(startTime).time}
+														</span>
+													</div>
+
+													{isLastFocusRecord && thereAreLeftoverFocusRecords && (
+														<div className="bg-gray-400/70 p-[2px] rounded">+X</div>
+													)}
 												</div>
 											);
 										})}
