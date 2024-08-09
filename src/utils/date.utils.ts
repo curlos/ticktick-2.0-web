@@ -152,8 +152,8 @@ export const getFormattedTimeString = (inputDate) => {
 export const formatDateTime = (dateTimeStr) => {
 	const date = new Date(dateTimeStr);
 
-	// Extracting hours and minutes for the time
-	const optionsTime = { hour: '2-digit', minute: '2-digit', hour12: true };
+	// Extracting hours and minutes for the time without leading zeros
+	const optionsTime = { hour: 'numeric', minute: 'numeric', hour12: true };
 	const time = date.toLocaleTimeString('en-US', optionsTime);
 
 	// Extracting the day and month for the date

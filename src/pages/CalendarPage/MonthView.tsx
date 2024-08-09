@@ -5,6 +5,7 @@ import { useGetFocusRecordsQuery } from '../../services/resources/focusRecordsAp
 import { useGetHabitsQuery } from '../../services/resources/habitsApi';
 import { useGetTasksQuery } from '../../services/resources/tasksApi';
 import DropdownDayFocusRecords from './DropdownDayFocusRecords';
+import MiniFocusRecord from './MiniFocusRecord';
 
 const MonthView = () => {
 	// RTK Query - Focus Records
@@ -104,63 +105,16 @@ const MonthView = () => {
 };
 
 const DayFocusRecordsList = ({ focusRecordsForTheDay, maxFocusRecords }) => {
-	// RTK Query - Tasks
-	const { data: fetchedTasks } = useGetTasksQuery();
-	const { tasksById } = fetchedTasks || {};
-
-	// RTK Query - Habits
-	const { data: fetchedHabits } = useGetHabitsQuery();
-	const { habitsById } = fetchedHabits || {};
-
 	const shownFocusRecords = focusRecordsForTheDay?.slice(0, maxFocusRecords);
 
-	const MiniFocusRecord = ({ focusRecord, index, maxFocusRecords }) => {
-		const { taskId, habitId, startTime } = focusRecord;
-		const task = tasksById[taskId];
-		const habit = habitsById[habitId];
-		const name = task?.title || habit?.name;
-		const isLastFocusRecord = shownFocusRecords.length - 1 === index;
-		const thereAreLeftoverFocusRecords = focusRecordsForTheDay?.length > maxFocusRecords;
-
-		const dropdownDayFocusRecords = useRef(null);
-		const [isDropdownDayFocusRecordsVisible, setIsDropdownDayFocusRecordsVisible] = useState(false);
-
-		return (
-			<div className="flex items-center gap-1 w-full opacity-70">
-				<div
-					className={classNames(
-						'bg-emerald-600 rounded p-1 py-[2px] h-[20px] flex justify-between flex-1 cursor-pointer',
-						// Necessary for the focus records with "+X" at the end.
-						'w-[88%]'
-					)}
-				>
-					<span className="truncate">{name}</span>
-					<span className="text-gray-200 min-w-[55px]">{formatDateTime(startTime).time}</span>
-				</div>
-
-				{isLastFocusRecord && thereAreLeftoverFocusRecords && (
-					<div className="relative">
-						<div
-							ref={dropdownDayFocusRecords}
-							onClick={() => setIsDropdownDayFocusRecordsVisible(!isDropdownDayFocusRecordsVisible)}
-							className="bg-gray-400/70 p-[2px] rounded cursor-pointer"
-						>
-							+X
-						</div>
-
-						<DropdownDayFocusRecords
-							toggleRef={dropdownDayFocusRecords}
-							isVisible={isDropdownDayFocusRecordsVisible}
-							setIsVisible={setIsDropdownDayFocusRecordsVisible}
-						/>
-					</div>
-				)}
-			</div>
-		);
-	};
-
 	return shownFocusRecords?.map((focusRecord, index) => (
-		<MiniFocusRecord focusRecord={focusRecord} index={index} maxFocusRecords={maxFocusRecords} />
+		<MiniFocusRecord
+			focusRecord={focusRecord}
+			index={index}
+			maxFocusRecords={maxFocusRecords}
+			focusRecordsForTheDay={focusRecordsForTheDay}
+			shownFocusRecords={shownFocusRecords}
+		/>
 	));
 };
 
