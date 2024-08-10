@@ -86,9 +86,9 @@ const SelectCalendar: React.FC<CalendarProps> = ({ dueDate, setDueDate, time }) 
 									if (isChosenDay) {
 										appliedStyles.push('bg-blue-500 text-white');
 									} else if (isDayToday) {
-										appliedStyles.push('bg-color-gray-200 text-blue-500');
+										appliedStyles.push('bg-color-gray-200 hover:bg-color-gray-200 text-blue-500');
 									} else {
-										appliedStyles.push('text-white bg-transparent hover:bg-color-gray-20');
+										appliedStyles.push('text-white bg-transparent hover:bg-color-gray-300');
 									}
 								} else {
 									appliedStyles.push('text-color-gray-100 bg-transparent hover:bg-color-gray-20');
