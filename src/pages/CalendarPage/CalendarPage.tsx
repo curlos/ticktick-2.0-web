@@ -5,7 +5,7 @@ import FilterSidebar from './FilterSidebar';
 import TopHeader from './TopHeader';
 
 const CalendarPage = () => {
-	const [showFilterSidebar, setShowFilterSidebar] = useState(false);
+	const [showFilterSidebar, setShowFilterSidebar] = useState(true);
 
 	return (
 		<div className="flex max-w-screen h-full">

@@ -1,11 +1,12 @@
 import classNames from 'classnames';
 import { areDatesEqual, formatCheckedInDayDate, formatDateTime, getCalendarMonth } from '../../utils/date.utils';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useGetFocusRecordsQuery } from '../../services/resources/focusRecordsApi';
 import { useGetHabitsQuery } from '../../services/resources/habitsApi';
 import { useGetTasksQuery } from '../../services/resources/tasksApi';
 import DropdownDayFocusRecords from './DropdownDayFocusRecords';
 import MiniFocusRecord from './MiniFocusRecord';
+import useWindowSize from '../../hooks/useWindowSize';
 
 const MonthView = () => {
 	// RTK Query - Focus Records
@@ -20,8 +21,34 @@ const MonthView = () => {
 	const calendarMonth = getCalendarMonth(currentDate.getFullYear(), currentDate.getMonth() - 1);
 	const shownWeeks = calendarMonth;
 
+	const [maxFocusRecords, setMaxFocusRecords] = useState(4);
+
+	const { height } = useWindowSize();
+	console.log(height);
+
+	useEffect(() => {
+		const newMaxFocusRecords = getMaxFocusRecordsFor6Weeks();
+		setMaxFocusRecords(newMaxFocusRecords);
+	}, [height]);
+
+	// TODO: This works only for 6 weeks and has been tested on desktop only. For Mobile, this will of course be completely different and if there's less than 6 weeks (1 through 5 weeks), then we can show more of course. Needs to be added later.
+	const getMaxFocusRecordsFor6Weeks = () => {
+		console.log('a');
+		console.log(height);
+		if (height) {
+			if (height >= 1080) return 5;
+			if (height >= 820) return 4;
+			if (height >= 670) return 3;
+			if (height >= 530) return 2;
+		}
+
+		return 1;
+	};
+
+	console.log(maxFocusRecords);
+
 	return (
-		<div className="h-full flex-1 flex flex-col">
+		<div className="h-full max-h-screen flex-1 flex flex-col">
 			<div className="grid grid-cols-7 mb-1">
 				{calendarMonth[0].map((day) => (
 					<div key={day.toLocaleDateString()} className="text-center text-color-gray-100">
@@ -59,7 +86,6 @@ const MonthView = () => {
 							const focusRecordsForTheDay =
 								sortedGroupedFocusRecordsAsc && sortedGroupedFocusRecordsAsc[formattedDay];
 
-							const maxFocusRecords = 4;
 							const remainingRowsToBeFilled = focusRecordsForTheDay
 								? focusRecordsForTheDay.slice(0, maxFocusRecords).length - maxFocusRecords
 								: maxFocusRecords;
