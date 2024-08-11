@@ -28,6 +28,20 @@ const FilterSidebar = () => {
 		filters: [],
 		tags: [],
 	});
+	const [selectedCollapsibleValues, setSelectedCollapsibleValues] = useState({
+		projects: {
+			name: 'Lists',
+			isChecked: false,
+		},
+		filters: {
+			name: 'Filters',
+			isChecked: false,
+		},
+		tags: {
+			name: 'Tags',
+			isChecked: false,
+		},
+	});
 
 	const isLoadingFinished = !isLoadingGetProjects && !isLoadingGetTags && !isLoadingGetFilters;
 
@@ -67,12 +81,22 @@ const FilterSidebar = () => {
 				<CustomCheckbox value={selectedValues.all} values={selectedValues} setValues={setSelectedValues} />
 			</div>
 
-			<GroupedFilters selectedValues={selectedValues} setSelectedValues={setSelectedValues} />
+			<GroupedFilters
+				selectedValues={selectedValues}
+				setSelectedValues={setSelectedValues}
+				selectedCollapsibleValues={selectedCollapsibleValues}
+				setSelectedCollapsibleValues={setSelectedCollapsibleValues}
+			/>
 		</div>
 	);
 };
 
-const GroupedFilters = ({ selectedValues, setSelectedValues }) => {
+const GroupedFilters = ({
+	selectedValues,
+	setSelectedValues,
+	selectedCollapsibleValues,
+	setSelectedCollapsibleValues,
+}) => {
 	const [showProjects, setShowProjects] = useState(true);
 	const [showFilters, setShowFilters] = useState(true);
 	const [showTags, setShowTags] = useState(true);
@@ -80,67 +104,78 @@ const GroupedFilters = ({ selectedValues, setSelectedValues }) => {
 	const inboxProject = selectedValues.projects?.find((project) => project.isInbox);
 
 	return (
-		<div className="space-y-3 mt-2">
+		<div className="space-y-3 mt-2 px-4">
 			{/* Projects */}
 			<div>
-				<CollpasibleTitle name="Lists" showValues={showProjects} setShowValues={setShowProjects} />
+				<CustomCheckbox
+					value={selectedCollapsibleValues.projects}
+					values={selectedValues}
+					setValues={setSelectedValues}
+					showValues={showProjects}
+					setShowValues={setShowProjects}
+					selectedCollapsibleValues={selectedCollapsibleValues}
+					setSelectedCollapsibleValues={setSelectedCollapsibleValues}
+					collapsible={true}
+				/>
 
 				{showProjects && inboxProject && (
-					<div className="px-4">
-						<CustomCheckbox value={inboxProject} values={selectedValues} setValues={setSelectedValues} />
-					</div>
+					<CustomCheckbox value={inboxProject} values={selectedValues} setValues={setSelectedValues} />
 				)}
 
 				{showProjects &&
 					selectedValues.projects
 						?.filter((project) => !project.isInbox)
 						.map((project) => (
-							<div className="px-4">
-								<CustomCheckbox value={project} values={selectedValues} setValues={setSelectedValues} />
-							</div>
+							<CustomCheckbox value={project} values={selectedValues} setValues={setSelectedValues} />
 						))}
 			</div>
 
 			{/* Filters */}
 			<div>
-				<CollpasibleTitle name="Filters" showValues={showFilters} setShowValues={setShowFilters} />
+				<CustomCheckbox
+					value={selectedCollapsibleValues.filters}
+					values={selectedValues}
+					setValues={setSelectedValues}
+					showValues={showFilters}
+					setShowValues={setShowFilters}
+					selectedCollapsibleValues={selectedCollapsibleValues}
+					setSelectedCollapsibleValues={setSelectedCollapsibleValues}
+					collapsible={true}
+				/>
 
 				{showFilters &&
 					selectedValues.filters.map((filter) => (
-						<div className="px-4">
-							<CustomCheckbox value={filter} values={selectedValues} setValues={setSelectedValues} />
-						</div>
+						<CustomCheckbox value={filter} values={selectedValues} setValues={setSelectedValues} />
 					))}
 			</div>
 
 			{/* Tags */}
 			<div>
-				<CollpasibleTitle name="Tags" showValues={showTags} setShowValues={setShowTags} />
+				<CustomCheckbox
+					value={selectedCollapsibleValues.tags}
+					values={selectedValues}
+					showValues={showTags}
+					setShowValues={setShowTags}
+					selectedCollapsibleValues={selectedCollapsibleValues}
+					setSelectedCollapsibleValues={setSelectedCollapsibleValues}
+					collapsible={true}
+				/>
 
 				{showTags &&
 					selectedValues.tags.map((tag) => (
-						<div className="px-4">
-							<CustomCheckbox value={tag} values={selectedValues} setValues={setSelectedValues} />
-						</div>
+						<CustomCheckbox value={tag} values={selectedValues} setValues={setSelectedValues} />
 					))}
 			</div>
 		</div>
 	);
 };
 
-const CollpasibleTitle = ({ name, showValues, setShowValues }) => {
-	const categoryIconClass = 'text-color-gray-100 !text-[16px] hover:text-white';
-
-	return (
-		<div className="flex items-center text-[12px] cursor-pointer mb-2" onClick={() => setShowValues(!showValues)}>
-			{showValues ? (
-				<Icon name="expand_more" customClass={categoryIconClass} />
-			) : (
-				<Icon name="chevron_right" customClass={categoryIconClass} />
-			)}
-			<span className="mr-[6px] font-bold">{name}</span>
-		</div>
-	);
-};
+// const CollpasibleTitle = ({ name, showValues, setShowValues }) => {
+// 	return (
+// 		<div className="flex items-center text-[12px] cursor-pointer mb-2" onClick={() => setShowValues(!showValues)}>
+// 			<CustomCheckbox value={tag} values={selectedValues} setValues={setSelectedValues} />
+// 		</div>
+// 	);
+// };
 
 export default FilterSidebar;

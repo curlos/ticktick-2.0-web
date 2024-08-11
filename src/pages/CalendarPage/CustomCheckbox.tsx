@@ -1,4 +1,16 @@
-const CustomCheckbox = ({ value, values, setValues }) => {
+import classNames from 'classnames';
+import Icon from '../../components/Icon';
+
+const CustomCheckbox = ({
+	value,
+	values,
+	setValues,
+	selectedCollapsibleValues,
+	setSelectedCollapsibleValues,
+	showValues,
+	setShowValues,
+	collapsible,
+}) => {
 	const { isChecked, name } = value;
 
 	const allHasBeenChecked = values.all.isChecked;
@@ -40,9 +52,27 @@ const CustomCheckbox = ({ value, values, setValues }) => {
 		}
 	};
 
+	const categoryIconClass = 'text-color-gray-100 !text-[16px] hover:text-white';
+
 	return (
-		<div className="flex items-center justify-between gap-2" onClick={handleClick}>
-			<span>{name}</span>
+		<div
+			className={classNames('flex items-center justify-between gap-2', collapsible ? 'mb-2' : '')}
+			onClick={handleClick}
+		>
+			<div className="flex items-center gap-[2px] cursor-pointer" onClick={() => setShowValues(!showValues)}>
+				{showValues ? (
+					<Icon
+						name="expand_more"
+						customClass={classNames(categoryIconClass, collapsible ? '' : 'invisible')}
+					/>
+				) : (
+					<Icon
+						name="chevron_right"
+						customClass={classNames(categoryIconClass, collapsible ? '' : 'invisible')}
+					/>
+				)}
+				<span className={collapsible ? 'font-bold' : ''}>{name}</span>
+			</div>
 			<input
 				type="checkbox"
 				name={name}
