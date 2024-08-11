@@ -8,26 +8,27 @@ import CustomCheckbox from './CustomCheckbox';
 
 const FilterSidebar = () => {
 	const { data: fetchedProjects, isLoading: isLoadingGetProjects, error } = useGetProjectsQuery();
-	const { projects } = fetchedProjects || {};
+	const { projects, projectsById } = fetchedProjects || {};
 
 	// RTK Query - Tags
 	const { data: fetchedTags, isLoading: isLoadingGetTags } = useGetTagsQuery();
-	const { tags, tagsWithNoParent } = fetchedTags || {};
+	const { tags, tagsById } = fetchedTags || {};
 
 	// RTK Query - Filters
 	const { data: fetchedFilters, isLoading: isLoadingGetFilters } = useGetFiltersQuery();
-	const { filters } = fetchedFilters || {};
+	const { filters, filtersById } = fetchedFilters || {};
 
 	const [currDueDate, setCurrDueDate] = useState(null);
-	const [selectedValues, setSelectedValues] = useState({
-		all: {
-			name: 'All',
-			isChecked: true,
-		},
-		projects: [],
-		filters: [],
-		tags: [],
+	const [allValue, setAllValue] = useState({
+		name: 'All',
+		isChecked: true,
 	});
+	const [selectedValuesById, setSelectedValuesById] = useState({
+		projectsById: {},
+		filtersById: {},
+		tags: {},
+	});
+
 	const [selectedCollapsibleValues, setSelectedCollapsibleValues] = useState({
 		projects: {
 			name: 'Lists',
@@ -42,35 +43,65 @@ const FilterSidebar = () => {
 			isChecked: false,
 		},
 	});
+	const [showProjects, setShowProjects] = useState(true);
+	const [showFilters, setShowFilters] = useState(true);
+	const [showTags, setShowTags] = useState(true);
 
 	const isLoadingFinished = !isLoadingGetProjects && !isLoadingGetTags && !isLoadingGetFilters;
+	const inboxProject = Object.values(selectedValuesById.projectsById).find((project) => project.isInbox);
 
 	useEffect(() => {
 		if (isLoadingFinished) {
-			const newSelectedValues = {
-				all: {
-					name: 'All',
-					isChecked: true,
-				},
-				projects: projects.map((project) => ({
-					...project,
-					isChecked: false,
-				})),
-				filters: filters.map((filter) => ({
-					...filter,
-					isChecked: false,
-				})),
-				tags: tags.map((tag) => ({
-					...tag,
-					isChecked: false,
-				})),
+			// const newSelectedValues = {
+			// 	projects: projects.map((project) => ({
+			// 		...project,
+			// 		isChecked: false,
+			// 	})),
+			// 	filters: filters.map((filter) => ({
+			// 		...filter,
+			// 		isChecked: false,
+			// 	})),
+			// 	tags: tags.map((tag) => ({
+			// 		...tag,
+			// 		isChecked: false,
+			// 	})),
+			// };
+
+			const newSelectedValuesById = {
+				projectsById: getObjWtihIsCheckedInEveryValue(projectsById),
+				filtersById: getObjWtihIsCheckedInEveryValue(filtersById),
+				tagsById: getObjWtihIsCheckedInEveryValue(tagsById),
 			};
 
-			setSelectedValues(newSelectedValues);
+			console.log(newSelectedValuesById);
+
+			setSelectedValuesById(newSelectedValuesById);
 		}
 	}, [isLoadingFinished, filters, projects, tags]);
 
-	console.log(selectedValues);
+	const getObjWtihIsCheckedInEveryValue = (obj) => {
+		const newObj = {};
+
+		Object.keys(obj).forEach((key) => {
+			const value = obj[key];
+
+			newObj[key] = { ...value, isChecked: false };
+		});
+
+		return newObj;
+	};
+
+	console.log(selectedCollapsibleValues);
+	console.log(inboxProject);
+
+	const customCheckboxSharedProps = {
+		values: selectedValuesById,
+		setValues: setSelectedValuesById,
+		allValue: allValue,
+		setAllValue: setAllValue,
+		selectedCollapsibleValues: selectedCollapsibleValues,
+		setSelectedCollapsibleValues: setSelectedCollapsibleValues,
+	};
 
 	return (
 		<div className="pt-5">
@@ -78,124 +109,88 @@ const FilterSidebar = () => {
 			<SelectCalendar dueDate={currDueDate} setDueDate={setCurrDueDate} />
 
 			<div className="px-4">
-				<CustomCheckbox value={selectedValues.all} values={selectedValues} setValues={setSelectedValues} />
+				<CustomCheckbox value={allValue} {...customCheckboxSharedProps} />
 			</div>
 
-			<GroupedFilters
-				selectedValues={selectedValues}
-				setSelectedValues={setSelectedValues}
-				selectedCollapsibleValues={selectedCollapsibleValues}
-				setSelectedCollapsibleValues={setSelectedCollapsibleValues}
-			/>
+			{isLoadingFinished && (
+				<div className="space-y-3 mt-2 px-4">
+					{/* PROJECTS */}
+					<div>
+						{/* Collapsible "Projects" Title */}
+						<CustomCheckbox
+							value={selectedCollapsibleValues.projects}
+							showValues={showProjects}
+							setShowValues={setShowProjects}
+							collapsible={true}
+							{...customCheckboxSharedProps}
+						/>
+
+						{/* Inbox Project */}
+						{showProjects && inboxProject && (
+							<CustomCheckbox value={inboxProject} iconName="inbox" {...customCheckboxSharedProps} />
+						)}
+
+						{/* Rest of the projects */}
+						{showProjects &&
+							projects
+								?.filter((project) => !project.isInbox)
+								.map((project) => (
+									<CustomCheckbox
+										key={project._id}
+										value={project}
+										iconName="menu"
+										{...customCheckboxSharedProps}
+									/>
+								))}
+					</div>
+
+					{/* FILTERS */}
+					<div>
+						{/* Collapsible "Filters" Title */}
+						<CustomCheckbox
+							value={selectedCollapsibleValues.filters}
+							showValues={showFilters}
+							setShowValues={setShowFilters}
+							collapsible={true}
+							{...customCheckboxSharedProps}
+						/>
+
+						{showFilters &&
+							filters.map((filter) => (
+								<CustomCheckbox
+									key={filter._id}
+									value={filter}
+									iconName="filter_list"
+									{...customCheckboxSharedProps}
+								/>
+							))}
+					</div>
+
+					{/* TAGS */}
+					<div>
+						{/* Collapsible "Tags" Title */}
+						<CustomCheckbox
+							value={selectedCollapsibleValues.tags}
+							showValues={showTags}
+							setShowValues={setShowTags}
+							collapsible={true}
+							{...customCheckboxSharedProps}
+						/>
+
+						{showTags &&
+							tags.map((tag) => (
+								<CustomCheckbox
+									key={tag._id}
+									value={tag}
+									iconName="sell"
+									{...customCheckboxSharedProps}
+								/>
+							))}
+					</div>
+				</div>
+			)}
 		</div>
 	);
 };
-
-const GroupedFilters = ({
-	selectedValues,
-	setSelectedValues,
-	selectedCollapsibleValues,
-	setSelectedCollapsibleValues,
-}) => {
-	const [showProjects, setShowProjects] = useState(true);
-	const [showFilters, setShowFilters] = useState(true);
-	const [showTags, setShowTags] = useState(true);
-
-	const inboxProject = selectedValues.projects?.find((project) => project.isInbox);
-
-	return (
-		<div className="space-y-3 mt-2 px-4">
-			{/* Projects */}
-			<div>
-				<CustomCheckbox
-					value={selectedCollapsibleValues.projects}
-					values={selectedValues}
-					setValues={setSelectedValues}
-					showValues={showProjects}
-					setShowValues={setShowProjects}
-					selectedCollapsibleValues={selectedCollapsibleValues}
-					setSelectedCollapsibleValues={setSelectedCollapsibleValues}
-					collapsible={true}
-				/>
-
-				{showProjects && inboxProject && (
-					<CustomCheckbox
-						value={inboxProject}
-						values={selectedValues}
-						setValues={setSelectedValues}
-						iconName="inbox"
-					/>
-				)}
-
-				{showProjects &&
-					selectedValues.projects
-						?.filter((project) => !project.isInbox)
-						.map((project) => (
-							<CustomCheckbox
-								value={project}
-								values={selectedValues}
-								setValues={setSelectedValues}
-								iconName="menu"
-							/>
-						))}
-			</div>
-
-			{/* Filters */}
-			<div>
-				<CustomCheckbox
-					value={selectedCollapsibleValues.filters}
-					values={selectedValues}
-					setValues={setSelectedValues}
-					showValues={showFilters}
-					setShowValues={setShowFilters}
-					selectedCollapsibleValues={selectedCollapsibleValues}
-					setSelectedCollapsibleValues={setSelectedCollapsibleValues}
-					collapsible={true}
-				/>
-
-				{showFilters &&
-					selectedValues.filters.map((filter) => (
-						<CustomCheckbox
-							value={filter}
-							values={selectedValues}
-							setValues={setSelectedValues}
-							iconName="filter_list"
-						/>
-					))}
-			</div>
-
-			{/* Tags */}
-			<div>
-				<CustomCheckbox
-					value={selectedCollapsibleValues.tags}
-					values={selectedValues}
-					showValues={showTags}
-					setShowValues={setShowTags}
-					selectedCollapsibleValues={selectedCollapsibleValues}
-					setSelectedCollapsibleValues={setSelectedCollapsibleValues}
-					collapsible={true}
-				/>
-
-				{showTags &&
-					selectedValues.tags.map((tag) => (
-						<CustomCheckbox
-							value={tag}
-							values={selectedValues}
-							setValues={setSelectedValues}
-							iconName="sell"
-						/>
-					))}
-			</div>
-		</div>
-	);
-};
-
-// const CollpasibleTitle = ({ name, showValues, setShowValues }) => {
-// 	return (
-// 		<div className="flex items-center text-[12px] cursor-pointer mb-2" onClick={() => setShowValues(!showValues)}>
-// 			<CustomCheckbox value={tag} values={selectedValues} setValues={setSelectedValues} />
-// 		</div>
-// 	);
-// };
 
 export default FilterSidebar;

@@ -5,6 +5,8 @@ const CustomCheckbox = ({
 	value,
 	values,
 	setValues,
+	allValue,
+	setAllValue,
 	selectedCollapsibleValues,
 	setSelectedCollapsibleValues,
 	showValues,
@@ -12,17 +14,21 @@ const CustomCheckbox = ({
 	collapsible,
 	iconName,
 }) => {
+	if (!value) {
+		return null;
+	}
+
 	const { isChecked, name } = value;
 
-	const allHasBeenChecked = values.all.isChecked;
+	const allHasBeenChecked = allValue.isChecked;
 
 	const handleClick = () => {
 		const willBeChecked = !isChecked;
-		setValues({ ...values, [value]: willBeChecked });
+		setValues({ ...values, [value]: { ...value, isChecked: willBeChecked } });
 
 		// If not checked, then this means, it's going to be checked and be true in the next state value
 		if (allHasBeenChecked && willBeChecked) {
-			setValues({ ...values, all: false });
+			setAllValue({ ...allValue, isChecked: false });
 		} else if (!allHasBeenChecked && willBeChecked) {
 			// TODO: Refactor
 			// const everyOtherPriorityTrue = Object.entries(values).every(([key, value]) => {
@@ -74,7 +80,7 @@ const CustomCheckbox = ({
 				)}
 				<div className="flex items-center gap-1">
 					<Icon name={iconName} customClass={'text-white !text-[18px]'} fill={0} />
-					<span className={classNames('truncate max-w-[150px]', collapsible ? 'font-bold' : '')}>{name}</span>
+					<span className={classNames('truncate max-w-[140px]', collapsible ? 'font-bold' : '')}>{name}</span>
 				</div>
 			</div>
 			<input
