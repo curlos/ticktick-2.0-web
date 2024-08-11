@@ -14,6 +14,7 @@ const CustomCheckbox = ({
 	setShowValues,
 	collapsible,
 	iconName,
+	collapsibleKey,
 	isAllValue = false,
 	circularCheckbox = false,
 }) => {
@@ -66,6 +67,7 @@ const CustomCheckbox = ({
 	};
 
 	const handleClickNormalValue = () => {
+		// If not checked, then this means, it's going to be checked and be true in the next state value. Otherwise, it'll be false in the next state value.
 		const willBeChecked = !isChecked;
 
 		const newValuesById = {
@@ -80,11 +82,11 @@ const CustomCheckbox = ({
 		};
 
 		setValuesById(newValuesById);
-		console.log(selectedCollapsibleValues);
 
-		// If not checked, then this means, it's going to be checked and be true in the next state value
+		// If all has been checked and the value being clicked will be true in the next state change, then all needs to be set to false.
 		if (allHasBeenChecked && willBeChecked) {
 			setAllValue({ ...allValue, isChecked: false });
+			// This is basically just the normal scenario. Most of the time all will NOT be checked so this is the scenario that will happen most of the time.
 		} else if (!allHasBeenChecked && willBeChecked) {
 			const { allProjectsTrue, allFiltersTrue, allTagsTrue, everyOtherValueTrue } =
 				getAllTrueValues(newValuesById);
@@ -116,6 +118,17 @@ const CustomCheckbox = ({
 					});
 				}
 			}
+		}
+
+		// If we're setting one of the "normal" values to false, then the collapsible value should be set to false as well. That collapsible value (like "Lists", "Filters", or "Tags") is only true when all the child "normal" values under it are ALL true. So, if even one of them is false, then it should be set to false.
+		if (!willBeChecked) {
+			const newSelectedCollapsibleValues = {
+				...selectedCollapsibleValues,
+				[collapsibleKey]: { ...selectedCollapsibleValues[collapsibleKey], isChecked: false },
+			};
+			setSelectedCollapsibleValues(newSelectedCollapsibleValues);
+
+			console.log(newSelectedCollapsibleValues);
 		}
 	};
 

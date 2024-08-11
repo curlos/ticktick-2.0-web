@@ -97,9 +97,6 @@ const FilterSidebar = () => {
 		return newObj;
 	};
 
-	console.log(selectedCollapsibleValues);
-	console.log(inboxProject);
-
 	const customCheckboxSharedProps = {
 		valuesById: selectedValuesById,
 		setValuesById: setSelectedValuesById,
@@ -141,6 +138,7 @@ const FilterSidebar = () => {
 							<CustomCheckbox
 								value={inboxProject}
 								valuesByIdType="projectsById"
+								collapsibleKey="projects"
 								iconName="inbox"
 								{...customCheckboxSharedProps}
 							/>
@@ -155,6 +153,7 @@ const FilterSidebar = () => {
 										key={project._id}
 										value={selectedValuesById.projectsById[project._id]}
 										valuesByIdType="projectsById"
+										collapsibleKey="projects"
 										iconName="menu"
 										{...customCheckboxSharedProps}
 									/>
@@ -178,6 +177,7 @@ const FilterSidebar = () => {
 									key={filter._id}
 									value={selectedValuesById.filtersById[filter._id]}
 									valuesByIdType="filtersById"
+									collapsibleKey="filters"
 									iconName="filter_list"
 									circularCheckbox={true}
 									{...customCheckboxSharedProps}
@@ -202,6 +202,7 @@ const FilterSidebar = () => {
 									key={tag._id}
 									value={selectedValuesById.tagsById[tag._id]}
 									valuesByIdType="tagsById"
+									collapsibleKey="tags"
 									iconName="sell"
 									{...customCheckboxSharedProps}
 								/>
