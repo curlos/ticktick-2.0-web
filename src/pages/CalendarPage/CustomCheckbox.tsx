@@ -200,7 +200,7 @@ const CustomCheckbox = ({
 				)}
 				<div className="flex items-center gap-1">
 					<Icon name={iconName} customClass={'text-white !text-[18px]'} fill={0} />
-					<span className={classNames('truncate max-w-[140px]', collapsible ? 'font-bold' : '')}>{name}</span>
+					<span className={classNames('truncate max-w-[120px]', collapsible ? 'font-bold' : '')}>{name}</span>
 				</div>
 			</div>
 			<div className="flex items-center">

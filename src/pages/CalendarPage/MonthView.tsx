@@ -45,8 +45,6 @@ const MonthView = () => {
 		return 1;
 	};
 
-	console.log(maxFocusRecords);
-
 	return (
 		<div className="h-full max-h-screen flex-1 flex flex-col">
 			<div className="grid grid-cols-7 mb-1">

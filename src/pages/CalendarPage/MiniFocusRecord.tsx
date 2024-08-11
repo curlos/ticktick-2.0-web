@@ -27,6 +27,7 @@ const MiniFocusRecord = ({
 	const name = task?.title || habit?.name;
 	const isLastFocusRecord = shownFocusRecords.length - 1 === index;
 	const thereAreLeftoverFocusRecords = maxFocusRecords && focusRecordsForTheDay?.length > maxFocusRecords;
+	const leftOverFocusRecordsCount = thereAreLeftoverFocusRecords && focusRecordsForTheDay?.length - maxFocusRecords;
 
 	const dropdownDayFocusRecords = useRef(null);
 	const [isDropdownDayFocusRecordsVisible, setIsDropdownDayFocusRecordsVisible] = useState(false);
@@ -53,7 +54,7 @@ const MiniFocusRecord = ({
 						onClick={() => setIsDropdownDayFocusRecordsVisible(!isDropdownDayFocusRecordsVisible)}
 						className="bg-gray-400/70 p-[2px] rounded cursor-pointer"
 					>
-						+X
+						+{leftOverFocusRecordsCount}
 					</div>
 
 					<DropdownDayFocusRecords
