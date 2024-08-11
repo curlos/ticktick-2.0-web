@@ -11,8 +11,6 @@ const DropdownDayFocusRecords = ({
 	focusRecordsForTheDay,
 	shownFocusRecords,
 }) => {
-	console.log(focusRecordsForTheDay);
-
 	return (
 		<Dropdown
 			toggleRef={toggleRef}
@@ -25,6 +23,7 @@ const DropdownDayFocusRecords = ({
 				<div className="space-y-1">
 					{shownFocusRecords?.map((focusRecord, index) => (
 						<MiniFocusRecord
+							key={focusRecord._id}
 							focusRecord={focusRecord}
 							index={index}
 							maxFocusRecords={null}

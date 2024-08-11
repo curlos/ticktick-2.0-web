@@ -69,9 +69,9 @@ const MonthView = () => {
 									Array.from({ length: remainingRowsToBeFilled }, (_, index) => index + 1)) ||
 								[];
 
-							if (focusRecordsForTheDay) {
-								console.log(emptyRows);
-							}
+							// if (focusRecordsForTheDay) {
+							// 	console.log(emptyRows);
+							// }
 
 							return (
 								<div
@@ -91,7 +91,10 @@ const MonthView = () => {
 										/>
 
 										{emptyRows.map((row) => (
-											<div className="bg-transparent rounded p-1 py-[2px] truncate h-[20px]"></div>
+											<div
+												key={row}
+												className="bg-transparent rounded p-1 py-[2px] truncate h-[20px]"
+											></div>
 										))}
 									</div>
 								</div>
@@ -109,6 +112,7 @@ const DayFocusRecordsList = ({ focusRecordsForTheDay, maxFocusRecords }) => {
 
 	return shownFocusRecords?.map((focusRecord, index) => (
 		<MiniFocusRecord
+			key={focusRecord._id}
 			focusRecord={focusRecord}
 			index={index}
 			maxFocusRecords={maxFocusRecords}
