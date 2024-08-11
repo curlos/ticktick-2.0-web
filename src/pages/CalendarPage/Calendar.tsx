@@ -3,7 +3,7 @@ import MonthView from './MonthView';
 
 const Calendar = () => {
 	return (
-		<div className="flex flex-col flex-1 h-full">
+		<div className="flex flex-col flex-1 max-h-screen">
 			{/* <DayView /> */}
 			<MonthView />
 		</div>

@@ -107,7 +107,7 @@ const FilterSidebar = () => {
 	};
 
 	return (
-		<div className="pt-5">
+		<div className="pt-5 max-h-screen flex flex-col">
 			{/* Calendar */}
 			<SelectCalendar dueDate={currDueDate} setDueDate={setCurrDueDate} />
 
@@ -121,7 +121,7 @@ const FilterSidebar = () => {
 			</div>
 
 			{isLoadingFinished && (
-				<div className="space-y-3 mt-2 px-4">
+				<div className="space-y-3 mt-2 px-4 overflow-auto gray-scrollbar">
 					{/* PROJECTS */}
 					<div>
 						{/* Collapsible "Projects" Title */}
