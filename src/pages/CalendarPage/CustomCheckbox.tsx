@@ -10,6 +10,7 @@ const CustomCheckbox = ({
 	showValues,
 	setShowValues,
 	collapsible,
+	iconName,
 }) => {
 	const { isChecked, name } = value;
 
@@ -71,7 +72,10 @@ const CustomCheckbox = ({
 						customClass={classNames(categoryIconClass, collapsible ? '' : 'invisible')}
 					/>
 				)}
-				<span className={collapsible ? 'font-bold' : ''}>{name}</span>
+				<div className="flex items-center gap-1">
+					<Icon name={iconName} customClass={'text-white !text-[18px]'} fill={0} />
+					<span className={classNames('truncate max-w-[150px]', collapsible ? 'font-bold' : '')}>{name}</span>
+				</div>
 			</div>
 			<input
 				type="checkbox"

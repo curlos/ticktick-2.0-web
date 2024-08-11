@@ -119,14 +119,24 @@ const GroupedFilters = ({
 				/>
 
 				{showProjects && inboxProject && (
-					<CustomCheckbox value={inboxProject} values={selectedValues} setValues={setSelectedValues} />
+					<CustomCheckbox
+						value={inboxProject}
+						values={selectedValues}
+						setValues={setSelectedValues}
+						iconName="inbox"
+					/>
 				)}
 
 				{showProjects &&
 					selectedValues.projects
 						?.filter((project) => !project.isInbox)
 						.map((project) => (
-							<CustomCheckbox value={project} values={selectedValues} setValues={setSelectedValues} />
+							<CustomCheckbox
+								value={project}
+								values={selectedValues}
+								setValues={setSelectedValues}
+								iconName="menu"
+							/>
 						))}
 			</div>
 
@@ -145,7 +155,12 @@ const GroupedFilters = ({
 
 				{showFilters &&
 					selectedValues.filters.map((filter) => (
-						<CustomCheckbox value={filter} values={selectedValues} setValues={setSelectedValues} />
+						<CustomCheckbox
+							value={filter}
+							values={selectedValues}
+							setValues={setSelectedValues}
+							iconName="filter_list"
+						/>
 					))}
 			</div>
 
@@ -163,7 +178,12 @@ const GroupedFilters = ({
 
 				{showTags &&
 					selectedValues.tags.map((tag) => (
-						<CustomCheckbox value={tag} values={selectedValues} setValues={setSelectedValues} />
+						<CustomCheckbox
+							value={tag}
+							values={selectedValues}
+							setValues={setSelectedValues}
+							iconName="sell"
+						/>
 					))}
 			</div>
 		</div>
