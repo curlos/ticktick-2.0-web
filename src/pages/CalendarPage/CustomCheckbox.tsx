@@ -3,8 +3,9 @@ import Icon from '../../components/Icon';
 
 const CustomCheckbox = ({
 	value,
-	values,
-	setValues,
+	valuesByIdType,
+	valuesById,
+	setValuesById,
 	allValue,
 	setAllValue,
 	selectedCollapsibleValues,
@@ -13,6 +14,7 @@ const CustomCheckbox = ({
 	setShowValues,
 	collapsible,
 	iconName,
+	isAllValue = false,
 }) => {
 	if (!value) {
 		return null;
@@ -24,27 +26,98 @@ const CustomCheckbox = ({
 
 	const handleClick = () => {
 		const willBeChecked = !isChecked;
-		setValues({ ...values, [value]: { ...value, isChecked: willBeChecked } });
+
+		if (isAllValue) {
+			if (willBeChecked) {
+				// Set all the collapsible and normal values to false.
+				setAllValue({ ...allValue, isChecked: true });
+				updateValuesByIdAndCollapsibleFalse(valuesById, selectedCollapsibleValues);
+			} else {
+				// set it to false like normal and that's it.
+				setAllValue({ ...allValue, isChecked: false });
+			}
+		} else if (collapsible) {
+			const { key, valuesByIdType } = value;
+			// Set the collapsible value and all the values part of the list to true.
+			setSelectedCollapsibleValues({
+				...selectedCollapsibleValues,
+				[key]: {
+					...value,
+					isChecked: willBeChecked,
+				},
+			});
+
+			const newValuesByIdForType = cloneWithIsChecked(valuesById[valuesByIdType], willBeChecked);
+			const newValuesById = {
+				...valuesById,
+				[valuesByIdType]: newValuesByIdForType,
+			};
+
+			const everyOtherValueTrue = checkIfEveryOtherValueTrue(newValuesById);
+
+			if (everyOtherValueTrue) {
+				updateValuesByIdAndCollapsibleFalse(newValuesById, selectedCollapsibleValues);
+				setAllValue({ ...allValue, isChecked: true });
+			} else {
+				setValuesById(newValuesById);
+			}
+		} else {
+			handleClickNormalValue();
+		}
+	};
+
+	const handleClickNormalValue = () => {
+		const willBeChecked = !isChecked;
+
+		const newValuesById = {
+			...valuesById,
+			[valuesByIdType]: {
+				...valuesById[valuesByIdType],
+				[value._id]: {
+					...value,
+					isChecked: !valuesById[valuesByIdType][value._id].isChecked,
+				},
+			},
+		};
+
+		setValuesById(newValuesById);
+		console.log(selectedCollapsibleValues);
 
 		// If not checked, then this means, it's going to be checked and be true in the next state value
 		if (allHasBeenChecked && willBeChecked) {
 			setAllValue({ ...allValue, isChecked: false });
 		} else if (!allHasBeenChecked && willBeChecked) {
 			// TODO: Refactor
-			// const everyOtherPriorityTrue = Object.entries(values).every(([key, value]) => {
-			// 	if (key === name.toLowerCase()) {
-			// 		return true;
-			// 	}
-			// 	return value;
-			// });
-			// TODO: Refactor
-			// if (everyOtherPriorityTrue) {
-			// 	const valuesClone = { ...values };
-			// 	Object.keys(values).forEach((key) => {
-			// 		valuesClone[key] = false;
-			// 	});
-			// 	setValues({ ...valuesClone, all: true });
-			// }
+
+			const everyOtherValueTrue = checkIfEveryOtherValueTrue(newValuesById);
+
+			// If every other value is true, then set them all to false because there are no "filters" applied since no one specific filter has been chosen so it's set to "All". Meaning do not filter by anything.
+			// TODO: Test this to make sure it works.
+			if (everyOtherValueTrue) {
+				updateValuesByIdAndCollapsibleFalse(newValuesById, selectedCollapsibleValues);
+				setAllValue({ ...allValue, isChecked: true });
+			} else {
+				if (allProjectsTrue) {
+					setSelectedCollapsibleValues({
+						...selectedCollapsibleValues,
+						projects: { ...selectedCollapsibleValues.projects, isChecked: true },
+					});
+				}
+
+				if (allFiltersTrue) {
+					setSelectedCollapsibleValues({
+						...selectedCollapsibleValues,
+						filters: { ...selectedCollapsibleValues.filters, isChecked: true },
+					});
+				}
+
+				if (allTagsTrue) {
+					setSelectedCollapsibleValues({
+						...selectedCollapsibleValues,
+						tags: { ...selectedCollapsibleValues.tags, isChecked: true },
+					});
+				}
+			}
 		} else if (!willBeChecked) {
 			// TODO: Refactor
 			// const everyOtherPriorityFalse = Object.entries(values).every(([key, value]) => {
@@ -57,6 +130,48 @@ const CustomCheckbox = ({
 			// 	setValues({ ...values, all: true });
 			// }
 		}
+	};
+
+	const updateValuesByIdAndCollapsibleFalse = (newValuesById, selectedCollapsibleValues) => {
+		const { projectsById, filtersById, tagsById } = newValuesById;
+
+		const newProjectsById = cloneWithIsChecked(projectsById, false);
+		const newFiltersById = cloneWithIsChecked(filtersById, false);
+		const newTagsById = cloneWithIsChecked(tagsById, false);
+
+		setValuesById({
+			projectsById: newProjectsById,
+			filtersById: newFiltersById,
+			tagsById: newTagsById,
+		});
+
+		const newSelectedCollapsibleValues = cloneWithIsChecked(selectedCollapsibleValues, false);
+
+		setSelectedCollapsibleValues(newSelectedCollapsibleValues);
+	};
+
+	const cloneWithIsChecked = (objById, isCheckedValue) => {
+		const newObjById = {};
+
+		Object.keys(objById).forEach((key) => {
+			const value = objById[key];
+
+			newObjById[key] = {
+				...value,
+				isChecked: isCheckedValue,
+			};
+		});
+
+		return newObjById;
+	};
+
+	const checkIfEveryOtherValueTrue = (newValuesById) => {
+		const { projectsById, filtersById, tagsById } = newValuesById;
+		const allProjectsTrue = Object.values(projectsById).every((project) => project.isChecked);
+		const allFiltersTrue = Object.values(filtersById).every((filter) => filter.isChecked);
+		const allTagsTrue = Object.values(tagsById).every((tag) => tag.isChecked);
+
+		return allProjectsTrue && allFiltersTrue && allTagsTrue;
 	};
 
 	const categoryIconClass = 'text-color-gray-100 !text-[16px] hover:text-white';

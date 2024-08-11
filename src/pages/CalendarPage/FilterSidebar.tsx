@@ -26,21 +26,27 @@ const FilterSidebar = () => {
 	const [selectedValuesById, setSelectedValuesById] = useState({
 		projectsById: {},
 		filtersById: {},
-		tags: {},
+		tagsById: {},
 	});
 
 	const [selectedCollapsibleValues, setSelectedCollapsibleValues] = useState({
 		projects: {
 			name: 'Lists',
 			isChecked: false,
+			valuesByIdType: 'projectsById',
+			key: 'projects',
 		},
 		filters: {
 			name: 'Filters',
 			isChecked: false,
+			valuesByIdType: 'filtersById',
+			key: 'filters',
 		},
 		tags: {
 			name: 'Tags',
 			isChecked: false,
+			valuesByIdType: 'tagsById',
+			key: 'tags',
 		},
 	});
 	const [showProjects, setShowProjects] = useState(true);
@@ -95,8 +101,8 @@ const FilterSidebar = () => {
 	console.log(inboxProject);
 
 	const customCheckboxSharedProps = {
-		values: selectedValuesById,
-		setValues: setSelectedValuesById,
+		valuesById: selectedValuesById,
+		setValuesById: setSelectedValuesById,
 		allValue: allValue,
 		setAllValue: setAllValue,
 		selectedCollapsibleValues: selectedCollapsibleValues,
@@ -109,7 +115,7 @@ const FilterSidebar = () => {
 			<SelectCalendar dueDate={currDueDate} setDueDate={setCurrDueDate} />
 
 			<div className="px-4">
-				<CustomCheckbox value={allValue} {...customCheckboxSharedProps} />
+				<CustomCheckbox value={allValue} isAllValue={true} {...customCheckboxSharedProps} />
 			</div>
 
 			{isLoadingFinished && (
@@ -127,7 +133,12 @@ const FilterSidebar = () => {
 
 						{/* Inbox Project */}
 						{showProjects && inboxProject && (
-							<CustomCheckbox value={inboxProject} iconName="inbox" {...customCheckboxSharedProps} />
+							<CustomCheckbox
+								value={inboxProject}
+								valuesByIdType="projectsById"
+								iconName="inbox"
+								{...customCheckboxSharedProps}
+							/>
 						)}
 
 						{/* Rest of the projects */}
@@ -137,7 +148,8 @@ const FilterSidebar = () => {
 								.map((project) => (
 									<CustomCheckbox
 										key={project._id}
-										value={project}
+										value={selectedValuesById.projectsById[project._id]}
+										valuesByIdType="projectsById"
 										iconName="menu"
 										{...customCheckboxSharedProps}
 									/>
@@ -159,7 +171,8 @@ const FilterSidebar = () => {
 							filters.map((filter) => (
 								<CustomCheckbox
 									key={filter._id}
-									value={filter}
+									value={selectedValuesById.filtersById[filter._id]}
+									valuesByIdType="filtersById"
 									iconName="filter_list"
 									{...customCheckboxSharedProps}
 								/>
@@ -181,7 +194,8 @@ const FilterSidebar = () => {
 							tags.map((tag) => (
 								<CustomCheckbox
 									key={tag._id}
-									value={tag}
+									value={selectedValuesById.tagsById[tag._id]}
+									valuesByIdType="tagsById"
 									iconName="sell"
 									{...customCheckboxSharedProps}
 								/>
