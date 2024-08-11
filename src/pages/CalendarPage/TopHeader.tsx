@@ -4,7 +4,7 @@ import Icon from '../../components/Icon';
 import { setModalState } from '../../slices/modalSlice';
 import DropdownIntervalSelect from './DropdownIntervalSelect';
 
-const TopHeader = () => {
+const TopHeader = ({ showFilterSidebar, setShowFilterSidebar }) => {
 	const dispatch = useDispatch();
 
 	const dropdownIntervalSelectRef = useRef(null);
@@ -14,7 +14,12 @@ const TopHeader = () => {
 	return (
 		<div className="p-3 pt-5 flex justify-between items-center">
 			<div className="flex items-center gap-2">
-				<Icon name="left_panel_open" fill={0} customClass="text-color-gray-100 cursor-pointer" />
+				<Icon
+					name="left_panel_open"
+					fill={0}
+					customClass="text-color-gray-100 cursor-pointer"
+					onClick={() => setShowFilterSidebar(!showFilterSidebar)}
+				/>
 				<div className="text-[18px] font-bold">July 2024</div>
 			</div>
 
