@@ -115,7 +115,12 @@ const FilterSidebar = () => {
 			<SelectCalendar dueDate={currDueDate} setDueDate={setCurrDueDate} />
 
 			<div className="px-4">
-				<CustomCheckbox value={allValue} isAllValue={true} {...customCheckboxSharedProps} />
+				<CustomCheckbox
+					value={allValue}
+					isAllValue={true}
+					circularCheckbox={true}
+					{...customCheckboxSharedProps}
+				/>
 			</div>
 
 			{isLoadingFinished && (
@@ -174,6 +179,7 @@ const FilterSidebar = () => {
 									value={selectedValuesById.filtersById[filter._id]}
 									valuesByIdType="filtersById"
 									iconName="filter_list"
+									circularCheckbox={true}
 									{...customCheckboxSharedProps}
 								/>
 							))}

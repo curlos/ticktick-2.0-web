@@ -15,6 +15,7 @@ const CustomCheckbox = ({
 	collapsible,
 	iconName,
 	isAllValue = false,
+	circularCheckbox = false,
 }) => {
 	if (!value) {
 		return null;
@@ -32,9 +33,6 @@ const CustomCheckbox = ({
 				// Set all the collapsible and normal values to false.
 				setAllValue({ ...allValue, isChecked: true });
 				updateValuesByIdAndCollapsibleFalse(valuesById, selectedCollapsibleValues);
-			} else {
-				// set it to false like normal and that's it.
-				setAllValue({ ...allValue, isChecked: false });
 			}
 		} else if (collapsible) {
 			const { key, valuesByIdType } = value;
@@ -53,13 +51,14 @@ const CustomCheckbox = ({
 				[valuesByIdType]: newValuesByIdForType,
 			};
 
-			const everyOtherValueTrue = checkIfEveryOtherValueTrue(newValuesById);
+			const { everyOtherValueTrue } = getAllTrueValues(newValuesById);
 
 			if (everyOtherValueTrue) {
 				updateValuesByIdAndCollapsibleFalse(newValuesById, selectedCollapsibleValues);
 				setAllValue({ ...allValue, isChecked: true });
 			} else {
 				setValuesById(newValuesById);
+				setAllValue({ ...allValue, isChecked: false });
 			}
 		} else {
 			handleClickNormalValue();
@@ -87,9 +86,8 @@ const CustomCheckbox = ({
 		if (allHasBeenChecked && willBeChecked) {
 			setAllValue({ ...allValue, isChecked: false });
 		} else if (!allHasBeenChecked && willBeChecked) {
-			// TODO: Refactor
-
-			const everyOtherValueTrue = checkIfEveryOtherValueTrue(newValuesById);
+			const { allProjectsTrue, allFiltersTrue, allTagsTrue, everyOtherValueTrue } =
+				getAllTrueValues(newValuesById);
 
 			// If every other value is true, then set them all to false because there are no "filters" applied since no one specific filter has been chosen so it's set to "All". Meaning do not filter by anything.
 			// TODO: Test this to make sure it works.
@@ -118,17 +116,6 @@ const CustomCheckbox = ({
 					});
 				}
 			}
-		} else if (!willBeChecked) {
-			// TODO: Refactor
-			// const everyOtherPriorityFalse = Object.entries(values).every(([key, value]) => {
-			// 	if (key === name.toLowerCase()) {
-			// 		return true;
-			// 	}
-			// 	return !value;
-			// });
-			// if (everyOtherPriorityFalse) {
-			// 	setValues({ ...values, all: true });
-			// }
 		}
 	};
 
@@ -165,13 +152,18 @@ const CustomCheckbox = ({
 		return newObjById;
 	};
 
-	const checkIfEveryOtherValueTrue = (newValuesById) => {
+	const getAllTrueValues = (newValuesById) => {
 		const { projectsById, filtersById, tagsById } = newValuesById;
 		const allProjectsTrue = Object.values(projectsById).every((project) => project.isChecked);
 		const allFiltersTrue = Object.values(filtersById).every((filter) => filter.isChecked);
 		const allTagsTrue = Object.values(tagsById).every((tag) => tag.isChecked);
 
-		return allProjectsTrue && allFiltersTrue && allTagsTrue;
+		return {
+			allProjectsTrue,
+			allFiltersTrue,
+			allTagsTrue,
+			everyOtherValueTrue: allProjectsTrue && allFiltersTrue && allTagsTrue,
+		};
 	};
 
 	const categoryIconClass = 'text-color-gray-100 !text-[16px] hover:text-white';
@@ -198,14 +190,26 @@ const CustomCheckbox = ({
 					<span className={classNames('truncate max-w-[140px]', collapsible ? 'font-bold' : '')}>{name}</span>
 				</div>
 			</div>
-			<input
-				type="checkbox"
-				name={name}
-				// TODO: Add option to make the checkbox rounded for certain items if passed in the props.
-				className="accent-blue-500"
-				checked={isChecked}
-				onChange={() => null}
-			/>
+			<div className="flex items-center">
+				<input
+					id="customCheckbox"
+					type="checkbox"
+					name={name}
+					// TODO: Add option to make the checkbox rounded for certain items if passed in the props.
+					className="accent-blue-500 hidden"
+					checked={isChecked}
+					onChange={() => null}
+				/>
+				<div
+					className={classNames(
+						'border border-color-gray-200 h-[17px] w-[17px] flex items-center justify-center',
+						isChecked ? 'bg-blue-500' : 'bg-transparent',
+						circularCheckbox ? 'rounded-full' : 'rounded'
+					)}
+				>
+					{isChecked && <Icon name={'check'} customClass={'text-white !text-[15px]'} fill={1} />}
+				</div>
+			</div>
 		</div>
 	);
 };
