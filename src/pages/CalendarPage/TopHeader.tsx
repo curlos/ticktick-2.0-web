@@ -5,12 +5,18 @@ import { setModalState } from '../../slices/modalSlice';
 import DropdownIntervalSelect from './DropdownIntervalSelect';
 import { formatCheckedInDayDate, getCalendarMonth } from '../../utils/date.utils';
 
-const TopHeader = ({ showFilterSidebar, setShowFilterSidebar, currentDate, setCurrentDate }) => {
+const TopHeader = ({
+	showFilterSidebar,
+	setShowFilterSidebar,
+	currentDate,
+	setCurrentDate,
+	selectedInterval,
+	setSelectedInterval,
+}) => {
 	const dispatch = useDispatch();
 
 	const dropdownIntervalSelectRef = useRef(null);
 	const [isDropdownIntervalSelectVisible, setIsDropdownIntervalSelectVisible] = useState(false);
-	const [selectedInterval, setSelectedInterval] = useState('Month');
 
 	const getName = () => {
 		// TODO: For now, assume the interval is always monthly. This logic has to be reworked once other intervals come into play.

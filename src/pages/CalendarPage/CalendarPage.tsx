@@ -7,6 +7,7 @@ import { getCalendarMonth } from '../../utils/date.utils';
 
 const CalendarPage = () => {
 	const [showFilterSidebar, setShowFilterSidebar] = useState(true);
+	const [selectedInterval, setSelectedInterval] = useState('Agenda');
 	const [currentDate, setCurrentDate] = useState(new Date());
 
 	return (
@@ -25,10 +26,12 @@ const CalendarPage = () => {
 					setShowFilterSidebar={setShowFilterSidebar}
 					currentDate={currentDate}
 					setCurrentDate={setCurrentDate}
+					selectedInterval={selectedInterval}
+					setSelectedInterval={setSelectedInterval}
 				/>
 				<div className="flex-1 flex flex-col h-full">
 					{/* TODO: Calendar extends past screen height currently. Prevent this from happening on Desktop at the very least. */}
-					<Calendar currentDate={currentDate} />
+					<Calendar currentDate={currentDate} selectedInterval={selectedInterval} />
 				</div>
 			</div>
 		</div>
