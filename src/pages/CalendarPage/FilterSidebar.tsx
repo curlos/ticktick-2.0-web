@@ -79,8 +79,6 @@ const FilterSidebar = () => {
 				tagsById: getObjWtihIsCheckedInEveryValue(tagsById),
 			};
 
-			console.log(newSelectedValuesById);
-
 			setSelectedValuesById(newSelectedValuesById);
 		}
 	}, [isLoadingFinished, filters, projects, tags]);

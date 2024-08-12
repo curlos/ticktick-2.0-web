@@ -3,13 +3,48 @@ import { useDispatch } from 'react-redux';
 import Icon from '../../components/Icon';
 import { setModalState } from '../../slices/modalSlice';
 import DropdownIntervalSelect from './DropdownIntervalSelect';
+import { formatCheckedInDayDate, getCalendarMonth } from '../../utils/date.utils';
 
-const TopHeader = ({ showFilterSidebar, setShowFilterSidebar }) => {
+const TopHeader = ({ showFilterSidebar, setShowFilterSidebar, calendarDateRange, setCalendarDateRange }) => {
 	const dispatch = useDispatch();
 
 	const dropdownIntervalSelectRef = useRef(null);
 	const [isDropdownIntervalSelectVisible, setIsDropdownIntervalSelectVisible] = useState(false);
-	const [selectedInterval, setSelectedInterval] = useState('Day');
+	const [selectedInterval, setSelectedInterval] = useState('Month');
+
+	const getName = () => {
+		// TODO: For now, assume the interval is always monthly. This logic has to be reworked once other intervals come into play.
+		const isMonthly = true;
+
+		if (isMonthly) {
+			const firstDay = calendarDateRange[0][0];
+
+			const lastRow = calendarDateRange[calendarDateRange.length - 1];
+			const lastDay = lastRow[lastRow.length - 1];
+
+			return `${formatCheckedInDayDate(firstDay)} - ${formatCheckedInDayDate(lastDay)}`;
+		}
+	};
+
+	const handleGoBack = () => {
+		const middleNum = Math.round(calendarDateRange.length / 2);
+		const middleRow = calendarDateRange[middleNum];
+		const firstDateMiddleRow = middleRow[0];
+		setCalendarDateRange(getCalendarMonth(firstDateMiddleRow.getFullYear(), firstDateMiddleRow.getMonth() - 1, 5));
+	};
+
+	const handleGoForward = () => {
+		const middleNum = Math.round(calendarDateRange.length / 2);
+		const middleRow = calendarDateRange[middleNum];
+		const firstDateMiddleRow = middleRow[0];
+		const newCalendarDateRange = getCalendarMonth(
+			firstDateMiddleRow.getFullYear(),
+			firstDateMiddleRow.getMonth() + 1,
+			5
+		);
+
+		setCalendarDateRange(newCalendarDateRange);
+	};
 
 	return (
 		<div className="p-3 pt-5 flex justify-between items-center">
@@ -20,7 +55,7 @@ const TopHeader = ({ showFilterSidebar, setShowFilterSidebar }) => {
 					customClass="text-color-gray-100 cursor-pointer"
 					onClick={() => setShowFilterSidebar(!showFilterSidebar)}
 				/>
-				<div className="text-[18px] font-bold">July 2024</div>
+				<div className="text-[18px] font-bold">{getName()}</div>
 			</div>
 
 			<div className="flex items-center gap-3">
@@ -52,13 +87,15 @@ const TopHeader = ({ showFilterSidebar, setShowFilterSidebar }) => {
 				<div>
 					<div className="border border-color-gray-150 py-1 px-2 rounded flex items-center cursor-pointer justify-between gap-3">
 						<Icon
-							name="keyboard_arrow_up"
+							name="keyboard_arrow_left"
 							customClass="text-color-gray-100 !text-[18px] hover:text-blue-500"
+							onClick={handleGoBack}
 						/>
-						<span className="hover:text-blue-500">Today</span>
+						<span className="hover:text-blue-500">{getName()}</span>
 						<Icon
-							name="keyboard_arrow_down"
+							name="keyboard_arrow_right"
 							customClass="text-color-gray-100 !text-[18px] hover:text-blue-500"
+							onClick={handleGoForward}
 						/>
 					</div>
 				</div>

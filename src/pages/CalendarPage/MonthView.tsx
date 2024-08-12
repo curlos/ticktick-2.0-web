@@ -2,13 +2,10 @@ import classNames from 'classnames';
 import { areDatesEqual, formatCheckedInDayDate, formatDateTime, getCalendarMonth } from '../../utils/date.utils';
 import { useEffect, useRef, useState } from 'react';
 import { useGetFocusRecordsQuery } from '../../services/resources/focusRecordsApi';
-import { useGetHabitsQuery } from '../../services/resources/habitsApi';
-import { useGetTasksQuery } from '../../services/resources/tasksApi';
-import DropdownDayFocusRecords from './DropdownDayFocusRecords';
 import MiniFocusRecord from './MiniFocusRecord';
 import useWindowSize from '../../hooks/useWindowSize';
 
-const MonthView = () => {
+const MonthView = ({ calendarDateRange }) => {
 	// RTK Query - Focus Records
 	const {
 		data: fetchedFocusRecords,
@@ -18,13 +15,11 @@ const MonthView = () => {
 	const { sortedGroupedFocusRecordsAsc } = fetchedFocusRecords || {};
 
 	const currentDate = new Date();
-	const calendarMonth = getCalendarMonth(currentDate.getFullYear(), currentDate.getMonth() - 1);
-	const shownWeeks = calendarMonth;
+	const shownWeeks = calendarDateRange;
 
 	const [maxFocusRecords, setMaxFocusRecords] = useState(4);
 
 	const { height } = useWindowSize();
-	console.log(height);
 
 	useEffect(() => {
 		const newMaxFocusRecords = getMaxFocusRecordsFor6Weeks();
@@ -33,8 +28,6 @@ const MonthView = () => {
 
 	// TODO: This works only for 6 weeks and has been tested on desktop only. For Mobile, this will of course be completely different and if there's less than 6 weeks (1 through 5 weeks), then we can show more of course. Needs to be added later.
 	const getMaxFocusRecordsFor6Weeks = () => {
-		console.log('a');
-		console.log(height);
 		if (height) {
 			if (height >= 1080) return 5;
 			if (height >= 820) return 4;
@@ -48,7 +41,7 @@ const MonthView = () => {
 	return (
 		<div className="h-full max-h-screen flex-1 flex flex-col">
 			<div className="grid grid-cols-7 mb-1">
-				{calendarMonth[0].map((day) => (
+				{calendarDateRange[0].map((day) => (
 					<div key={day.toLocaleDateString()} className="text-center text-color-gray-100">
 						{day.toLocaleString('en-us', { weekday: 'short' })}
 					</div>
