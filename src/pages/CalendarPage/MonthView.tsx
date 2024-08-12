@@ -5,7 +5,7 @@ import { useGetFocusRecordsQuery } from '../../services/resources/focusRecordsAp
 import MiniFocusRecord from './MiniFocusRecord';
 import useWindowSize from '../../hooks/useWindowSize';
 
-const MonthView = ({ calendarDateRange }) => {
+const MonthView = ({ currentDate }) => {
 	// RTK Query - Focus Records
 	const {
 		data: fetchedFocusRecords,
@@ -13,8 +13,7 @@ const MonthView = ({ calendarDateRange }) => {
 		error: errorFocusRecords,
 	} = useGetFocusRecordsQuery();
 	const { sortedGroupedFocusRecordsAsc } = fetchedFocusRecords || {};
-
-	const currentDate = new Date();
+	const calendarDateRange = getCalendarMonth(currentDate.getFullYear(), currentDate.getMonth(), 5);
 	const shownWeeks = calendarDateRange;
 
 	const [maxFocusRecords, setMaxFocusRecords] = useState(4);

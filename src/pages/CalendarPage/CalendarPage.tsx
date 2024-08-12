@@ -7,10 +7,7 @@ import { getCalendarMonth } from '../../utils/date.utils';
 
 const CalendarPage = () => {
 	const [showFilterSidebar, setShowFilterSidebar] = useState(true);
-	const currentDate = new Date();
-	const [calendarDateRange, setCalendarDateRange] = useState(
-		getCalendarMonth(currentDate.getFullYear(), currentDate.getMonth() - 1, 5)
-	);
+	const [currentDate, setCurrentDate] = useState(new Date());
 
 	return (
 		<div className="flex max-w-screen h-full">
@@ -26,12 +23,12 @@ const CalendarPage = () => {
 				<TopHeader
 					showFilterSidebar={showFilterSidebar}
 					setShowFilterSidebar={setShowFilterSidebar}
-					calendarDateRange={calendarDateRange}
-					setCalendarDateRange={setCalendarDateRange}
+					currentDate={currentDate}
+					setCurrentDate={setCurrentDate}
 				/>
 				<div className="flex-1 flex flex-col h-full">
 					{/* TODO: Calendar extends past screen height currently. Prevent this from happening on Desktop at the very least. */}
-					<Calendar calendarDateRange={calendarDateRange} />
+					<Calendar currentDate={currentDate} />
 				</div>
 			</div>
 		</div>

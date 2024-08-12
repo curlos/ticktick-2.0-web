@@ -5,7 +5,7 @@ import { setModalState } from '../../slices/modalSlice';
 import DropdownIntervalSelect from './DropdownIntervalSelect';
 import { formatCheckedInDayDate, getCalendarMonth } from '../../utils/date.utils';
 
-const TopHeader = ({ showFilterSidebar, setShowFilterSidebar, calendarDateRange, setCalendarDateRange }) => {
+const TopHeader = ({ showFilterSidebar, setShowFilterSidebar, currentDate, setCurrentDate }) => {
 	const dispatch = useDispatch();
 
 	const dropdownIntervalSelectRef = useRef(null);
@@ -14,36 +14,19 @@ const TopHeader = ({ showFilterSidebar, setShowFilterSidebar, calendarDateRange,
 
 	const getName = () => {
 		// TODO: For now, assume the interval is always monthly. This logic has to be reworked once other intervals come into play.
-		const isMonthly = true;
 
-		if (isMonthly) {
-			const firstDay = calendarDateRange[0][0];
-
-			const lastRow = calendarDateRange[calendarDateRange.length - 1];
-			const lastDay = lastRow[lastRow.length - 1];
-
-			return `${formatCheckedInDayDate(firstDay)} - ${formatCheckedInDayDate(lastDay)}`;
+		if (selectedInterval === 'Month') {
+			const currentMonth = currentDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+			return `${currentMonth}`;
 		}
 	};
 
-	const handleGoBack = () => {
-		const middleNum = Math.round(calendarDateRange.length / 2);
-		const middleRow = calendarDateRange[middleNum];
-		const firstDateMiddleRow = middleRow[0];
-		setCalendarDateRange(getCalendarMonth(firstDateMiddleRow.getFullYear(), firstDateMiddleRow.getMonth() - 1, 5));
+	const goToPreviousMonth = () => {
+		setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
 	};
 
-	const handleGoForward = () => {
-		const middleNum = Math.round(calendarDateRange.length / 2);
-		const middleRow = calendarDateRange[middleNum];
-		const firstDateMiddleRow = middleRow[0];
-		const newCalendarDateRange = getCalendarMonth(
-			firstDateMiddleRow.getFullYear(),
-			firstDateMiddleRow.getMonth() + 1,
-			5
-		);
-
-		setCalendarDateRange(newCalendarDateRange);
+	const goToNextMonth = () => {
+		setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
 	};
 
 	return (
@@ -89,13 +72,13 @@ const TopHeader = ({ showFilterSidebar, setShowFilterSidebar, calendarDateRange,
 						<Icon
 							name="keyboard_arrow_left"
 							customClass="text-color-gray-100 !text-[18px] hover:text-blue-500"
-							onClick={handleGoBack}
+							onClick={goToPreviousMonth}
 						/>
 						<span className="hover:text-blue-500">{getName()}</span>
 						<Icon
 							name="keyboard_arrow_right"
 							customClass="text-color-gray-100 !text-[18px] hover:text-blue-500"
-							onClick={handleGoForward}
+							onClick={goToNextMonth}
 						/>
 					</div>
 				</div>

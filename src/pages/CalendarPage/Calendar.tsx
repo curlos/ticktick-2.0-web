@@ -1,11 +1,11 @@
 import DayView from './DayView';
 import MonthView from './MonthView';
 
-const Calendar = ({ calendarDateRange }) => {
+const Calendar = ({ currentDate }) => {
 	return (
 		<div className="flex flex-col flex-1 max-h-screen">
 			{/* <DayView /> */}
-			<MonthView calendarDateRange={calendarDateRange} />
+			<MonthView currentDate={currentDate} />
 		</div>
 	);
 };
