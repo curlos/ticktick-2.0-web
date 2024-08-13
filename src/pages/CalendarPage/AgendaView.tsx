@@ -32,7 +32,7 @@ const AgendaView = () => {
 		habitsById;
 
 	return (
-		<div className="flex-1 overflow-auto gray-scrollbar border-t border-color-gray-200 p-10 flex gap-8">
+		<div className="flex-1 overflow-auto gray-scrollbar border-t border-color-gray-200 p-10 flex gap-[120px]">
 			<div className="font-bold text-[24px]">July 30, 2024</div>
 
 			<div>
@@ -70,6 +70,11 @@ const FocusRecord = ({ focusRecord, focusRecordsById, tasksById, habitsById }) =
 		childFocusRecordTaskTitles.add(isTask ? childItem?.title : childItem?.name);
 	});
 
+	const getTime = () => {
+		if (startTime) return startTimeObj.time;
+		return 'All Day';
+	};
+
 	return (
 		<li
 			key={_id}
@@ -87,6 +92,7 @@ const FocusRecord = ({ focusRecord, focusRecordsById, tasksById, habitsById }) =
 			></div>
 
 			<div className="relative m-0 ml-[40px] break-words" style={{ marginTop: 'unset' }}>
+				<div className="absolute left-[-105px] text-color-gray-100">{getTime()}</div>
 				<div className="absolute left-[-40px] w-[24px] h-[24px] bg-primary-10 rounded-full flex items-center justify-center">
 					<Icon name="nutrition" customClass={'!text-[20px] text-blue-500 cursor-pointer'} fill={1} />
 				</div>
@@ -96,8 +102,8 @@ const FocusRecord = ({ focusRecord, focusRecordsById, tasksById, habitsById }) =
 					style={{ top: '34px' }}
 				></div>
 
-				<div>
-					<div className="flex justify-between text-color-gray-100 text-[12px] mb-[6px]">
+				<div className="bg-blue-500 rounded p-2 opacity-50">
+					<div className="flex justify-between text-[12px] mb-[6px]">
 						<div>
 							{startTimeObj.time} - {endTimeObj.time}
 						</div>
@@ -118,10 +124,6 @@ const FocusRecord = ({ focusRecord, focusRecordsById, tasksById, habitsById }) =
 							<div>{habit && <div className="font-medium">{habit.name}</div>}</div>
 						</div>
 					)}
-
-					<div className="text-color-gray-100 mt-1 max-w-[350px] break-words react-markdown">
-						<ReactMarkdown remarkPlugins={[remarkGfm]}>{note}</ReactMarkdown>
-					</div>
 				</div>
 			</div>
 		</li>
