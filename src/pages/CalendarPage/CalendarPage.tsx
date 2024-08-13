@@ -1,14 +1,16 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import ActionSidebar from '../../components/ActionSidebar';
 import Calendar from './Calendar';
 import FilterSidebar from './FilterSidebar';
 import TopHeader from './TopHeader';
-import { getCalendarMonth } from '../../utils/date.utils';
 
 const CalendarPage = () => {
 	const [showFilterSidebar, setShowFilterSidebar] = useState(true);
 	const [selectedInterval, setSelectedInterval] = useState('Agenda');
 	const [currentDate, setCurrentDate] = useState(new Date());
+
+	const topHeaderRef = useRef(null);
+	const [headerHeight, setHeaderHeight] = useState(0);
 
 	return (
 		<div className="flex max-w-screen h-full">
@@ -20,8 +22,10 @@ const CalendarPage = () => {
 					<FilterSidebar />
 				</div>
 			)}
-			<div className="flex-1 flex flex-col bg-color-gray-700 h-full min-h-screen">
+			<div className="flex-1 flex flex-col bg-color-gray-700 h-screen">
 				<TopHeader
+					topHeaderRef={topHeaderRef}
+					setHeaderHeight={setHeaderHeight}
 					showFilterSidebar={showFilterSidebar}
 					setShowFilterSidebar={setShowFilterSidebar}
 					currentDate={currentDate}
@@ -31,7 +35,11 @@ const CalendarPage = () => {
 				/>
 				<div className="flex-1 flex flex-col h-full">
 					{/* TODO: Calendar extends past screen height currently. Prevent this from happening on Desktop at the very least. */}
-					<Calendar currentDate={currentDate} selectedInterval={selectedInterval} />
+					<Calendar
+						currentDate={currentDate}
+						selectedInterval={selectedInterval}
+						headerHeight={headerHeight}
+					/>
 				</div>
 			</div>
 		</div>

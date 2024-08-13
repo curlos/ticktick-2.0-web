@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Icon from '../../components/Icon';
 import { setModalState } from '../../slices/modalSlice';
@@ -6,6 +6,8 @@ import DropdownIntervalSelect from './DropdownIntervalSelect';
 import { formatCheckedInDayDate, getCalendarMonth } from '../../utils/date.utils';
 
 const TopHeader = ({
+	topHeaderRef,
+	setHeaderHeight,
 	showFilterSidebar,
 	setShowFilterSidebar,
 	currentDate,
@@ -14,6 +16,12 @@ const TopHeader = ({
 	setSelectedInterval,
 }) => {
 	const dispatch = useDispatch();
+
+	useEffect(() => {
+		if (topHeaderRef.current) {
+			setHeaderHeight(topHeaderRef.current.clientHeight);
+		}
+	}, []);
 
 	const dropdownIntervalSelectRef = useRef(null);
 	const [isDropdownIntervalSelectVisible, setIsDropdownIntervalSelectVisible] = useState(false);
@@ -36,7 +44,7 @@ const TopHeader = ({
 	};
 
 	return (
-		<div className="p-3 pt-5 flex justify-between items-center">
+		<div ref={topHeaderRef} className="p-3 pt-5 flex justify-between items-center">
 			<div className="flex items-center gap-2">
 				<Icon
 					name="left_panel_open"

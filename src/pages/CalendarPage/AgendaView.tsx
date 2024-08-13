@@ -32,13 +32,14 @@ const AgendaView = () => {
 		habitsById;
 
 	return (
-		<div className="border-t border-color-gray-200 p-10 flex gap-8">
+		<div className="flex-1 overflow-auto gray-scrollbar border-t border-color-gray-200 p-10 flex gap-8">
 			<div className="font-bold text-[24px]">July 30, 2024</div>
 
 			<div>
 				{isAllDoneLoading &&
 					focusRecordsForTheDay?.map((focusRecord) => (
 						<FocusRecord
+							key={focusRecord._id}
 							focusRecord={focusRecord}
 							focusRecordsById={focusRecordsById}
 							tasksById={tasksById}
