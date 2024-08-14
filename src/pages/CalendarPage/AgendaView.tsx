@@ -1,7 +1,7 @@
 import { useDispatch } from 'react-redux';
 import Icon from '../../components/Icon';
 import { useGetFocusRecordsQuery } from '../../services/resources/focusRecordsApi';
-import { formatDateTime } from '../../utils/date.utils';
+import { formatCheckedInDayDate, formatDateTime } from '../../utils/date.utils';
 import { getFormattedDuration } from '../../utils/helpers.utils';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -31,21 +31,31 @@ const AgendaView = () => {
 		tasksById &&
 		habitsById;
 
-	return (
-		<div className="flex-1 overflow-auto gray-scrollbar border-t border-color-gray-200 p-10 flex gap-[120px]">
-			<div className="font-bold text-[24px]">July 30, 2024</div>
+	console.log(sortedGroupedFocusRecordsAsc);
 
-			<div>
+	return (
+		<div className="flex-1 overflow-auto gray-scrollbar border-t border-color-gray-200 p-10">
+			<div className="space-y-10">
 				{isAllDoneLoading &&
-					focusRecordsForTheDay?.map((focusRecord) => (
-						<FocusRecord
-							key={focusRecord._id}
-							focusRecord={focusRecord}
-							focusRecordsById={focusRecordsById}
-							tasksById={tasksById}
-							habitsById={habitsById}
-						/>
-					))}
+					Object.values(sortedGroupedFocusRecordsAsc).map((focusRecordsForTheDay) => {
+						const dateName = formatCheckedInDayDate(new Date(focusRecordsForTheDay[0].startTime));
+						return (
+							<div className="flex gap-[120px]">
+								<div className="font-bold text-[24px]">{dateName}</div>
+								<div className="space-y-4">
+									{focusRecordsForTheDay?.map((focusRecord) => (
+										<FocusRecord
+											key={focusRecord._id}
+											focusRecord={focusRecord}
+											focusRecordsById={focusRecordsById}
+											tasksById={tasksById}
+											habitsById={habitsById}
+										/>
+									))}
+								</div>
+							</div>
+						);
+					})}
 			</div>
 		</div>
 	);
@@ -78,7 +88,7 @@ const FocusRecord = ({ focusRecord, focusRecordsById, tasksById, habitsById }) =
 	return (
 		<li
 			key={_id}
-			className="relative m-0 list-none last:mb-[4px] mt-[24px] cursor-pointer"
+			className="relative m-0 list-none last:mb-[4px] cursor-pointer"
 			style={{ minHeight: '54px' }}
 			// onClick={() =>
 			// 	dispatch(
@@ -102,7 +112,7 @@ const FocusRecord = ({ focusRecord, focusRecordsById, tasksById, habitsById }) =
 					style={{ top: '34px' }}
 				></div>
 
-				<div className="bg-blue-500 rounded p-2 opacity-50">
+				<div className="bg-blue-600 rounded p-2 opacity-40">
 					<div className="flex justify-between text-[12px] mb-[6px]">
 						<div>
 							{startTimeObj.time} - {endTimeObj.time}
