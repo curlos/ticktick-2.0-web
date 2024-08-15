@@ -33,9 +33,6 @@ const AgendaView = () => {
 
 	const sortedFocusRecordsByDate = sortedGroupedFocusRecordsAsc && sortObjectByDateKeys(sortedGroupedFocusRecordsAsc);
 
-	console.log(sortedGroupedFocusRecordsAsc);
-	console.log(sortedFocusRecordsByDate);
-
 	return (
 		<div className="flex-1 overflow-auto gray-scrollbar border-t border-color-gray-200 py-[50px] pl-[50px] pr-[120px]">
 			<div className="space-y-10">
@@ -46,16 +43,21 @@ const AgendaView = () => {
 							<div key={dateName + focusRecordsForTheDay[0]._id} className="flex">
 								<div className="font-bold text-[24px] flex-[3] text-right mr-[100px]">{dateName}</div>
 								<div className="space-y-4 flex-[8]">
-									{focusRecordsForTheDay?.map((focusRecord) => (
-										<FocusRecord
-											key={focusRecord._id}
-											focusRecord={focusRecord}
-											focusRecordsById={focusRecordsById}
-											tasksById={tasksById}
-											habitsById={habitsById}
-											projectsById={projectsById}
-										/>
-									))}
+									{focusRecordsForTheDay?.map((focusRecord, index) => {
+										const isLastFocusRecordForTheDay = index === focusRecordsForTheDay.length - 1;
+
+										return (
+											<FocusRecord
+												key={focusRecord._id}
+												focusRecord={focusRecord}
+												focusRecordsById={focusRecordsById}
+												tasksById={tasksById}
+												habitsById={habitsById}
+												projectsById={projectsById}
+												isLastFocusRecordForTheDay={isLastFocusRecordForTheDay}
+											/>
+										);
+									})}
 								</div>
 							</div>
 						);
@@ -65,7 +67,14 @@ const AgendaView = () => {
 	);
 };
 
-const FocusRecord = ({ focusRecord, focusRecordsById, tasksById, habitsById, projectsById }) => {
+const FocusRecord = ({
+	focusRecord,
+	focusRecordsById,
+	tasksById,
+	habitsById,
+	projectsById,
+	isLastFocusRecordForTheDay,
+}) => {
 	const [hover, setHover] = useState(false);
 
 	const { _id, taskId, habitId, note, duration, startTime, endTime, children } = focusRecord;
@@ -101,23 +110,29 @@ const FocusRecord = ({ focusRecord, focusRecordsById, tasksById, habitsById, pro
 		borderColor: borderColor,
 	};
 
+	console.log(isLastFocusRecordForTheDay);
+
 	return (
 		<li key={_id} className="relative m-0 list-none last:mb-[4px] cursor-pointer" style={{ minHeight: '54px' }}>
-			<div
-				className="absolute top-[28px] left-[11px] h-full border-solid border-l-[1px] border-blue-900"
-				style={{ height: 'calc(100% - 16px)' }}
-			></div>
+			{!isLastFocusRecordForTheDay && (
+				<div
+					className="absolute top-[28px] left-[11px] h-full border-solid border-l-[1px] border-blue-900"
+					style={{ height: 'calc(100% - 16px)' }}
+				></div>
+			)}
 
 			<div className="relative m-0 ml-[40px] break-words" style={{ marginTop: 'unset' }}>
 				<div className="absolute left-[-105px] text-color-gray-100">{getTime()}</div>
 				<div className="absolute left-[-40px] w-[24px] h-[24px] bg-primary-10 rounded-full flex items-center justify-center">
-					<Icon name="nutrition" customClass={'!text-[20px] text-blue-500 cursor-pointer'} fill={1} />
+					<Icon name="timer" customClass={'!text-[20px] text-blue-500 cursor-pointer'} fill={1} />
 				</div>
 
-				<div
-					className="absolute left-[-33px] w-[10px] h-[10px] border-solid rounded-full border-[2px] bg-color-gray-600 border-blue-500"
-					style={{ top: '34px' }}
-				></div>
+				{!isLastFocusRecordForTheDay && (
+					<div
+						className="absolute left-[-33px] w-[10px] h-[10px] border-solid rounded-full border-[2px] bg-color-gray-600 border-blue-500"
+						style={{ top: '34px' }}
+					></div>
+				)}
 
 				<div
 					className="border-l border-l-[5px] rounded p-2"
