@@ -1,6 +1,6 @@
 import Icon from '../../components/Icon';
 import { useGetFocusRecordsQuery } from '../../services/resources/focusRecordsApi';
-import { formatCheckedInDayDate, formatDateTime } from '../../utils/date.utils';
+import { formatCheckedInDayDate, formatDateTime, sortObjectByDateKeys } from '../../utils/date.utils';
 import { getFormattedDuration, hexToRGBA } from '../../utils/helpers.utils';
 import { useGetHabitsQuery } from '../../services/resources/habitsApi';
 import { useGetTasksQuery } from '../../services/resources/tasksApi';
@@ -24,10 +24,6 @@ const AgendaView = () => {
 	const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
 	const { projectsById } = fetchedProjects || {};
 
-	const focusRecordsForTheDay = sortedGroupedFocusRecordsAsc && sortedGroupedFocusRecordsAsc['July 30, 2024'];
-
-	console.log(focusRecordsForTheDay);
-
 	const isAllDoneLoading =
 		!(isLoadingGetFocusRecords && isLoadingGetTasks && isLoadingGetHabits) &&
 		focusRecordsById &&
@@ -35,16 +31,19 @@ const AgendaView = () => {
 		projectsById &&
 		habitsById;
 
+	const sortedFocusRecordsByDate = sortedGroupedFocusRecordsAsc && sortObjectByDateKeys(sortedGroupedFocusRecordsAsc);
+
 	console.log(sortedGroupedFocusRecordsAsc);
+	console.log(sortedFocusRecordsByDate);
 
 	return (
 		<div className="flex-1 overflow-auto gray-scrollbar border-t border-color-gray-200 py-[50px] pl-[50px] pr-[120px]">
 			<div className="space-y-10">
 				{isAllDoneLoading &&
-					Object.values(sortedGroupedFocusRecordsAsc).map((focusRecordsForTheDay) => {
-						const dateName = formatCheckedInDayDate(new Date(focusRecordsForTheDay[0].startTime));
+					Object.values(sortedFocusRecordsByDate).map((focusRecordsForTheDay) => {
+						const dateName = formatCheckedInDayDate(new Date(focusRecordsForTheDay[0].endTime));
 						return (
-							<div className="flex">
+							<div key={dateName + focusRecordsForTheDay[0]._id} className="flex">
 								<div className="font-bold text-[24px] flex-[3] text-right mr-[100px]">{dateName}</div>
 								<div className="space-y-4 flex-[8]">
 									{focusRecordsForTheDay?.map((focusRecord) => (
@@ -74,7 +73,6 @@ const FocusRecord = ({ focusRecord, focusRecordsById, tasksById, habitsById, pro
 	const task = tasksById[taskId];
 	const habit = habitsById[habitId];
 	const project = task && task.projectId && projectsById[task.projectId];
-	console.log(project);
 
 	const startTimeObj = formatDateTime(startTime);
 	const endTimeObj = formatDateTime(endTime);

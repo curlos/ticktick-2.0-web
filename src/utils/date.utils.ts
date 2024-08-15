@@ -453,3 +453,16 @@ export const isInSameHour = (date1, date2) => {
 		date1.getHours() === date2.getHours()
 	);
 };
+
+export const sortObjectByDateKeys = (data) => {
+	// Create an array from the object keys and sort it based on the date
+	const sortedKeys = Object.keys(data).sort((a, b) => new Date(a) - new Date(b));
+
+	// Create a new object with keys ordered by date
+	const sortedObject = {};
+	sortedKeys.forEach((key) => {
+		sortedObject[key] = data[key];
+	});
+
+	return sortedObject;
+};
