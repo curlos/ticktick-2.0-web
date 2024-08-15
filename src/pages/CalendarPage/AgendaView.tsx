@@ -1,12 +1,10 @@
-import { useDispatch } from 'react-redux';
 import Icon from '../../components/Icon';
 import { useGetFocusRecordsQuery } from '../../services/resources/focusRecordsApi';
 import { formatCheckedInDayDate, formatDateTime } from '../../utils/date.utils';
-import { getFormattedDuration } from '../../utils/helpers.utils';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import { getFormattedDuration, hexToRGBA } from '../../utils/helpers.utils';
 import { useGetHabitsQuery } from '../../services/resources/habitsApi';
 import { useGetTasksQuery } from '../../services/resources/tasksApi';
+import { useGetProjectsQuery } from '../../services/resources/projectsApi';
 
 const AgendaView = () => {
 	// RTK Query - Focus Records
@@ -21,6 +19,10 @@ const AgendaView = () => {
 	const { data: fetchedHabits, isLoading: isLoadingGetHabits } = useGetHabitsQuery();
 	const { habitsById } = fetchedHabits || {};
 
+	// RTK Query - Projects
+	const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
+	const { projectsById } = fetchedProjects || {};
+
 	const focusRecordsForTheDay = sortedGroupedFocusRecordsAsc && sortedGroupedFocusRecordsAsc['July 30, 2024'];
 
 	console.log(focusRecordsForTheDay);
@@ -29,20 +31,21 @@ const AgendaView = () => {
 		!(isLoadingGetFocusRecords && isLoadingGetTasks && isLoadingGetHabits) &&
 		focusRecordsById &&
 		tasksById &&
+		projectsById &&
 		habitsById;
 
 	console.log(sortedGroupedFocusRecordsAsc);
 
 	return (
-		<div className="flex-1 overflow-auto gray-scrollbar border-t border-color-gray-200 p-10">
+		<div className="flex-1 overflow-auto gray-scrollbar border-t border-color-gray-200 py-[50px] pl-[50px] pr-[120px]">
 			<div className="space-y-10">
 				{isAllDoneLoading &&
 					Object.values(sortedGroupedFocusRecordsAsc).map((focusRecordsForTheDay) => {
 						const dateName = formatCheckedInDayDate(new Date(focusRecordsForTheDay[0].startTime));
 						return (
-							<div className="flex gap-[120px]">
-								<div className="font-bold text-[24px]">{dateName}</div>
-								<div className="space-y-4">
+							<div className="flex">
+								<div className="font-bold text-[24px] flex-[3] text-right mr-[100px]">{dateName}</div>
+								<div className="space-y-4 flex-[8]">
 									{focusRecordsForTheDay?.map((focusRecord) => (
 										<FocusRecord
 											key={focusRecord._id}
@@ -50,6 +53,7 @@ const AgendaView = () => {
 											focusRecordsById={focusRecordsById}
 											tasksById={tasksById}
 											habitsById={habitsById}
+											projectsById={projectsById}
 										/>
 									))}
 								</div>
@@ -61,11 +65,13 @@ const AgendaView = () => {
 	);
 };
 
-const FocusRecord = ({ focusRecord, focusRecordsById, tasksById, habitsById }) => {
+const FocusRecord = ({ focusRecord, focusRecordsById, tasksById, habitsById, projectsById }) => {
 	const { _id, taskId, habitId, note, duration, startTime, endTime, children } = focusRecord;
 
 	const task = tasksById[taskId];
 	const habit = habitsById[habitId];
+	const project = task && task.projectId && projectsById[task.projectId];
+	console.log(project);
 
 	const startTimeObj = formatDateTime(startTime);
 	const endTimeObj = formatDateTime(endTime);
@@ -85,17 +91,11 @@ const FocusRecord = ({ focusRecord, focusRecordsById, tasksById, habitsById }) =
 		return 'All Day';
 	};
 
+	const bgColor = project?.color ? hexToRGBA(project.color, '40%') : hexToRGBA('#3b82f6', '40%');
+	const borderColor = project?.color ? hexToRGBA(project.color) : hexToRGBA('#3b82f6');
+
 	return (
-		<li
-			key={_id}
-			className="relative m-0 list-none last:mb-[4px] cursor-pointer"
-			style={{ minHeight: '54px' }}
-			// onClick={() =>
-			// 	dispatch(
-			// 		setModalState({ modalId: 'ModalAddFocusRecord', isOpen: true, props: { focusRecord: focusRecord } })
-			// 	)
-			// }
-		>
+		<li key={_id} className="relative m-0 list-none last:mb-[4px] cursor-pointer" style={{ minHeight: '54px' }}>
 			<div
 				className="absolute top-[28px] left-[11px] h-full border-solid border-l-[1px] border-blue-900"
 				style={{ height: 'calc(100% - 16px)' }}
@@ -112,7 +112,13 @@ const FocusRecord = ({ focusRecord, focusRecordsById, tasksById, habitsById }) =
 					style={{ top: '34px' }}
 				></div>
 
-				<div className="bg-blue-600 rounded p-2 opacity-40">
+				<div
+					className="border-l border-l-[5px] rounded p-2"
+					style={{
+						backgroundColor: bgColor,
+						borderColor: borderColor,
+					}}
+				>
 					<div className="flex justify-between text-[12px] mb-[6px]">
 						<div>
 							{startTimeObj.time} - {endTimeObj.time}

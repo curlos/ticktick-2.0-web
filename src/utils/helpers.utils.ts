@@ -427,7 +427,7 @@ export const toTitleCase = (str) => {
 	return str.replace(/\w\S*/g, (text) => text.charAt(0).toUpperCase() + text.substring(1).toLowerCase());
 };
 
-export const hexToRGBA = (hex, opacity) => {
+export const hexToRGBA = (hex, opacity = '100%') => {
 	// Remove the hash at the beginning of the hex code if it's there
 	hex = hex.replace('#', '');
 
