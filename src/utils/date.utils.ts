@@ -190,6 +190,66 @@ export const groupByEndTimeDay = (records) => {
 	return sortedGrouped;
 };
 
+export const groupTasksByDate = (tasks) => {
+	const grouped = {};
+
+	tasks.forEach((task) => {
+		const associatedTaskTime = getAssociatedTimeForTask(task);
+
+		console.log(associatedTaskTime);
+
+		if (!associatedTaskTime) {
+			return;
+		}
+
+		const taskTime = new Date(associatedTaskTime.value);
+		const day = taskTime.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+		// Initialize the array if it does not already exist
+		if (!grouped[day]) {
+			grouped[day] = [];
+		}
+
+		// Push the current record into the correct day array
+		grouped[day].push(task);
+	});
+
+	// Create an array from the grouped object and sort it by date
+	const sortedKeys = Object.keys(grouped).sort((a, b) => new Date(b) - new Date(a));
+	const sortedGrouped = {};
+	sortedKeys.forEach((key) => {
+		sortedGrouped[key] = grouped[key];
+	});
+
+	return sortedGrouped;
+};
+
+export const getAssociatedTimeForTask = (task) => {
+	if (task['completedTime']) {
+		return {
+			key: 'completedTime',
+			value: task['completedTime'],
+		};
+	} else if (task['willNotDo']) {
+		return {
+			key: 'willNotDo',
+			value: task['willNotDo'],
+		};
+	} else if (task['isDeleted']) {
+		return {
+			key: 'isDeleted',
+			value: task['isDeleted'],
+		};
+	} else if (task['dueDate']) {
+		return {
+			key: 'dueDate',
+			value: task['dueDate'],
+		};
+	}
+
+	return null;
+};
+
 export const getLast7Days = () => {
 	let result = [];
 

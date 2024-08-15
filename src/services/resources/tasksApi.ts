@@ -1,3 +1,4 @@
+import { groupTasksByDate } from '../../utils/date.utils';
 import { arrayToObjectByKey, getObjectOfEachItemsParent } from '../../utils/helpers.utils';
 import { baseAPI, buildQueryString } from '../api';
 
@@ -16,7 +17,9 @@ export const tasksApi = baseAPI.injectEndpoints({
 				const parentOfTasks = getObjectOfEachItemsParent(response);
 				const tasksWithoutDeletedOrWillNotDo = tasks.filter((task) => !task.isDeleted && !task.willNotDo);
 
-				return { tasks, tasksById, parentOfTasks, tasksWithoutDeletedOrWillNotDo };
+				const groupedTasksByDate = groupTasksByDate(tasks);
+
+				return { tasks, tasksById, parentOfTasks, tasksWithoutDeletedOrWillNotDo, groupedTasksByDate };
 			},
 		}),
 		addTask: builder.mutation({

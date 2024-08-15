@@ -5,16 +5,18 @@ import { getFormattedDuration, hexToRGBA } from '../../utils/helpers.utils';
 import { useGetHabitsQuery } from '../../services/resources/habitsApi';
 import { useGetTasksQuery } from '../../services/resources/tasksApi';
 import { useGetProjectsQuery } from '../../services/resources/projectsApi';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const AgendaView = () => {
+	const [allItemsGroupedByDate, setAllItemsGroupedByDate] = useState({});
+
 	// RTK Query - Focus Records
 	const { data: fetchedFocusRecords, isLoading: isLoadingGetFocusRecords } = useGetFocusRecordsQuery();
 	const { sortedGroupedFocusRecordsAsc, focusRecordsById } = fetchedFocusRecords || {};
 
 	// RTK Query - Tasks
 	const { data: fetchedTasks, isLoading: isLoadingGetTasks } = useGetTasksQuery();
-	const { tasksById } = fetchedTasks || {};
+	const { tasks, tasksById, groupedTasksByDate } = fetchedTasks || {};
 
 	// RTK Query - Habits
 	const { data: fetchedHabits, isLoading: isLoadingGetHabits } = useGetHabitsQuery();
@@ -31,7 +33,44 @@ const AgendaView = () => {
 		projectsById &&
 		habitsById;
 
+	const sortedTasksByDate = groupedTasksByDate && sortObjectByDateKeys(groupedTasksByDate);
 	const sortedFocusRecordsByDate = sortedGroupedFocusRecordsAsc && sortObjectByDateKeys(sortedGroupedFocusRecordsAsc);
+
+	useEffect(() => {
+		if (sortedTasksByDate && sortedFocusRecordsByDate) {
+			const newAllGroupedByDate = {};
+
+			Object.keys(sortedTasksByDate).map((dateKey) => {
+				const tasksForThisDay = sortedTasksByDate[dateKey];
+
+				if (!newAllGroupedByDate[dateKey]) {
+					newAllGroupedByDate[dateKey] = {};
+				}
+
+				newAllGroupedByDate[dateKey].tasks = tasksForThisDay;
+			});
+
+			Object.keys(sortedFocusRecordsByDate).map((dateKey) => {
+				const focusRecordForThisDay = sortedFocusRecordsByDate[dateKey];
+
+				if (!newAllGroupedByDate[dateKey]) {
+					newAllGroupedByDate[dateKey] = {};
+				}
+
+				newAllGroupedByDate[dateKey].focusRecords = focusRecordForThisDay;
+			});
+
+			// TODO: Sort the dates in the combined object.
+			console.log(newAllGroupedByDate);
+
+			const newSortedAllGroupedByDate = newAllGroupedByDate && sortObjectByDateKeys(newAllGroupedByDate);
+			console.log(newSortedAllGroupedByDate)
+
+			setAllItemsGroupedByDate(newSortedAllGroupedByDate);
+		}
+	}, [isAllDoneLoading]);
+
+	console.log(allItemsGroupedByDate);
 
 	return (
 		<div className="flex-1 overflow-auto gray-scrollbar border-t border-color-gray-200 py-[50px] pl-[50px] pr-[120px]">
@@ -109,8 +148,6 @@ const FocusRecord = ({
 		backgroundColor: hover ? bgColorHover : bgColor,
 		borderColor: borderColor,
 	};
-
-	console.log(isLastFocusRecordForTheDay);
 
 	return (
 		<li key={_id} className="relative m-0 list-none last:mb-[4px] cursor-pointer" style={{ minHeight: '54px' }}>
