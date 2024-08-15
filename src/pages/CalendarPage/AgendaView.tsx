@@ -5,6 +5,7 @@ import { getFormattedDuration, hexToRGBA } from '../../utils/helpers.utils';
 import { useGetHabitsQuery } from '../../services/resources/habitsApi';
 import { useGetTasksQuery } from '../../services/resources/tasksApi';
 import { useGetProjectsQuery } from '../../services/resources/projectsApi';
+import { useState } from 'react';
 
 const AgendaView = () => {
 	// RTK Query - Focus Records
@@ -66,6 +67,8 @@ const AgendaView = () => {
 };
 
 const FocusRecord = ({ focusRecord, focusRecordsById, tasksById, habitsById, projectsById }) => {
+	const [hover, setHover] = useState(false);
+
 	const { _id, taskId, habitId, note, duration, startTime, endTime, children } = focusRecord;
 
 	const task = tasksById[taskId];
@@ -91,8 +94,14 @@ const FocusRecord = ({ focusRecord, focusRecordsById, tasksById, habitsById, pro
 		return 'All Day';
 	};
 
-	const bgColor = project?.color ? hexToRGBA(project.color, '40%') : hexToRGBA('#3b82f6', '40%');
+	const bgColor = project?.color ? hexToRGBA(project.color, '30%') : hexToRGBA('#3b82f6', '30%');
+	const bgColorHover = project?.color ? hexToRGBA(project.color, '60%') : hexToRGBA('#3b82f6', '60%');
 	const borderColor = project?.color ? hexToRGBA(project.color) : hexToRGBA('#3b82f6');
+
+	const cardStyle = {
+		backgroundColor: hover ? bgColorHover : bgColor,
+		borderColor: borderColor,
+	};
 
 	return (
 		<li key={_id} className="relative m-0 list-none last:mb-[4px] cursor-pointer" style={{ minHeight: '54px' }}>
@@ -114,10 +123,9 @@ const FocusRecord = ({ focusRecord, focusRecordsById, tasksById, habitsById, pro
 
 				<div
 					className="border-l border-l-[5px] rounded p-2"
-					style={{
-						backgroundColor: bgColor,
-						borderColor: borderColor,
-					}}
+					style={cardStyle}
+					onMouseEnter={() => setHover(true)}
+					onMouseLeave={() => setHover(false)}
 				>
 					<div className="flex justify-between text-[12px] mb-[6px]">
 						<div>
