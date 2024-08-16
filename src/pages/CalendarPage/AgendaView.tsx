@@ -1,6 +1,11 @@
 import Icon from '../../components/Icon';
 import { useGetFocusRecordsQuery } from '../../services/resources/focusRecordsApi';
-import { formatCheckedInDayDate, formatDateTime, sortObjectByDateKeys } from '../../utils/date.utils';
+import {
+	formatCheckedInDayDate,
+	formatDateTime,
+	getAssociatedTimeForTask,
+	sortObjectByDateKeys,
+} from '../../utils/date.utils';
 import { getFormattedDuration, hexToRGBA } from '../../utils/helpers.utils';
 import { useGetHabitsQuery } from '../../services/resources/habitsApi';
 import { useGetTasksQuery } from '../../services/resources/tasksApi';
@@ -141,7 +146,7 @@ const AgendaItem = ({
 
 	const [hover, setHover] = useState(false);
 
-	const { _id, taskId, habitId, note, duration, startTime, endTime, children } = focusRecord;
+	const { _id, taskId, habitId, note, duration, startTime, endTime, children, pomos } = focusRecord;
 
 	const taskForFocusRecord = isForFocusRecord && tasksById[taskId];
 	const habit = isForFocusRecord && habitsById[habitId];
@@ -164,8 +169,51 @@ const AgendaItem = ({
 		});
 
 	const getTime = () => {
-		if (startTime) return startTimeObj.time;
+		if (isForFocusRecord && startTime) return startTimeObj.time;
 		return 'All Day';
+	};
+
+	const getIcon = () => {
+		if (isForFocusRecord) {
+			if (pomos > 0) {
+				return {
+					name: 'nutrition',
+					fill: 1,
+				};
+			}
+
+			return {
+				name: 'timer',
+				fill: 1,
+			};
+		}
+
+		if (isForTask) {
+			const { key } = getAssociatedTimeForTask(task);
+
+			switch (key) {
+				case 'completedTime':
+					return {
+						name: 'check_circle',
+						fill: 1,
+					};
+				case 'isDeleted':
+					return {
+						name: 'delete',
+						fill: 1,
+					};
+				case 'willNotDo':
+					return {
+						name: 'disabled_by_default',
+						fill: 1,
+					};
+				default:
+					return {
+						name: 'radio_button_unchecked',
+						fill: 0,
+					};
+			}
+		}
 	};
 
 	const bgColor = project?.color ? hexToRGBA(project.color, '30%') : hexToRGBA('#3b82f6', '30%');
@@ -177,11 +225,13 @@ const AgendaItem = ({
 		borderColor: borderColor,
 	};
 
+	const { name: iconName, fill: iconFill } = getIcon();
+
 	return (
 		<li key={_id} className="relative m-0 list-none last:mb-[4px] cursor-pointer" style={{ minHeight: '54px' }}>
 			{!isLastAgendaItem && (
 				<div
-					className="absolute top-[28px] left-[11px] h-full border-solid border-l-[1px] border-blue-900"
+					className="absolute top-[28px] left-[11px] h-full border-solid border-l-[1px] border-color-gray-100/50"
 					style={{ height: 'calc(100% - 16px)' }}
 				></div>
 			)}
@@ -189,12 +239,16 @@ const AgendaItem = ({
 			<div className="relative m-0 ml-[40px] break-words" style={{ marginTop: 'unset' }}>
 				<div className="absolute left-[-105px] text-color-gray-100">{getTime()}</div>
 				<div className="absolute left-[-40px] w-[24px] h-[24px] bg-primary-10 rounded-full flex items-center justify-center">
-					<Icon name="timer" customClass={'!text-[20px] text-blue-500 cursor-pointer'} fill={1} />
+					<Icon
+						name={iconName}
+						customClass={'!text-[20px] text-color-gray-100/50 cursor-pointer'}
+						fill={iconFill}
+					/>
 				</div>
 
 				{!isLastAgendaItem && (
 					<div
-						className="absolute left-[-33px] w-[10px] h-[10px] border-solid rounded-full border-[2px] bg-color-gray-600 border-blue-500"
+						className="absolute left-[-33px] w-[10px] h-[10px] border-solid rounded-full border-[2px] bg-color-gray-600 border-color-gray-100/50"
 						style={{ top: '34px' }}
 					></div>
 				)}
