@@ -258,7 +258,7 @@ const AddOrEditFocusRecord = ({ focusRecord, closeModal }) => {
 
 					{/* Focus Note */}
 					<div className="flex gap-2">
-						<div className="w-[100px] mt-3">Focus Note</div>
+						{closeModal && <div className="w-[100px] mt-3">Focus Note</div>}
 
 						<TextareaAutosize
 							className="flex-1 text-[13px] placeholder:text-[#7C7C7C] mt-2 mb-4 bg-transparent outline-none resize-none border border-color-gray-200 rounded p-2 hover:border-blue-500 min-h-[120px] max-h-[300px] overflow-auto gray-scrollbar"

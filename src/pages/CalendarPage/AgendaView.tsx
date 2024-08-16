@@ -13,6 +13,7 @@ import { useGetProjectsQuery } from '../../services/resources/projectsApi';
 import { useEffect, useRef, useState } from 'react';
 import ContextMenuGeneric from '../../components/ContextMenu/ContextMenuGeneric';
 import DropdownTaskDetails from '../../components/Dropdown/DropdownTaskDetails';
+import DrodpownAddFocusRecord from '../../components/Dropdown/DropdownAddFocusRecord';
 
 const AgendaView = () => {
 	const [allItemsGroupedByDate, setAllItemsGroupedByDate] = useState({});
@@ -322,7 +323,7 @@ const AgendaItem = ({
 						isDropdownVisible={isDropdownVisible}
 						setIsDropdownVisible={setIsDropdownVisible}
 					>
-						{isForTask && (
+						{isForTask ? (
 							<DropdownTaskDetails
 								toggleRef={dropdownRef}
 								isVisible={true}
@@ -335,6 +336,20 @@ const AgendaItem = ({
 								}}
 								onCloseContextMenu={handleClose}
 								task={task}
+							/>
+						) : (
+							<DrodpownAddFocusRecord
+								toggleRef={dropdownRef}
+								isVisible={true}
+								setIsVisible={setIsDropdownVisible}
+								customClasses=" !ml-[0px] mt-[15px]"
+								customStyling={{
+									position: 'absolute',
+									top: `${contextMenu.yPos}px`,
+									left: `${contextMenu.xPos}px`,
+								}}
+								onCloseContextMenu={handleClose}
+								focusRecord={focusRecord}
 							/>
 						)}
 					</ContextMenuGeneric>
