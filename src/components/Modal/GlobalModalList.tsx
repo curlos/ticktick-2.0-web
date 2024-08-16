@@ -1,6 +1,6 @@
 import React from 'react';
 import ModalAddTaskForm from './ModalAddTaskForm';
-import ModalAddFocusRecord from './ModalAddFocusRecord';
+import ModalAddFocusRecord from './ModalAddFocusRecord/ModalAddFocusRecord';
 import ModalAddProject from './ModalAddProject/ModalAddProject';
 import ModalSearchTasks from './ModalSearchTasks';
 import ModalErrorMessenger from './ModalErrorMessenger';
