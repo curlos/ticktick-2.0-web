@@ -10,7 +10,9 @@ import { getFormattedDuration, hexToRGBA } from '../../utils/helpers.utils';
 import { useGetHabitsQuery } from '../../services/resources/habitsApi';
 import { useGetTasksQuery } from '../../services/resources/tasksApi';
 import { useGetProjectsQuery } from '../../services/resources/projectsApi';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import ContextMenuGeneric from '../../components/ContextMenu/ContextMenuGeneric';
+import DropdownTaskDetails from '../../components/Dropdown/DropdownTaskDetails';
 
 const AgendaView = () => {
 	const [allItemsGroupedByDate, setAllItemsGroupedByDate] = useState({});
@@ -227,6 +229,24 @@ const AgendaItem = ({
 
 	const { name: iconName, fill: iconFill } = getIcon();
 
+	const [contextMenu, setContextMenu] = useState(null);
+
+	const [isDropdownVisible, setIsDropdownVisible] = useState(true);
+	const dropdownRef = useRef(null);
+
+	const handleContextMenu = (event) => {
+		event.preventDefault(); // Prevent the default context menu
+
+		setContextMenu({
+			xPos: event.pageX, // X coordinate of the mouse pointer
+			yPos: event.pageY, // Y coordinate of the mouse pointer
+		});
+	};
+
+	const handleClose = () => {
+		setContextMenu(null);
+	};
+
 	return (
 		<li key={_id} className="relative m-0 list-none last:mb-[4px] cursor-pointer" style={{ minHeight: '54px' }}>
 			{!isLastAgendaItem && (
@@ -258,6 +278,10 @@ const AgendaItem = ({
 					style={cardStyle}
 					onMouseEnter={() => setHover(true)}
 					onMouseLeave={() => setHover(false)}
+					onClick={(e) => {
+						e.stopPropagation();
+						handleContextMenu(e);
+					}}
 				>
 					{isForFocusRecord && (
 						<div className="flex justify-between text-[12px] mb-[6px]">
@@ -289,6 +313,32 @@ const AgendaItem = ({
 						<div>{task && <div className="font-medium">{task.title}</div>}</div>
 					)}
 				</div>
+
+				{contextMenu && (
+					<ContextMenuGeneric
+						xPos={contextMenu.xPos}
+						yPos={contextMenu.yPos}
+						onClose={handleClose}
+						isDropdownVisible={isDropdownVisible}
+						setIsDropdownVisible={setIsDropdownVisible}
+					>
+						{isForTask && (
+							<DropdownTaskDetails
+								toggleRef={dropdownRef}
+								isVisible={true}
+								setIsVisible={setIsDropdownVisible}
+								customClasses=" !ml-[0px] mt-[15px]"
+								customStyling={{
+									position: 'absolute',
+									top: `${contextMenu.yPos}px`,
+									left: `${contextMenu.xPos}px`,
+								}}
+								onCloseContextMenu={handleClose}
+								task={task}
+							/>
+						)}
+					</ContextMenuGeneric>
+				)}
 			</div>
 		</li>
 	);
