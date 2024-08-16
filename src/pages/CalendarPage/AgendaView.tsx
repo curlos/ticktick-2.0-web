@@ -64,8 +64,6 @@ const AgendaView = () => {
 			console.log(newAllGroupedByDate);
 
 			const newSortedAllGroupedByDate = newAllGroupedByDate && sortObjectByDateKeys(newAllGroupedByDate);
-			console.log(newSortedAllGroupedByDate)
-
 			setAllItemsGroupedByDate(newSortedAllGroupedByDate);
 		}
 	}, [isAllDoneLoading]);
@@ -76,24 +74,47 @@ const AgendaView = () => {
 		<div className="flex-1 overflow-auto gray-scrollbar border-t border-color-gray-200 py-[50px] pl-[50px] pr-[120px]">
 			<div className="space-y-10">
 				{isAllDoneLoading &&
-					Object.values(sortedFocusRecordsByDate).map((focusRecordsForTheDay) => {
-						const dateName = formatCheckedInDayDate(new Date(focusRecordsForTheDay[0].endTime));
+					allItemsGroupedByDate &&
+					Object.keys(allItemsGroupedByDate).map((dateKey) => {
+						const tasksAndFocusRecords = allItemsGroupedByDate[dateKey];
+						const { tasks, focusRecords } = tasksAndFocusRecords;
+
+						if (!tasks && !focusRecords) {
+							return null;
+						}
+
 						return (
-							<div key={dateName + focusRecordsForTheDay[0]._id} className="flex">
-								<div className="font-bold text-[24px] flex-[3] text-right mr-[100px]">{dateName}</div>
+							<div key={dateKey} className="flex">
+								<div className="font-bold text-[24px] flex-[3] text-right mr-[100px]">{dateKey}</div>
 								<div className="space-y-4 flex-[8]">
-									{focusRecordsForTheDay?.map((focusRecord, index) => {
-										const isLastFocusRecordForTheDay = index === focusRecordsForTheDay.length - 1;
+									{tasks?.map((task, index) => {
+										const isLastAgendaItem =
+											(!focusRecords || focusRecords.length === 0) && index === tasks.length - 1;
 
 										return (
-											<FocusRecord
+											<AgendaItem
+												key={task._id}
+												task={task}
+												focusRecordsById={focusRecordsById}
+												tasksById={tasksById}
+												habitsById={habitsById}
+												projectsById={projectsById}
+												isLastAgendaItem={isLastAgendaItem}
+											/>
+										);
+									})}
+									{focusRecords?.map((focusRecord, index) => {
+										const isLastAgendaItem = index === focusRecords.length - 1;
+
+										return (
+											<AgendaItem
 												key={focusRecord._id}
 												focusRecord={focusRecord}
 												focusRecordsById={focusRecordsById}
 												tasksById={tasksById}
 												habitsById={habitsById}
 												projectsById={projectsById}
-												isLastFocusRecordForTheDay={isLastFocusRecordForTheDay}
+												isLastAgendaItem={isLastAgendaItem}
 											/>
 										);
 									})}
@@ -106,34 +127,41 @@ const AgendaView = () => {
 	);
 };
 
-const FocusRecord = ({
-	focusRecord,
+const AgendaItem = ({
+	task = {},
+	focusRecord = {},
 	focusRecordsById,
 	tasksById,
 	habitsById,
 	projectsById,
-	isLastFocusRecordForTheDay,
+	isLastAgendaItem,
 }) => {
+	const isForTask = task && Object.keys(task).length > 0;
+	const isForFocusRecord = focusRecord && Object.keys(focusRecord).length > 0;
+
 	const [hover, setHover] = useState(false);
 
 	const { _id, taskId, habitId, note, duration, startTime, endTime, children } = focusRecord;
 
-	const task = tasksById[taskId];
-	const habit = habitsById[habitId];
-	const project = task && task.projectId && projectsById[task.projectId];
+	const taskForFocusRecord = isForFocusRecord && tasksById[taskId];
+	const habit = isForFocusRecord && habitsById[habitId];
+	const project = isForFocusRecord
+		? taskForFocusRecord && taskForFocusRecord.projectId && projectsById[taskForFocusRecord.projectId]
+		: projectsById[task.projectId];
 
 	const startTimeObj = formatDateTime(startTime);
 	const endTimeObj = formatDateTime(endTime);
 
 	const childFocusRecordTaskTitles = new Set();
 
-	children?.forEach((childId) => {
-		const childFocusRecord = focusRecordsById[childId];
-		const isTask = childFocusRecord.taskId;
+	isForFocusRecord &&
+		children?.forEach((childId) => {
+			const childFocusRecord = focusRecordsById[childId];
+			const isTask = childFocusRecord.taskId;
 
-		const childItem = isTask ? tasksById[childFocusRecord.taskId] : habitsById[childFocusRecord.habitId];
-		childFocusRecordTaskTitles.add(isTask ? childItem?.title : childItem?.name);
-	});
+			const childItem = isTask ? tasksById[childFocusRecord.taskId] : habitsById[childFocusRecord.habitId];
+			childFocusRecordTaskTitles.add(isTask ? childItem?.title : childItem?.name);
+		});
 
 	const getTime = () => {
 		if (startTime) return startTimeObj.time;
@@ -151,7 +179,7 @@ const FocusRecord = ({
 
 	return (
 		<li key={_id} className="relative m-0 list-none last:mb-[4px] cursor-pointer" style={{ minHeight: '54px' }}>
-			{!isLastFocusRecordForTheDay && (
+			{!isLastAgendaItem && (
 				<div
 					className="absolute top-[28px] left-[11px] h-full border-solid border-l-[1px] border-blue-900"
 					style={{ height: 'calc(100% - 16px)' }}
@@ -164,7 +192,7 @@ const FocusRecord = ({
 					<Icon name="timer" customClass={'!text-[20px] text-blue-500 cursor-pointer'} fill={1} />
 				</div>
 
-				{!isLastFocusRecordForTheDay && (
+				{!isLastAgendaItem && (
 					<div
 						className="absolute left-[-33px] w-[10px] h-[10px] border-solid rounded-full border-[2px] bg-color-gray-600 border-blue-500"
 						style={{ top: '34px' }}
@@ -177,26 +205,34 @@ const FocusRecord = ({
 					onMouseEnter={() => setHover(true)}
 					onMouseLeave={() => setHover(false)}
 				>
-					<div className="flex justify-between text-[12px] mb-[6px]">
-						<div>
-							{startTimeObj.time} - {endTimeObj.time}
+					{isForFocusRecord && (
+						<div className="flex justify-between text-[12px] mb-[6px]">
+							<div>
+								{startTimeObj.time} - {endTimeObj.time}
+							</div>
+							<div>{getFormattedDuration(duration)}</div>
 						</div>
-						<div>{getFormattedDuration(duration)}</div>
-					</div>
+					)}
 
-					{/* TODO: Render an array of titles if it has children for better clarity. */}
-
-					{children && children.length > 0 ? (
-						<div className="font-medium space-y-1">
-							{[...childFocusRecordTaskTitles].map((title, index) => {
-								return <div key={`${title}-${index}`}>{title}</div>;
-							})}
-						</div>
+					{isForFocusRecord ? (
+						children && children.length > 0 ? (
+							<div className="font-medium space-y-1">
+								{[...childFocusRecordTaskTitles].map((title, index) => {
+									return <div key={`${title}-${index}`}>{title}</div>;
+								})}
+							</div>
+						) : (
+							<div>
+								<div>
+									{taskForFocusRecord && (
+										<div className="font-medium">{taskForFocusRecord.title}</div>
+									)}
+								</div>
+								<div>{habit && <div className="font-medium">{habit.name}</div>}</div>
+							</div>
+						)
 					) : (
-						<div>
-							<div>{task && <div className="font-medium">{task.title}</div>}</div>
-							<div>{habit && <div className="font-medium">{habit.name}</div>}</div>
-						</div>
+						<div>{task && <div className="font-medium">{task.title}</div>}</div>
 					)}
 				</div>
 			</div>
