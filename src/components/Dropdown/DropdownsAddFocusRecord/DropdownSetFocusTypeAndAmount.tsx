@@ -37,6 +37,9 @@ const DropdownSetFocusTypeAndAmount: React.FC<DropdownSetFocusTypeAndAmountProps
 
 	const handlePomoChange = (newPomos) => {
 		setPomos(newPomos);
+		// TODO: Take the maximum number from the following two: Pomo's duration AND End Time - Start Time total possible duration
+
+		// TODO: One other thing I could do is automatically change the end time as well. It'd make sense to change it based off the most recent change (like changing the pomos in this case.)
 
 		const duration = getDuration(newPomos);
 		const { hours, minutes } = formatTimeToHoursMinutesSeconds(duration);

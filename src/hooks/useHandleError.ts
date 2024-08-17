@@ -10,12 +10,14 @@ const useHandleError = () => {
 			try {
 				await fn();
 			} catch (error) {
+				const { status, data, message } = error;
+
 				// Dispatch an action to show an error modal
 				dispatch(
 					setModalState({
 						modalId: 'ModalErrorMessenger',
 						isOpen: true,
-						props: { error },
+						props: { error: { status, data, message } },
 					})
 				);
 			}

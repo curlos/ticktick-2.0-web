@@ -18,7 +18,7 @@ const ModalErrorMessenger: React.FC = () => {
 		return null;
 	}
 
-	const { status, data } = error;
+	const { status, data, message } = error;
 
 	const closeModal = () => dispatch(setModalState({ modalId: 'ModalErrorMessenger', isOpen: false }));
 
@@ -33,11 +33,13 @@ const ModalErrorMessenger: React.FC = () => {
 					/>
 				</div>
 				<h1 className="font-bold text-[18px] mt-[-12px]">Fatal Error!</h1>
-				<h3 className="font-bold">
-					Status: <span className="font-normal">{status}</span>
-				</h3>
+				{status && (
+					<h3 className="font-bold">
+						Status: <span className="font-normal">{status}</span>
+					</h3>
+				)}
 				<p className="font-bold mt-1">
-					Message: <span className="font-normal">{data?.message}</span>
+					Message: <span className="font-normal">{data?.message || message}</span>
 				</p>
 			</div>
 		</Modal>

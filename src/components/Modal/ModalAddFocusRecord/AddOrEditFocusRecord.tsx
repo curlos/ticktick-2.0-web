@@ -13,8 +13,11 @@ import Icon from '../../Icon';
 import FocusRecordChild from './FocusRecordChild';
 import TimeOption from './TimeOption';
 import TextareaAutosize from 'react-textarea-autosize';
+import useHandleError from '../../../hooks/useHandleError';
 
 const AddOrEditFocusRecord = ({ focusRecord, closeModal, showTitle = true }) => {
+	const handleError = useHandleError();
+
 	const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
 	const { tasks, tasksById } = fetchedTasks || {};
 
@@ -102,8 +105,7 @@ const AddOrEditFocusRecord = ({ focusRecord, closeModal, showTitle = true }) => 
 		};
 
 		if (payload.duration < 300) {
-			console.log('Duration must be longer or equal to 300 seconds (5 minutes)');
-			return;
+			throw new Error('Duration must be longer or equal to 300 seconds (5 minutes)');
 		}
 
 		if (focusRecord) {
@@ -286,13 +288,11 @@ const AddOrEditFocusRecord = ({ focusRecord, closeModal, showTitle = true }) => 
 					</button>
 					<button
 						className="bg-blue-500 rounded py-1 cursor-pointer hover:bg-blue-600 min-w-[114px]"
-						onClick={async () => {
-							try {
+						onClick={() => {
+							handleError(async () => {
 								await handleAddFocusRecord();
 								closeModal();
-							} catch (error) {
-								console.log(error);
-							}
+							});
 						}}
 					>
 						Ok
