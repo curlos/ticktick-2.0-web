@@ -95,7 +95,11 @@ const MonthView = ({ currentDate }) => {
 									<span className="pl-1">{day.getDate()}</span>
 
 									<div className="space-y-1 text-white text-[11px] mt-1 px-[2px] w-full">
-										<ActionItemList actionItems={actionItems} maxActionItems={maxActionItems} />
+										<ActionItemList
+											actionItems={actionItems}
+											maxActionItems={maxActionItems}
+											formattedDay={formattedDay}
+										/>
 
 										{emptyRows.map((row) => (
 											<div

@@ -1,6 +1,6 @@
 import MiniActionItem from './MiniActionItem';
 
-const ActionItemList = ({ actionItems, maxActionItems }) => {
+const ActionItemList = ({ actionItems, maxActionItems, formattedDay }) => {
 	const { tasks, focusRecords } = actionItems;
 	const safeTasks = tasks ? tasks : [];
 	const safeFocusRecords = focusRecords ? focusRecords : [];
@@ -15,9 +15,10 @@ const ActionItemList = ({ actionItems, maxActionItems }) => {
 					key={task._id}
 					index={index}
 					task={task}
+					actionItems={actionItems}
 					flattenedActionItems={flattenedActionItems}
 					shownActionItems={shownActionItems}
-					maxActionItems={maxActionItems}
+					formattedDay={formattedDay}
 				/>
 			))}
 
@@ -26,9 +27,10 @@ const ActionItemList = ({ actionItems, maxActionItems }) => {
 					key={focusRecord._id}
 					index={index}
 					focusRecord={focusRecord}
+					actionItems={actionItems}
 					flattenedActionItems={flattenedActionItems}
 					shownActionItems={shownActionItems}
-					maxActionItems={maxActionItems}
+					formattedDay={formattedDay}
 				/>
 			))}
 		</div>

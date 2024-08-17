@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { useRef, useState } from 'react';
 import { formatDateTime } from '../../utils/date.utils';
-import DropdownDayFocusRecords from './DropdownDayFocusRecords';
+import DropdownAllActionItemsForDay from './DropdownAllActionItemsForDay';
 import { useGetHabitsQuery } from '../../services/resources/habitsApi';
 import { useGetTasksQuery } from '../../services/resources/tasksApi';
 
@@ -9,12 +9,13 @@ const MiniActionItem = ({
 	index,
 	task,
 	focusRecord,
-	maxActionItems,
+	actionItems,
 	flattenedActionItems,
 	shownActionItems,
 	customStartTimeClasses,
+	formattedDay,
 }) => {
-	const isForTask = task && Object.keys(task).length > 0;
+	const maxActionItems = shownActionItems.length;
 	const isForFocusRecord = focusRecord && Object.keys(focusRecord).length > 0;
 
 	// RTK Query - Tasks
@@ -69,13 +70,15 @@ const MiniActionItem = ({
 					</div>
 
 					{/* TODO: Bring back in a moment and refactor to include BOTH Tasks and Focus Records. */}
-					{/* <DropdownDayFocusRecords
+					<DropdownAllActionItemsForDay
 						toggleRef={dropdownDayFocusRecords}
 						isVisible={isDropdownDayFocusRecordsVisible}
 						setIsVisible={setIsDropdownDayFocusRecordsVisible}
-						focusRecordsForTheDay={focusRecordsForTheDay}
-						shownFocusRecords={focusRecordsForTheDay}
-					/> */}
+						actionItems={actionItems}
+						flattenedActionItems={flattenedActionItems}
+						customStartTimeClasses={'min-w-[65px]'}
+						formattedDay={formattedDay}
+					/>
 				</div>
 			)}
 		</div>
