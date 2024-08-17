@@ -14,6 +14,7 @@ const DropdownTaskDetails: React.FC<IDropdownTaskDetails> = ({
 	customClasses,
 	customStyling,
 	task,
+	isForAddingNewTask,
 }) => {
 	return (
 		<Dropdown
@@ -24,7 +25,7 @@ const DropdownTaskDetails: React.FC<IDropdownTaskDetails> = ({
 			customStyling={customStyling ? customStyling : null}
 		>
 			<div className="w-[400px]">
-				<TaskDetails taskToUse={task} />
+				<TaskDetails taskToUse={task} isForAddingNewTask={isForAddingNewTask} />
 			</div>
 		</Dropdown>
 	);

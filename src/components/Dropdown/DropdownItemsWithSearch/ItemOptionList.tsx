@@ -18,6 +18,7 @@ const ItemOptionList = ({
 	setIsVisible,
 	task,
 	onCloseContextMenu,
+	isForAddingNewTask,
 }) => {
 	const ItemOptionWithProps = ({ item, iconFill = 1 }) => {
 		return (
@@ -38,6 +39,7 @@ const ItemOptionList = ({
 				nonSmartListProjects={nonSmartListProjects}
 				allProject={allProject}
 				onCloseContextMenu={onCloseContextMenu}
+				isForAddingNewTask={isForAddingNewTask}
 			/>
 		);
 	};

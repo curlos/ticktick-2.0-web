@@ -26,6 +26,7 @@ const ItemOption: React.FC<ItemOptionProps> = ({
 	nonSmartListProjects,
 	allProject,
 	onCloseContextMenu,
+	isForAddingNewTask,
 }) => {
 	const { name, _id, isFolder } = item;
 	const smartList = type === 'project' && SMART_LISTS[item.urlName];
@@ -111,7 +112,7 @@ const ItemOption: React.FC<ItemOptionProps> = ({
 			setSelectedItem(item);
 			setIsVisible(false);
 
-			if (type === 'project' && task) {
+			if (type === 'project' && task && !isForAddingNewTask) {
 				editTask({ taskId: task._id, payload: { projectId: item._id } });
 			}
 		}

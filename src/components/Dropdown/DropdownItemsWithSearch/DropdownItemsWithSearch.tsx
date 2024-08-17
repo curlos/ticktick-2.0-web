@@ -38,6 +38,7 @@ const DropdownItemsWithSearch: React.FC<DropdownItemsWithSearchProps> = memo(
 		showSmartLists = false,
 		multiSelect = false,
 		type,
+		isForAddingNewTask,
 	}) => {
 		const TOP_LIST_NAMES = ['all', 'today', 'tomorrow', 'week'];
 		const topListProjects = TOP_LIST_NAMES.map((name) => SMART_LISTS[name]);
@@ -145,6 +146,7 @@ const DropdownItemsWithSearch: React.FC<DropdownItemsWithSearchProps> = memo(
 							setIsVisible={setIsVisible}
 							task={task}
 							onCloseContextMenu={onCloseContextMenu}
+							isForAddingNewTask={isForAddingNewTask}
 						/>
 					</div>
 

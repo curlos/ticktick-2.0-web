@@ -14,7 +14,7 @@ const TagList = ({ taskTags, task, selectedTagList, setSelectedTagList }) => {
 
 	return (
 		<div className="flex flex-wrap gap-1">
-			{taskTags.map((tag) => (
+			{taskTags?.map((tag) => (
 				<TagItemForTask
 					key={tag._id}
 					tag={tag}
@@ -24,7 +24,7 @@ const TagList = ({ taskTags, task, selectedTagList, setSelectedTagList }) => {
 				/>
 			))}
 
-			{taskTags.length > 0 && (
+			{taskTags?.length > 0 && (
 				<div className="relative">
 					<div
 						ref={dropdownItemsWithSearchTagRef}

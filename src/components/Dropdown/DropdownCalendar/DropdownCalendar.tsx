@@ -123,6 +123,8 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({
 	isVisible,
 	setIsVisible,
 	task,
+	setTask,
+	isForAddingNewTask = false,
 	currDueDate,
 	setCurrDueDate,
 	customClasses,
@@ -310,8 +312,10 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({
 							setSelectedTime(null);
 							setIsVisible(false);
 
-							if (task) {
+							if (task && !isForAddingNewTask) {
 								editTask({ taskId: task._id, payload: { dueDate: null } });
+							} else {
+								setTask({ ...task, dueDate: null });
 							}
 
 							if (onCloseContextMenu) {
@@ -334,8 +338,11 @@ const DropdownCalendar: React.FC<DropdownPrioritiesProps> = ({
 								setCurrDueDate(finalDueDate);
 							}
 
-							if (task) {
+							if (task && !isForAddingNewTask) {
 								editTask({ taskId: task._id, payload: { dueDate: finalDueDate } });
+							} else {
+								console.log('setting new task');
+								setTask({ ...task, dueDate: finalDueDate });
 							}
 
 							setIsVisible(false);

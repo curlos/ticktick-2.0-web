@@ -39,7 +39,7 @@ const EmptyTask = () => (
 	</div>
 );
 
-const TaskDetails = ({ taskToUse }) => {
+const TaskDetails = ({ taskToUse, isForAddingNewTask = false }) => {
 	// RTK Query - Tasks
 	const { data: fetchedTasks, isLoading: isTasksLoading, error } = useGetTasksQuery();
 	const { tasks, tasksById, parentOfTasks } = fetchedTasks || {};
@@ -48,7 +48,7 @@ const TaskDetails = ({ taskToUse }) => {
 
 	// RTK Query - Projects
 	const { data: fetchedProjects, isLoading: isProjectsLoading, error: errorProjects } = useGetProjectsQuery();
-	const { projects, projectsById } = fetchedProjects || {};
+	const { projects, projectsById, inboxProject } = fetchedProjects || {};
 
 	// RTK Query - Focus Records
 	const {
@@ -101,7 +101,7 @@ const TaskDetails = ({ taskToUse }) => {
 	const dropdownPrioritiesRef = useRef(null);
 	const dropdownProjectsRef = useRef(null);
 
-	let { taskId, projectId: paramsProjectId } = useParams();
+	let { taskId: paramsTaskId, projectId: paramsProjectId } = useParams();
 	const navigate = useNavigate();
 
 	const inSmartListView = paramsProjectId && SMART_LISTS[paramsProjectId];
@@ -111,10 +111,11 @@ const TaskDetails = ({ taskToUse }) => {
 			return;
 		}
 
-		const currTask = taskToUse ? taskToUse : taskId && tasksById && tasksById[taskId];
-		setTask(currTask);
+		const currTask =
+			!isForAddingNewTask && (taskToUse ? taskToUse : paramsTaskId && tasksById && tasksById[paramsTaskId]);
 
-		if (currTask) {
+		if (!isForAddingNewTask && currTask) {
+			setTask(currTask);
 			setCurrTitle(currTask.title);
 			setCurrDescription(currTask.description);
 			setCurrCompletedTime(currTask.completedTime);
@@ -163,10 +164,27 @@ const TaskDetails = ({ taskToUse }) => {
 
 			// TODO: Maybe think about what should happen when a project id changes. Should we redirect to the project id list too? Maybe, maybe not.
 			// navigate(`/projects/${inSmartListView ? paramsProjectId : currTask.projectId}/tasks/${currTask._id}`);
+		} else {
+			// TODO: Reset all the state values to their defaults.
+			resetStateValues();
 		}
-	}, [taskId, tasks, tasksById, isTasksLoading, isProjectsLoading, isLoadingFocusRecords]);
+	}, [paramsTaskId, tasks, tasksById, isTasksLoading, isProjectsLoading, isLoadingFocusRecords]);
 
-	if (!task || isTasksLoading) {
+	const resetStateValues = () => {
+		setTask(null);
+		setCurrTitle('');
+		setCurrDescription('');
+		setCurrCompletedTime(null);
+		setCurrDueDate(null);
+		setSelectedProject(inboxProject);
+		setSelectedTagList([]);
+		setParentTask(null);
+		setChildTasks([]);
+		setPomos(0);
+		setDuration(0);
+	};
+
+	if ((!task && !isForAddingNewTask) || isTasksLoading) {
 		return <EmptyTask />;
 	}
 
@@ -181,11 +199,14 @@ const TaskDetails = ({ taskToUse }) => {
 		willNotDo,
 		dueDate,
 		tagIds,
-	} = task;
-	const priorityData = PRIORITIES[priority];
+	} = task || {};
+
+	const priorityData = !isForAddingNewTask ? PRIORITIES[priority] : PRIORITIES[selectedPriority];
 	const taskComments = _id && commentsByTaskId && commentsByTaskId[_id] && Object.values(commentsByTaskId[_id]);
 
-	const taskTags = tagIds.map((tagId) => tagsById[tagId]);
+	const taskTags = tagIds?.map((tagId) => tagsById[tagId]);
+
+	console.log(task);
 
 	return (
 		<div
@@ -194,36 +215,44 @@ const TaskDetails = ({ taskToUse }) => {
 		>
 			<div className="flex justify-between items-center p-4 border-b border-color-gray-200">
 				<div className="flex items-center gap-2">
-					<span
-						className={classNames(
-							'flex items-center hover:text-white cursor-pointer',
-							priorityData.textFlagColor
-						)}
-						onClick={(e) => {
-							e.stopPropagation();
-							const newCompletedTime = currCompletedTime ? null : new Date().toISOString();
-							setCurrCompletedTime(newCompletedTime);
+					{!isForAddingNewTask && (
+						<span
+							className={classNames(
+								'flex items-center hover:text-white cursor-pointer',
+								priorityData?.textFlagColor
+							)}
+							onClick={(e) => {
+								e.stopPropagation();
+								const newCompletedTime = currCompletedTime ? null : new Date().toISOString();
+								setCurrCompletedTime(newCompletedTime);
 
-							// Reset and play audio
-							playCompletionSound();
+								// Reset and play audio
+								playCompletionSound();
 
-							editTask({ taskId: _id, payload: { completedTime: newCompletedTime } });
-						}}
-					>
-						{willNotDo ? (
-							<Icon name="disabled_by_default" fill={1} customClass={'!text-[20px] '} />
-						) : !currCompletedTime ? (
-							children.length > 0 ? (
-								<Icon name="list_alt" fill={0} customClass={'!text-[20px] '} />
+								!isForAddingNewTask &&
+									editTask({ taskId: _id, payload: { completedTime: newCompletedTime } });
+							}}
+						>
+							{willNotDo ? (
+								<Icon name="disabled_by_default" fill={1} customClass={'!text-[20px] '} />
+							) : !currCompletedTime ? (
+								children?.length > 0 ? (
+									<Icon name="list_alt" fill={0} customClass={'!text-[20px] '} />
+								) : (
+									<Icon name="check_box_outline_blank" customClass={'!text-[20px] '} />
+								)
 							) : (
-								<Icon name="check_box_outline_blank" customClass={'!text-[20px] '} />
-							)
-						) : (
-							<Icon name="check_box" customClass={'!text-[20px] '} />
-						)}
-					</span>
+								<Icon name="check_box" customClass={'!text-[20px] '} />
+							)}
+						</span>
+					)}
 
-					<div className="flex items-center gap-1 border-l border-color-gray-200 text-color-gray-100 px-2 relative">
+					<div
+						className={classNames(
+							'flex items-center gap-1 text-color-gray-100 relative',
+							!isForAddingNewTask && 'border-l border-color-gray-200 px-2'
+						)}
+					>
 						<div
 							ref={dropdownCalendarToggleRef}
 							onClick={() => setIsDropdownCalendarVisible(!isDropdownCalendarVisible)}
@@ -236,6 +265,8 @@ const TaskDetails = ({ taskToUse }) => {
 							isVisible={isDropdownCalendarVisible}
 							setIsVisible={setIsDropdownCalendarVisible}
 							task={task}
+							setTask={setTask}
+							isForAddingNewTask={isForAddingNewTask}
 							currDueDate={currDueDate}
 							setCurrDueDate={setCurrDueDate}
 							customClasses=" !ml-[0px] mt-[15px]"
@@ -252,7 +283,7 @@ const TaskDetails = ({ taskToUse }) => {
 							name="flag"
 							customClass={classNames(
 								'!text-[22px] hover:text-white cursor-pointer',
-								priorityData.textFlagColor
+								priorityData?.textFlagColor
 							)}
 						/>
 					</div>
@@ -319,7 +350,7 @@ const TaskDetails = ({ taskToUse }) => {
 						value={currTitle}
 						onChange={(e) => {
 							setCurrTitle(e.target.value);
-							debouncedEditTaskApiCall(_id, { title: e.target.value });
+							!isForAddingNewTask && debouncedEditTaskApiCall(_id, { title: e.target.value });
 						}}
 					></TextareaAutosize>
 					<TextareaAutosize
@@ -328,7 +359,7 @@ const TaskDetails = ({ taskToUse }) => {
 						value={currDescription}
 						onChange={(e) => {
 							setCurrDescription(e.target.value);
-							debouncedEditTaskApiCall(_id, { description: e.target.value });
+							!isForAddingNewTask && debouncedEditTaskApiCall(_id, { description: e.target.value });
 						}}
 					></TextareaAutosize>
 					{/* {children.map((subtaskId: string) => (
@@ -382,7 +413,7 @@ const TaskDetails = ({ taskToUse }) => {
 					setShowAddCommentInput={setShowAddCommentInput}
 					currentComment={currentComment}
 					setCurrentComment={setCurrentComment}
-					taskId={taskId}
+					taskId={paramsTaskId}
 					commentToEdit={commentToEdit}
 					setCommentToEdit={setCommentToEdit}
 				/>
@@ -410,40 +441,43 @@ const TaskDetails = ({ taskToUse }) => {
 								setSelectedItem={setSelectedProject}
 								items={projects}
 								task={task}
+								isForAddingNewTask={isForAddingNewTask}
 								type="project"
 								customClasses="!mt-[-315px]"
 							/>
 						</div>
 					)}
 
-					<div className="flex items-center gap-2 relative">
-						{/* <Icon name="edit_note" customClass={"text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer"} fill={0} /> */}
-						<Icon
-							name="comment"
-							customClass={
-								'text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer'
-							}
-							fill={0}
-							onClick={() => setShowAddCommentInput(!showAddCommentInput)}
-						/>
-						<Icon
-							toggleRef={dropdownTaskOptionsRef}
-							name="more_horiz"
-							customClass={
-								'text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer'
-							}
-							fill={0}
-							onClick={() => setIsDropdownTaskOptionsVisible(!isDropdownTaskOptionsVisible)}
-						/>
+					{!isForAddingNewTask && (
+						<div className="flex items-center gap-2 relative">
+							{/* <Icon name="edit_note" customClass={"text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer"} fill={0} /> */}
+							<Icon
+								name="comment"
+								customClass={
+									'text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer'
+								}
+								fill={0}
+								onClick={() => setShowAddCommentInput(!showAddCommentInput)}
+							/>
+							<Icon
+								toggleRef={dropdownTaskOptionsRef}
+								name="more_horiz"
+								customClass={
+									'text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer'
+								}
+								fill={0}
+								onClick={() => setIsDropdownTaskOptionsVisible(!isDropdownTaskOptionsVisible)}
+							/>
 
-						<DropdownTaskOptions
-							toggleRef={dropdownTaskOptionsRef}
-							isVisible={isDropdownTaskOptionsVisible}
-							setIsVisible={setIsDropdownTaskOptionsVisible}
-							setIsModalTaskActivitiesOpen={setIsModalTaskActivitiesOpen}
-							task={task}
-						/>
-					</div>
+							<DropdownTaskOptions
+								toggleRef={dropdownTaskOptionsRef}
+								isVisible={isDropdownTaskOptionsVisible}
+								setIsVisible={setIsDropdownTaskOptionsVisible}
+								setIsModalTaskActivitiesOpen={setIsModalTaskActivitiesOpen}
+								task={task}
+							/>
+						</div>
+					)}
 				</div>
 			</div>
 
