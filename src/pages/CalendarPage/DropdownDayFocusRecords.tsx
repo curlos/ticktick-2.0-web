@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import Dropdown from '../../components/Dropdown/Dropdown';
-import MiniFocusRecord from './MiniFocusRecord';
+import MiniFocusRecord from './MiniActionItem';
 import { formatCheckedInDayDate } from '../../utils/date.utils';
 
 const DropdownDayFocusRecords = ({

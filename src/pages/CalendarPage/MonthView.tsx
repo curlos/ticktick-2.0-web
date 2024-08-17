@@ -1,11 +1,14 @@
 import classNames from 'classnames';
-import { areDatesEqual, formatCheckedInDayDate, formatDateTime, getCalendarMonth } from '../../utils/date.utils';
-import { useEffect, useRef, useState } from 'react';
+import { areDatesEqual, formatCheckedInDayDate, getCalendarMonth } from '../../utils/date.utils';
+import { useEffect, useState } from 'react';
 import { useGetFocusRecordsQuery } from '../../services/resources/focusRecordsApi';
-import MiniFocusRecord from './MiniFocusRecord';
+import MiniActionItem from './MiniActionItem';
 import useWindowSize from '../../hooks/useWindowSize';
+import useGroupedItemsByDate from '../../hooks/useGroupedItemsByDate';
 
 const MonthView = ({ currentDate }) => {
+	const { allItemsGroupedByDate } = useGroupedItemsByDate();
+
 	// RTK Query - Focus Records
 	const {
 		data: fetchedFocusRecords,
@@ -16,20 +19,20 @@ const MonthView = ({ currentDate }) => {
 	const calendarDateRange = getCalendarMonth(currentDate.getFullYear(), currentDate.getMonth(), 5);
 	const shownWeeks = calendarDateRange;
 
-	const [maxFocusRecords, setMaxFocusRecords] = useState(4);
+	const [maxActionItems, setMaxActionItems] = useState(4);
 
 	const { height } = useWindowSize();
 
 	useEffect(() => {
-		const newMaxFocusRecords = getMaxFocusRecordsFor6Weeks();
-		setMaxFocusRecords(newMaxFocusRecords);
+		const newMaxActionItems = getMaxActionItemsFor6Weeks();
+		setMaxActionItems(newMaxActionItems);
 	}, [height]);
 
 	// TODO: This works only for 6 weeks and has been tested on desktop only. For Mobile, this will of course be completely different and if there's less than 6 weeks (1 through 5 weeks), then we can show more of course. Needs to be added later.
-	const getMaxFocusRecordsFor6Weeks = () => {
+	const getMaxActionItemsFor6Weeks = () => {
 		if (height) {
-			if (height >= 1080) return 5;
-			if (height >= 820) return 4;
+			if (height >= 850) return 5;
+			if (height >= 770) return 4;
 			if (height >= 670) return 3;
 			if (height >= 530) return 2;
 		}
@@ -73,21 +76,21 @@ const MonthView = ({ currentDate }) => {
 
 							const formattedDay = formatCheckedInDayDate(day);
 
-							const focusRecordsForTheDay =
-								sortedGroupedFocusRecordsAsc && sortedGroupedFocusRecordsAsc[formattedDay];
+							const actionItems = allItemsGroupedByDate[formattedDay] || {};
+							const { tasks, focusRecords } = actionItems;
+							const safeTasks = tasks ? tasks : [];
+							const safeFocusRecords = focusRecords ? focusRecords : [];
 
-							const remainingRowsToBeFilled = focusRecordsForTheDay
-								? focusRecordsForTheDay.slice(0, maxFocusRecords).length - maxFocusRecords
-								: maxFocusRecords;
+							const flattenedActionItems = [...safeTasks, ...safeFocusRecords];
+
+							const remainingRowsToBeFilled = flattenedActionItems
+								? flattenedActionItems.slice(0, maxActionItems).length - maxActionItems
+								: maxActionItems;
 							const allRowsFilled = remainingRowsToBeFilled <= 0;
 							const emptyRows =
 								(!allRowsFilled &&
 									Array.from({ length: remainingRowsToBeFilled }, (_, index) => index + 1)) ||
 								[];
-
-							// if (focusRecordsForTheDay) {
-							// 	console.log(emptyRows);
-							// }
 
 							return (
 								<div
@@ -101,10 +104,7 @@ const MonthView = ({ currentDate }) => {
 									<span className="pl-1">{day.getDate()}</span>
 
 									<div className="space-y-1 text-white text-[11px] mt-1 px-[2px] w-full">
-										<DayFocusRecordsList
-											focusRecordsForTheDay={focusRecordsForTheDay}
-											maxFocusRecords={maxFocusRecords}
-										/>
+										<ActionItemList actionItems={actionItems} maxActionItems={maxActionItems} />
 
 										{emptyRows.map((row) => (
 											<div
@@ -123,19 +123,39 @@ const MonthView = ({ currentDate }) => {
 	);
 };
 
-const DayFocusRecordsList = ({ focusRecordsForTheDay, maxFocusRecords }) => {
-	const shownFocusRecords = focusRecordsForTheDay?.slice(0, maxFocusRecords);
+const ActionItemList = ({ actionItems, maxActionItems }) => {
+	const { tasks, focusRecords } = actionItems;
+	const safeTasks = tasks ? tasks : [];
+	const safeFocusRecords = focusRecords ? focusRecords : [];
 
-	return shownFocusRecords?.map((focusRecord, index) => (
-		<MiniFocusRecord
-			key={focusRecord._id}
-			focusRecord={focusRecord}
-			index={index}
-			maxFocusRecords={maxFocusRecords}
-			focusRecordsForTheDay={focusRecordsForTheDay}
-			shownFocusRecords={shownFocusRecords}
-		/>
-	));
+	const flattenedActionItems = [...safeTasks, ...safeFocusRecords];
+	const shownActionItems = flattenedActionItems.slice(0, maxActionItems);
+
+	return (
+		<div className="space-y-[2px]">
+			{tasks?.map((task, index) => (
+				<MiniActionItem
+					key={task._id}
+					index={index}
+					task={task}
+					flattenedActionItems={flattenedActionItems}
+					shownActionItems={shownActionItems}
+					maxActionItems={maxActionItems}
+				/>
+			))}
+
+			{focusRecords?.map((focusRecord, index) => (
+				<MiniActionItem
+					key={focusRecord._id}
+					index={index}
+					focusRecord={focusRecord}
+					flattenedActionItems={flattenedActionItems}
+					shownActionItems={shownActionItems}
+					maxActionItems={maxActionItems}
+				/>
+			))}
+		</div>
+	);
 };
 
 export default MonthView;

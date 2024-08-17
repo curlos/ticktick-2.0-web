@@ -44,6 +44,7 @@ const AgendaView = () => {
 											/>
 										);
 									})}
+
 									{focusRecords?.map((focusRecord, index) => {
 										const isLastAgendaItem = index === focusRecords.length - 1;
 
