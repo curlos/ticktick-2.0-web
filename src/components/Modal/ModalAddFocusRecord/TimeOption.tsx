@@ -1,8 +1,9 @@
 import classNames from 'classnames';
 import DropdownTimeCalendar from '../../Dropdown/DropdownsAddFocusRecord/DropdownTimeCalendar';
 import Icon from '../../Icon';
-import { getDurationFromDates } from '../../../utils/date.utils';
+import { getDurationFromDates, isDateBefore } from '../../../utils/date.utils';
 import { formatTimeToHoursMinutesSeconds } from '../../../utils/helpers.utils';
+import useHandleError from '../../../hooks/useHandleError';
 
 const TimeOption = ({
 	dropdownRef,
@@ -18,11 +19,22 @@ const TimeOption = ({
 	setMinutes,
 	getDuration,
 }) => {
-	const handleSetDate = (newDate) => {
-		setTime(newDate);
+	const handleError = useHandleError();
 
-		const startTimeToUse = name === 'Start Time' ? newDate : startTime;
-		const endTimeToUse = name === 'End Time' ? newDate : endTime;
+	const handleSetDate = (newDate) => {
+		const settingStartTime = name === 'Start Time';
+		const settingEndTime = name === 'End Time';
+
+		const startTimeToUse = settingStartTime ? newDate : startTime;
+		const endTimeToUse = settingEndTime ? newDate : endTime;
+
+		const isStartTimeBeforeEndTime = startTimeToUse && endTimeToUse ? isDateBefore(startTimeToUse, endTimeToUse) : true
+
+		if (isStartTimeBeforeEndTime) {
+			setTime(newDate);	
+		} else {
+			throw new Error("Start Time must be before End Time.")
+		}
 
 		if (startTimeToUse && endTimeToUse) {
 			const durationInSeconds = getDurationFromDates(startTimeToUse, endTimeToUse);
@@ -83,7 +95,11 @@ const TimeOption = ({
 					isVisible={isDropdownVisible}
 					setIsVisible={setIsDropdownVisible}
 					date={time}
-					setDate={handleSetDate}
+					setDate={(newDate) => {
+						handleError(() => {
+							handleSetDate(newDate);
+						});
+					}}
 					showTime={true}
 				/>
 			</div>

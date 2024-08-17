@@ -536,3 +536,12 @@ export const getDurationFromDates = (date1, date2) => {
 
 	return diffInSeconds;
 };
+
+export const isDateBefore = (firstDate, secondDate) => {
+	// Convert date inputs to Date objects if they are not already
+	const date1 = new Date(firstDate);
+	const date2 = new Date(secondDate);
+
+	// Compare the time values of the dates
+	return date1.getTime() < date2.getTime();
+};
