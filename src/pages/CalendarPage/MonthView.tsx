@@ -83,6 +83,10 @@ const MonthView = ({ currentDate }) => {
 									Array.from({ length: remainingRowsToBeFilled }, (_, index) => index + 1)) ||
 								[];
 
+							const dayNum = day.getDate();
+							const dayMonthName = dayNum === 1 ? day.toLocaleString('default', { month: 'short' }) : '';
+							const formattedDayText = `${dayMonthName} ${dayNum}`;
+
 							return (
 								<div
 									key={`day-${index}`}
@@ -92,7 +96,7 @@ const MonthView = ({ currentDate }) => {
 										index !== 0 ? 'border-l border-color-gray-200' : ''
 									)}
 								>
-									<span className="pl-1">{day.getDate()}</span>
+									<span className="pl-1">{formattedDayText}</span>
 
 									<div className="space-y-1 text-white text-[11px] mt-1 px-[2px] w-full">
 										<ActionItemList
