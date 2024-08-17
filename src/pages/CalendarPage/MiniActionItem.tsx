@@ -1,9 +1,13 @@
 import classNames from 'classnames';
-import { useRef, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 import { formatDateTime } from '../../utils/date.utils';
 import DropdownAllActionItemsForDay from './DropdownAllActionItemsForDay';
 import { useGetHabitsQuery } from '../../services/resources/habitsApi';
 import { useGetTasksQuery } from '../../services/resources/tasksApi';
+import useContextMenu from '../../hooks/useContextMenu';
+import ContextMenuGeneric from '../../components/ContextMenu/ContextMenuGeneric';
+import DrodpownAddFocusRecord from '../../components/Dropdown/DropdownAddFocusRecord';
+import DropdownTaskDetails from '../../components/Dropdown/DropdownTaskDetails';
 
 const MiniActionItem = ({
 	index,
@@ -16,6 +20,7 @@ const MiniActionItem = ({
 	formattedDay,
 }) => {
 	const maxActionItems = shownActionItems.length;
+	const isForTask = task && Object.keys(task).length > 0;
 	const isForFocusRecord = focusRecord && Object.keys(focusRecord).length > 0;
 
 	// RTK Query - Tasks
@@ -38,6 +43,9 @@ const MiniActionItem = ({
 	const dropdownDayFocusRecords = useRef(null);
 	const [isDropdownDayFocusRecordsVisible, setIsDropdownDayFocusRecordsVisible] = useState(false);
 
+	const { contextMenu, isDropdownVisible, setIsDropdownVisible, dropdownRef, handleContextMenu, handleClose } =
+		useContextMenu();
+
 	if (index >= maxActionItems) {
 		return null;
 	}
@@ -50,6 +58,10 @@ const MiniActionItem = ({
 					// Necessary for the focus records with "+X" at the end.
 					'w-[88%]'
 				)}
+				onClick={(e) => {
+					e.stopPropagation();
+					handleContextMenu(e);
+				}}
 			>
 				<span className="truncate">{name}</span>
 				{isForFocusRecord && (
@@ -69,7 +81,6 @@ const MiniActionItem = ({
 						+{leftoverActionItemsCount}
 					</div>
 
-					{/* TODO: Bring back in a moment and refactor to include BOTH Tasks and Focus Records. */}
 					<DropdownAllActionItemsForDay
 						toggleRef={dropdownDayFocusRecords}
 						isVisible={isDropdownDayFocusRecordsVisible}
@@ -80,6 +91,47 @@ const MiniActionItem = ({
 						formattedDay={formattedDay}
 					/>
 				</div>
+			)}
+
+			{contextMenu && (
+				<ContextMenuGeneric
+					xPos={contextMenu.xPos}
+					yPos={contextMenu.yPos}
+					onClose={handleClose}
+					isDropdownVisible={isDropdownVisible}
+					setIsDropdownVisible={setIsDropdownVisible}
+				>
+					{isForTask ? (
+						<DropdownTaskDetails
+							toggleRef={dropdownRef}
+							isVisible={true}
+							setIsVisible={setIsDropdownVisible}
+							customClasses=" !ml-[0px] mt-[15px]"
+							customStyling={{
+								position: 'absolute',
+								top: `${contextMenu.yPos}px`,
+								left: `${contextMenu.xPos}px`,
+							}}
+							onCloseContextMenu={handleClose}
+							task={task}
+						/>
+					) : (
+						<DrodpownAddFocusRecord
+							toggleRef={dropdownRef}
+							isVisible={true}
+							setIsVisible={setIsDropdownVisible}
+							customClasses=" !ml-[0px] mt-[15px]"
+							customStyling={{
+								position: 'absolute',
+								top: `${contextMenu.yPos}px`,
+								left: `${contextMenu.xPos}px`,
+							}}
+							onCloseContextMenu={handleClose}
+							focusRecord={focusRecord}
+							showTitle={false}
+						/>
+					)}
+				</ContextMenuGeneric>
 			)}
 		</div>
 	);
