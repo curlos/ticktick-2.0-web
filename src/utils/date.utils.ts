@@ -196,8 +196,6 @@ export const groupTasksByDate = (tasks) => {
 	tasks.forEach((task) => {
 		const associatedTaskTime = getAssociatedTimeForTask(task);
 
-		console.log(associatedTaskTime);
-
 		if (!associatedTaskTime) {
 			return;
 		}

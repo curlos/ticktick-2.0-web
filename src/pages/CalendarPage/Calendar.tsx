@@ -4,7 +4,6 @@ import DayView from './DayView';
 import MonthView from './MonthView';
 
 const Calendar = ({ currentDate, selectedInterval, headerHeight }) => {
-	console.log(headerHeight);
 	const maxHeight = useMaxHeight(headerHeight);
 
 	return (

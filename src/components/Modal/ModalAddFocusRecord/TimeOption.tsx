@@ -28,20 +28,18 @@ const TimeOption = ({
 		const startTimeToUse = settingStartTime ? newDate : startTime;
 		const endTimeToUse = settingEndTime ? newDate : endTime;
 
-		const isStartTimeBeforeEndTime = startTimeToUse && endTimeToUse ? isDateBefore(startTimeToUse, endTimeToUse) : true
+		const isStartTimeBeforeEndTime =
+			startTimeToUse && endTimeToUse ? isDateBefore(startTimeToUse, endTimeToUse) : true;
 
 		if (isStartTimeBeforeEndTime) {
-			setTime(newDate);	
+			setTime(newDate);
 		} else {
-			throw new Error("Start Time must be before End Time.")
+			throw new Error('Start Time must be before End Time.');
 		}
 
 		if (startTimeToUse && endTimeToUse) {
 			const durationInSeconds = getDurationFromDates(startTimeToUse, endTimeToUse);
 			const newPomos = getPomosFromDuration(durationInSeconds);
-
-			console.log(durationInSeconds);
-			console.log(newPomos);
 			setPomos(newPomos);
 
 			const { hours, minutes } = formatTimeToHoursMinutesSeconds(durationInSeconds);

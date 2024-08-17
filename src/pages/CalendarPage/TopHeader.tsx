@@ -17,8 +17,8 @@ const TopHeader = ({
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		if (topHeaderRef.current) {
-			setHeaderHeight(topHeaderRef.current.clientHeight);
+		if (topHeaderRef.current && document.readyState === 'complete') {
+			setHeaderHeight(topHeaderRef.current.getBoundingClientRect().height);
 		}
 	}, [topHeaderRef, setHeaderHeight]);
 
@@ -27,7 +27,6 @@ const TopHeader = ({
 
 	const getName = () => {
 		// TODO: For now, assume the interval is always monthly. This logic has to be reworked once other intervals come into play.
-
 		if (selectedInterval === 'Month') {
 			const currentMonth = currentDate.toLocaleString('default', { month: 'long', year: 'numeric' });
 			return `${currentMonth}`;
