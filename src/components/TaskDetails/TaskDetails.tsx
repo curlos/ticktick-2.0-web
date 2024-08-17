@@ -323,7 +323,7 @@ const TaskDetails = ({ taskToUse }) => {
 						}}
 					></TextareaAutosize>
 					<TextareaAutosize
-						className="text-[14px] placeholder:text-[#7C7C7C] mt-2 mb-4 bg-transparent w-full outline-none resize-none"
+						className="text-[14px] placeholder:text-[#7C7C7C] mt-2 mb-4 bg-transparent w-full outline-none resize-none gray-scrollbar"
 						placeholder="Description"
 						value={currDescription}
 						onChange={(e) => {

@@ -350,6 +350,7 @@ const AgendaItem = ({
 								}}
 								onCloseContextMenu={handleClose}
 								focusRecord={focusRecord}
+								showTitle={false}
 							/>
 						)}
 					</ContextMenuGeneric>

@@ -2,7 +2,15 @@ import Dropdown from './Dropdown';
 import classNames from 'classnames';
 import AddOrEditFocusRecord from '../Modal/ModalAddFocusRecord/AddOrEditFocusRecord';
 
-const DrodpownAddFocusRecord = ({ toggleRef, isVisible, setIsVisible, customClasses, customStyling, focusRecord }) => {
+const DrodpownAddFocusRecord = ({
+	toggleRef,
+	isVisible,
+	setIsVisible,
+	customClasses,
+	customStyling,
+	focusRecord,
+	showTitle,
+}) => {
 	return (
 		<Dropdown
 			toggleRef={toggleRef}
@@ -12,7 +20,7 @@ const DrodpownAddFocusRecord = ({ toggleRef, isVisible, setIsVisible, customClas
 			customStyling={customStyling ? customStyling : null}
 		>
 			<div className="w-[400px]">
-				<AddOrEditFocusRecord focusRecord={focusRecord} />
+				<AddOrEditFocusRecord focusRecord={focusRecord} showTitle={showTitle} />
 			</div>
 		</Dropdown>
 	);

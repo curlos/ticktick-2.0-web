@@ -6,7 +6,7 @@ import TopHeader from './TopHeader';
 
 const CalendarPage = () => {
 	const [showFilterSidebar, setShowFilterSidebar] = useState(true);
-	const [selectedInterval, setSelectedInterval] = useState('Agenda');
+	const [selectedInterval, setSelectedInterval] = useState('Month');
 	const [currentDate, setCurrentDate] = useState(new Date());
 
 	const topHeaderRef = useRef(null);

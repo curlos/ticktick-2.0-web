@@ -14,7 +14,7 @@ import FocusRecordChild from './FocusRecordChild';
 import TimeOption from './TimeOption';
 import TextareaAutosize from 'react-textarea-autosize';
 
-const AddOrEditFocusRecord = ({ focusRecord, closeModal }) => {
+const AddOrEditFocusRecord = ({ focusRecord, closeModal, showTitle = true }) => {
 	const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
 	const { tasks, tasksById } = fetchedTasks || {};
 
@@ -128,14 +128,16 @@ const AddOrEditFocusRecord = ({ focusRecord, closeModal }) => {
 	return (
 		<div>
 			<div className={classNames('p-5', focusRecord ? 'pb-2' : '')}>
-				<div className="flex items-center justify-between mb-4">
-					<h3 className="font-bold text-[16px]">{focusRecord ? 'Edit' : 'Add'} Focus Record</h3>
-					<Icon
-						name="close"
-						customClass={'!text-[20px] text-color-gray-100 hover:text-white cursor-pointer'}
-						onClick={closeModal}
-					/>
-				</div>
+				{showTitle && (
+					<div className="flex items-center justify-between mb-4">
+						<h3 className="font-bold text-[16px]">{focusRecord ? 'Edit' : 'Add'} Focus Record</h3>
+						<Icon
+							name="close"
+							customClass={'!text-[20px] text-color-gray-100 hover:text-white cursor-pointer'}
+							onClick={closeModal}
+						/>
+					</div>
+				)}
 
 				<div className="space-y-2">
 					{/* Task */}

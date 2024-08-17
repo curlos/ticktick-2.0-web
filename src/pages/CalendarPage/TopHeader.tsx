@@ -3,7 +3,6 @@ import { useDispatch } from 'react-redux';
 import Icon from '../../components/Icon';
 import { setModalState } from '../../slices/modalSlice';
 import DropdownIntervalSelect from './DropdownIntervalSelect';
-import { formatCheckedInDayDate, getCalendarMonth } from '../../utils/date.utils';
 
 const TopHeader = ({
 	topHeaderRef,
@@ -21,7 +20,7 @@ const TopHeader = ({
 		if (topHeaderRef.current) {
 			setHeaderHeight(topHeaderRef.current.clientHeight);
 		}
-	}, []);
+	}, [topHeaderRef, setHeaderHeight]);
 
 	const dropdownIntervalSelectRef = useRef(null);
 	const [isDropdownIntervalSelectVisible, setIsDropdownIntervalSelectVisible] = useState(false);
