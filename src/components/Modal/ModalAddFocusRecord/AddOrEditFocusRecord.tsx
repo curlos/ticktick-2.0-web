@@ -186,6 +186,12 @@ const AddOrEditFocusRecord = ({ focusRecord, closeModal, showTitle = true }) => 
 							time={startTime}
 							setTime={setStartTime}
 							name="Start Time"
+							startTime={startTime}
+							endTime={endTime}
+							setPomos={setPomos}
+							setHours={setHours}
+							setMinutes={setMinutes}
+							getDuration={getDuration}
 						/>
 					)}
 
@@ -198,6 +204,12 @@ const AddOrEditFocusRecord = ({ focusRecord, closeModal, showTitle = true }) => 
 							time={endTime}
 							setTime={setEndTime}
 							name="End Time"
+							startTime={startTime}
+							endTime={endTime}
+							setPomos={setPomos}
+							setHours={setHours}
+							setMinutes={setMinutes}
+							getDuration={getDuration}
 						/>
 					)}
 

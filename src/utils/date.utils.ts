@@ -526,3 +526,13 @@ export const sortObjectByDateKeys = (data) => {
 
 	return sortedObject;
 };
+
+export const getDurationFromDates = (date1, date2) => {
+	// Calculate the difference in milliseconds
+	const diffInMilliseconds = date2.getTime() - date1.getTime();
+
+	// Convert milliseconds to seconds
+	const diffInSeconds = diffInMilliseconds / 1000;
+
+	return diffInSeconds;
+};

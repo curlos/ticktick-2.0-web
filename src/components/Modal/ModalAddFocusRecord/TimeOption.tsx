@@ -1,8 +1,51 @@
 import classNames from 'classnames';
 import DropdownTimeCalendar from '../../Dropdown/DropdownsAddFocusRecord/DropdownTimeCalendar';
 import Icon from '../../Icon';
+import { getDurationFromDates } from '../../../utils/date.utils';
+import { formatTimeToHoursMinutesSeconds } from '../../../utils/helpers.utils';
 
-const TimeOption = ({ dropdownRef, isDropdownVisible, setIsDropdownVisible, time, setTime, name }) => {
+const TimeOption = ({
+	dropdownRef,
+	isDropdownVisible,
+	setIsDropdownVisible,
+	time,
+	setTime,
+	name,
+	startTime,
+	endTime,
+	setPomos,
+	setHours,
+	setMinutes,
+	getDuration,
+}) => {
+	const handleSetDate = (newDate) => {
+		setTime(newDate);
+
+		const startTimeToUse = name === 'Start Time' ? newDate : startTime;
+		const endTimeToUse = name === 'End Time' ? newDate : endTime;
+
+		if (startTimeToUse && endTimeToUse) {
+			const durationInSeconds = getDurationFromDates(startTimeToUse, endTimeToUse);
+			const newPomos = getPomosFromDuration(durationInSeconds);
+
+			console.log(durationInSeconds);
+			console.log(newPomos);
+			setPomos(newPomos);
+
+			const { hours, minutes } = formatTimeToHoursMinutesSeconds(durationInSeconds);
+			setHours(hours);
+			setMinutes(minutes);
+		}
+	};
+
+	const getPomosFromDuration = (durationInSeconds) => {
+		const defaultPomoLength = 2700; // 2700 seconds = 45 minutes
+
+		if (defaultPomoLength >= durationInSeconds) return 1;
+
+		return Math.round(durationInSeconds / defaultPomoLength);
+	};
+
 	return (
 		<div className="flex items-center gap-2">
 			<div className="w-[100px]">{name}</div>
@@ -38,7 +81,7 @@ const TimeOption = ({ dropdownRef, isDropdownVisible, setIsDropdownVisible, time
 					isVisible={isDropdownVisible}
 					setIsVisible={setIsDropdownVisible}
 					date={time}
-					setDate={setTime}
+					setDate={handleSetDate}
 					showTime={true}
 				/>
 			</div>
