@@ -39,7 +39,7 @@ const EmptyTask = () => (
 	</div>
 );
 
-const TaskDetails = ({ taskToUse, isForAddingNewTask = false }) => {
+const TaskDetails = ({ taskToUse, isForAddingNewTask = false, newTask, setNewTask }) => {
 	// RTK Query - Tasks
 	const { data: fetchedTasks, isLoading: isTasksLoading, error } = useGetTasksQuery();
 	const { tasks, tasksById, parentOfTasks } = fetchedTasks || {};
@@ -171,11 +171,17 @@ const TaskDetails = ({ taskToUse, isForAddingNewTask = false }) => {
 	}, [paramsTaskId, tasks, tasksById, isTasksLoading, isProjectsLoading, isLoadingFocusRecords]);
 
 	const resetStateValues = () => {
-		setTask(null);
+		setTask(
+			taskToUse?.dueDate
+				? {
+						dueDate: taskToUse.dueDate,
+					}
+				: null
+		);
 		setCurrTitle('');
 		setCurrDescription('');
 		setCurrCompletedTime(null);
-		setCurrDueDate(null);
+		setCurrDueDate(taskToUse?.dueDate || null);
 		setSelectedProject(inboxProject);
 		setSelectedTagList([]);
 		setParentTask(null);
@@ -183,6 +189,18 @@ const TaskDetails = ({ taskToUse, isForAddingNewTask = false }) => {
 		setPomos(0);
 		setDuration(0);
 	};
+
+	useEffect(() => {
+		if (isForAddingNewTask) {
+			setNewTask({
+				title: currTitle,
+				description: currDescription,
+				priority: selectedPriority || 0,
+				projectId: selectedProject?._id ?? null,
+				dueDate: task?.dueDate ?? null,
+			});
+		}
+	}, [currTitle, currDescription, selectedProject, selectedPriority, task]);
 
 	if ((!task && !isForAddingNewTask) || isTasksLoading) {
 		return <EmptyTask />;
@@ -205,8 +223,6 @@ const TaskDetails = ({ taskToUse, isForAddingNewTask = false }) => {
 	const taskComments = _id && commentsByTaskId && commentsByTaskId[_id] && Object.values(commentsByTaskId[_id]);
 
 	const taskTags = tagIds?.map((tagId) => tagsById[tagId]);
-
-	console.log(task);
 
 	return (
 		<div
@@ -296,6 +312,7 @@ const TaskDetails = ({ taskToUse, isForAddingNewTask = false }) => {
 						setPriority={setSelectedPriority}
 						customClasses="!ml-[-180px]"
 						task={task}
+						isForAddingNewTask={isForAddingNewTask}
 					/>
 				</div>
 			</div>

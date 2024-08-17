@@ -7,6 +7,8 @@ import ActionItemList from './ActionItemList';
 import ContextMenuGeneric from '../../components/ContextMenu/ContextMenuGeneric';
 import DropdownTaskDetails from '../../components/Dropdown/DropdownTaskDetails';
 import useContextMenu from '../../hooks/useContextMenu';
+import { useAddTaskMutation } from '../../services/resources/tasksApi';
+import useHandleError from '../../hooks/useHandleError';
 
 const MonthView = ({ currentDate }) => {
 	const { allItemsGroupedByDate } = useGroupedItemsByDate();
@@ -71,21 +73,27 @@ const MonthView = ({ currentDate }) => {
 };
 
 const DaySquare = ({ day, index, currentDate, maxActionItems, allItemsGroupedByDate }) => {
+	const handleError = useHandleError();
+	// RTK Query - Tasks
+	const [addTask, { isLoading, error }] = useAddTaskMutation();
+
 	const { contextMenu, isDropdownVisible, setIsDropdownVisible, dropdownRef, handleContextMenu, handleClose } =
 		useContextMenu();
 
 	const isCurrentMonth = day.getMonth() === currentDate.getMonth();
 	const isDayToday = areDatesEqual(new Date(), day);
 	const appliedStyles = [];
+	const backgroundColor =
+		contextMenu && isDropdownVisible ? 'bg-color-gray-300' : 'bg-transparent hover:bg-color-gray-20';
 
 	if (isCurrentMonth) {
 		if (isDayToday) {
-			appliedStyles.push('text-blue-500');
+			appliedStyles.push('text-blue-500', backgroundColor);
 		} else {
-			appliedStyles.push('text-white bg-transparent hover:bg-color-gray-20');
+			appliedStyles.push('text-white', backgroundColor);
 		}
 	} else {
-		appliedStyles.push('text-color-gray-100 bg-transparent hover:bg-color-gray-20');
+		appliedStyles.push('text-color-gray-100', backgroundColor);
 	}
 
 	const formattedDay = formatCheckedInDayDate(day);
@@ -108,12 +116,39 @@ const DaySquare = ({ day, index, currentDate, maxActionItems, allItemsGroupedByD
 	const dayMonthName = dayNum === 1 ? day.toLocaleString('default', { month: 'short' }) : '';
 	const formattedDayText = `${dayMonthName} ${dayNum}`;
 
+	const defaultNewTask = {
+		dueDate: day,
+	};
+
+	const [newTask, setNewTask] = useState(defaultNewTask);
+
+	const handleAddTask = async () => {
+		const { title, description, priority, projectId, dueDate } = newTask;
+
+		if (!title) {
+			return null;
+		}
+
+		const payload = {
+			title,
+			description,
+			priority,
+			projectId,
+			dueDate,
+		};
+
+		const addedTask = handleError(async () => {
+			await addTask({ payload }).unwrap();
+		});
+
+		console.log(addedTask);
+	};
+
 	return (
 		<div
 			className={classNames(`p-[1px] w-full`, appliedStyles, index !== 0 ? 'border-l border-color-gray-200' : '')}
 			onClick={(e) => {
 				e.stopPropagation();
-				console.log(e);
 				handleContextMenu(e);
 			}}
 		>
@@ -131,7 +166,13 @@ const DaySquare = ({ day, index, currentDate, maxActionItems, allItemsGroupedByD
 				<ContextMenuGeneric
 					xPos={contextMenu.xPos}
 					yPos={contextMenu.yPos}
-					onClose={handleClose}
+					onClose={() => {
+						// Check if there's at least a title on the task and if there is, then make an API call to add that task to the backend.
+						handleAddTask();
+
+						// Close the context menu
+						handleClose();
+					}}
 					isDropdownVisible={isDropdownVisible}
 					setIsDropdownVisible={setIsDropdownVisible}
 				>
@@ -146,7 +187,9 @@ const DaySquare = ({ day, index, currentDate, maxActionItems, allItemsGroupedByD
 							left: `${contextMenu.xPos}px`,
 						}}
 						onCloseContextMenu={handleClose}
-						task={null}
+						task={defaultNewTask}
+						newTask={newTask}
+						setNewTask={setNewTask}
 						isForAddingNewTask={true}
 					/>
 				</ContextMenuGeneric>

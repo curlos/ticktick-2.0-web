@@ -20,6 +20,7 @@ const DropdownPriorities: React.FC<DropdownPrioritiesProps> = ({
 	setPriority,
 	customClasses,
 	task,
+	isForAddingNewTask,
 }) => {
 	const [editTask] = useEditTaskMutation();
 
@@ -37,7 +38,7 @@ const DropdownPriorities: React.FC<DropdownPrioritiesProps> = ({
 					setPriority(backendValue);
 					setIsVisible(false);
 
-					if (task) {
+					if (task && !isForAddingNewTask) {
 						editTask({ taskId: task._id, payload: { priority: backendValue } });
 					}
 				}}

@@ -14,6 +14,7 @@ const useGroupedItemsByDate = () => {
 
 	// RTK Query - Tasks
 	const { data: fetchedTasks, isLoading: isLoadingGetTasks } = useGetTasksQuery();
+	// TODO: When a new task is added, not showing up on calendar. Make sure this refreshes so data isn't stale.
 	const { tasks, tasksById, groupedTasksByDate } = fetchedTasks || {};
 
 	// RTK Query - Habits
