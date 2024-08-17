@@ -50,8 +50,11 @@ const AddOrEditFocusRecord = ({ focusRecord, closeModal, showTitle = true }) => 
 
 	useEffect(() => {
 		if (focusRecord) {
+			console.log(focusRecord);
 			const duration = formatTimeToHoursMinutesSeconds(focusRecord?.duration) || { hours: 0, minutes: 0 };
 			const task = tasksById[focusRecord.taskId];
+
+			// console.log(duration);
 
 			setSelectedTask(task);
 			setFocusNote(focusRecord.note);
@@ -73,17 +76,7 @@ const AddOrEditFocusRecord = ({ focusRecord, closeModal, showTitle = true }) => 
 		}
 	}, [focusRecord]);
 
-	useEffect(() => {
-		if (focusType === 'pomo') {
-			const duration = getDuration();
-			const { hours, minutes } = formatTimeToHoursMinutesSeconds(duration);
-
-			setHours(hours);
-			setMinutes(minutes);
-		}
-	}, [pomos]);
-
-	const getDuration = () => {
+	const getDuration = (pomos) => {
 		if (focusType === 'pomo') {
 			// TODO: Change later when focus settings is worked on but for now keep it at 45 minutes as the default
 			const defaultPomoLength = 2700; // 2700 seconds = 45 minutes
@@ -102,7 +95,7 @@ const AddOrEditFocusRecord = ({ focusRecord, closeModal, showTitle = true }) => 
 			habitId: !isTask && selectedTask ? selectedTask._id : null,
 			startTime: startTime,
 			endTime: endTime,
-			duration: getDuration(),
+			duration: getDuration(pomos),
 			pomos: focusType === 'pomo' ? pomos : 0,
 			focusType,
 			note: focusNote,
@@ -253,6 +246,7 @@ const AddOrEditFocusRecord = ({ focusRecord, closeModal, showTitle = true }) => 
 									setHours={setHours}
 									minutes={minutes}
 									setMinutes={setMinutes}
+									getDuration={getDuration}
 								/>
 							</div>
 						</div>

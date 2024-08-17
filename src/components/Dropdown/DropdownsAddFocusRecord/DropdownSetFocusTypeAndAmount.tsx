@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Dropdown from '../Dropdown';
 import { DropdownProps } from '../../../interfaces/interfaces';
 import CustomInput from '../../CustomInput';
+import { formatTimeToHoursMinutesSeconds } from '../../../utils/helpers.utils';
 
 interface DropdownSetFocusTypeAndAmountProps extends DropdownProps {
 	selectedTask: Object | null;
@@ -28,10 +29,20 @@ const DropdownSetFocusTypeAndAmount: React.FC<DropdownSetFocusTypeAndAmountProps
 	setHours,
 	minutes,
 	setMinutes,
+	getDuration,
 }) => {
 	const sharedButtonStyle = `text-[12px] py-1 px-3 rounded-3xl cursor-pointer`;
 	const selectedButtonStyle = `${sharedButtonStyle} bg-[#222735] text-[#4671F7] font-semibold`;
 	const unselectedButtonStyle = `${sharedButtonStyle} text-[#666666] bg-color-gray-300`;
+
+	const handlePomoChange = (newPomos) => {
+		setPomos(newPomos);
+
+		const duration = getDuration(newPomos);
+		const { hours, minutes } = formatTimeToHoursMinutesSeconds(duration);
+		setHours(hours);
+		setMinutes(minutes);
+	};
 
 	return (
 		<Dropdown
@@ -58,7 +69,7 @@ const DropdownSetFocusTypeAndAmount: React.FC<DropdownSetFocusTypeAndAmountProps
 			<div className="grid grid-cols-2 gap-4 my-4">
 				{focusType === 'pomo' ? (
 					<div className="flex items-end gap-2">
-						<CustomInput value={pomos} setValue={setPomos} customClasses="w-[60px]" />
+						<CustomInput value={pomos} setValue={handlePomoChange} customClasses="w-[60px]" />
 						<div>pomos</div>
 					</div>
 				) : (
