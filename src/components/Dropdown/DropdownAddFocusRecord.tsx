@@ -19,7 +19,12 @@ const DrodpownAddFocusRecord = ({
 			customClasses={classNames('shadow-2xl border border-color-gray-200 rounded-lg', customClasses)}
 			customStyling={customStyling ? customStyling : null}
 		>
-			<div className="w-[400px]">
+			<div
+				className="w-[400px]"
+				onClick={(e) => {
+					e.stopPropagation();
+				}}
+			>
 				<AddOrEditFocusRecord focusRecord={focusRecord} showTitle={showTitle} />
 			</div>
 		</Dropdown>
