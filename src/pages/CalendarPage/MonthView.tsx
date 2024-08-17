@@ -1,21 +1,12 @@
 import classNames from 'classnames';
 import { areDatesEqual, formatCheckedInDayDate, getCalendarMonth } from '../../utils/date.utils';
 import { useEffect, useState } from 'react';
-import { useGetFocusRecordsQuery } from '../../services/resources/focusRecordsApi';
-import MiniActionItem from './MiniActionItem';
 import useWindowSize from '../../hooks/useWindowSize';
 import useGroupedItemsByDate from '../../hooks/useGroupedItemsByDate';
+import ActionItemList from './ActionItemList';
 
 const MonthView = ({ currentDate }) => {
 	const { allItemsGroupedByDate } = useGroupedItemsByDate();
-
-	// RTK Query - Focus Records
-	const {
-		data: fetchedFocusRecords,
-		isLoading: isLoadingFocusRecords,
-		error: errorFocusRecords,
-	} = useGetFocusRecordsQuery();
-	const { sortedGroupedFocusRecordsAsc } = fetchedFocusRecords || {};
 	const calendarDateRange = getCalendarMonth(currentDate.getFullYear(), currentDate.getMonth(), 5);
 	const shownWeeks = calendarDateRange;
 
@@ -119,41 +110,6 @@ const MonthView = ({ currentDate }) => {
 					</div>
 				))}
 			</div>
-		</div>
-	);
-};
-
-const ActionItemList = ({ actionItems, maxActionItems }) => {
-	const { tasks, focusRecords } = actionItems;
-	const safeTasks = tasks ? tasks : [];
-	const safeFocusRecords = focusRecords ? focusRecords : [];
-
-	const flattenedActionItems = [...safeTasks, ...safeFocusRecords];
-	const shownActionItems = flattenedActionItems.slice(0, maxActionItems);
-
-	return (
-		<div className="space-y-[2px]">
-			{tasks?.map((task, index) => (
-				<MiniActionItem
-					key={task._id}
-					index={index}
-					task={task}
-					flattenedActionItems={flattenedActionItems}
-					shownActionItems={shownActionItems}
-					maxActionItems={maxActionItems}
-				/>
-			))}
-
-			{focusRecords?.map((focusRecord, index) => (
-				<MiniActionItem
-					key={focusRecord._id}
-					index={index}
-					focusRecord={focusRecord}
-					flattenedActionItems={flattenedActionItems}
-					shownActionItems={shownActionItems}
-					maxActionItems={maxActionItems}
-				/>
-			))}
 		</div>
 	);
 };
