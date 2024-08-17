@@ -62,7 +62,7 @@ const useGroupedItemsByDate = () => {
 			const newSortedAllGroupedByDate = newAllGroupedByDate && sortObjectByDateKeys(newAllGroupedByDate);
 			setAllItemsGroupedByDate(newSortedAllGroupedByDate);
 		}
-	}, [isAllDoneLoading]);
+	}, [isAllDoneLoading, fetchedTasks, fetchedProjects, fetchedHabits, fetchedFocusRecords]);
 
 	return { allItemsGroupedByDate, isAllDoneLoading, focusRecordsById, tasksById, projectsById, habitsById };
 };

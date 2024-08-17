@@ -39,7 +39,13 @@ const EmptyTask = () => (
 	</div>
 );
 
-const TaskDetails = ({ taskToUse, isForAddingNewTask = false, newTask, setNewTask }) => {
+const TaskDetails = ({
+	taskToUse,
+	isForAddingNewTask = false,
+	setNewTask,
+	fromDropdown = false,
+	setIsDropdownTaskDetailsVisible,
+}) => {
 	// RTK Query - Tasks
 	const { data: fetchedTasks, isLoading: isTasksLoading, error } = useGetTasksQuery();
 	const { tasks, tasksById, parentOfTasks } = fetchedTasks || {};
@@ -492,6 +498,8 @@ const TaskDetails = ({ taskToUse, isForAddingNewTask = false, newTask, setNewTas
 								setIsVisible={setIsDropdownTaskOptionsVisible}
 								setIsModalTaskActivitiesOpen={setIsModalTaskActivitiesOpen}
 								task={task}
+								fromDropdown={fromDropdown}
+								setIsDropdownTaskDetailsVisible={setIsDropdownTaskDetailsVisible}
 							/>
 						</div>
 					)}

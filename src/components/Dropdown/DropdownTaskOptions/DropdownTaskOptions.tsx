@@ -12,6 +12,8 @@ import { useFlagTaskMutation, useGetTasksQuery } from '../../../services/resourc
 interface DropdownTaskOptionsProps extends DropdownProps {
 	setIsModalTaskActivitiesOpen: React.Dispatch<React.SetStateAction<boolean>>;
 	task: TaskObj;
+	fromDropdown: boolean;
+	setIsDropdownTaskDetailsVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const DropdownTaskOptions: React.FC<DropdownTaskOptionsProps> = ({
@@ -20,6 +22,8 @@ const DropdownTaskOptions: React.FC<DropdownTaskOptionsProps> = ({
 	setIsVisible,
 	setIsModalTaskActivitiesOpen,
 	task,
+	fromDropdown,
+	setIsDropdownTaskDetailsVisible,
 }) => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
@@ -54,10 +58,14 @@ const DropdownTaskOptions: React.FC<DropdownTaskOptionsProps> = ({
 				);
 			}
 
-			if (!parentId) {
-				navigate(`/projects/${projectId}/tasks`);
+			if (!fromDropdown) {
+				if (!parentId) {
+					navigate(`/projects/${projectId}/tasks`);
+				} else {
+					navigate(`/projects/${projectId}/tasks/${parentId}`);
+				}
 			} else {
-				navigate(`/projects/${projectId}/tasks/${parentId}`);
+				setIsDropdownTaskDetailsVisible(false);
 			}
 		} catch (error) {
 			throw new Error(error);

@@ -30,8 +30,9 @@ const DropdownTaskDetails: React.FC<IDropdownTaskDetails> = ({
 				<TaskDetails
 					taskToUse={task}
 					isForAddingNewTask={isForAddingNewTask}
-					newTask={newTask}
 					setNewTask={setNewTask}
+					fromDropdown={true}
+					setIsDropdownTaskDetailsVisible={setIsVisible}
 				/>
 			</div>
 		</Dropdown>
