@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { useContext, useRef, useState } from 'react';
-import { formatDateTime } from '../../utils/date.utils';
+import { areDatesEqual, formatDateTime, getAssociatedTimeForTask } from '../../utils/date.utils';
 import DropdownAllActionItemsForDay from './DropdownAllActionItemsForDay';
 import { useGetHabitsQuery } from '../../services/resources/habitsApi';
 import { useGetTasksQuery } from '../../services/resources/tasksApi';
@@ -50,13 +50,22 @@ const MiniActionItem = ({
 		return null;
 	}
 
+	const formattedDayDate = new Date(formattedDay);
+	const today = new Date();
+	const isToday = areDatesEqual(today, formattedDayDate);
+	const associatedTimeForTask = isForTask && getAssociatedTimeForTask(task);
+	const isDateBasedOnDueDate = associatedTimeForTask?.key === 'dueDate';
+
+	const showFullOpacity = isToday || isDateBasedOnDueDate;
+
 	return (
 		<div className="flex items-center gap-1 w-full">
 			<div
 				className={classNames(
-					'bg-emerald-600 rounded p-1 py-[2px] h-[20px] flex justify-between flex-1 cursor-pointer opacity-70',
+					'bg-emerald-600 rounded p-1 py-[2px] h-[20px] flex justify-between flex-1 cursor-pointer',
 					// Necessary for the focus records with "+X" at the end.
-					'w-[88%]'
+					'w-[88%]',
+					showFullOpacity ? 'opacity-100' : 'opacity-70'
 				)}
 				onClick={(e) => {
 					e.stopPropagation();
