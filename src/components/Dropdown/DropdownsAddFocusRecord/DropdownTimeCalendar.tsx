@@ -3,7 +3,7 @@ import { DropdownProps } from '../../../interfaces/interfaces';
 import SelectCalendar from '../../SelectCalendar';
 import Dropdown from '../Dropdown';
 import DropdownTime from '../DropdownCalendar/DropdownTime';
-import { getCurrentTimeString, setTimeOnDateString } from '../../../utils/date.utils';
+import { getTimeString, setTimeOnDateString } from '../../../utils/date.utils';
 
 interface DropdownTimeCalendarProps extends DropdownProps {
 	date: Date | null;
@@ -19,7 +19,7 @@ const DropdownTimeCalendar: React.FC<DropdownTimeCalendarProps> = ({
 	showTime = true,
 }) => {
 	// TODO: Get default date of today
-	const [selectedTime, setSelectedTime] = useState(getCurrentTimeString());
+	const [selectedTime, setSelectedTime] = useState(getTimeString(date));
 	const [selectedDate, setSelectedDate] = useState(null);
 	const [isDropdownTimeVisible, setIsDropdownTimeVisible] = useState(false);
 	const dropdownTimeRef = useRef(null);

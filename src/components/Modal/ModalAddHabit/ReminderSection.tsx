@@ -1,11 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Icon from '../../Icon';
-import {
-	areTimesEqual,
-	getCurrentTimeString,
-	getFormattedTimeString,
-	setTimeOnDateString,
-} from '../../../utils/date.utils';
+import { areTimesEqual, getTimeString, getFormattedTimeString, setTimeOnDateString } from '../../../utils/date.utils';
 import DropdownTime from '../../Dropdown/DropdownCalendar/DropdownTime';
 import classNames from 'classnames';
 import React from 'react';
@@ -22,7 +17,7 @@ const ReminderSection = ({ reminderList, setReminderList }) => {
 		const [isDropdownTimeVisible, setIsDropdownTimeVisible] = useState(false);
 		const [dropdownTimeWasVisible, setDropdownTimeWasVisible] = useState(false);
 		const [selectedTime, setSelectedTime] = useState(
-			reminderTime ? getFormattedTimeString(reminderTime) : getCurrentTimeString()
+			reminderTime ? getFormattedTimeString(reminderTime) : getTimeString()
 		);
 		const [isHovering, setIsHovering] = useState(false);
 		const [showPlus, setShowPlus] = useState(isNewReminder);

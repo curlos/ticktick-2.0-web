@@ -46,6 +46,8 @@ const TimeOption = ({
 		return Math.round(durationInSeconds / defaultPomoLength);
 	};
 
+	console.log(time);
+
 	return (
 		<div className="flex items-center gap-2">
 			<div className="w-[100px]">{name}</div>

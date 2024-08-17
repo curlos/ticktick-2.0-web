@@ -112,10 +112,10 @@ export const setTimeOnDateString = (dateString, timeString) => {
 	return date;
 };
 
-export const getCurrentTimeString = () => {
-	const now = new Date();
-	let hours = now.getHours();
-	const minutes = now.getMinutes();
+export const getTimeString = (dateToUse) => {
+	const date = dateToUse || new Date();
+	let hours = date.getHours();
+	const minutes = date.getMinutes();
 	const ampm = hours >= 12 ? 'PM' : 'AM';
 
 	// Convert hours from 24-hour time to 12-hour time
