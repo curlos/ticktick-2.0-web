@@ -10,6 +10,7 @@ import HabitsPage from './pages/HabitsPage';
 import FocusStatsPage from './pages/FocusStatsPage';
 import StatsPage from './pages/StatsPage/StatsPage';
 import CalendarPage from './pages/CalendarPage/CalendarPage';
+import { CalendarProvider } from './contexts/useCalendarContext';
 
 function App() {
 	return (
@@ -49,7 +50,14 @@ function App() {
 						<Route path="/stats/focus" element={<StatsPage />}></Route>
 
 						{/* Calendar Page */}
-						<Route path="/calendar" element={<CalendarPage />}></Route>
+						<Route
+							path="/calendar"
+							element={
+								<CalendarProvider>
+									<CalendarPage />
+								</CalendarProvider>
+							}
+						></Route>
 
 						{/* Fallback route for 404 Not Found */}
 						<Route path="*" element={<HomePage />} />

@@ -15,33 +15,6 @@ const CalendarPage = () => {
 	const [currentDate, setCurrentDate] = useState(new Date());
 	const topHeaderRef = useRef(null);
 	const [headerHeight, setHeaderHeight] = useState(0);
-	const [selectedColorsType, setSelectedColorsType] = useState('Projects');
-	const [selectedTasksToShow, setSelectedTasksToShow] = useState({
-		showCompleted: {
-			name: 'Show Completed',
-			isChecked: false,
-		},
-		showCheckItem: {
-			name: 'Show Check Item',
-			isChecked: false,
-		},
-		showAllRepeatCycle: {
-			name: 'Show All Repeat Cycle',
-			isChecked: false,
-		},
-		showHabit: {
-			name: 'Show Habit',
-			isChecked: false,
-		},
-		showFocusRecords: {
-			name: 'Show Focus Records',
-			isChecked: false,
-		},
-		showWeekends: {
-			name: 'Show Weekends',
-			isChecked: false,
-		},
-	});
 
 	// Filter Sidebar - useState
 	const [allValue, setAllValue] = useState({
@@ -101,10 +74,6 @@ const CalendarPage = () => {
 		setSelectedInterval,
 		connectedCurrentDate,
 		setConnectedCurrentDate,
-		selectedColorsType,
-		setSelectedColorsType,
-		selectedTasksToShow,
-		setSelectedTasksToShow,
 	};
 
 	return (
@@ -125,7 +94,12 @@ const CalendarPage = () => {
 						currentDate={currentDate}
 						selectedInterval={selectedInterval}
 						headerHeight={headerHeight}
-						{...{ allValue, selectedValuesById, selectedCollapsibleValues, currDueDate }}
+						{...{
+							allValue,
+							selectedValuesById,
+							selectedCollapsibleValues,
+							currDueDate,
+						}}
 					/>
 				</div>
 			</div>

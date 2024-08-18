@@ -4,15 +4,11 @@ import Modal from '../../components/Modal/Modal';
 import { useRef, useState } from 'react';
 import DropdownGeneralSelect from '../StatsPage/DropdownGeneralSelect';
 import CustomCheckbox from '../../components/CustomCheckbox';
+import { useCalendarContext } from '../../contexts/useCalendarContext';
 
-const ModalViewOptions: React.FC = ({
-	isOpen,
-	setIsOpen,
-	selectedColorsType,
-	setSelectedColorsType,
-	selectedTasksToShow,
-	setSelectedTasksToShow,
-}) => {
+const ModalViewOptions: React.FC = ({ isOpen, setIsOpen }) => {
+	const { selectedColorsType, setSelectedColorsType, selectedTasksToShow, setSelectedTasksToShow } =
+		useCalendarContext();
 	const dropdownRef = useRef(null);
 	const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 	const selectedColorsTypeOptions = ['Projects', 'Priority', 'Tags'];

@@ -17,10 +17,6 @@ const TopHeader = ({
 	setSelectedInterval,
 	connectedCurrentDate,
 	setConnectedCurrentDate,
-	selectedColorsType,
-	setSelectedColorsType,
-	selectedTasksToShow,
-	setSelectedTasksToShow,
 }) => {
 	const [isModalViewOptionsOpen, setIsModalViewOptionsOpen] = useState(false);
 
@@ -137,10 +133,6 @@ const TopHeader = ({
 						{...{
 							isModalViewOptionsOpen,
 							setIsModalViewOptionsOpen,
-							selectedColorsType,
-							setSelectedColorsType,
-							selectedTasksToShow,
-							setSelectedTasksToShow,
 						}}
 					/>
 				</div>
@@ -148,11 +140,7 @@ const TopHeader = ({
 
 			<DropdownAddNewTaskDetails contextMenuObj={contextMenuObj} />
 
-			<ModalViewOptions
-				isOpen={isModalViewOptionsOpen}
-				setIsOpen={setIsModalViewOptionsOpen}
-				{...{ selectedColorsType, setSelectedColorsType, selectedTasksToShow, setSelectedTasksToShow }}
-			/>
+			<ModalViewOptions isOpen={isModalViewOptionsOpen} setIsOpen={setIsModalViewOptionsOpen} />
 		</div>
 	);
 };
