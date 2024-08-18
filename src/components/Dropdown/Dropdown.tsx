@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import useOutsideClick from '../../hooks/useOutsideClick';
 import { DropdownProps } from '../../interfaces/interfaces';
 import classNames from 'classnames';
@@ -19,10 +19,37 @@ const Dropdown: React.FC<BaseDropdownProps> = ({
 	customStyling,
 	innerClickElemRefs,
 }) => {
-	const dropdownRef = useRef(null);
+	const dropdownRef = useRef<HTMLDivElement>(null);
+
 	useOutsideClick(dropdownRef, toggleRef, innerClickElemRefs, () => {
 		setIsVisible(false);
 	});
+
+	useEffect(() => {
+		if (isVisible && dropdownRef.current) {
+			const dropdownRect = dropdownRef.current.getBoundingClientRect();
+			const toggleRect = toggleRef?.current?.getBoundingClientRect();
+			const adjustments = {};
+
+			// Check if dropdown exceeds the bottom of the viewport
+			if (dropdownRect.bottom > window.innerHeight) {
+				// // Calculate the necessary margin-top adjustment
+				const requiredMarginTop = -(dropdownRect.height + (toggleRect?.height || 0) + 7);
+				console.log(dropdownRect);
+				console.log(toggleRect);
+				adjustments.marginTop = `${requiredMarginTop}px`;
+			}
+
+			// Check if dropdown exceeds the right side of the viewport
+			if (dropdownRect.right > window.innerWidth) {
+				adjustments.right = '0px'; // Align right edge with the toggle element or adjust as necessary
+				adjustments.left = 'auto'; // Reset left positioning if right adjustment is made
+			}
+
+			// Apply styles directly to adjust the dropdown's positioning
+			Object.assign(dropdownRef.current.style, adjustments);
+		}
+	}, [isVisible]); // Depend on isVisible to re-calculate on show
 
 	// Animation variants
 	const variants = {
