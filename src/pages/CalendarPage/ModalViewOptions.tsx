@@ -5,6 +5,7 @@ import Modal from '../../components/Modal/Modal';
 import { setModalState } from '../../slices/modalSlice';
 import { useRef, useState } from 'react';
 import DropdownGeneralSelect from '../StatsPage/DropdownGeneralSelect';
+import CustomCheckbox from '../../components/CustomCheckbox';
 
 const ModalViewOptions: React.FC = () => {
 	const modal = useSelector((state) => state.modals.modals['ModalViewOptions']);
@@ -14,6 +15,32 @@ const ModalViewOptions: React.FC = () => {
 	const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 	const [selectedColorsType, setSelectedColorsType] = useState('Projects');
 	const selectedColorsTypeOptions = ['Projects', 'Priority', 'Tags'];
+	const [selectedTasksToShow, setSelectedTasksToShow] = useState({
+		showCompleted: {
+			name: 'Show Completed',
+			isChecked: false,
+		},
+		showCheckItem: {
+			name: 'Show Check Item',
+			isChecked: false,
+		},
+		showAllRepeatCycle: {
+			name: 'Show All Repeat Cycle',
+			isChecked: false,
+		},
+		showHabit: {
+			name: 'Show Habit',
+			isChecked: false,
+		},
+		showFocusRecords: {
+			name: 'Show Focus Records',
+			isChecked: false,
+		},
+		showWeekends: {
+			name: 'Show Weekends',
+			isChecked: false,
+		},
+	});
 
 	if (!modal) {
 		return null;
@@ -36,6 +63,7 @@ const ModalViewOptions: React.FC = () => {
 						/>
 					</div>
 
+					{/* Colors */}
 					<div className="font-bold">Colors</div>
 					<p className="m-0 text-color-gray-100">
 						Colors of the task block in the calendar view can be displayed according to lists, tags, and
@@ -62,7 +90,30 @@ const ModalViewOptions: React.FC = () => {
 						/>
 					</div>
 
-					{/* TODO: Add Tasks section with the checkboxes. */}
+					{/* Tasks */}
+					<div className="font-bold mt-6 mb-2">Tasks</div>
+					<div className="space-y-1">
+						{Object.keys(selectedTasksToShow).map((taskToShowKey) => {
+							const taskToShowValue = selectedTasksToShow[taskToShowKey];
+							const { name, isChecked } = taskToShowValue;
+
+							return (
+								<CustomCheckbox
+									isChecked={isChecked}
+									setIsChecked={(newCheckedValue) => {
+										setSelectedTasksToShow({
+											...selectedTasksToShow,
+											[taskToShowKey]: {
+												...selectedTasksToShow[taskToShowKey],
+												isChecked: newCheckedValue,
+											},
+										});
+									}}
+									label={name}
+								/>
+							);
+						})}
+					</div>
 				</div>
 			</div>
 		</Modal>
