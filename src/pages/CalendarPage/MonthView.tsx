@@ -6,7 +6,7 @@ import ActionItemList from './ActionItemList';
 import useContextMenu from '../../hooks/useContextMenu';
 import { useAddTaskMutation } from '../../services/resources/tasksApi';
 import useHandleError from '../../hooks/useHandleError';
-import DropdownAddNewTaskDetails from './DropdownAddNewTaskDetails';
+import DropdownAddNewTaskDetails from './Dropdown/DropdownAddNewTaskDetails';
 
 const MonthView = ({ groupedItemsByDateObj, currentDate, currDueDate }) => {
 	const { allItemsGroupedByDate } = groupedItemsByDateObj;

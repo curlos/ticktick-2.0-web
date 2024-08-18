@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import Icon from '../../components/Icon';
-import DropdownIntervalSelect from './DropdownIntervalSelect';
 import useContextMenu from '../../hooks/useContextMenu';
-import DropdownAddNewTaskDetails from './DropdownAddNewTaskDetails';
-import DropdownTopHeaderMoreOptions from './DropdownTopHeaderMoreOptions';
+import DropdownTopHeaderMoreOptions from './Dropdown/DropdownTopHeaderMoreOptions';
+import DropdownAddNewTaskDetails from './Dropdown/DropdownAddNewTaskDetails';
+import DropdownIntervalSelect from './Dropdown/DropdownIntervalSelect';
 
 const TopHeader = ({
 	topHeaderRef,

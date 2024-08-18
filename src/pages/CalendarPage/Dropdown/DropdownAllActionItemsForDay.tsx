@@ -1,7 +1,7 @@
 import classNames from 'classnames';
-import Dropdown from '../../components/Dropdown/Dropdown';
-import MiniActionItem from './MiniActionItem';
 import { useState } from 'react';
+import Dropdown from '../../../components/Dropdown/Dropdown';
+import MiniActionItem from '../MiniActionItem';
 
 const DropdownAllActionItemsForDay = ({
 	toggleRef,

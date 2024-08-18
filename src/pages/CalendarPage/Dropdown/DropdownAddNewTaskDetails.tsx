@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import ContextMenuGeneric from '../../components/ContextMenu/ContextMenuGeneric';
-import DropdownTaskDetails from '../../components/Dropdown/DropdownTaskDetails';
-import useHandleError from '../../hooks/useHandleError';
-import { useAddTaskMutation } from '../../services/resources/tasksApi';
+import ContextMenuGeneric from '../../../components/ContextMenu/ContextMenuGeneric';
+import DropdownTaskDetails from '../../../components/Dropdown/DropdownTaskDetails';
+import useHandleError from '../../../hooks/useHandleError';
+import { useAddTaskMutation } from '../../../services/resources/tasksApi';
 
 const DropdownAddNewTaskDetails = ({ contextMenuObj, defaultDueDate }) => {
 	const { contextMenu, isDropdownVisible, setIsDropdownVisible, dropdownRef, handleClose } = contextMenuObj;
