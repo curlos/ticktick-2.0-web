@@ -5,6 +5,10 @@ import FilterSidebar from './FilterSidebar';
 import TopHeader from './TopHeader';
 
 const CalendarPage = () => {
+	// General - useState
+	const [currDueDate, setCurrDueDate] = useState(null);
+	const [connectedCurrentDate, setConnectedCurrentDate] = useState();
+
 	// TopHeader - useState
 	const [showFilterSidebar, setShowFilterSidebar] = useState(true);
 	const [selectedInterval, setSelectedInterval] = useState('Month');
@@ -44,9 +48,7 @@ const CalendarPage = () => {
 		},
 	});
 
-	const [currDueDate, setCurrDueDate] = useState(null);
-	const [connectedCurrentDate, setConnectedCurrentDate] = useState();
-
+	// Filter Sidebar - Props
 	const filterSidebarProps = {
 		allValue,
 		setAllValue,
@@ -60,6 +62,7 @@ const CalendarPage = () => {
 		setCurrDueDate,
 	};
 
+	// Top Header - Props
 	const topHeaderProps = {
 		topHeaderRef,
 		setHeaderHeight,

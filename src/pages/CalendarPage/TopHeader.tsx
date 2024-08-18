@@ -3,6 +3,7 @@ import Icon from '../../components/Icon';
 import DropdownIntervalSelect from './DropdownIntervalSelect';
 import useContextMenu from '../../hooks/useContextMenu';
 import DropdownAddNewTaskDetails from './DropdownAddNewTaskDetails';
+import DropdownTopHeaderMoreOptions from './DropdownTopHeaderMoreOptions';
 
 const TopHeader = ({
 	topHeaderRef,
@@ -28,8 +29,12 @@ const TopHeader = ({
 		}
 	}, [connectedCurrentDate]);
 
+	// Dropdown Refs and States
 	const dropdownIntervalSelectRef = useRef(null);
 	const [isDropdownIntervalSelectVisible, setIsDropdownIntervalSelectVisible] = useState(false);
+
+	const dropdownTopHeaderMoreOptions = useRef(null);
+	const [isDropdownTopHeaderMoreOptionsVisible, setIsDropdownTopHeaderMoreOptionsVisible] = useState(false);
 
 	const getName = () => {
 		// TODO: For now, assume the interval is always monthly. This logic has to be reworked once other intervals come into play.
@@ -111,10 +116,19 @@ const TopHeader = ({
 					</div>
 				</div>
 
-				<Icon
-					name="more_horiz"
-					customClass="text-color-gray-100 !text-[20px] cursor-pointer hover:text-blue-500 p-1 rounded hover:bg-color-gray-300"
-				/>
+				<div className="relative">
+					<Icon
+						name="more_horiz"
+						customClass="text-color-gray-100 !text-[20px] cursor-pointer hover:text-blue-500 p-1 rounded hover:bg-color-gray-300"
+						onClick={() => setIsDropdownTopHeaderMoreOptionsVisible(!isDropdownTopHeaderMoreOptionsVisible)}
+					/>
+
+					<DropdownTopHeaderMoreOptions
+						toggleRef={dropdownTopHeaderMoreOptions}
+						isVisible={isDropdownTopHeaderMoreOptionsVisible}
+						setIsVisible={setIsDropdownTopHeaderMoreOptionsVisible}
+					/>
+				</div>
 			</div>
 
 			<DropdownAddNewTaskDetails contextMenuObj={contextMenuObj} />
