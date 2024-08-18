@@ -18,6 +18,7 @@ const Dropdown: React.FC<BaseDropdownProps> = ({
 	toggleRef,
 	customStyling,
 	innerClickElemRefs,
+	addedAdditionalMargin,
 }) => {
 	const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -38,7 +39,8 @@ const Dropdown: React.FC<BaseDropdownProps> = ({
 				const requiredMarginTop = -(
 					dropdownRect.height +
 					(toggleRect?.height || 0) +
-					paddingAboveRelativeButton
+					paddingAboveRelativeButton +
+					(addedAdditionalMargin?.marginTop ? addedAdditionalMargin?.marginTop : 0)
 				);
 				adjustments.marginTop = `${requiredMarginTop}px`;
 

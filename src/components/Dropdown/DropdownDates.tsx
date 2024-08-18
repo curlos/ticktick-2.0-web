@@ -48,7 +48,8 @@ const DropdownDates: React.FC<DropdownDatesProps> = ({
 					setIsDropdownDateVisible={setIsDropdownFromDateVisible}
 					date={fromDate}
 					setDate={setFromDate}
-					dropdownCustomClasses=" !ml-[100px] mt-[-100px]"
+					// TODO: Both these duration options are in a modal with relative positioning. Not sure if it's because of this BUT when "DropdownDates" is opened here, it's cut off. Need to adjust the positioning of the dropdown or increase the height of the modal somehow.
+					dropdownCustomClasses=" !ml-[100px]"
 				/>
 
 				<DurationOption
@@ -57,7 +58,7 @@ const DropdownDates: React.FC<DropdownDatesProps> = ({
 					setIsDropdownDateVisible={setIsDropdownToDateVisible}
 					date={toDate}
 					setDate={setToDate}
-					dropdownCustomClasses=" !ml-[100px] mt-[-60px]"
+					dropdownCustomClasses=" !ml-[100px]"
 				/>
 			</div>
 		);

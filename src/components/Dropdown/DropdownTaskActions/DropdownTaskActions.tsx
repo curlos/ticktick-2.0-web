@@ -260,7 +260,6 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 							items={projects}
 							task={task}
 							type="project"
-							customClasses="ml-[200px] mt-[-30px]"
 							onCloseContextMenu={onCloseContextMenu}
 						/>
 					</div>
@@ -284,7 +283,6 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 							task={task}
 							multiSelect={true}
 							type="tags"
-							customClasses="ml-[200px] mt-[-30px]"
 							onCloseContextMenu={onCloseContextMenu}
 						/>
 					</div>
@@ -307,7 +305,6 @@ const DropdownTaskActions: React.FC<DropdownTaskActionsProps> = ({
 					toggleRef={dropdownStartFocusRef}
 					isVisible={isDropdownStartFocusVisible}
 					setIsVisible={setIsDropdownStartFocusVisible}
-					customClasses="ml-[205px] mt-[-42px]"
 					dropdownEstimationCustomClasses="ml-[0px]"
 				/>
 

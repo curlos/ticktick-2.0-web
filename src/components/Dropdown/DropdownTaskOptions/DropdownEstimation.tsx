@@ -28,7 +28,7 @@ const DropdownEstimation: React.FC<DropdownEstimationProps> = ({
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
 			customClasses={classNames(
-				'mt-[5px] shadow-2xl border border-color-gray-200 rounded mt-[-130px] ml-[-210px]',
+				'mt-[5px] shadow-2xl border border-color-gray-200 rounded ml-[-210px]',
 				customClasses
 			)}
 		>

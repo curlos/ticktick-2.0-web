@@ -23,7 +23,7 @@ const DropdownAllActionItemsForDay = ({
 			toggleRef={toggleRef}
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
-			customClasses={classNames('shadow-2xl border border-color-gray-200 rounded-lg mt-[-150px]', customClasses)}
+			customClasses={classNames('shadow-2xl border border-color-gray-200 rounded-lg', customClasses)}
 			innerClickElemRefs={innerClickElemRefs}
 		>
 			<div className="w-[300px] p-2">

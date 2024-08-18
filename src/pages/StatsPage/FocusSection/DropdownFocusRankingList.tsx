@@ -20,7 +20,7 @@ const DropdownFocusRankingList: React.FC<DropdownPrioritiesProps> = ({
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
 			customClasses={classNames(
-				'shadow-2xl border border-color-gray-200 rounded-lg mt-[-305px] max-h-[276px] overflow-auto gray-scrollbar',
+				'shadow-2xl border border-color-gray-200 rounded-lg max-h-[276px] overflow-auto gray-scrollbar',
 				customClasses
 			)}
 		>

@@ -77,7 +77,7 @@ const DropdownTaskOptions: React.FC<DropdownTaskOptionsProps> = ({
 			toggleRef={toggleRef}
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
-			customClasses={'shadow-2xl border border-color-gray-200 rounded !mt-[-175px] ml-[-180px]'}
+			customClasses={'shadow-2xl border border-color-gray-200 rounded ml-[-180px]'}
 		>
 			<div className="w-[232px] p-1 rounded text-[13px]" onClick={(e) => e.stopPropagation()}>
 				<div
