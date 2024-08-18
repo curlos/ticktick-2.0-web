@@ -467,7 +467,6 @@ const TaskDetails = ({
 								task={task}
 								isForAddingNewTask={isForAddingNewTask}
 								type="project"
-								customClasses="!mt-[-315px]"
 							/>
 						</div>
 					)}

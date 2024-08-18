@@ -33,11 +33,21 @@ const Dropdown: React.FC<BaseDropdownProps> = ({
 
 			// Check if dropdown exceeds the bottom of the viewport
 			if (dropdownRect.bottom > window.innerHeight) {
-				// // Calculate the necessary margin-top adjustment
-				const requiredMarginTop = -(dropdownRect.height + (toggleRect?.height || 0) + 7);
-				console.log(dropdownRect);
-				console.log(toggleRect);
+				// If the bottom portion of the dropdown exceeds the screen's height, then set a negative margin top to adjust the dropdown so that it fits within the screen.
+				const paddingAboveRelativeButton = 20;
+				const requiredMarginTop = -(
+					dropdownRect.height +
+					(toggleRect?.height || 0) +
+					paddingAboveRelativeButton
+				);
 				adjustments.marginTop = `${requiredMarginTop}px`;
+
+				const spaceAbove = toggleRect?.top;
+
+				// If the dropdown's height is greater than the space above it, then set the negative margin to the total space above it. The dropdowns always start off being completely below the relative button where it's opened from so giving it a negative margin of the total screen height ABOVE it should move it enough so that it's NOT BELOW the screen height anymore BUT also so that it doesn't go ABOVE the screen height either. The only dropdowns that will suffer from a condition like this are very tall ones so most of the dropdowns will not apply here. The main one I know will do this is DropdownCalendar because there is A LOT going on there.
+				if (dropdownRect.height > spaceAbove) {
+					adjustments.marginTop = `${-spaceAbove}px`;
+				}
 			}
 
 			// Check if dropdown exceeds the right side of the viewport
@@ -49,7 +59,7 @@ const Dropdown: React.FC<BaseDropdownProps> = ({
 			// Apply styles directly to adjust the dropdown's positioning
 			Object.assign(dropdownRef.current.style, adjustments);
 		}
-	}, [isVisible]); // Depend on isVisible to re-calculate on show
+	}, [isVisible]);
 
 	// Animation variants
 	const variants = {
