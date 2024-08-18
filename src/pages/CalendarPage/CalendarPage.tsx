@@ -44,6 +44,7 @@ const CalendarPage = () => {
 		},
 	});
 
+	const [currDueDate, setCurrDueDate] = useState(null);
 	const [connectedCurrentDate, setConnectedCurrentDate] = useState();
 
 	const filterSidebarProps = {
@@ -54,6 +55,9 @@ const CalendarPage = () => {
 		selectedCollapsibleValues,
 		setSelectedCollapsibleValues,
 		connectedCurrentDate,
+		setConnectedCurrentDate,
+		currDueDate,
+		setCurrDueDate,
 	};
 
 	const topHeaderProps = {
@@ -87,7 +91,7 @@ const CalendarPage = () => {
 						currentDate={currentDate}
 						selectedInterval={selectedInterval}
 						headerHeight={headerHeight}
-						{...{ allValue, selectedValuesById, selectedCollapsibleValues }}
+						{...{ allValue, selectedValuesById, selectedCollapsibleValues, currDueDate }}
 					/>
 				</div>
 			</div>

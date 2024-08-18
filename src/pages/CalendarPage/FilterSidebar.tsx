@@ -13,6 +13,9 @@ const FilterSidebar = ({
 	selectedCollapsibleValues,
 	setSelectedCollapsibleValues,
 	connectedCurrentDate,
+	setConnectedCurrentDate,
+	currDueDate,
+	setCurrDueDate,
 }) => {
 	const { data: fetchedProjects, isLoading: isLoadingGetProjects, error } = useGetProjectsQuery();
 	const { projects, projectsById } = fetchedProjects || {};
@@ -24,8 +27,6 @@ const FilterSidebar = ({
 	// RTK Query - Filters
 	const { data: fetchedFilters, isLoading: isLoadingGetFilters } = useGetFiltersQuery();
 	const { filters, filtersById } = fetchedFilters || {};
-
-	const [currDueDate, setCurrDueDate] = useState(null);
 
 	const [showProjects, setShowProjects] = useState(true);
 	const [showFilters, setShowFilters] = useState(true);
@@ -74,6 +75,7 @@ const FilterSidebar = ({
 				dueDate={currDueDate}
 				setDueDate={setCurrDueDate}
 				connectedCurrentDate={connectedCurrentDate}
+				setConnectedCurrentDate={setConnectedCurrentDate}
 			/>
 
 			<div className="px-4">

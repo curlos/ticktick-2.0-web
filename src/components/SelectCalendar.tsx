@@ -8,7 +8,13 @@ interface CalendarProps {
 	setDueDate: React.Dispatch<React.SetStateAction<Date | null>>;
 }
 
-const SelectCalendar: React.FC<CalendarProps> = ({ dueDate, setDueDate, time, connectedCurrentDate }) => {
+const SelectCalendar: React.FC<CalendarProps> = ({
+	dueDate,
+	setDueDate,
+	time,
+	connectedCurrentDate,
+	setConnectedCurrentDate,
+}) => {
 	const [currentDate, setCurrentDate] = useState(new Date());
 
 	useEffect(() => {
@@ -102,6 +108,7 @@ const SelectCalendar: React.FC<CalendarProps> = ({ dueDate, setDueDate, time, co
 
 								const handleClick = () => {
 									setCurrentDate(new Date(day.getFullYear(), day.getMonth(), 1));
+									setConnectedCurrentDate(new Date(day.getFullYear(), day.getMonth(), 1));
 
 									let newDueDate = day ? day : new Date();
 

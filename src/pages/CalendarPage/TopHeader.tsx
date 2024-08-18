@@ -22,6 +22,12 @@ const TopHeader = ({
 		}
 	}, [topHeaderRef, setHeaderHeight]);
 
+	useEffect(() => {
+		if (connectedCurrentDate) {
+			setCurrentDate(connectedCurrentDate);
+		}
+	}, [connectedCurrentDate]);
+
 	const dropdownIntervalSelectRef = useRef(null);
 	const [isDropdownIntervalSelectVisible, setIsDropdownIntervalSelectVisible] = useState(false);
 
