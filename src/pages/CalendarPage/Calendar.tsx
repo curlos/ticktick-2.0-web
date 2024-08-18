@@ -11,6 +11,7 @@ const Calendar = ({
 	allValue,
 	selectedValuesById,
 	selectedCollapsibleValues,
+	currDueDate,
 }) => {
 	const filters = {
 		allValue,
@@ -26,7 +27,11 @@ const Calendar = ({
 				<DayView currentDate={currentDate} groupedItemsByDateObj={groupedItemsByDateObj} />
 			)}
 			{selectedInterval === 'Month' && (
-				<MonthView currentDate={currentDate} groupedItemsByDateObj={groupedItemsByDateObj} />
+				<MonthView
+					currentDate={currentDate}
+					groupedItemsByDateObj={groupedItemsByDateObj}
+					currDueDate={currDueDate}
+				/>
 			)}
 			{selectedInterval === 'Agenda' && (
 				<AgendaView currentDate={currentDate} groupedItemsByDateObj={groupedItemsByDateObj} />

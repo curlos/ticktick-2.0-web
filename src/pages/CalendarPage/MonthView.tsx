@@ -8,7 +8,7 @@ import { useAddTaskMutation } from '../../services/resources/tasksApi';
 import useHandleError from '../../hooks/useHandleError';
 import DropdownAddNewTaskDetails from './DropdownAddNewTaskDetails';
 
-const MonthView = ({ groupedItemsByDateObj, currentDate }) => {
+const MonthView = ({ groupedItemsByDateObj, currentDate, currDueDate }) => {
 	const { allItemsGroupedByDate } = groupedItemsByDateObj;
 	const calendarDateRange = getCalendarMonth(currentDate.getFullYear(), currentDate.getMonth(), 5);
 	const shownWeeks = calendarDateRange;
@@ -61,6 +61,7 @@ const MonthView = ({ groupedItemsByDateObj, currentDate }) => {
 								currentDate={currentDate}
 								maxActionItems={maxActionItems}
 								allItemsGroupedByDate={allItemsGroupedByDate}
+								currDueDate={currDueDate}
 							/>
 						))}
 					</div>
@@ -70,7 +71,7 @@ const MonthView = ({ groupedItemsByDateObj, currentDate }) => {
 	);
 };
 
-const DaySquare = ({ day, index, currentDate, maxActionItems, allItemsGroupedByDate }) => {
+const DaySquare = ({ day, index, currentDate, maxActionItems, allItemsGroupedByDate, currDueDate }) => {
 	const handleError = useHandleError();
 	// RTK Query - Tasks
 	const [addTask, { isLoading, error }] = useAddTaskMutation();
@@ -115,9 +116,26 @@ const DaySquare = ({ day, index, currentDate, maxActionItems, allItemsGroupedByD
 	const dayMonthName = dayNum === 1 ? day.toLocaleString('default', { month: 'short' }) : '';
 	const formattedDayText = `${dayMonthName} ${dayNum}`;
 
+	const [highlight, setHighlight] = useState(false);
+
+	useEffect(() => {
+		if (currDueDate && areDatesEqual(currDueDate, day)) {
+			// Light up the background with a light gray color for one second and then go back to normal.
+			setHighlight(true);
+			setTimeout(() => {
+				setHighlight(false);
+			}, 1000);
+		}
+	}, [currDueDate]);
+
 	return (
 		<div
-			className={classNames(`p-[1px] w-full`, appliedStyles, index !== 0 ? 'border-l border-color-gray-200' : '')}
+			className={classNames(
+				`p-[1px] w-full transition-all`,
+				appliedStyles,
+				index !== 0 ? 'border-l border-color-gray-200' : '',
+				highlight ? '!bg-color-gray-200' : ''
+			)}
 			onClick={(e) => {
 				e.stopPropagation();
 				handleContextMenu(e);
