@@ -8,6 +8,9 @@ import ContextMenuGeneric from '../../components/ContextMenu/ContextMenuGeneric'
 import DrodpownAddFocusRecord from '../../components/Dropdown/DropdownAddFocusRecord';
 import DropdownTaskDetails from '../../components/Dropdown/DropdownTaskDetails';
 import DropdownAllActionItemsForDay from './Dropdown/DropdownAllActionItemsForDay';
+import { useCalendarContext } from '../../contexts/useCalendarContext';
+import { useGetProjectsQuery } from '../../services/resources/projectsApi';
+import { PRIORITIES } from '../../utils/priorities.utils';
 
 const MiniActionItem = ({
 	index,
@@ -21,6 +24,8 @@ const MiniActionItem = ({
 	innerClickElemRefs,
 	setInnerClickElemRefs,
 }) => {
+	const { selectedColorsType } = useCalendarContext();
+
 	const maxActionItems = shownActionItems.length;
 	const isForTask = task && Object.keys(task).length > 0;
 	const isForFocusRecord = focusRecord && Object.keys(focusRecord).length > 0;
@@ -32,6 +37,10 @@ const MiniActionItem = ({
 	// RTK Query - Habits
 	const { data: fetchedHabits } = useGetHabitsQuery();
 	const { habitsById } = fetchedHabits || {};
+
+	// RTK Query - Projects
+	const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
+	const { projectsById } = fetchedProjects || {};
 
 	const { taskId, habitId, startTime } = focusRecord || {};
 	const focusRecordTask = isForFocusRecord && tasksById && tasksById[taskId];
@@ -68,15 +77,41 @@ const MiniActionItem = ({
 
 	const showFullOpacity = isToday || isDateBasedOnDueDate;
 
+	const getBgColor = () => {
+		const defaultColor = '#3b82f6';
+		const taskToUse = isForTask ? task : focusRecordTask;
+
+		const { projectId, priority } = taskToUse || {};
+
+		const foundProject = projectsById[projectId];
+		const projectColor = foundProject?.color;
+
+		const priorityData = PRIORITIES[priority];
+		const priorityColor = priorityData?.flagColor;
+		const noPriorityColor = PRIORITIES[0].flagColor;
+
+		switch (selectedColorsType) {
+			case 'Projects':
+				return projectColor || defaultColor;
+			case 'Priority':
+				return priorityColor || noPriorityColor;
+			default:
+				return defaultColor;
+		}
+	};
+
 	return (
 		<div onClick={(e) => e.stopPropagation()} className="flex items-center gap-1 w-full">
 			<div
 				className={classNames(
-					'bg-emerald-600 rounded p-1 py-[2px] h-[20px] flex justify-between flex-1 cursor-pointer',
+					'rounded p-1 py-[2px] h-[20px] flex justify-between flex-1 cursor-pointer',
 					// Necessary for the focus records with "+X" at the end.
 					'w-[88%]',
-					showFullOpacity ? 'opacity-100' : 'opacity-70'
+					showFullOpacity ? 'opacity-90' : 'opacity-70'
 				)}
+				style={{
+					backgroundColor: getBgColor(),
+				}}
 				onClick={(e) => {
 					handleContextMenu(e);
 				}}
