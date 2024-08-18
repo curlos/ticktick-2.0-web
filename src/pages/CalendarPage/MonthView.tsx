@@ -9,6 +9,7 @@ import DropdownTaskDetails from '../../components/Dropdown/DropdownTaskDetails';
 import useContextMenu from '../../hooks/useContextMenu';
 import { useAddTaskMutation } from '../../services/resources/tasksApi';
 import useHandleError from '../../hooks/useHandleError';
+import DropdownAddNewTaskDetails from './DropdownAddNewTaskDetails';
 
 const MonthView = ({ currentDate }) => {
 	const { allItemsGroupedByDate } = useGroupedItemsByDate();
@@ -77,8 +78,9 @@ const DaySquare = ({ day, index, currentDate, maxActionItems, allItemsGroupedByD
 	// RTK Query - Tasks
 	const [addTask, { isLoading, error }] = useAddTaskMutation();
 
-	const { contextMenu, isDropdownVisible, setIsDropdownVisible, dropdownRef, handleContextMenu, handleClose } =
-		useContextMenu();
+	const contextMenuObj = useContextMenu();
+
+	const { contextMenu, isDropdownVisible, handleContextMenu } = contextMenuObj;
 
 	const isCurrentMonth = day.getMonth() === currentDate.getMonth();
 	const isDayToday = areDatesEqual(new Date(), day);
@@ -116,34 +118,6 @@ const DaySquare = ({ day, index, currentDate, maxActionItems, allItemsGroupedByD
 	const dayMonthName = dayNum === 1 ? day.toLocaleString('default', { month: 'short' }) : '';
 	const formattedDayText = `${dayMonthName} ${dayNum}`;
 
-	const defaultNewTask = {
-		dueDate: day,
-	};
-
-	const [newTask, setNewTask] = useState(defaultNewTask);
-
-	const handleAddTask = async () => {
-		const { title, description, priority, projectId, dueDate } = newTask;
-
-		if (!title) {
-			return null;
-		}
-
-		const payload = {
-			title,
-			description,
-			priority,
-			projectId,
-			dueDate,
-		};
-
-		handleError(async () => {
-			await addTask({ payload }).unwrap();
-		});
-
-		setNewTask(defaultNewTask);
-	};
-
 	return (
 		<div
 			className={classNames(`p-[1px] w-full`, appliedStyles, index !== 0 ? 'border-l border-color-gray-200' : '')}
@@ -162,38 +136,7 @@ const DaySquare = ({ day, index, currentDate, maxActionItems, allItemsGroupedByD
 				))}
 			</div>
 
-			{contextMenu && (
-				<ContextMenuGeneric
-					xPos={contextMenu.xPos}
-					yPos={contextMenu.yPos}
-					onClose={() => {
-						// Check if there's at least a title on the task and if there is, then make an API call to add that task to the backend.
-						handleAddTask();
-
-						// Close the context menu
-						handleClose();
-					}}
-					isDropdownVisible={isDropdownVisible}
-					setIsDropdownVisible={setIsDropdownVisible}
-				>
-					<DropdownTaskDetails
-						toggleRef={dropdownRef}
-						isVisible={true}
-						setIsVisible={setIsDropdownVisible}
-						customClasses=" !ml-[0px] mt-[15px]"
-						customStyling={{
-							position: 'absolute',
-							top: `${contextMenu.yPos}px`,
-							left: `${contextMenu.xPos}px`,
-						}}
-						onCloseContextMenu={handleClose}
-						task={defaultNewTask}
-						newTask={newTask}
-						setNewTask={setNewTask}
-						isForAddingNewTask={true}
-					/>
-				</ContextMenuGeneric>
-			)}
+			<DropdownAddNewTaskDetails contextMenuObj={contextMenuObj} defaultDueDate={day} />
 		</div>
 	);
 };
