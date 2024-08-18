@@ -118,7 +118,8 @@ const TaskDetails = ({
 		}
 
 		const currTask =
-			!isForAddingNewTask && (taskToUse ? taskToUse : paramsTaskId && tasksById && tasksById[paramsTaskId]);
+			!isForAddingNewTask &&
+			(taskToUse ? tasksById[taskToUse._id] : paramsTaskId && tasksById && tasksById[paramsTaskId]);
 
 		if (!isForAddingNewTask && currTask) {
 			setTask(currTask);

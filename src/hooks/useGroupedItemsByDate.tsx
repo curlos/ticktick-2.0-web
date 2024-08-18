@@ -5,7 +5,8 @@ import { useGetProjectsQuery } from '../services/resources/projectsApi';
 import { useGetTasksQuery } from '../services/resources/tasksApi';
 import { sortObjectByDateKeys } from '../utils/date.utils';
 
-const useGroupedItemsByDate = () => {
+const useGroupedItemsByDate = (filters) => {
+	const { allValue, selectedValuesById, selectedCollapsibleValues } = filters;
 	const [allItemsGroupedByDate, setAllItemsGroupedByDate] = useState({});
 
 	// RTK Query - Focus Records
@@ -37,6 +38,8 @@ const useGroupedItemsByDate = () => {
 
 	useEffect(() => {
 		if (sortedTasksByDate && sortedFocusRecordsByDate) {
+			// TODO: Use the passed in filters to filter the the tasks and focus records according to the filters. For example, if GUNPLA is selected as the only chosen project, then only GUNPLA tasks and focus records should be shown.
+
 			const newAllGroupedByDate = {};
 
 			Object.keys(sortedTasksByDate).forEach((dateKey) => {

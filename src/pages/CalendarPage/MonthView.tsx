@@ -2,17 +2,14 @@ import classNames from 'classnames';
 import { areDatesEqual, formatCheckedInDayDate, getCalendarMonth } from '../../utils/date.utils';
 import { useEffect, useState } from 'react';
 import useWindowSize from '../../hooks/useWindowSize';
-import useGroupedItemsByDate from '../../hooks/useGroupedItemsByDate';
 import ActionItemList from './ActionItemList';
-import ContextMenuGeneric from '../../components/ContextMenu/ContextMenuGeneric';
-import DropdownTaskDetails from '../../components/Dropdown/DropdownTaskDetails';
 import useContextMenu from '../../hooks/useContextMenu';
 import { useAddTaskMutation } from '../../services/resources/tasksApi';
 import useHandleError from '../../hooks/useHandleError';
 import DropdownAddNewTaskDetails from './DropdownAddNewTaskDetails';
 
-const MonthView = ({ currentDate }) => {
-	const { allItemsGroupedByDate } = useGroupedItemsByDate();
+const MonthView = ({ groupedItemsByDateObj, currentDate }) => {
+	const { allItemsGroupedByDate } = groupedItemsByDateObj;
 	const calendarDateRange = getCalendarMonth(currentDate.getFullYear(), currentDate.getMonth(), 5);
 	const shownWeeks = calendarDateRange;
 

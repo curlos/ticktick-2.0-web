@@ -1,9 +1,8 @@
-import useGroupedItemsByDate from '../../hooks/useGroupedItemsByDate';
 import AgendaItem from './AgendaItem';
 
-const AgendaView = () => {
+const AgendaView = ({ groupedItemsByDateObj }) => {
 	const { allItemsGroupedByDate, isAllDoneLoading, focusRecordsById, tasksById, projectsById, habitsById } =
-		useGroupedItemsByDate();
+		groupedItemsByDateObj;
 
 	return (
 		<div className="flex-1 overflow-auto gray-scrollbar border-t border-color-gray-200 py-[50px] pl-[50px] pr-[120px]">

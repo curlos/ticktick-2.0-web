@@ -1,12 +1,18 @@
 import { useEffect, useState } from 'react';
 import SelectCalendar from '../../components/SelectCalendar';
 import { useGetProjectsQuery } from '../../services/resources/projectsApi';
-import Icon from '../../components/Icon';
 import { useGetFiltersQuery } from '../../services/resources/filtersApi';
 import { useGetTagsQuery } from '../../services/resources/tagsApi';
 import CustomCheckbox from './CustomCheckbox';
 
-const FilterSidebar = () => {
+const FilterSidebar = ({
+	allValue,
+	setAllValue,
+	selectedValuesById,
+	setSelectedValuesById,
+	selectedCollapsibleValues,
+	setSelectedCollapsibleValues,
+}) => {
 	const { data: fetchedProjects, isLoading: isLoadingGetProjects, error } = useGetProjectsQuery();
 	const { projects, projectsById } = fetchedProjects || {};
 
@@ -19,36 +25,7 @@ const FilterSidebar = () => {
 	const { filters, filtersById } = fetchedFilters || {};
 
 	const [currDueDate, setCurrDueDate] = useState(null);
-	const [allValue, setAllValue] = useState({
-		name: 'All',
-		isChecked: true,
-	});
-	const [selectedValuesById, setSelectedValuesById] = useState({
-		projectsById: {},
-		filtersById: {},
-		tagsById: {},
-	});
 
-	const [selectedCollapsibleValues, setSelectedCollapsibleValues] = useState({
-		projects: {
-			name: 'Lists',
-			isChecked: false,
-			valuesByIdType: 'projectsById',
-			key: 'projects',
-		},
-		filters: {
-			name: 'Filters',
-			isChecked: false,
-			valuesByIdType: 'filtersById',
-			key: 'filters',
-		},
-		tags: {
-			name: 'Tags',
-			isChecked: false,
-			valuesByIdType: 'tagsById',
-			key: 'tags',
-		},
-	});
 	const [showProjects, setShowProjects] = useState(true);
 	const [showFilters, setShowFilters] = useState(true);
 	const [showTags, setShowTags] = useState(true);
@@ -58,21 +35,6 @@ const FilterSidebar = () => {
 
 	useEffect(() => {
 		if (isLoadingFinished) {
-			// const newSelectedValues = {
-			// 	projects: projects.map((project) => ({
-			// 		...project,
-			// 		isChecked: false,
-			// 	})),
-			// 	filters: filters.map((filter) => ({
-			// 		...filter,
-			// 		isChecked: false,
-			// 	})),
-			// 	tags: tags.map((tag) => ({
-			// 		...tag,
-			// 		isChecked: false,
-			// 	})),
-			// };
-
 			const newSelectedValuesById = {
 				projectsById: getObjWtihIsCheckedInEveryValue(projectsById),
 				filtersById: getObjWtihIsCheckedInEveryValue(filtersById),
