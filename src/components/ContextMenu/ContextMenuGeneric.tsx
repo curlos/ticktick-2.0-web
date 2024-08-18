@@ -8,6 +8,7 @@ interface IContextMenuGeneric {
 }
 
 const ContextMenuGeneric: React.FC<IContextMenuGeneric> = ({
+	toggleRef,
 	xPos,
 	yPos,
 	onClose,
@@ -29,7 +30,7 @@ const ContextMenuGeneric: React.FC<IContextMenuGeneric> = ({
 		}
 	}, [isDropdownVisible]);
 
-	return createPortal(<div>{children}</div>, document.body);
+	return createPortal(<div ref={toggleRef}>{children}</div>, document.body);
 };
 
 export default ContextMenuGeneric;

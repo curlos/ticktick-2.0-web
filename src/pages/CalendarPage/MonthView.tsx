@@ -137,11 +137,11 @@ const DaySquare = ({ day, index, currentDate, maxActionItems, allItemsGroupedByD
 			dueDate,
 		};
 
-		const addedTask = handleError(async () => {
+		handleError(async () => {
 			await addTask({ payload }).unwrap();
 		});
 
-		console.log(addedTask);
+		setNewTask(defaultNewTask);
 	};
 
 	return (

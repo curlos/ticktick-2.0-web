@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import Dropdown from '../../components/Dropdown/Dropdown';
-import { formatCheckedInDayDate } from '../../utils/date.utils';
 import MiniActionItem from './MiniActionItem';
+import { useState } from 'react';
 
 const DropdownAllActionItemsForDay = ({
 	toggleRef,
@@ -16,12 +16,15 @@ const DropdownAllActionItemsForDay = ({
 	const { tasks, focusRecords } = actionItems;
 	const shownActionItems = flattenedActionItems;
 
+	const [innerClickElemRefs, setInnerClickElemRefs] = useState([]);
+
 	return (
 		<Dropdown
 			toggleRef={toggleRef}
 			isVisible={isVisible}
 			setIsVisible={setIsVisible}
 			customClasses={classNames('shadow-2xl border border-color-gray-200 rounded-lg mt-[-150px]', customClasses)}
+			innerClickElemRefs={innerClickElemRefs}
 		>
 			<div className="w-[300px] p-2">
 				<div className="mb-2 font-bold">{formattedDay}</div>
@@ -34,6 +37,8 @@ const DropdownAllActionItemsForDay = ({
 							actionItems={actionItems}
 							flattenedActionItems={flattenedActionItems}
 							shownActionItems={shownActionItems}
+							innerClickElemRefs={innerClickElemRefs}
+							setInnerClickElemRefs={setInnerClickElemRefs}
 						/>
 					))}
 
@@ -46,6 +51,8 @@ const DropdownAllActionItemsForDay = ({
 							flattenedActionItems={flattenedActionItems}
 							shownActionItems={shownActionItems}
 							customStartTimeClasses={customStartTimeClasses}
+							innerClickElemRefs={innerClickElemRefs}
+							setInnerClickElemRefs={setInnerClickElemRefs}
 						/>
 					))}
 				</div>

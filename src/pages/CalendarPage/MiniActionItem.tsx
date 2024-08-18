@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { useContext, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { areDatesEqual, formatDateTime, getAssociatedTimeForTask } from '../../utils/date.utils';
 import DropdownAllActionItemsForDay from './DropdownAllActionItemsForDay';
 import { useGetHabitsQuery } from '../../services/resources/habitsApi';
@@ -18,6 +18,8 @@ const MiniActionItem = ({
 	shownActionItems,
 	customStartTimeClasses,
 	formattedDay,
+	innerClickElemRefs,
+	setInnerClickElemRefs,
 }) => {
 	const maxActionItems = shownActionItems.length;
 	const isForTask = task && Object.keys(task).length > 0;
@@ -46,6 +48,14 @@ const MiniActionItem = ({
 	const { contextMenu, isDropdownVisible, setIsDropdownVisible, dropdownRef, handleContextMenu, handleClose } =
 		useContextMenu();
 
+	const contextMenuRef = useRef(null);
+
+	useEffect(() => {
+		if (setInnerClickElemRefs) {
+			setInnerClickElemRefs([contextMenuRef]);
+		}
+	}, [contextMenu]);
+
 	if (index >= maxActionItems) {
 		return null;
 	}
@@ -59,7 +69,7 @@ const MiniActionItem = ({
 	const showFullOpacity = isToday || isDateBasedOnDueDate;
 
 	return (
-		<div className="flex items-center gap-1 w-full">
+		<div onClick={(e) => e.stopPropagation()} className="flex items-center gap-1 w-full">
 			<div
 				className={classNames(
 					'bg-emerald-600 rounded p-1 py-[2px] h-[20px] flex justify-between flex-1 cursor-pointer',
@@ -68,7 +78,6 @@ const MiniActionItem = ({
 					showFullOpacity ? 'opacity-100' : 'opacity-70'
 				)}
 				onClick={(e) => {
-					e.stopPropagation();
 					handleContextMenu(e);
 				}}
 			>
@@ -84,7 +93,9 @@ const MiniActionItem = ({
 				<div className="relative">
 					<div
 						ref={dropdownDayFocusRecords}
-						onClick={() => setIsDropdownDayFocusRecordsVisible(!isDropdownDayFocusRecordsVisible)}
+						onClick={() => {
+							setIsDropdownDayFocusRecordsVisible(!isDropdownDayFocusRecordsVisible);
+						}}
 						className="bg-gray-400/70 p-[2px] rounded cursor-pointer"
 					>
 						+{leftoverActionItemsCount}
@@ -98,12 +109,15 @@ const MiniActionItem = ({
 						flattenedActionItems={flattenedActionItems}
 						customStartTimeClasses={'min-w-[65px]'}
 						formattedDay={formattedDay}
+						innerClickElemRefs={innerClickElemRefs}
+						contextMenu={contextMenu}
 					/>
 				</div>
 			)}
 
 			{contextMenu && (
 				<ContextMenuGeneric
+					toggleRef={contextMenuRef}
 					xPos={contextMenu.xPos}
 					yPos={contextMenu.yPos}
 					onClose={handleClose}

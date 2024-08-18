@@ -17,9 +17,12 @@ const Dropdown: React.FC<BaseDropdownProps> = ({
 	positionAdjustment,
 	toggleRef,
 	customStyling,
+	innerClickElemRefs,
 }) => {
 	const dropdownRef = useRef(null);
-	useOutsideClick(dropdownRef, toggleRef, () => setIsVisible(false));
+	useOutsideClick(dropdownRef, toggleRef, innerClickElemRefs, () => {
+		setIsVisible(false);
+	});
 
 	// Animation variants
 	const variants = {
