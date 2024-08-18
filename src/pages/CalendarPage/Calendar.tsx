@@ -12,12 +12,13 @@ const Calendar = ({
 	selectedValuesById,
 	selectedCollapsibleValues,
 }) => {
-	const maxHeight = useMaxHeight(headerHeight);
-	const groupedItemsByDateObj = useGroupedItemsByDate({
+	const filters = {
 		allValue,
 		selectedValuesById,
 		selectedCollapsibleValues,
-	});
+	};
+	const maxHeight = useMaxHeight(headerHeight);
+	const groupedItemsByDateObj = useGroupedItemsByDate(filters);
 
 	return (
 		<div className="flex flex-col flex-1" style={{ maxHeight }}>

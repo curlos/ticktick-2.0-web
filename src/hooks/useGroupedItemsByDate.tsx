@@ -4,9 +4,9 @@ import { useGetHabitsQuery } from '../services/resources/habitsApi';
 import { useGetProjectsQuery } from '../services/resources/projectsApi';
 import { useGetTasksQuery } from '../services/resources/tasksApi';
 import { sortObjectByDateKeys } from '../utils/date.utils';
+import { filterTaskByFilter } from '../utils/filters.util';
 
 const useGroupedItemsByDate = (filters) => {
-	const { allValue, selectedValuesById, selectedCollapsibleValues } = filters;
 	const [allItemsGroupedByDate, setAllItemsGroupedByDate] = useState({});
 
 	// RTK Query - Focus Records
@@ -33,13 +33,57 @@ const useGroupedItemsByDate = (filters) => {
 		projectsById &&
 		habitsById;
 
-	const sortedTasksByDate = groupedTasksByDate && sortObjectByDateKeys(groupedTasksByDate);
-	const sortedFocusRecordsByDate = sortedGroupedFocusRecordsAsc && sortObjectByDateKeys(sortedGroupedFocusRecordsAsc);
-
 	useEffect(() => {
-		if (sortedTasksByDate && sortedFocusRecordsByDate) {
-			// TODO: Use the passed in filters to filter the the tasks and focus records according to the filters. For example, if GUNPLA is selected as the only chosen project, then only GUNPLA tasks and focus records should be shown.
+		// TODO: Use the passed in filters to filter the the tasks and focus records according to the filters. For example, if GUNPLA is selected as the only chosen project, then only GUNPLA tasks and focus records should be shown.
+		const filteredGroupedTasksByDate = {};
+		const filteredFocusRecordsByDate = sortedGroupedFocusRecordsAsc;
 
+		console.log(filters);
+
+		groupedTasksByDate &&
+			Object.keys(groupedTasksByDate).forEach((dateKey) => {
+				const tasksForDayArray = groupedTasksByDate[dateKey];
+
+				filteredGroupedTasksByDate[dateKey] = tasksForDayArray.filter((task) => {
+					if (filters.allValue.isChecked) {
+						return true;
+					}
+
+					const { projectsById, tagsById, filtersById } = filters.selectedValuesById;
+
+					const listOfProjects = Object.values(projectsById);
+					const listOfTags = Object.values(tagsById);
+					const listOfFilters = Object.values(filtersById);
+
+					for (let project of listOfProjects) {
+						if (project.isChecked && String(task.projectId) === String(project._id)) {
+							return true;
+						}
+					}
+
+					for (let tag of listOfTags) {
+						if (tag.isChecked && task.tagIds.includes(String(tag._id))) {
+							return true;
+						}
+					}
+
+					for (let filter of listOfFilters) {
+						if (filter.isChecked) {
+							const doesTaskMatchTheFilter = filterTaskByFilter(task, filter);
+							return doesTaskMatchTheFilter ? true : false;
+						}
+					}
+
+					return false;
+				});
+			});
+
+		console.log(filteredGroupedTasksByDate);
+
+		const sortedTasksByDate = filteredGroupedTasksByDate && sortObjectByDateKeys(filteredGroupedTasksByDate);
+		const sortedFocusRecordsByDate = filteredFocusRecordsByDate && sortObjectByDateKeys(filteredFocusRecordsByDate);
+
+		if (sortedTasksByDate && sortedFocusRecordsByDate) {
 			const newAllGroupedByDate = {};
 
 			Object.keys(sortedTasksByDate).forEach((dateKey) => {
@@ -65,7 +109,15 @@ const useGroupedItemsByDate = (filters) => {
 			const newSortedAllGroupedByDate = newAllGroupedByDate && sortObjectByDateKeys(newAllGroupedByDate);
 			setAllItemsGroupedByDate(newSortedAllGroupedByDate);
 		}
-	}, [isAllDoneLoading, fetchedTasks, fetchedProjects, fetchedHabits, fetchedFocusRecords]);
+	}, [
+		isAllDoneLoading,
+		fetchedTasks,
+		fetchedProjects,
+		fetchedHabits,
+		fetchedFocusRecords,
+		filters.allValue,
+		filters.selectedValuesById,
+	]);
 
 	return { allItemsGroupedByDate, isAllDoneLoading, focusRecordsById, tasksById, projectsById, habitsById };
 };

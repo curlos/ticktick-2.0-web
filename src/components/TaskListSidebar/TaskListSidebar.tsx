@@ -91,7 +91,7 @@ const TaskListSidebar = () => {
 
 				{/* Filters */}
 				{/* TODO: Bring back after fixing bug with stale state in Sortabletree */}
-				{/* <div className="pt-3">
+				<div className="pt-3">
 					<div className="flex items-center justify-between py-1 pr-1 hover:bg-color-gray-600 rounded cursor-pointer mb-2">
 						<div className="flex items-center">
 							<Icon name={'chevron_right'} customClass={'text-color-gray-100 !text-[16px]'} />
@@ -126,7 +126,7 @@ const TaskListSidebar = () => {
 							})}
 						</div>
 					)}
-				</div> */}
+				</div>
 
 				<div className="pt-3">
 					<div className="flex items-center justify-between py-1 pr-1 hover:bg-color-gray-600 rounded cursor-pointer mb-2">
