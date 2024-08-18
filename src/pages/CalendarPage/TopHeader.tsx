@@ -3,6 +3,11 @@ import { useDispatch } from 'react-redux';
 import Icon from '../../components/Icon';
 import { setModalState } from '../../slices/modalSlice';
 import DropdownIntervalSelect from './DropdownIntervalSelect';
+import useContextMenu from '../../hooks/useContextMenu';
+import useHandleError from '../../hooks/useHandleError';
+import { useAddTaskMutation } from '../../services/resources/tasksApi';
+import ContextMenuGeneric from '../../components/ContextMenu/ContextMenuGeneric';
+import DropdownTaskDetails from '../../components/Dropdown/DropdownTaskDetails';
 
 const TopHeader = ({
 	topHeaderRef,
@@ -41,6 +46,41 @@ const TopHeader = ({
 		setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
 	};
 
+	const { contextMenu, isDropdownVisible, setIsDropdownVisible, dropdownRef, handleContextMenu, handleClose } =
+		useContextMenu();
+
+	const handleError = useHandleError();
+	// RTK Query - Tasks
+	const [addTask, { isLoading, error }] = useAddTaskMutation();
+
+	const defaultNewTask = {
+		dueDate: new Date(),
+	};
+
+	const [newTask, setNewTask] = useState(defaultNewTask);
+
+	const handleAddTask = async () => {
+		const { title, description, priority, projectId, dueDate } = newTask;
+
+		if (!title) {
+			return null;
+		}
+
+		const payload = {
+			title,
+			description,
+			priority,
+			projectId,
+			dueDate,
+		};
+
+		handleError(async () => {
+			await addTask({ payload }).unwrap();
+		});
+
+		setNewTask(defaultNewTask);
+	};
+
 	return (
 		<div ref={topHeaderRef} className="p-3 pt-5 flex justify-between items-center">
 			<div className="flex items-center gap-2">
@@ -57,7 +97,10 @@ const TopHeader = ({
 				<Icon
 					name="add"
 					customClass="text-color-gray-100 !text-[18px] p-1 border border-color-gray-150 rounded cursor-pointer hover:text-blue-500"
-					onClick={() => dispatch(setModalState({ modalId: 'ModalAddTaskForm', isOpen: true }))}
+					onClick={(e) => {
+						e.stopPropagation();
+						handleContextMenu(e);
+					}}
 				/>
 
 				<div className="relative">
@@ -100,6 +143,39 @@ const TopHeader = ({
 					customClass="text-color-gray-100 !text-[20px] cursor-pointer hover:text-blue-500 p-1 rounded hover:bg-color-gray-300"
 				/>
 			</div>
+
+			{contextMenu && (
+				<ContextMenuGeneric
+					xPos={contextMenu.xPos}
+					yPos={contextMenu.yPos}
+					onClose={() => {
+						// Check if there's at least a title on the task and if there is, then make an API call to add that task to the backend.
+						handleAddTask();
+
+						// Close the context menu
+						handleClose();
+					}}
+					isDropdownVisible={isDropdownVisible}
+					setIsDropdownVisible={setIsDropdownVisible}
+				>
+					<DropdownTaskDetails
+						toggleRef={dropdownRef}
+						isVisible={true}
+						setIsVisible={setIsDropdownVisible}
+						customClasses=" !ml-[0px] mt-[15px]"
+						customStyling={{
+							position: 'absolute',
+							top: `${contextMenu.yPos}px`,
+							left: `${contextMenu.xPos}px`,
+						}}
+						onCloseContextMenu={handleClose}
+						task={defaultNewTask}
+						newTask={newTask}
+						setNewTask={setNewTask}
+						isForAddingNewTask={true}
+					/>
+				</ContextMenuGeneric>
+			)}
 		</div>
 	);
 };
