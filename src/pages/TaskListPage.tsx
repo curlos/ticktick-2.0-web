@@ -100,7 +100,12 @@ const TaskListPage = () => {
 		return <div>Loading...</div>; // Show loading state
 	}
 
-	const tasksToUse = filterTasksByFilter(tasksWithoutDeletedOrWillNotDo, filterToUse);
+	const tasksToUse =
+		projectId === 'will-not-do' || projectId === 'trash'
+			? filterTasksByFilter(tasks, filterToUse)
+			: filterTasksByFilter(tasksWithoutDeletedOrWillNotDo, filterToUse);
+
+	console.log(tasksWithNoParent);
 
 	return (
 		<div className="w-full h-full overflow-auto no-scrollbar max-h-screen bg-color-gray-700 border-l border-r border-color-gray-200">
