@@ -20,7 +20,6 @@ const MODAL_IDS = [
 	'ModalAddHabit',
 	'ModalAddHabitLog',
 	'ModalEditHabitSettings',
-	'ModalViewOptions',
 ];
 
 const initialState = {

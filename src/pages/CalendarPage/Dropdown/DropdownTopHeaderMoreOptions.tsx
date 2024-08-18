@@ -4,7 +4,14 @@ import Icon from '../../../components/Icon';
 import { setModalState } from '../../../slices/modalSlice';
 import { useDispatch } from 'react-redux';
 
-const DropdownTopHeaderMoreOptions = ({ toggleRef, isVisible, setIsVisible, customClasses }) => {
+const DropdownTopHeaderMoreOptions = ({
+	toggleRef,
+	isVisible,
+	setIsVisible,
+	customClasses,
+	isModalViewOptionsOpen,
+	setIsModalViewOptionsOpen,
+}) => {
 	const dispatch = useDispatch();
 
 	return (
@@ -19,8 +26,7 @@ const DropdownTopHeaderMoreOptions = ({ toggleRef, isVisible, setIsVisible, cust
 					name="View Options"
 					iconName="visibility"
 					onClick={() => {
-						console.log('hi');
-						dispatch(setModalState({ modalId: 'ModalViewOptions', isOpen: true }));
+						setIsModalViewOptionsOpen(true);
 					}}
 					setIsVisible={setIsVisible}
 				/>

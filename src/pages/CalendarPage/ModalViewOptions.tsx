@@ -1,54 +1,23 @@
-import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 import Icon from '../../components/Icon';
 import Modal from '../../components/Modal/Modal';
-import { setModalState } from '../../slices/modalSlice';
 import { useRef, useState } from 'react';
 import DropdownGeneralSelect from '../StatsPage/DropdownGeneralSelect';
 import CustomCheckbox from '../../components/CustomCheckbox';
 
-const ModalViewOptions: React.FC = () => {
-	const modal = useSelector((state) => state.modals.modals['ModalViewOptions']);
-	const dispatch = useDispatch();
-
+const ModalViewOptions: React.FC = ({
+	isOpen,
+	setIsOpen,
+	selectedColorsType,
+	setSelectedColorsType,
+	selectedTasksToShow,
+	setSelectedTasksToShow,
+}) => {
 	const dropdownRef = useRef(null);
 	const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-	const [selectedColorsType, setSelectedColorsType] = useState('Projects');
 	const selectedColorsTypeOptions = ['Projects', 'Priority', 'Tags'];
-	const [selectedTasksToShow, setSelectedTasksToShow] = useState({
-		showCompleted: {
-			name: 'Show Completed',
-			isChecked: false,
-		},
-		showCheckItem: {
-			name: 'Show Check Item',
-			isChecked: false,
-		},
-		showAllRepeatCycle: {
-			name: 'Show All Repeat Cycle',
-			isChecked: false,
-		},
-		showHabit: {
-			name: 'Show Habit',
-			isChecked: false,
-		},
-		showFocusRecords: {
-			name: 'Show Focus Records',
-			isChecked: false,
-		},
-		showWeekends: {
-			name: 'Show Weekends',
-			isChecked: false,
-		},
-	});
 
-	if (!modal) {
-		return null;
-	}
-
-	const { isOpen, props } = modal;
-
-	const closeModal = () => dispatch(setModalState({ modalId: 'ModalViewOptions', isOpen: false }));
+	const closeModal = () => setIsOpen(false);
 
 	return (
 		<Modal isOpen={isOpen} onClose={closeModal} position="top-center">
@@ -99,6 +68,7 @@ const ModalViewOptions: React.FC = () => {
 
 							return (
 								<CustomCheckbox
+									key={name}
 									isChecked={isChecked}
 									setIsChecked={(newCheckedValue) => {
 										setSelectedTasksToShow({

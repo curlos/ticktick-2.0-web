@@ -4,6 +4,7 @@ import useContextMenu from '../../hooks/useContextMenu';
 import DropdownTopHeaderMoreOptions from './Dropdown/DropdownTopHeaderMoreOptions';
 import DropdownAddNewTaskDetails from './Dropdown/DropdownAddNewTaskDetails';
 import DropdownIntervalSelect from './Dropdown/DropdownIntervalSelect';
+import ModalViewOptions from './ModalViewOptions';
 
 const TopHeader = ({
 	topHeaderRef,
@@ -16,7 +17,13 @@ const TopHeader = ({
 	setSelectedInterval,
 	connectedCurrentDate,
 	setConnectedCurrentDate,
+	selectedColorsType,
+	setSelectedColorsType,
+	selectedTasksToShow,
+	setSelectedTasksToShow,
 }) => {
+	const [isModalViewOptionsOpen, setIsModalViewOptionsOpen] = useState(false);
+
 	useEffect(() => {
 		if (topHeaderRef.current && document.readyState === 'complete') {
 			setHeaderHeight(topHeaderRef.current.getBoundingClientRect().height);
@@ -127,11 +134,25 @@ const TopHeader = ({
 						toggleRef={dropdownTopHeaderMoreOptions}
 						isVisible={isDropdownTopHeaderMoreOptionsVisible}
 						setIsVisible={setIsDropdownTopHeaderMoreOptionsVisible}
+						{...{
+							isModalViewOptionsOpen,
+							setIsModalViewOptionsOpen,
+							selectedColorsType,
+							setSelectedColorsType,
+							selectedTasksToShow,
+							setSelectedTasksToShow,
+						}}
 					/>
 				</div>
 			</div>
 
 			<DropdownAddNewTaskDetails contextMenuObj={contextMenuObj} />
+
+			<ModalViewOptions
+				isOpen={isModalViewOptionsOpen}
+				setIsOpen={setIsModalViewOptionsOpen}
+				{...{ selectedColorsType, setSelectedColorsType, selectedTasksToShow, setSelectedTasksToShow }}
+			/>
 		</div>
 	);
 };
