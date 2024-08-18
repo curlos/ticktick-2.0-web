@@ -186,7 +186,13 @@ const CustomCheckbox = ({
 			className={classNames('flex items-center justify-between gap-2', collapsible ? 'mb-2' : '')}
 			onClick={handleClick}
 		>
-			<div className="flex items-center gap-[2px] cursor-pointer" onClick={() => setShowValues(!showValues)}>
+			<div
+				className="flex items-center gap-[2px] cursor-pointer"
+				onClick={(e) => {
+					e.stopPropagation();
+					setShowValues(!showValues);
+				}}
+			>
 				{showValues ? (
 					<Icon
 						name="expand_more"
