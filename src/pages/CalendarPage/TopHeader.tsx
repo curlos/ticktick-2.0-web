@@ -5,19 +5,22 @@ import DropdownTopHeaderMoreOptions from './Dropdown/DropdownTopHeaderMoreOption
 import DropdownAddNewTaskDetails from './Dropdown/DropdownAddNewTaskDetails';
 import DropdownIntervalSelect from './Dropdown/DropdownIntervalSelect';
 import ModalViewOptions from './ModalViewOptions';
+import { useCalendarContext } from '../../contexts/useCalendarContext';
 
-const TopHeader = ({
-	topHeaderRef,
-	setHeaderHeight,
-	showFilterSidebar,
-	setShowFilterSidebar,
-	currentDate,
-	setCurrentDate,
-	selectedInterval,
-	setSelectedInterval,
-	connectedCurrentDate,
-	setConnectedCurrentDate,
-}) => {
+const TopHeader = () => {
+	const {
+		connectedCurrentDate,
+		setConnectedCurrentDate,
+		topHeaderRef,
+		setHeaderHeight,
+		showFilterSidebar,
+		setShowFilterSidebar,
+		currentDate,
+		setCurrentDate,
+		selectedInterval,
+		setSelectedInterval,
+	} = useCalendarContext();
+
 	const [isModalViewOptionsOpen, setIsModalViewOptionsOpen] = useState(false);
 
 	useEffect(() => {

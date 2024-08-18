@@ -1,18 +1,21 @@
+import { useCalendarContext } from '../../contexts/useCalendarContext';
 import useGroupedItemsByDate from '../../hooks/useGroupedItemsByDate';
 import useMaxHeight from '../../hooks/useMaxHeight';
 import AgendaView from './AgendaView';
 import DayView from './DayView';
 import MonthView from './MonthView';
 
-const Calendar = ({
-	currentDate,
-	selectedInterval,
-	headerHeight,
-	allValue,
-	selectedValuesById,
-	selectedCollapsibleValues,
-	currDueDate,
-}) => {
+const Calendar = () => {
+	const {
+		currDueDate,
+		currentDate,
+		selectedInterval,
+		headerHeight,
+		allValue,
+		selectedValuesById,
+		selectedCollapsibleValues,
+	} = useCalendarContext();
+
 	const filters = {
 		allValue,
 		selectedValuesById,

@@ -4,19 +4,22 @@ import { useGetProjectsQuery } from '../../services/resources/projectsApi';
 import { useGetFiltersQuery } from '../../services/resources/filtersApi';
 import { useGetTagsQuery } from '../../services/resources/tagsApi';
 import CustomCheckbox from './CustomCheckbox';
+import { useCalendarContext } from '../../contexts/useCalendarContext';
 
-const FilterSidebar = ({
-	allValue,
-	setAllValue,
-	selectedValuesById,
-	setSelectedValuesById,
-	selectedCollapsibleValues,
-	setSelectedCollapsibleValues,
-	connectedCurrentDate,
-	setConnectedCurrentDate,
-	currDueDate,
-	setCurrDueDate,
-}) => {
+const FilterSidebar = () => {
+	const {
+		currDueDate,
+		setCurrDueDate,
+		connectedCurrentDate,
+		setConnectedCurrentDate,
+		allValue,
+		setAllValue,
+		selectedValuesById,
+		setSelectedValuesById,
+		selectedCollapsibleValues,
+		setSelectedCollapsibleValues,
+	} = useCalendarContext();
+
 	const { data: fetchedProjects, isLoading: isLoadingGetProjects, error } = useGetProjectsQuery();
 	const { projects, projectsById } = fetchedProjects || {};
 
