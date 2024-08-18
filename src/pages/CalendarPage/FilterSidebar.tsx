@@ -12,6 +12,7 @@ const FilterSidebar = ({
 	setSelectedValuesById,
 	selectedCollapsibleValues,
 	setSelectedCollapsibleValues,
+	connectedCurrentDate,
 }) => {
 	const { data: fetchedProjects, isLoading: isLoadingGetProjects, error } = useGetProjectsQuery();
 	const { projects, projectsById } = fetchedProjects || {};
@@ -69,7 +70,11 @@ const FilterSidebar = ({
 	return (
 		<div className="pt-5 h-screen flex flex-col">
 			{/* Calendar */}
-			<SelectCalendar dueDate={currDueDate} setDueDate={setCurrDueDate} />
+			<SelectCalendar
+				dueDate={currDueDate}
+				setDueDate={setCurrDueDate}
+				connectedCurrentDate={connectedCurrentDate}
+			/>
 
 			<div className="px-4">
 				<CustomCheckbox

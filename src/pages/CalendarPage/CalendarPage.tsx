@@ -44,6 +44,8 @@ const CalendarPage = () => {
 		},
 	});
 
+	const [connectedCurrentDate, setConnectedCurrentDate] = useState();
+
 	const filterSidebarProps = {
 		allValue,
 		setAllValue,
@@ -51,6 +53,7 @@ const CalendarPage = () => {
 		setSelectedValuesById,
 		selectedCollapsibleValues,
 		setSelectedCollapsibleValues,
+		connectedCurrentDate,
 	};
 
 	const topHeaderProps = {
@@ -62,6 +65,8 @@ const CalendarPage = () => {
 		setCurrentDate,
 		selectedInterval,
 		setSelectedInterval,
+		connectedCurrentDate,
+		setConnectedCurrentDate,
 	};
 
 	return (
@@ -76,6 +81,7 @@ const CalendarPage = () => {
 			)}
 			<div className="flex-1 flex flex-col bg-color-gray-700 h-screen">
 				<TopHeader {...topHeaderProps} />
+
 				<div className="flex-1 flex flex-col h-full">
 					<Calendar
 						currentDate={currentDate}

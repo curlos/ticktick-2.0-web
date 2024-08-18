@@ -1,13 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import Icon from '../../components/Icon';
-import { setModalState } from '../../slices/modalSlice';
 import DropdownIntervalSelect from './DropdownIntervalSelect';
 import useContextMenu from '../../hooks/useContextMenu';
-import useHandleError from '../../hooks/useHandleError';
-import { useAddTaskMutation } from '../../services/resources/tasksApi';
-import ContextMenuGeneric from '../../components/ContextMenu/ContextMenuGeneric';
-import DropdownTaskDetails from '../../components/Dropdown/DropdownTaskDetails';
 import DropdownAddNewTaskDetails from './DropdownAddNewTaskDetails';
 
 const TopHeader = ({
@@ -19,9 +13,9 @@ const TopHeader = ({
 	setCurrentDate,
 	selectedInterval,
 	setSelectedInterval,
+	connectedCurrentDate,
+	setConnectedCurrentDate,
 }) => {
-	const dispatch = useDispatch();
-
 	useEffect(() => {
 		if (topHeaderRef.current && document.readyState === 'complete') {
 			setHeaderHeight(topHeaderRef.current.getBoundingClientRect().height);
@@ -40,11 +34,15 @@ const TopHeader = ({
 	};
 
 	const goToPreviousMonth = () => {
-		setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
+		const prevMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
+		setCurrentDate(prevMonth);
+		setConnectedCurrentDate(prevMonth);
 	};
 
 	const goToNextMonth = () => {
-		setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
+		const nextMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
+		setCurrentDate(nextMonth);
+		setConnectedCurrentDate(nextMonth);
 	};
 
 	const contextMenuObj = useContextMenu();
