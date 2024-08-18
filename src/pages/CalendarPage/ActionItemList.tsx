@@ -25,7 +25,7 @@ const ActionItemList = ({ actionItems, maxActionItems, formattedDay }) => {
 			{focusRecords?.map((focusRecord, index) => (
 				<MiniActionItem
 					key={focusRecord._id}
-					index={index}
+					index={(tasks?.length ? tasks.length : 0) + index}
 					focusRecord={focusRecord}
 					actionItems={actionItems}
 					flattenedActionItems={flattenedActionItems}
