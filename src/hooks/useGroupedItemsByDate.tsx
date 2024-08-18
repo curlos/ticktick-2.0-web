@@ -34,10 +34,14 @@ const useGroupedItemsByDate = (filters) => {
 		habitsById;
 
 	useEffect(() => {
-		// TODO: Use the passed in filters to filter the the tasks and focus records according to the filters. For example, if GUNPLA is selected as the only chosen project, then only GUNPLA tasks and focus records should be shown.
+		if (!isAllDoneLoading) {
+			return;
+		}
+
 		const filteredGroupedTasksByDate = {};
 		const filteredFocusRecordsByDate = {};
 
+		// Filter the tasks
 		groupedTasksByDate &&
 			Object.keys(groupedTasksByDate).forEach((dateKey) => {
 				const tasksForDayArray = groupedTasksByDate[dateKey];
@@ -45,6 +49,7 @@ const useGroupedItemsByDate = (filters) => {
 				filteredGroupedTasksByDate[dateKey] = tasksForDayArray.filter(filterTask);
 			});
 
+		// Filter the focus records (by the attached task - if there is any)
 		sortedGroupedFocusRecordsAsc &&
 			Object.keys(sortedGroupedFocusRecordsAsc).forEach((dateKey) => {
 				const focusRecordsForTheDay = sortedGroupedFocusRecordsAsc[dateKey];
@@ -59,17 +64,12 @@ const useGroupedItemsByDate = (filters) => {
 				filteredFocusRecordsByDate[dateKey] = filteredFocusRecordsForTheDay;
 			});
 
-		console.log(sortedGroupedFocusRecordsAsc);
-		console.log(filteredGroupedTasksByDate);
-
-		const sortedTasksByDate = filteredGroupedTasksByDate && sortObjectByDateKeys(filteredGroupedTasksByDate);
-		const sortedFocusRecordsByDate = filteredFocusRecordsByDate && sortObjectByDateKeys(filteredFocusRecordsByDate);
-
-		if (sortedTasksByDate && sortedFocusRecordsByDate) {
+		if (filteredGroupedTasksByDate && filteredFocusRecordsByDate) {
 			const newAllGroupedByDate = {};
 
-			Object.keys(sortedTasksByDate).forEach((dateKey) => {
-				const tasksForThisDay = sortedTasksByDate[dateKey];
+			// Add the filtered tasks to the all grouped by date items object
+			Object.keys(filteredGroupedTasksByDate).forEach((dateKey) => {
+				const tasksForThisDay = filteredGroupedTasksByDate[dateKey];
 
 				if (!newAllGroupedByDate[dateKey]) {
 					newAllGroupedByDate[dateKey] = {};
@@ -78,8 +78,9 @@ const useGroupedItemsByDate = (filters) => {
 				newAllGroupedByDate[dateKey].tasks = tasksForThisDay;
 			});
 
-			Object.keys(sortedFocusRecordsByDate).forEach((dateKey) => {
-				const focusRecordForThisDay = sortedFocusRecordsByDate[dateKey];
+			// Add the filtered focus records to the all grouped by date items object
+			Object.keys(filteredFocusRecordsByDate).forEach((dateKey) => {
+				const focusRecordForThisDay = filteredFocusRecordsByDate[dateKey];
 
 				if (!newAllGroupedByDate[dateKey]) {
 					newAllGroupedByDate[dateKey] = {};
@@ -88,6 +89,7 @@ const useGroupedItemsByDate = (filters) => {
 				newAllGroupedByDate[dateKey].focusRecords = focusRecordForThisDay;
 			});
 
+			// Sort all the items by their date key (from oldest to most recent)
 			const newSortedAllGroupedByDate = newAllGroupedByDate && sortObjectByDateKeys(newAllGroupedByDate);
 			setAllItemsGroupedByDate(newSortedAllGroupedByDate);
 		}
