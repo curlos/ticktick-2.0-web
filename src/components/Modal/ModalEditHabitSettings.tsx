@@ -71,7 +71,6 @@ const ModalEditHabitSettings: React.FC = () => {
 						<button
 							className="flex-1 bg-blue-500 rounded py-1 cursor-pointer hover:bg-blue-600 min-w-[114px]"
 							onClick={() => {
-								// TODO: Send backend call to edit habit settings.
 								handleError(async () => {
 									const payload = {
 										habit: {

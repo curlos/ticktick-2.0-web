@@ -179,7 +179,7 @@ const AddOrEditFocusRecord = ({ focusRecord, closeModal, fromDropdown = false, c
 					) : (
 						<div className="max-h-[500px] no-scrollbar overflow-auto flex flex-col gap-4">
 							{focusRecord.children.map((childId) => (
-								<FocusRecordChild childId={childId} />
+								<FocusRecordChild key={childId} childId={childId} />
 							))}
 						</div>
 					)}

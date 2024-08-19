@@ -8,8 +8,8 @@ import { filterTaskByFilter } from '../utils/filters.util';
 import { useCalendarContext } from '../contexts/useCalendarContext';
 
 const useGroupedItemsByDate = (filters) => {
-	const { selectedTasksToShow } = useCalendarContext();
-	const { showCompleted, showFocusRecords } = selectedTasksToShow;
+	const { shownTasksFilters } = useCalendarContext();
+	const { showCompleted, showFocusRecords } = shownTasksFilters;
 
 	const [allItemsGroupedByDate, setAllItemsGroupedByDate] = useState({});
 
@@ -107,7 +107,7 @@ const useGroupedItemsByDate = (filters) => {
 		fetchedFocusRecords,
 		filters.allValue,
 		filters.selectedValuesById,
-		selectedTasksToShow,
+		shownTasksFilters,
 	]);
 
 	const filterTask = (task) => {

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
-import { useGetUserSettingsQuery, useEditUserSettingsMutation } from '../services/resources/userSettingsApi';
+import { useGetUserSettingsQuery } from '../services/resources/userSettingsApi';
 
 const CalendarContext = createContext();
 
@@ -16,7 +16,6 @@ const useCalendar = () => {
 	// RTK Query - User Settings
 	const { data: fetchedUserSettings, isLoading: isLoadingGetUserSettings } = useGetUserSettingsQuery();
 	const { userSettings } = fetchedUserSettings || {};
-	const [editUserSettings] = useEditUserSettingsMutation();
 
 	// useState: General
 	const [currDueDate, setCurrDueDate] = useState(null);
@@ -28,8 +27,8 @@ const useCalendar = () => {
 	const [currentDate, setCurrentDate] = useState(new Date());
 	const topHeaderRef = useRef(null);
 	const [headerHeight, setHeaderHeight] = useState(0);
-	const [selectedColorsType, setSelectedColorsType] = useState('Priority');
-	const [selectedTasksToShow, setSelectedTasksToShow] = useState({
+	const [colorsType, setColorsType] = useState('Priority');
+	const [shownTasksFilters, setShownTasksFilters] = useState({
 		showCompleted: {
 			name: 'Show Completed',
 			isChecked: true,
@@ -101,20 +100,20 @@ const useCalendar = () => {
 		}
 
 		const {
-			calendarViewOptions: { colorsType, shownTasksFilters },
+			calendarViewOptions: { colorsType: backendColorsType, shownTasksFilters: backendShownTasksFilters },
 		} = userSettings;
 
-		setSelectedColorsType(colorsType);
-		const newSelectedTasksToShow = { ...selectedTasksToShow };
+		setColorsType(backendColorsType);
+		const newShownTasksFilters = { ...shownTasksFilters };
 
-		Object.keys(shownTasksFilters).forEach((key) => {
-			if (newSelectedTasksToShow[key]) {
-				const newCheckedValue = shownTasksFilters[key];
-				newSelectedTasksToShow[key].isChecked = newCheckedValue;
+		Object.keys(backendShownTasksFilters).forEach((key) => {
+			if (shownTasksFilters[key]) {
+				const newCheckedValue = backendShownTasksFilters[key];
+				shownTasksFilters[key].isChecked = newCheckedValue;
 			}
 		});
 
-		setSelectedTasksToShow(newSelectedTasksToShow);
+		setShownTasksFilters(newShownTasksFilters);
 	}, [isLoadingGetUserSettings]);
 
 	return {
@@ -134,10 +133,10 @@ const useCalendar = () => {
 		topHeaderRef,
 		headerHeight,
 		setHeaderHeight,
-		selectedColorsType,
-		setSelectedColorsType,
-		selectedTasksToShow,
-		setSelectedTasksToShow,
+		colorsType,
+		setColorsType,
+		shownTasksFilters,
+		setShownTasksFilters,
 
 		// useState: Filter Sidebar
 		allValue,

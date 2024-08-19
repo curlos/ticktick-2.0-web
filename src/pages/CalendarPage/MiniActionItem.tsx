@@ -25,7 +25,7 @@ const MiniActionItem = ({
 	innerClickElemRefs,
 	setInnerClickElemRefs,
 }) => {
-	const { selectedColorsType } = useCalendarContext();
+	const { colorsType } = useCalendarContext();
 
 	const maxActionItems = shownActionItems.length;
 	const isForTask = task && Object.keys(task).length > 0;
@@ -102,7 +102,7 @@ const MiniActionItem = ({
 		const foundTag = tagsById[firstTagId];
 		const tagColor = foundTag?.color;
 
-		switch (selectedColorsType) {
+		switch (colorsType) {
 			case 'Projects':
 				return projectColor || defaultColor;
 			case 'Priority':

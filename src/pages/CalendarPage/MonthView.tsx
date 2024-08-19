@@ -8,8 +8,8 @@ import DropdownAddNewTaskDetails from './Dropdown/DropdownAddNewTaskDetails';
 import { useCalendarContext } from '../../contexts/useCalendarContext';
 
 const MonthView = ({ groupedItemsByDateObj, currentDate, currDueDate }) => {
-	const { selectedTasksToShow } = useCalendarContext();
-	const { showWeekends } = selectedTasksToShow;
+	const { shownTasksFilters } = useCalendarContext();
+	const { showWeekends } = shownTasksFilters;
 	const doNotShowWeekendDays = !showWeekends.isChecked;
 
 	const { allItemsGroupedByDate } = groupedItemsByDateObj;
@@ -82,8 +82,8 @@ const MonthView = ({ groupedItemsByDateObj, currentDate, currDueDate }) => {
 };
 
 const DaySquare = ({ day, index, currentDate, maxActionItems, allItemsGroupedByDate, currDueDate }) => {
-	const { selectedTasksToShow } = useCalendarContext();
-	const { showWeekends } = selectedTasksToShow;
+	const { shownTasksFilters } = useCalendarContext();
+	const { showWeekends } = shownTasksFilters;
 	const doNotShowWeekendDays = !showWeekends.isChecked;
 
 	if (doNotShowWeekendDays && isWeekendDay(day)) {

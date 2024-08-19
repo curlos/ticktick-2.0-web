@@ -5,13 +5,22 @@ import { useRef, useState } from 'react';
 import DropdownGeneralSelect from '../StatsPage/DropdownGeneralSelect';
 import CustomCheckbox from '../../components/CustomCheckbox';
 import { useCalendarContext } from '../../contexts/useCalendarContext';
+import { useEditUserSettingsMutation, useGetUserSettingsQuery } from '../../services/resources/userSettingsApi';
+import useHandleError from '../../hooks/useHandleError';
 
 const ModalViewOptions: React.FC = ({ isOpen, setIsOpen }) => {
-	const { selectedColorsType, setSelectedColorsType, selectedTasksToShow, setSelectedTasksToShow } =
-		useCalendarContext();
+	const { colorsType, setColorsType, shownTasksFilters, setShownTasksFilters } = useCalendarContext();
+
+	// RTK Query - User Settings
+	const { data: fetchedUserSettings, isLoading: isLoadingGetUserSettings } = useGetUserSettingsQuery();
+	const { userSettings } = fetchedUserSettings || {};
+
+	const [editUserSettings] = useEditUserSettingsMutation();
+	const handleError = useHandleError();
+
 	const dropdownRef = useRef(null);
 	const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-	const selectedColorsTypeOptions = ['Projects', 'Priority', 'Tags'];
+	const colorsTypeOptions = ['Projects', 'Priority', 'Tags'];
 
 	const closeModal = () => setIsOpen(false);
 
@@ -40,7 +49,7 @@ const ModalViewOptions: React.FC = ({ isOpen, setIsOpen }) => {
 							className="flex justify-between items-center gap-[2px] border border-color-gray-200 px-2 py-1 rounded-md cursor-pointer"
 							onClick={() => setIsDropdownVisible(!isDropdownVisible)}
 						>
-							<div>{selectedColorsType}</div>
+							<div>{colorsType}</div>
 							<Icon name="keyboard_arrow_down" customClass="!text-[18px] mt-[2px]" />
 						</div>
 
@@ -48,9 +57,22 @@ const ModalViewOptions: React.FC = ({ isOpen, setIsOpen }) => {
 							toggleRef={dropdownRef}
 							isVisible={isDropdownVisible}
 							setIsVisible={setIsDropdownVisible}
-							selected={selectedColorsType}
-							setSelected={setSelectedColorsType}
-							selectedOptions={selectedColorsTypeOptions}
+							selected={colorsType}
+							setSelected={(newColorsType) => {
+								handleError(async () => {
+									setColorsType(newColorsType);
+
+									const payload = {
+										calendarViewOptions: {
+											...userSettings.calendarViewOptions,
+											colorsType: newColorsType,
+										},
+									};
+
+									await editUserSettings(payload).unwrap();
+								});
+							}}
+							selectedOptions={colorsTypeOptions}
 							customClasses={'!w-full'}
 						/>
 					</div>
@@ -58,8 +80,8 @@ const ModalViewOptions: React.FC = ({ isOpen, setIsOpen }) => {
 					{/* Tasks */}
 					<div className="font-bold mt-6 mb-2">Tasks</div>
 					<div className="space-y-1">
-						{Object.keys(selectedTasksToShow).map((taskToShowKey) => {
-							const taskToShowValue = selectedTasksToShow[taskToShowKey];
+						{Object.keys(shownTasksFilters).map((taskToShowKey) => {
+							const taskToShowValue = shownTasksFilters[taskToShowKey];
 							const { name, isChecked } = taskToShowValue;
 
 							return (
@@ -67,12 +89,26 @@ const ModalViewOptions: React.FC = ({ isOpen, setIsOpen }) => {
 									key={name}
 									isChecked={isChecked}
 									setIsChecked={(newCheckedValue) => {
-										setSelectedTasksToShow({
-											...selectedTasksToShow,
-											[taskToShowKey]: {
-												...selectedTasksToShow[taskToShowKey],
-												isChecked: newCheckedValue,
-											},
+										handleError(async () => {
+											setShownTasksFilters({
+												...shownTasksFilters,
+												[taskToShowKey]: {
+													...shownTasksFilters[taskToShowKey],
+													isChecked: newCheckedValue,
+												},
+											});
+
+											const payload = {
+												calendarViewOptions: {
+													...userSettings.calendarViewOptions,
+													shownTasksFilters: {
+														...userSettings.calendarViewOptions.shownTasksFilters,
+														[taskToShowKey]: newCheckedValue,
+													},
+												},
+											};
+
+											await editUserSettings(payload).unwrap();
 										});
 									}}
 									label={name}
