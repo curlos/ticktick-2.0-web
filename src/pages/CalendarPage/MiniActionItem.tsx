@@ -200,7 +200,6 @@ const MiniActionItem = ({
 							}}
 							onCloseContextMenu={handleClose}
 							focusRecord={focusRecord}
-							showTitle={false}
 						/>
 					)}
 				</ContextMenuGeneric>

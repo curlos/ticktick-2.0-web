@@ -15,7 +15,7 @@ import TimeOption from './TimeOption';
 import TextareaAutosize from 'react-textarea-autosize';
 import useHandleError from '../../../hooks/useHandleError';
 
-const AddOrEditFocusRecord = ({ focusRecord, closeModal, showTitle = true }) => {
+const AddOrEditFocusRecord = ({ focusRecord, closeModal, fromDropdown = false, closeDropdown }) => {
 	const handleError = useHandleError();
 
 	const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
@@ -115,12 +115,20 @@ const AddOrEditFocusRecord = ({ focusRecord, closeModal, showTitle = true }) => 
 		}
 	};
 
+	const handleClose = () => {
+		if (fromDropdown) {
+			closeDropdown();
+		} else {
+			closeModal();
+		}
+	};
+
 	const noChildFocusRecords = !focusRecord || focusRecord?.children?.length === 0;
 
 	return (
 		<div>
 			<div className={classNames('p-5', focusRecord ? 'pb-2' : '')}>
-				{showTitle && (
+				{!fromDropdown && (
 					<div className="flex items-center justify-between mb-4">
 						<h3 className="font-bold text-[16px]">{focusRecord ? 'Edit' : 'Add'} Focus Record</h3>
 						<Icon
@@ -279,7 +287,7 @@ const AddOrEditFocusRecord = ({ focusRecord, closeModal, showTitle = true }) => 
 				<div className="flex justify-end gap-2">
 					<button
 						className="border border-color-gray-200 rounded py-1 cursor-pointer hover:bg-color-gray-200 min-w-[114px]"
-						onClick={closeModal}
+						onClick={handleClose}
 					>
 						Close
 					</button>
@@ -288,7 +296,7 @@ const AddOrEditFocusRecord = ({ focusRecord, closeModal, showTitle = true }) => 
 						onClick={() => {
 							handleError(async () => {
 								await handleAddFocusRecord();
-								closeModal();
+								handleClose();
 							});
 						}}
 					>
