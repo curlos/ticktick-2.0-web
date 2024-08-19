@@ -12,8 +12,10 @@ const AgendaView = ({ groupedItemsByDateObj }) => {
 					Object.keys(allItemsGroupedByDate).map((dateKey) => {
 						const tasksAndFocusRecords = allItemsGroupedByDate[dateKey];
 						const { tasks, focusRecords } = tasksAndFocusRecords;
+						const noTasks = !tasks || tasks.length === 0;
+						const noFocusRecords = !focusRecords || focusRecords.length === 0;
 
-						if (!tasks && !focusRecords) {
+						if (noTasks && noFocusRecords) {
 							return null;
 						}
 
