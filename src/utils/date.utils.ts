@@ -543,3 +543,8 @@ export const isDateBefore = (firstDate, secondDate) => {
 	// Compare the time values of the dates
 	return date1.getTime() < date2.getTime();
 };
+
+export const isWeekendDay = (date) => {
+	const dayOfWeek = date.getDay();
+	return dayOfWeek === 0 || dayOfWeek === 6; // 0 is Sunday, 6 is Saturday
+};

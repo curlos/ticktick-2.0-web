@@ -26,7 +26,7 @@ const useCalendar = () => {
 	const [selectedTasksToShow, setSelectedTasksToShow] = useState({
 		showCompleted: {
 			name: 'Show Completed',
-			isChecked: false,
+			isChecked: true,
 		},
 
 		// TODO: "Check Item" on TickTick 1.0 is the tasks that are NOT tasks but can be completed and only created from a real "Task". It's what I use most often. I don't know how I'm going to structure these quite yet so commenting this out for now.
@@ -49,11 +49,11 @@ const useCalendar = () => {
 
 		showFocusRecords: {
 			name: 'Show Focus Records',
-			isChecked: false,
+			isChecked: true,
 		},
 		showWeekends: {
 			name: 'Show Weekends',
-			isChecked: false,
+			isChecked: true,
 		},
 	});
 

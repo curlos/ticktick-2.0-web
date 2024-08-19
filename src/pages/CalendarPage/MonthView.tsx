@@ -1,14 +1,17 @@
 import classNames from 'classnames';
-import { areDatesEqual, formatCheckedInDayDate, getCalendarMonth } from '../../utils/date.utils';
+import { areDatesEqual, formatCheckedInDayDate, getCalendarMonth, isWeekendDay } from '../../utils/date.utils';
 import { useEffect, useState } from 'react';
 import useWindowSize from '../../hooks/useWindowSize';
 import ActionItemList from './ActionItemList';
 import useContextMenu from '../../hooks/useContextMenu';
-import { useAddTaskMutation } from '../../services/resources/tasksApi';
-import useHandleError from '../../hooks/useHandleError';
 import DropdownAddNewTaskDetails from './Dropdown/DropdownAddNewTaskDetails';
+import { useCalendarContext } from '../../contexts/useCalendarContext';
 
 const MonthView = ({ groupedItemsByDateObj, currentDate, currDueDate }) => {
+	const { selectedTasksToShow } = useCalendarContext();
+	const { showWeekends } = selectedTasksToShow;
+	const doNotShowWeekendDays = !showWeekends.isChecked;
+
 	const { allItemsGroupedByDate } = groupedItemsByDateObj;
 	const calendarDateRange = getCalendarMonth(currentDate.getFullYear(), currentDate.getMonth(), 5);
 	const shownWeeks = calendarDateRange;
@@ -36,21 +39,28 @@ const MonthView = ({ groupedItemsByDateObj, currentDate, currDueDate }) => {
 
 	return (
 		<div className="h-full max-h-screen flex-1 flex flex-col">
-			<div className="grid grid-cols-7 mb-1">
-				{calendarDateRange[0].map((day) => (
-					<div key={day.toLocaleDateString()} className="text-center text-color-gray-100">
-						{day.toLocaleString('en-us', { weekday: 'short' })}
-					</div>
-				))}
+			<div className={classNames('grid mb-1', doNotShowWeekendDays ? 'grid-cols-5' : 'grid-cols-7')}>
+				{calendarDateRange[0].map((day) => {
+					if (doNotShowWeekendDays && isWeekendDay(day)) {
+						return null;
+					}
+
+					return (
+						<div key={day.toLocaleDateString()} className="text-center text-color-gray-100">
+							{day.toLocaleString('en-us', { weekday: 'short' })}
+						</div>
+					);
+				})}
 			</div>
 			<div className="flex-1 flex flex-col">
 				{shownWeeks.map((week, index) => (
 					<div
 						key={`week-${index}`}
 						className={classNames(
-							'grid grid-cols-7 flex-1 border-color-gray-200',
+							'grid flex-1 border-color-gray-200',
 							index === 0 ? 'border-t' : '',
-							index !== shownWeeks.length - 1 ? 'border-b' : ''
+							index !== shownWeeks.length - 1 ? 'border-b' : '',
+							doNotShowWeekendDays ? 'grid-cols-5' : 'grid-cols-7'
 						)}
 					>
 						{week.map((day, index) => (
@@ -72,9 +82,13 @@ const MonthView = ({ groupedItemsByDateObj, currentDate, currDueDate }) => {
 };
 
 const DaySquare = ({ day, index, currentDate, maxActionItems, allItemsGroupedByDate, currDueDate }) => {
-	const handleError = useHandleError();
-	// RTK Query - Tasks
-	const [addTask, { isLoading, error }] = useAddTaskMutation();
+	const { selectedTasksToShow } = useCalendarContext();
+	const { showWeekends } = selectedTasksToShow;
+	const doNotShowWeekendDays = !showWeekends.isChecked;
+
+	if (doNotShowWeekendDays && isWeekendDay(day)) {
+		return null;
+	}
 
 	const contextMenuObj = useContextMenu();
 

@@ -9,7 +9,7 @@ import { useCalendarContext } from '../contexts/useCalendarContext';
 
 const useGroupedItemsByDate = (filters) => {
 	const { selectedTasksToShow } = useCalendarContext();
-	const { showCompleted, showHabit, showFocusRecords, showWeekends } = selectedTasksToShow;
+	const { showCompleted, showFocusRecords } = selectedTasksToShow;
 
 	const [allItemsGroupedByDate, setAllItemsGroupedByDate] = useState({});
 
