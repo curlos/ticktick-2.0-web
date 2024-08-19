@@ -70,7 +70,7 @@ const useCalendar = () => {
 
 	const [selectedCollapsibleValues, setSelectedCollapsibleValues] = useState({
 		projects: {
-			name: 'Lists',
+			name: 'Projects',
 			isChecked: false,
 			valuesByIdType: 'projectsById',
 			key: 'projects',

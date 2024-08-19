@@ -117,8 +117,6 @@ const useGroupedItemsByDate = (filters) => {
 	};
 
 	const filterByViewOptions = (task) => {
-		// showWeekends
-		console.log(task);
 		const doNotShowCompletedTasks = !showCompleted.isChecked;
 
 		if (task && doNotShowCompletedTasks) {

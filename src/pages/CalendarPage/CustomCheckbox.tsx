@@ -26,47 +26,70 @@ const CustomCheckbox = ({
 
 	const allHasBeenChecked = allValue.isChecked;
 
+	/**
+	 * @description Handles the click for any of the values and determines which type of value it is: "All", "Collapsible", "Normal Filter"
+	 */
 	const handleClick = () => {
-		const willBeChecked = !isChecked;
-
 		if (isAllValue) {
-			if (willBeChecked) {
-				// Set all the collapsible and normal values to false.
-				setAllValue({ ...allValue, isChecked: true });
-				updateValuesByIdAndCollapsibleFalse(valuesById, selectedCollapsibleValues);
-			}
+			handleClickAllValue();
 		} else if (collapsible) {
-			const { key, valuesByIdType } = value;
-			// Set the collapsible value and all the values part of the list to true.
-			setSelectedCollapsibleValues({
-				...selectedCollapsibleValues,
-				[key]: {
-					...value,
-					isChecked: willBeChecked,
-				},
-			});
-
-			const newValuesByIdForType = cloneWithIsChecked(valuesById[valuesByIdType], willBeChecked);
-			const newValuesById = {
-				...valuesById,
-				[valuesByIdType]: newValuesByIdForType,
-			};
-
-			const { everyOtherValueTrue } = getAllTrueValues(newValuesById);
-
-			if (everyOtherValueTrue) {
-				updateValuesByIdAndCollapsibleFalse(newValuesById, selectedCollapsibleValues);
-				setAllValue({ ...allValue, isChecked: true });
-			} else {
-				setValuesById(newValuesById);
-				setAllValue({ ...allValue, isChecked: false });
-			}
+			handleClickCollapsibleFilter();
 		} else {
-			handleClickNormalValue();
+			handleClickNormalFilter();
 		}
 	};
 
-	const handleClickNormalValue = () => {
+	/**
+	 * @description Handles the click for the "All" value which will affect all the "Collapsible Filter" and "Normal Filter" values.
+	 */
+	const handleClickAllValue = () => {
+		const willBeChecked = !isChecked;
+
+		if (willBeChecked) {
+			// Set all the collapsible and normal values to false.
+			setAllValue({ ...allValue, isChecked: true });
+			updateValuesByIdAndCollapsibleFalse(valuesById, selectedCollapsibleValues);
+		}
+	};
+
+	/**
+	 * @description Handles "Collapsible Filter" which are the top-level values that encompass a list of "Normal Filter" values. When one of these are checked or unchecked, it will change all of the "Normal Filter" values below to be "true" or "false".
+	 */
+	const handleClickCollapsibleFilter = () => {
+		const willBeChecked = !isChecked;
+
+		const { key, valuesByIdType } = value;
+		// Set the collapsible value and all the values part of the list to true.
+		setSelectedCollapsibleValues({
+			...selectedCollapsibleValues,
+			[key]: {
+				...value,
+				isChecked: willBeChecked,
+			},
+		});
+
+		const newValuesByIdForType = cloneWithIsChecked(valuesById[valuesByIdType], willBeChecked);
+		const newValuesById = {
+			...valuesById,
+			[valuesByIdType]: newValuesByIdForType,
+		};
+
+		const { everyOtherValueTrue } = getAllTrueValues(newValuesById);
+		const noFiltersAreChecked = checkIfNoFiltersAreChecked(newValuesById);
+
+		if (everyOtherValueTrue || noFiltersAreChecked) {
+			updateValuesByIdAndCollapsibleFalse(newValuesById, selectedCollapsibleValues);
+			setAllValue({ ...allValue, isChecked: true });
+		} else {
+			setValuesById(newValuesById);
+			setAllValue({ ...allValue, isChecked: false });
+		}
+	};
+
+	/**
+	 * @description Handles "Normal Filter" which are basically the objects that are created from one of the backend models (Projects, Filters, Tags) with the "isChecked" property added to it. When these values are clicked, they typically only change their own value and don't affect surrounding values.
+	 */
+	const handleClickNormalFilter = () => {
 		// If not checked, then this means, it's going to be checked and be true in the next state value. Otherwise, it'll be false in the next state value.
 		const willBeChecked = !isChecked;
 
@@ -92,7 +115,6 @@ const CustomCheckbox = ({
 				getAllTrueValues(newValuesById);
 
 			// If every other value is true, then set them all to false because there are no "filters" applied since no one specific filter has been chosen so it's set to "All". Meaning do not filter by anything.
-			// TODO: Test this to make sure it works.
 			if (everyOtherValueTrue) {
 				updateValuesByIdAndCollapsibleFalse(newValuesById, selectedCollapsibleValues);
 				setAllValue({ ...allValue, isChecked: true });
@@ -120,18 +142,41 @@ const CustomCheckbox = ({
 			}
 		}
 
-		// If we're setting one of the "normal" values to false, then the collapsible value should be set to false as well. That collapsible value (like "Lists", "Filters", or "Tags") is only true when all the child "normal" values under it are ALL true. So, if even one of them is false, then it should be set to false.
 		if (!willBeChecked) {
+			const noFiltersAreChecked = checkIfNoFiltersAreChecked(newValuesById);
+
+			// If none of the filters are checked, then set the "All" value to true as a specific filter (Project, Filter, Tag) has not been checked and thus all values can be shown.
+			if (noFiltersAreChecked) {
+				setAllValue({ ...allValue, isChecked: true });
+			}
+
+			// If we're setting one of the "normal" values to false, then the collapsible value should be set to false as well. That collapsible value (like "Lists", "Filters", or "Tags") is only true when all the child "normal" values under it are ALL true. So, if even one of them is false, then it should be set to false.
 			const newSelectedCollapsibleValues = {
 				...selectedCollapsibleValues,
 				[collapsibleKey]: { ...selectedCollapsibleValues[collapsibleKey], isChecked: false },
 			};
 			setSelectedCollapsibleValues(newSelectedCollapsibleValues);
-
-			console.log(newSelectedCollapsibleValues);
 		}
 	};
 
+	/**
+	 * @description Checks if ANY of the filters (Project, Filter, or Tag) in the "FilterSidebar" is checked.
+	 */
+	const checkIfNoFiltersAreChecked = (valuesById) => {
+		const { projectsById, filtersById, tagsById } = valuesById;
+
+		const noProjectsChecked = Object.values(projectsById).every((project) => !project.isChecked);
+		const noFiltersChecked = Object.values(filtersById).every((filter) => !filter.isChecked);
+		const noTagsChecked = Object.values(tagsById).every((tag) => !tag.isChecked);
+
+		const noFiltersAreChecked = noProjectsChecked && noFiltersChecked && noTagsChecked;
+
+		return noFiltersAreChecked;
+	};
+
+	/**
+	 * @description Set all the filters (Project, Filter, Tag) to be false AND set all collapsible values to be false as well.
+	 */
 	const updateValuesByIdAndCollapsibleFalse = (newValuesById, selectedCollapsibleValues) => {
 		const { projectsById, filtersById, tagsById } = newValuesById;
 
@@ -150,6 +195,9 @@ const CustomCheckbox = ({
 		setSelectedCollapsibleValues(newSelectedCollapsibleValues);
 	};
 
+	/**
+	 * @description Clone an "objById", one of the filter objects by id, where the "isChecked" property is set to the passed in value.
+	 */
 	const cloneWithIsChecked = (objById, isCheckedValue) => {
 		const newObjById = {};
 
@@ -165,6 +213,9 @@ const CustomCheckbox = ({
 		return newObjById;
 	};
 
+	/**
+	 * @description Checks which specific filters have all their values checked and if ALL of the filters combined ALL have been checked.
+	 */
 	const getAllTrueValues = (newValuesById) => {
 		const { projectsById, filtersById, tagsById } = newValuesById;
 		const allProjectsTrue = Object.values(projectsById).every((project) => project.isChecked);
@@ -214,7 +265,6 @@ const CustomCheckbox = ({
 					id="customCheckbox"
 					type="checkbox"
 					name={name}
-					// TODO: Add option to make the checkbox rounded for certain items if passed in the props.
 					className="accent-blue-500 hidden"
 					checked={isChecked}
 					onChange={() => null}
