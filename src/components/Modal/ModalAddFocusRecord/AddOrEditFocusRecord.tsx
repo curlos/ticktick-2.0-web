@@ -53,11 +53,8 @@ const AddOrEditFocusRecord = ({ focusRecord, closeModal, showTitle = true }) => 
 
 	useEffect(() => {
 		if (focusRecord) {
-			console.log(focusRecord);
 			const duration = formatTimeToHoursMinutesSeconds(focusRecord?.duration) || { hours: 0, minutes: 0 };
 			const task = tasksById[focusRecord.taskId];
-
-			// console.log(duration);
 
 			setSelectedTask(task);
 			setFocusNote(focusRecord.note);

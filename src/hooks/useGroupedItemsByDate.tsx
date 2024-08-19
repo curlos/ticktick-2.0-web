@@ -5,8 +5,12 @@ import { useGetProjectsQuery } from '../services/resources/projectsApi';
 import { useGetTasksQuery } from '../services/resources/tasksApi';
 import { sortObjectByDateKeys } from '../utils/date.utils';
 import { filterTaskByFilter } from '../utils/filters.util';
+import { useCalendarContext } from '../contexts/useCalendarContext';
 
 const useGroupedItemsByDate = (filters) => {
+	const { selectedTasksToShow } = useCalendarContext();
+	const { showCompleted, showHabit, showFocusRecords, showWeekends } = selectedTasksToShow;
+
 	const [allItemsGroupedByDate, setAllItemsGroupedByDate] = useState({});
 
 	// RTK Query - Focus Records
@@ -101,9 +105,30 @@ const useGroupedItemsByDate = (filters) => {
 		fetchedFocusRecords,
 		filters.allValue,
 		filters.selectedValuesById,
+		selectedTasksToShow,
 	]);
 
 	const filterTask = (task) => {
+		const viewOptionsShowsIt = filterByViewOptions(task);
+		const filterSidebarShowsIt = viewOptionsShowsIt && filterTaskByFilterSidebar(task);
+		return viewOptionsShowsIt && filterSidebarShowsIt;
+	};
+
+	const filterByViewOptions = (task) => {
+		// showHabit, showFocusRecords, showWeekends
+		console.log(task);
+		const doNotShowCompletedTasks = !showCompleted.isChecked;
+
+		if (task && doNotShowCompletedTasks) {
+			if (task.completedTime) {
+				return false;
+			}
+		}
+
+		return true;
+	};
+
+	const filterTaskByFilterSidebar = (task) => {
 		if (filters.allValue.isChecked) {
 			return true;
 		}

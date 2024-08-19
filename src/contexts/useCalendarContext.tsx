@@ -28,18 +28,25 @@ const useCalendar = () => {
 			name: 'Show Completed',
 			isChecked: false,
 		},
-		showCheckItem: {
-			name: 'Show Check Item',
-			isChecked: false,
-		},
-		showAllRepeatCycle: {
-			name: 'Show All Repeat Cycle',
-			isChecked: false,
-		},
-		showHabit: {
-			name: 'Show Habit',
-			isChecked: false,
-		},
+
+		// TODO: "Check Item" on TickTick 1.0 is the tasks that are NOT tasks but can be completed and only created from a real "Task". It's what I use most often. I don't know how I'm going to structure these quite yet so commenting this out for now.
+		// showCheckItem: {
+		// 	name: 'Show Check Item',
+		// 	isChecked: false,
+		// },
+
+		// TODO: I do not have repeating tasks working right now so commenting out. Will come back to this after I've added that feature.
+		// showAllRepeatCycle: {
+		// 	name: 'Show All Repeat Cycle',
+		// 	isChecked: false,
+		// },
+
+		// TODO: I do have habits finished for the most part so this could be doable but I'm actually unsure on how this view feature works on TickTick 1.0 so would need to research first before proceeding.
+		// showHabit: {
+		// 	name: 'Show Habit',
+		// 	isChecked: false,
+		// },
+
 		showFocusRecords: {
 			name: 'Show Focus Records',
 			isChecked: false,
