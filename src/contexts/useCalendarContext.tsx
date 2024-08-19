@@ -22,7 +22,7 @@ const useCalendar = () => {
 	const [currentDate, setCurrentDate] = useState(new Date());
 	const topHeaderRef = useRef(null);
 	const [headerHeight, setHeaderHeight] = useState(0);
-	const [selectedColorsType, setSelectedColorsType] = useState('Projects');
+	const [selectedColorsType, setSelectedColorsType] = useState('Priority');
 	const [selectedTasksToShow, setSelectedTasksToShow] = useState({
 		showCompleted: {
 			name: 'Show Completed',
