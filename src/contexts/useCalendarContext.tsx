@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useRef, useState } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { useGetUserSettingsQuery, useEditUserSettingsMutation } from '../services/resources/userSettingsApi';
 
 const CalendarContext = createContext();
 
@@ -12,6 +13,11 @@ export const CalendarProvider = ({ children }) => {
 };
 
 const useCalendar = () => {
+	// RTK Query - User Settings
+	const { data: fetchedUserSettings, isLoading: isLoadingGetUserSettings } = useGetUserSettingsQuery();
+	const { userSettings } = fetchedUserSettings || {};
+	const [editUserSettings] = useEditUserSettingsMutation();
+
 	// useState: General
 	const [currDueDate, setCurrDueDate] = useState(null);
 	const [connectedCurrentDate, setConnectedCurrentDate] = useState();
@@ -88,6 +94,28 @@ const useCalendar = () => {
 			key: 'tags',
 		},
 	});
+
+	useEffect(() => {
+		if (isLoadingGetUserSettings) {
+			return;
+		}
+
+		const {
+			calendarViewOptions: { colorsType, shownTasksFilters },
+		} = userSettings;
+
+		setSelectedColorsType(colorsType);
+		const newSelectedTasksToShow = { ...selectedTasksToShow };
+
+		Object.keys(shownTasksFilters).forEach((key) => {
+			if (newSelectedTasksToShow[key]) {
+				const newCheckedValue = shownTasksFilters[key];
+				newSelectedTasksToShow[key].isChecked = newCheckedValue;
+			}
+		});
+
+		setSelectedTasksToShow(newSelectedTasksToShow);
+	}, [isLoadingGetUserSettings]);
 
 	return {
 		// useState: General
