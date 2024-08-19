@@ -4,9 +4,10 @@ import Calendar from './Calendar';
 import FilterSidebar from './FilterSidebar';
 import TopHeader from './TopHeader';
 import { useCalendarContext } from '../../contexts/useCalendarContext';
+import ArrangeTasksSidebar from './ArrangeTasksSidebar';
 
 const CalendarPage = () => {
-	const { showFilterSidebar } = useCalendarContext();
+	const { showFilterSidebar, showArrangeTasksSidebar } = useCalendarContext();
 
 	return (
 		<div className="flex max-w-screen h-full">
@@ -25,6 +26,11 @@ const CalendarPage = () => {
 					<Calendar />
 				</div>
 			</div>
+			{showArrangeTasksSidebar && (
+				<div className="bg-color-gray-700 border-l border-color-gray-200 w-[240px]">
+					<ArrangeTasksSidebar />
+				</div>
+			)}
 		</div>
 	);
 };
