@@ -54,7 +54,8 @@ const useGroupedItemsByDate = (filters) => {
 			});
 
 		// Filter the focus records (by the attached task - if there is any)
-		sortedGroupedFocusRecordsAsc &&
+		showFocusRecords.isChecked &&
+			sortedGroupedFocusRecordsAsc &&
 			Object.keys(sortedGroupedFocusRecordsAsc).forEach((dateKey) => {
 				const focusRecordsForTheDay = sortedGroupedFocusRecordsAsc[dateKey];
 				const filteredFocusRecordsForTheDay = focusRecordsForTheDay.filter((focusRecord) => {
@@ -68,7 +69,7 @@ const useGroupedItemsByDate = (filters) => {
 				filteredFocusRecordsByDate[dateKey] = filteredFocusRecordsForTheDay;
 			});
 
-		if (filteredGroupedTasksByDate && filteredFocusRecordsByDate) {
+		if (filteredGroupedTasksByDate && (!showFocusRecords.isChecked || filteredFocusRecordsByDate)) {
 			const newAllGroupedByDate = {};
 
 			// Add the filtered tasks to the all grouped by date items object
@@ -83,15 +84,16 @@ const useGroupedItemsByDate = (filters) => {
 			});
 
 			// Add the filtered focus records to the all grouped by date items object
-			Object.keys(filteredFocusRecordsByDate).forEach((dateKey) => {
-				const focusRecordForThisDay = filteredFocusRecordsByDate[dateKey];
+			showFocusRecords.isChecked &&
+				Object.keys(filteredFocusRecordsByDate).forEach((dateKey) => {
+					const focusRecordForThisDay = filteredFocusRecordsByDate[dateKey];
 
-				if (!newAllGroupedByDate[dateKey]) {
-					newAllGroupedByDate[dateKey] = {};
-				}
+					if (!newAllGroupedByDate[dateKey]) {
+						newAllGroupedByDate[dateKey] = {};
+					}
 
-				newAllGroupedByDate[dateKey].focusRecords = focusRecordForThisDay;
-			});
+					newAllGroupedByDate[dateKey].focusRecords = focusRecordForThisDay;
+				});
 
 			// Sort all the items by their date key (from oldest to most recent)
 			const newSortedAllGroupedByDate = newAllGroupedByDate && sortObjectByDateKeys(newAllGroupedByDate);
@@ -115,7 +117,7 @@ const useGroupedItemsByDate = (filters) => {
 	};
 
 	const filterByViewOptions = (task) => {
-		// showHabit, showFocusRecords, showWeekends
+		// showWeekends
 		console.log(task);
 		const doNotShowCompletedTasks = !showCompleted.isChecked;
 
