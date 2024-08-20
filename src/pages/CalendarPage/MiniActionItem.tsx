@@ -8,10 +8,7 @@ import ContextMenuGeneric from '../../components/ContextMenu/ContextMenuGeneric'
 import DrodpownAddFocusRecord from '../../components/Dropdown/DropdownAddFocusRecord';
 import DropdownTaskDetails from '../../components/Dropdown/DropdownTaskDetails';
 import DropdownAllActionItemsForDay from './Dropdown/DropdownAllActionItemsForDay';
-import { useCalendarContext } from '../../contexts/useCalendarContext';
-import { useGetProjectsQuery } from '../../services/resources/projectsApi';
-import { PRIORITIES } from '../../utils/priorities.utils';
-import { useGetTagsQuery } from '../../services/resources/tagsApi';
+import useGetTaskBgColor from '../../hooks/useGetTaskBgColor';
 
 const MiniActionItem = ({
 	index,
@@ -25,7 +22,7 @@ const MiniActionItem = ({
 	innerClickElemRefs,
 	setInnerClickElemRefs,
 }) => {
-	const { colorsType } = useCalendarContext();
+	const getTaskBgColor = useGetTaskBgColor();
 
 	const maxActionItems = shownActionItems.length;
 	const isForTask = task && Object.keys(task).length > 0;
@@ -38,14 +35,6 @@ const MiniActionItem = ({
 	// RTK Query - Habits
 	const { data: fetchedHabits } = useGetHabitsQuery();
 	const { habitsById } = fetchedHabits || {};
-
-	// RTK Query - Projects
-	const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
-	const { projectsById } = fetchedProjects || {};
-
-	// RTK Query - Tags
-	const { data: fetchedTags, isLoading: isLoadingGetTags, error: errorGetTags } = useGetTagsQuery();
-	const { tagsById } = fetchedTags || {};
 
 	const { taskId, habitId, startTime } = focusRecord || {};
 	const focusRecordTask = isForFocusRecord && tasksById && tasksById[taskId];
@@ -82,38 +71,6 @@ const MiniActionItem = ({
 
 	const showFullOpacity = isToday || isDateBasedOnDueDate;
 
-	const getBgColor = () => {
-		const defaultColor = '#3b82f6';
-		const taskToUse = isForTask ? task : focusRecordTask;
-
-		const { projectId, priority, tagIds } = taskToUse || {};
-
-		// Project Color
-		const foundProject = projectsById[projectId];
-		const projectColor = foundProject?.color;
-
-		// Priority Color
-		const priorityData = PRIORITIES[priority];
-		const priorityColor = priorityData?.flagColor;
-		const noPriorityColor = PRIORITIES[0].flagColor;
-
-		// Tag Color
-		const firstTagId = tagIds && tagIds[0];
-		const foundTag = tagsById[firstTagId];
-		const tagColor = foundTag?.color;
-
-		switch (colorsType) {
-			case 'Projects':
-				return projectColor || defaultColor;
-			case 'Priority':
-				return priorityColor || noPriorityColor;
-			case 'Tags':
-				return tagColor || defaultColor;
-			default:
-				return defaultColor;
-		}
-	};
-
 	return (
 		<div onClick={(e) => e.stopPropagation()} className="flex items-center gap-1 w-full">
 			<div
@@ -124,7 +81,7 @@ const MiniActionItem = ({
 					showFullOpacity ? 'opacity-90' : 'opacity-70'
 				)}
 				style={{
-					backgroundColor: getBgColor(),
+					backgroundColor: getTaskBgColor(isForTask ? task : focusRecordTask),
 				}}
 				onClick={(e) => {
 					handleContextMenu(e);
