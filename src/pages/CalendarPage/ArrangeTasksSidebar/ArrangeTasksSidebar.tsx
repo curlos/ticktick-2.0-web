@@ -1,15 +1,40 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Icon from '../../../components/Icon';
 import { useCalendarContext } from '../../../contexts/useCalendarContext';
 import classNames from 'classnames';
+import TaskListByGroup from '../../../components/TaskListByGroup';
+import { getTasksWithNoParent } from '../../../utils/helpers.utils';
+import { useGetProjectsQuery } from '../../../services/resources/projectsApi';
+import { useGetTasksQuery } from '../../../services/resources/tasksApi';
 
 const ArrangeTasksSidebar = () => {
-	const { setShowArrangeTasksSidebar } = useCalendarContext();
-	const iconClassName = 'text-color-gray-50 !text-[18px] cursor-pointer p-1 hover:bg-color-gray-300 rounded';
+	const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
+	const { tasks, tasksById } = fetchedTasks || {};
 
-	const [selectedView, setSelectedView] = useState('Projects');
+	const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
+	const { projects } = fetchedProjects || {};
+
+	const { setShowArrangeTasksSidebar } = useCalendarContext();
+
+	const iconClassName = 'text-color-gray-50 !text-[18px] cursor-pointer p-1 hover:bg-color-gray-300 rounded';
+	const [selectedView, setSelectedView] = useState('Priority');
 	const allViews = ['Projects', 'Tags', 'Priority'];
 	const containerRef = useRef(null); // Ref for the container to allow relative positioning
+
+	const [tasksWithNoParent, setTasksWithNoParent] = useState([]);
+
+	useEffect(() => {
+		if (!tasks || !projects) {
+			return;
+		}
+
+		const newTasksWithNoParent = getTasksWithNoParent(tasks, tasksById, null, false);
+		setTasksWithNoParent(newTasksWithNoParent);
+	}, [fetchedTasks, fetchedProjects]);
+
+	const handleTaskClick = () => {
+		// TODO:
+	};
 
 	return (
 		<div className="px-3 py-5">
@@ -79,6 +104,22 @@ const ArrangeTasksSidebar = () => {
 					}}
 				/>
 			</div>
+
+			<TaskListByGroup
+				tasks={tasksWithNoParent.filter((task) => {
+					if (task.isDeleted) {
+						return false;
+					}
+
+					if (task.willNotDo) {
+						return false;
+					}
+
+					return true;
+				})}
+				handleTaskClick={handleTaskClick}
+				groupBy="priority"
+			/>
 		</div>
 	);
 };

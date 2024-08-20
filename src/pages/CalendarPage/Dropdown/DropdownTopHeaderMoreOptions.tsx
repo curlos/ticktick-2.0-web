@@ -1,18 +1,16 @@
 import classNames from 'classnames';
 import Dropdown from '../../../components/Dropdown/Dropdown';
 import Icon from '../../../components/Icon';
-import { setModalState } from '../../../slices/modalSlice';
-import { useDispatch } from 'react-redux';
+import { useCalendarContext } from '../../../contexts/useCalendarContext';
 
 const DropdownTopHeaderMoreOptions = ({
 	toggleRef,
 	isVisible,
 	setIsVisible,
 	customClasses,
-	isModalViewOptionsOpen,
 	setIsModalViewOptionsOpen,
 }) => {
-	const dispatch = useDispatch();
+	const { setShowArrangeTasksSidebar } = useCalendarContext();
 
 	return (
 		<Dropdown
@@ -25,17 +23,13 @@ const DropdownTopHeaderMoreOptions = ({
 				<SelectOption
 					name="View Options"
 					iconName="visibility"
-					onClick={() => {
-						setIsModalViewOptionsOpen(true);
-					}}
+					onClick={() => setIsModalViewOptionsOpen(true)}
 					setIsVisible={setIsVisible}
 				/>
 				<SelectOption
 					name="Arrange Tasks"
 					iconName="layers"
-					onClick={() => {
-						console.log('hi');
-					}}
+					onClick={() => setShowArrangeTasksSidebar(true)}
 					setIsVisible={setIsVisible}
 				/>
 			</div>
