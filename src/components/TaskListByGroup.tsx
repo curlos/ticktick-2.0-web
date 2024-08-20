@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import React from 'react';
 import { PRIORITIES } from '../utils/priorities.utils';
 import { useGetProjectsQuery } from '../services/resources/projectsApi';
+import MiniTaskList from '../pages/CalendarPage/ArrangeTasksSidebar/MiniTaskList';
 
 interface TaskListByGroupProps {
 	tasks: Array<TaskObj>;
@@ -23,6 +24,8 @@ const TaskListByGroup: React.FC<TaskListByGroupProps> = ({
 	handleTaskClick,
 	groupBy,
 	sortBy,
+	showMiniTasks = false,
+	fromCalendarPage = false,
 }) => {
 	const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
 	const { projectsById } = fetchedProjects || {};
@@ -68,12 +71,16 @@ const TaskListByGroup: React.FC<TaskListByGroupProps> = ({
 				<AnimatePresence>
 					{showTasks && (
 						<motion.div initial="hidden" animate="visible" exit="hidden" variants={listVariants}>
-							<TaskList
-								tasks={tasks}
-								selectedFocusRecordTask={selectedFocusRecordTask}
-								setSelectedFocusRecordTask={setSelectedFocusRecordTask}
-								handleTaskClick={handleTaskClick}
-							/>
+							{!showMiniTasks ? (
+								<TaskList
+									tasks={tasks}
+									selectedFocusRecordTask={selectedFocusRecordTask}
+									setSelectedFocusRecordTask={setSelectedFocusRecordTask}
+									handleTaskClick={handleTaskClick}
+								/>
+							) : (
+								<MiniTaskList tasks={tasks} fromCalendarPage={fromCalendarPage} />
+							)}
 						</motion.div>
 					)}
 				</AnimatePresence>
