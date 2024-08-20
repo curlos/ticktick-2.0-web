@@ -4,7 +4,7 @@ import Calendar from './Calendar';
 import FilterSidebar from './FilterSidebar';
 import TopHeader from './TopHeader';
 import { useCalendarContext } from '../../contexts/useCalendarContext';
-import ArrangeTasksSidebar from './ArrangeTasksSidebar';
+import ArrangeTasksSidebar from './ArrangeTasksSidebar/ArrangeTasksSidebar';
 
 const CalendarPage = () => {
 	const { showFilterSidebar, showArrangeTasksSidebar } = useCalendarContext();
