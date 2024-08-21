@@ -23,8 +23,24 @@ const ArrangeTasksSidebar = () => {
 	const { setShowArrangeTasksSidebar } = useCalendarContext();
 
 	const iconClassName = 'text-color-gray-50 !text-[18px] cursor-pointer p-1 hover:bg-color-gray-300 rounded';
-	const [selectedView, setSelectedView] = useState('Priority');
-	const allViews = ['Projects', 'Tags', 'Priority'];
+	const [selectedView, setSelectedView] = useState({
+		name: 'Priority',
+		groupBy: 'priority',
+	});
+	const allViews = [
+		{
+			name: 'Projects',
+			groupBy: 'project',
+		},
+		{
+			name: 'Tags',
+			groupBy: 'tag',
+		},
+		{
+			name: 'Priority',
+			groupBy: 'priority',
+		},
+	];
 	const containerRef = useRef(null); // Ref for the container to allow relative positioning
 
 	const [tasksWithNoParent, setTasksWithNoParent] = useState([]);
@@ -80,7 +96,7 @@ const ArrangeTasksSidebar = () => {
 				>
 					{allViews.map((view, index) => (
 						<div
-							key={view}
+							key={view.name}
 							className={
 								'rounded-md text-center p-[2px] cursor-pointer transition-all duration-300 ease-in-out text-white'
 							}
@@ -90,7 +106,7 @@ const ArrangeTasksSidebar = () => {
 								zIndex: 2,
 							}}
 						>
-							{view}
+							{view.name}
 						</div>
 					))}
 
@@ -100,7 +116,7 @@ const ArrangeTasksSidebar = () => {
 						style={{
 							width: `${100 / allViews.length}%`,
 							//
-							transform: `translateX(${allViews.indexOf(selectedView) * 100}%)`,
+							transform: `translateX(${allViews.findIndex((view) => view.name === selectedView.name) * 100}%)`,
 						}}
 					/>
 				</div>
@@ -131,7 +147,7 @@ const ArrangeTasksSidebar = () => {
 						return true;
 					})}
 					handleTaskClick={handleTaskClick}
-					groupBy="priority"
+					groupBy={selectedView.groupBy}
 					showMiniTasks={true}
 					fromCalendarPage={true}
 				/>

@@ -7,6 +7,7 @@ import React from 'react';
 import { PRIORITIES } from '../utils/priorities.utils';
 import { useGetProjectsQuery } from '../services/resources/projectsApi';
 import MiniTaskList from '../pages/CalendarPage/ArrangeTasksSidebar/MiniTaskList';
+import { useGetTagsQuery } from '../services/resources/tagsApi';
 
 interface TaskListByGroupProps {
 	tasks: Array<TaskObj>;
@@ -27,8 +28,13 @@ const TaskListByGroup: React.FC<TaskListByGroupProps> = ({
 	showMiniTasks = false,
 	fromCalendarPage = false,
 }) => {
+	// RTK Query - Projects
 	const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
 	const { projectsById } = fetchedProjects || {};
+
+	// RTK Query - Tags
+	const { data: fetchedTags, isLoading: isLoadingGetTags, error: errorGetTags } = useGetTagsQuery();
+	const { tagsById } = fetchedTags || {};
 
 	const categoryIconClass = 'text-color-gray-100 !text-[16px] hover:text-white';
 	// Show all the priorities if no specific priorities were listed
@@ -129,6 +135,9 @@ const TaskListByGroup: React.FC<TaskListByGroupProps> = ({
 					if (groupBy === 'project') {
 						const project = projectsById[key];
 						groupedByKey = project.name;
+					} else if (groupBy === 'tag') {
+						const tag = tagsById[key];
+						groupedByKey = tag.name;
 					}
 
 					return <GroupedByTaskList key={groupedByKey} categoryName={groupedByKey} tasks={tasksList} />;
@@ -146,8 +155,8 @@ const TaskListByGroup: React.FC<TaskListByGroupProps> = ({
 				const groupedTasksByDueDate = groupTasksByDueDate(tasks);
 				return <GroupedByTaskListWrapper groupBy="time" groupedTasks={groupedTasksByDueDate} />;
 			case 'tag':
-				// TODO: Implement this when tags are set up on the backend and for tasks
-				return null;
+				const groupedTasksByTag = groupTasksByTag(tasks);
+				return <GroupedByTaskListWrapper groupBy="tag" groupedTasks={groupedTasksByTag} />;
 			case 'priority':
 				// TODO: Refactor this to be more dynamic.
 				return <GroupedByPriority />;
@@ -177,6 +186,24 @@ const groupTasksByProject = (tasks, projectsById) => {
 		}
 
 		groupedTasks[projectId].push(task);
+	});
+
+	return groupedTasks;
+};
+
+const groupTasksByTag = (tasks) => {
+	const groupedTasks = {};
+
+	tasks.forEach((task) => {
+		const { tagIds } = task;
+
+		tagIds.forEach((tagId) => {
+			if (!groupedTasks[tagId]) {
+				groupedTasks[tagId] = [];
+			}
+
+			groupedTasks[tagId].push(task);
+		});
 	});
 
 	return groupedTasks;
