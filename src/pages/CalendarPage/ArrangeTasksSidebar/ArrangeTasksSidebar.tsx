@@ -7,13 +7,21 @@ import { getTasksWithNoParent } from '../../../utils/helpers.utils';
 import { useGetProjectsQuery } from '../../../services/resources/projectsApi';
 import { useGetTasksQuery } from '../../../services/resources/tasksApi';
 import useMaxHeight from '../../../hooks/useMaxHeight';
+import DropdownItemsWithSearch from '../../../components/Dropdown/DropdownItemsWithSearch/DropdownItemsWithSearch';
+import { useGetTagsQuery } from '../../../services/resources/tagsApi';
+import { SMART_LISTS } from '../../../utils/smartLists.utils';
 
 const ArrangeTasksSidebar = () => {
 	const { data: fetchedTasks, isLoading: isLoadingTasks, error: errorTasks } = useGetTasksQuery();
 	const { tasks, tasksById } = fetchedTasks || {};
 
-	const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
-	const { projects } = fetchedProjects || {};
+	// RTK Query - Projects
+	const { data: fetchedProjects, isLoading: isLoadingGetProjects, error: errorProjects } = useGetProjectsQuery();
+	const { projects, inboxProject } = fetchedProjects || {};
+
+	// RTK Query - Tags
+	const { data: fetchedTags, isLoading: isLoadingGetTags, error: errorGetTags } = useGetTagsQuery();
+	const { tagsById, tagsWithNoParent } = fetchedTags || {};
 
 	// Header
 	const [headerHeight, setHeaderHeight] = useState(0);
@@ -63,6 +71,19 @@ const ArrangeTasksSidebar = () => {
 	const handleTaskClick = () => {
 		// TODO:
 	};
+
+	// Projects
+	const TOP_LIST_NAMES = ['all', 'today', 'tomorrow', 'week'];
+	const topListProjects = TOP_LIST_NAMES.map((name) => SMART_LISTS[name]);
+	const allProject = topListProjects.find((project) => project.urlName === 'all');
+
+	// Tags
+	const allTag = { name: 'All' };
+
+	const dropdownItemsWithSearchRef = useRef(null);
+	const [isDropdownItemsWithSearchVisible, setIsDropdownItemsWithSearchVisible] = useState(false);
+	const [selectedProjectsList, setSelectedProjectsList] = useState([allProject]);
+	const [selectedTagList, setSelectedTagList] = useState([allTag]);
 
 	return (
 		<div>
@@ -121,16 +142,42 @@ const ArrangeTasksSidebar = () => {
 					/>
 				</div>
 				{selectedView.name !== 'Priority' && (
-					<div className="flex items-center mt-4 cursor-pointer">
-						<div className="text-blue-500">All {selectedView.name}</div>
-						<Icon
-							name="chevron_right"
-							fill={0}
-							customClass={classNames(iconClassName, 'mb-[-2px]')}
-							onClick={() => {
-								setShowArrangeTasksSidebar(false);
-							}}
-						/>
+					<div className="relative">
+						<div
+							ref={dropdownItemsWithSearchRef}
+							className="flex items-center mt-4 cursor-pointer"
+							onClick={() => setIsDropdownItemsWithSearchVisible(!isDropdownItemsWithSearchVisible)}
+						>
+							<div className="text-blue-500">All {selectedView.name}</div>
+							<Icon name="chevron_right" fill={0} customClass={classNames(iconClassName, 'mb-[-2px]')} />
+						</div>
+
+						{!isLoadingGetProjects && selectedView.name === 'Projects' && (
+							<DropdownItemsWithSearch
+								toggleRef={dropdownItemsWithSearchRef}
+								isVisible={isDropdownItemsWithSearchVisible}
+								setIsVisible={setIsDropdownItemsWithSearchVisible}
+								selectedItemList={selectedProjectsList}
+								setSelectedItemList={setSelectedProjectsList}
+								items={projects}
+								multiSelect={true}
+								type="project"
+							/>
+						)}
+
+						{/* TODO: Bring this back in a moment to also filter by TAGS. */}
+						{!isLoadingGetTags && selectedView.name === 'Tags' && (
+							<DropdownItemsWithSearch
+								toggleRef={dropdownItemsWithSearchRef}
+								isVisible={isDropdownItemsWithSearchVisible}
+								setIsVisible={setIsDropdownItemsWithSearchVisible}
+								selectedItemList={selectedTagList}
+								setSelectedItemList={setSelectedTagList}
+								items={tagsWithNoParent}
+								multiSelect={true}
+								type="tags"
+							/>
+						)}
 					</div>
 				)}
 			</div>

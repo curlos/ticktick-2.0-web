@@ -13,7 +13,7 @@ const MiniTaskList: React.FC<MiniTaskListProps> = ({ tasks, fromCalendarPage }) 
 	return (
 		<div className="space-y-1">
 			{tasks.map((task) => (
-				<MiniTask task={task} />
+				<MiniTask key={task._id} task={task} />
 			))}
 		</div>
 	);
@@ -26,7 +26,7 @@ const MiniTask = ({ task }) => {
 		useContextMenu();
 
 	return (
-		<div ref={dropdownRef} key={task._id} className="relative">
+		<div ref={dropdownRef} className="relative">
 			<div
 				className="p-[2px] truncate text-[12px] rounded cursor-pointer"
 				style={{

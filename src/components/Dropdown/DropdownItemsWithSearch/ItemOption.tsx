@@ -147,6 +147,7 @@ const ItemOption: React.FC<ItemOptionProps> = ({
 
 	return (
 		<div>
+			{/* Current Item Option */}
 			<div
 				className="flex items-center justify-between cursor-pointer hover:bg-color-gray-300 px-2 py-[6px] rounded-lg"
 				onClick={handleClick}
@@ -171,6 +172,7 @@ const ItemOption: React.FC<ItemOptionProps> = ({
 				)}
 			</div>
 
+			{/* Tags - If the current tag has any children, then show them underneath with an indent. */}
 			{type === 'tags' &&
 				item?.children?.length > 0 &&
 				item.children.map((childTagId) => {
