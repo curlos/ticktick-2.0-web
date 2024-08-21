@@ -120,17 +120,19 @@ const ArrangeTasksSidebar = () => {
 						}}
 					/>
 				</div>
-				<div className="flex items-center mt-4 cursor-pointer">
-					<div className="text-blue-500">All Projects</div>
-					<Icon
-						name="chevron_right"
-						fill={0}
-						customClass={classNames(iconClassName, 'mb-[-2px]')}
-						onClick={() => {
-							setShowArrangeTasksSidebar(false);
-						}}
-					/>
-				</div>
+				{selectedView.name !== 'Priority' && (
+					<div className="flex items-center mt-4 cursor-pointer">
+						<div className="text-blue-500">All {selectedView.name}</div>
+						<Icon
+							name="chevron_right"
+							fill={0}
+							customClass={classNames(iconClassName, 'mb-[-2px]')}
+							onClick={() => {
+								setShowArrangeTasksSidebar(false);
+							}}
+						/>
+					</div>
+				)}
 			</div>
 
 			<div className="px-3 pt-5 overflow-auto max-h-screen gray-scrollbar" style={{ maxHeight }}>

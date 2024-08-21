@@ -1,5 +1,8 @@
+import DropdownTaskDetails from '../../../components/Dropdown/DropdownTaskDetails';
 import useGetTaskBgColor from '../../../hooks/useGetTaskBgColor';
 import { TaskObj } from '../interfaces/interfaces';
+import useContextMenu from '../../../hooks/useContextMenu';
+import ContextMenuGeneric from '../../../components/ContextMenu/ContextMenuGeneric';
 
 interface MiniTaskListProps {
 	tasks: Array<TaskObj>;
@@ -7,22 +10,59 @@ interface MiniTaskListProps {
 }
 
 const MiniTaskList: React.FC<MiniTaskListProps> = ({ tasks, fromCalendarPage }) => {
-	const getTaskBgColor = useGetTaskBgColor();
-
 	return (
 		<div className="space-y-1">
-			{tasks.map((task) => {
-				return (
-					<div
-						className="p-[2px] truncate text-[12px] rounded"
-						style={{
-							backgroundColor: getTaskBgColor(task),
+			{tasks.map((task) => (
+				<MiniTask task={task} />
+			))}
+		</div>
+	);
+};
+
+const MiniTask = ({ task }) => {
+	const getTaskBgColor = useGetTaskBgColor();
+
+	const { contextMenu, isDropdownVisible, setIsDropdownVisible, dropdownRef, handleContextMenu, handleClose } =
+		useContextMenu();
+
+	return (
+		<div ref={dropdownRef} key={task._id} className="relative">
+			<div
+				className="p-[2px] truncate text-[12px] rounded cursor-pointer"
+				style={{
+					backgroundColor: getTaskBgColor(task),
+				}}
+				onClick={(e) => {
+					e.stopPropagation();
+					handleContextMenu(e);
+				}}
+			>
+				{task.title}
+			</div>
+
+			{contextMenu && (
+				<ContextMenuGeneric
+					xPos={contextMenu.xPos}
+					yPos={contextMenu.yPos}
+					onClose={handleClose}
+					isDropdownVisible={isDropdownVisible}
+					setIsDropdownVisible={setIsDropdownVisible}
+				>
+					<DropdownTaskDetails
+						toggleRef={dropdownRef}
+						isVisible={true}
+						setIsVisible={setIsDropdownVisible}
+						customClasses=" !ml-[0px] mt-[15px]"
+						customStyling={{
+							position: 'absolute',
+							top: `${contextMenu.yPos}px`,
+							left: `${contextMenu.xPos}px`,
 						}}
-					>
-						{task.title}
-					</div>
-				);
-			})}
+						onCloseContextMenu={handleClose}
+						task={task}
+					/>
+				</ContextMenuGeneric>
+			)}
 		</div>
 	);
 };
