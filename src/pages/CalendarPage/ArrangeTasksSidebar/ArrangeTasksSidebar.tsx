@@ -66,7 +66,7 @@ const ArrangeTasksSidebar = () => {
 		if (topHeaderRef.current && document.readyState === 'complete') {
 			setHeaderHeight(topHeaderRef.current.getBoundingClientRect().height);
 		}
-	}, [topHeaderRef, setHeaderHeight]);
+	}, [topHeaderRef, setHeaderHeight, selectedView]);
 
 	const handleTaskClick = () => {
 		// TODO:

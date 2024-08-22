@@ -8,6 +8,7 @@ import { PRIORITIES } from '../utils/priorities.utils';
 import { useGetProjectsQuery } from '../services/resources/projectsApi';
 import MiniTaskList from '../pages/CalendarPage/ArrangeTasksSidebar/MiniTaskList';
 import { useGetTagsQuery } from '../services/resources/tagsApi';
+import { getTotalTaskCountWithChildren } from '../utils/helpers.utils';
 
 interface TaskListByGroupProps {
 	tasks: Array<TaskObj>;
@@ -58,6 +59,8 @@ const TaskListByGroup: React.FC<TaskListByGroupProps> = ({
 			// visible: { opacity: 1, height: 'auto', transition: { duration: 0.1 } },
 		};
 
+		const totalTasksCount = getTotalTaskCountWithChildren(tasks);
+
 		return (
 			<div>
 				<div
@@ -70,8 +73,7 @@ const TaskListByGroup: React.FC<TaskListByGroupProps> = ({
 						<Icon name="chevron_right" customClass={categoryIconClass} />
 					)}
 					<span className="mr-[6px] font-bold">{categoryName}</span>
-					<span className="text-color-gray-100 font-bold">{tasks.length}</span>{' '}
-					{/* Updated to show actual count */}
+					<span className="text-color-gray-100 font-bold">{totalTasksCount}</span>
 				</div>
 
 				<AnimatePresence>

@@ -439,3 +439,20 @@ export const hexToRGBA = (hex, opacity = '100%') => {
 	// Return the RGBA color with specified opacity
 	return `rgba(${r}, ${g}, ${b}, ${opacity})`;
 };
+
+export const getTotalTaskCountWithChildren = (tasks) => {
+	let count = 0; // Initialize counter
+
+	// Recursive function to count tasks
+	const countTasks = (taskArray) => {
+		for (const task of taskArray) {
+			count++; // Count the current task
+			if (task.children && task.children.length > 0) {
+				countTasks(task.children); // Recurse if there are children
+			}
+		}
+	};
+
+	countTasks(tasks); // Start the recursive count
+	return count; // Return the total count
+};
