@@ -85,6 +85,31 @@ const ArrangeTasksSidebar = () => {
 	const [selectedProjectsList, setSelectedProjectsList] = useState([allProject]);
 	const [selectedTagList, setSelectedTagList] = useState([allTag]);
 
+	const getAllFilters = () => {
+		const ifOnlyHasAllProject = selectedProjectsList.length === 1 && selectedProjectsList[0]?.urlName === 'all';
+		const ifOnlyHasAllTag =
+			selectedTagList.length === 1 &&
+			selectedTagList[0].name === 'All' &&
+			Object.keys(selectedTagList).length === 1;
+		const selectedProjectIds = {};
+		const selectedTagIds = {};
+
+		selectedProjectsList.forEach((project) => {
+			selectedProjectIds[project._id] = true;
+		});
+
+		selectedTagList.forEach((tag) => {
+			selectedTagIds[tag._id] = true;
+		});
+
+		return {
+			ifOnlyHasAllProject,
+			ifOnlyHasAllTag,
+			selectedProjectIds,
+			selectedTagIds,
+		};
+	};
+
 	return (
 		<div>
 			<div ref={topHeaderRef} className="px-3 pt-5 pb-3">
@@ -202,10 +227,7 @@ const ArrangeTasksSidebar = () => {
 					groupBy={selectedView.groupBy}
 					showMiniTasks={true}
 					fromCalendarPage={true}
-					filters={{
-						selectedProjectsList,
-						selectedTagList,
-					}}
+					filters={getAllFilters()}
 				/>
 			</div>
 		</div>

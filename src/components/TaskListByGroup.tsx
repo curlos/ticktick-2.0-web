@@ -150,16 +150,17 @@ const TaskListByGroup: React.FC<TaskListByGroupProps> = ({
 	};
 
 	const getGroupedByTaskList = () => {
+		const filteredTasks = getMultiSelectFilteredTasks(tasks, filters);
+
 		switch (groupBy) {
 			case 'project':
-				const filteredTasks = getMultiSelectFilteredTasks(tasks, filters);
 				const groupedTasksByProject = groupTasksByProject(filteredTasks);
 				return <GroupedByTaskListWrapper groupBy="project" groupedTasks={groupedTasksByProject} />;
 			case 'time':
 				const groupedTasksByDueDate = groupTasksByDueDate(tasks);
 				return <GroupedByTaskListWrapper groupBy="time" groupedTasks={groupedTasksByDueDate} />;
 			case 'tag':
-				const groupedTasksByTag = groupTasksByTag(tasks);
+				const groupedTasksByTag = groupTasksByTag(filteredTasks, filters);
 				return <GroupedByTaskListWrapper groupBy="tag" groupedTasks={groupedTasksByTag} />;
 			case 'priority':
 				// TODO: Refactor this to be more dynamic.
@@ -195,18 +196,23 @@ const groupTasksByProject = (tasks, projectsById) => {
 	return groupedTasks;
 };
 
-const groupTasksByTag = (tasks) => {
+const groupTasksByTag = (tasks, filters) => {
 	const groupedTasks = {};
+
+	const noFilters = !filters || filters.ifOnlyHasAllTag;
+	const selectedTagIds = filters?.selectedTagIds || {};
 
 	tasks.forEach((task) => {
 		const { tagIds } = task;
 
 		tagIds.forEach((tagId) => {
-			if (!groupedTasks[tagId]) {
-				groupedTasks[tagId] = [];
-			}
+			if (noFilters || selectedTagIds[tagId]) {
+				if (!groupedTasks[tagId]) {
+					groupedTasks[tagId] = [];
+				}
 
-			groupedTasks[tagId].push(task);
+				groupedTasks[tagId].push(task);
+			}
 		});
 	});
 
