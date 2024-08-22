@@ -85,8 +85,6 @@ const ArrangeTasksSidebar = () => {
 	const [selectedProjectsList, setSelectedProjectsList] = useState([allProject]);
 	const [selectedTagList, setSelectedTagList] = useState([allTag]);
 
-	// console.log(selectedProjectsList);
-
 	return (
 		<div>
 			<div ref={topHeaderRef} className="px-3 pt-5 pb-3">
@@ -204,6 +202,10 @@ const ArrangeTasksSidebar = () => {
 					groupBy={selectedView.groupBy}
 					showMiniTasks={true}
 					fromCalendarPage={true}
+					filters={{
+						selectedProjectsList,
+						selectedTagList,
+					}}
 				/>
 			</div>
 		</div>

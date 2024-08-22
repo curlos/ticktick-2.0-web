@@ -8,7 +8,7 @@ import { PRIORITIES } from '../utils/priorities.utils';
 import { useGetProjectsQuery } from '../services/resources/projectsApi';
 import MiniTaskList from '../pages/CalendarPage/ArrangeTasksSidebar/MiniTaskList';
 import { useGetTagsQuery } from '../services/resources/tagsApi';
-import { getTotalTaskCountWithChildren } from '../utils/helpers.utils';
+import { getMultiSelectFilteredTasks, getTotalTaskCountWithChildren } from '../utils/helpers.utils';
 
 interface TaskListByGroupProps {
 	tasks: Array<TaskObj>;
@@ -28,6 +28,7 @@ const TaskListByGroup: React.FC<TaskListByGroupProps> = ({
 	sortBy,
 	showMiniTasks = false,
 	fromCalendarPage = false,
+	filters,
 }) => {
 	// RTK Query - Projects
 	const { data: fetchedProjects, isLoading: isLoadingProjects, error: errorProjects } = useGetProjectsQuery();
@@ -151,7 +152,8 @@ const TaskListByGroup: React.FC<TaskListByGroupProps> = ({
 	const getGroupedByTaskList = () => {
 		switch (groupBy) {
 			case 'project':
-				const groupedTasksByProject = groupTasksByProject(tasks);
+				const filteredTasks = getMultiSelectFilteredTasks(tasks, filters);
+				const groupedTasksByProject = groupTasksByProject(filteredTasks);
 				return <GroupedByTaskListWrapper groupBy="project" groupedTasks={groupedTasksByProject} />;
 			case 'time':
 				const groupedTasksByDueDate = groupTasksByDueDate(tasks);

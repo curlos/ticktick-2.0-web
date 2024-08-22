@@ -456,3 +456,43 @@ export const getTotalTaskCountWithChildren = (tasks) => {
 	countTasks(tasks); // Start the recursive count
 	return count; // Return the total count
 };
+
+export const getMultiSelectFilteredTasks = (tasks, filters) => {
+	if (!filters || Object.keys(filters).length === 0) {
+		return tasks;
+	}
+
+	let filteredTasks = tasks;
+
+	const { selectedProjectsList, selectedTagList } = filters;
+
+	console.log(selectedProjectsList);
+
+	// TODO: Filter out by projects
+	const ifOnlyHasAllProject = selectedProjectsList.length === 1 && selectedProjectsList[0]?.urlName === 'all';
+
+	// If we DO NOT only have the All project, then that means that a filter has been selected and thus we must filter out the tasks by that filter.
+	if (!ifOnlyHasAllProject) {
+		// Go through the array of selected projects, and if the task's project id matches at least one of the selected projects, then keep it, if not, filter it out.
+		const selectedProjectIds = {};
+
+		selectedProjectsList.forEach((project) => {
+			selectedProjectIds[project._id] = true;
+		});
+
+		filteredTasks = filteredTasks.filter((task) => {
+			// console.log(task.projectId);
+			const projectIsInSelectedProjectIds = selectedProjectIds[task.projectId];
+
+			// console.log(projectIsInSelectedProjectIds);
+
+			return projectIsInSelectedProjectIds;
+		});
+	}
+
+	// TODO: Filter out by tags
+
+	console.log(filteredTasks);
+
+	return filteredTasks;
+};
