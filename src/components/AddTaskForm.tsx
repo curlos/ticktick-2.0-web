@@ -20,7 +20,12 @@ interface AddTaskFormProps {
 	parentId: string;
 }
 
-const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId, defaultPriority }) => {
+const AddTaskForm: React.FC<AddTaskFormProps> = ({
+	setShowAddTaskForm,
+	parentId,
+	defaultPriority,
+	setIsDropdownAddTaskFormVisible,
+}) => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const params = useParams();
@@ -120,10 +125,16 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId,
 	};
 
 	const handleTaskNavigation = (task) => {
-		if (tagId) {
-			navigate(`/tags/${tagId}/tasks/${task._id}`);
+		const fromDropdown = setIsDropdownAddTaskFormVisible;
+
+		if (fromDropdown) {
+			setIsDropdownAddTaskFormVisible(false);
 		} else {
-			navigate(`/projects/${task.projectId}/tasks/${task._id}`);
+			if (tagId) {
+				navigate(`/tags/${tagId}/tasks/${task._id}`);
+			} else {
+				navigate(`/projects/${task.projectId}/tasks/${task._id}`);
+			}
 		}
 	};
 
@@ -131,8 +142,7 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ setShowAddTaskForm, parentId,
 		<>
 			<form
 				className={
-					'mt-3 gap-1 bg-color-gray-600 rounded-lg border' +
-					(focused ? ' border-blue-500' : ' border-transparent')
+					'gap-1 bg-color-gray-600 rounded-lg border' + (focused ? ' border-blue-500' : ' border-transparent')
 				}
 				onSubmit={handleAddTask}
 			>

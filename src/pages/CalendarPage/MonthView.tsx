@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import useWindowSize from '../../hooks/useWindowSize';
 import ActionItemList from './ActionItemList';
 import useContextMenu from '../../hooks/useContextMenu';
-import DropdownAddNewTaskDetails from './Dropdown/DropdownAddNewTaskDetails';
 import { useCalendarContext } from '../../contexts/useCalendarContext';
+import DropdownAddNewTaskDetails from '../../components/Dropdown/DropdownAddNewTaskDetails';
 
 const MonthView = ({ groupedItemsByDateObj, currentDate, currDueDate }) => {
 	const { shownTasksFilters } = useCalendarContext();

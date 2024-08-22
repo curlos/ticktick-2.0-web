@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import Icon from '../../components/Icon';
 import useContextMenu from '../../hooks/useContextMenu';
 import DropdownTopHeaderMoreOptions from './Dropdown/DropdownTopHeaderMoreOptions';
-import DropdownAddNewTaskDetails from './Dropdown/DropdownAddNewTaskDetails';
 import DropdownIntervalSelect from './Dropdown/DropdownIntervalSelect';
 import ModalViewOptions from './ModalViewOptions';
 import { useCalendarContext } from '../../contexts/useCalendarContext';
+import DropdownAddNewTaskDetails from '../../components/Dropdown/DropdownAddNewTaskDetails';
 
 const TopHeader = () => {
 	const {

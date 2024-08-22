@@ -144,7 +144,11 @@ const TaskListPage = () => {
 					</button>
 				)}
 
-				{showAddTaskForm && <AddTaskForm setShowAddTaskForm={setShowAddTaskForm} />}
+				{showAddTaskForm && (
+					<div className="mt-3">
+						<AddTaskForm setShowAddTaskForm={setShowAddTaskForm} />
+					</div>
+				)}
 
 				<div className="h-[50px]"></div>
 			</div>

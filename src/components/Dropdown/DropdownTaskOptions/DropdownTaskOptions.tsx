@@ -8,6 +8,7 @@ import { useNavigate, useParams } from 'react-router';
 import { DropdownProps, TaskObj } from '../../../interfaces/interfaces';
 import { setAlertState } from '../../../slices/alertSlice';
 import { useFlagTaskMutation, useGetTasksQuery } from '../../../services/resources/tasksApi';
+import DropdownAddTaskForm from '../DropdownAddTaskForm';
 
 interface DropdownTaskOptionsProps extends DropdownProps {
 	setIsModalTaskActivitiesOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -34,6 +35,8 @@ const DropdownTaskOptions: React.FC<DropdownTaskOptionsProps> = ({
 	const [isDropdownStartFocusVisible, setIsDropdownStartFocusVisible] = useState(false);
 
 	const dropdownStartFocusRef = useRef(null);
+	const dropdownAddTaskFormRef = useRef(null);
+	const [isDropdownAddTaskFormVisible, setIsDropdownAddTaskFormVisible] = useState(false);
 
 	const handleDelete = () => {
 		// Delete the task and then the redirect to the list of tasks in the project as the current task has been delete and thus the page is not accessible anymore.
@@ -80,22 +83,28 @@ const DropdownTaskOptions: React.FC<DropdownTaskOptionsProps> = ({
 			customClasses={'shadow-2xl border border-color-gray-200 rounded ml-[-180px]'}
 		>
 			<div className="w-[232px] p-1 rounded text-[13px]" onClick={(e) => e.stopPropagation()}>
-				<div
-					className="p-1 flex items-center gap-[2px] hover:bg-color-gray-300 cursor-pointer"
-					onClick={() => {
-						dispatch(
-							setModalState({ modalId: 'ModalAddTaskForm', isOpen: true, props: { parentId: task._id } })
-						);
-					}}
-				>
-					<Icon
-						name="add_task"
-						customClass={
-							'text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer'
-						}
-						fill={0}
+				<div className="relative">
+					<div
+						className="p-1 flex items-center gap-[2px] hover:bg-color-gray-300 cursor-pointer"
+						onClick={() => setIsDropdownAddTaskFormVisible(!isDropdownAddTaskFormVisible)}
+					>
+						<Icon
+							name="add_task"
+							customClass={
+								'text-color-gray-100 !text-[18px] p-1 rounded hover:bg-color-gray-300 cursor-pointer'
+							}
+							fill={0}
+						/>
+						<div>Add Subtask</div>
+					</div>
+
+					<DropdownAddTaskForm
+						toggleRef={dropdownAddTaskFormRef}
+						isVisible={isDropdownAddTaskFormVisible}
+						setIsVisible={setIsDropdownAddTaskFormVisible}
+						// customClasses=" !ml-[0px] mt-[15px]"
+						parentId={task._id}
 					/>
-					<div>Add Subtask</div>
 				</div>
 
 				<div
