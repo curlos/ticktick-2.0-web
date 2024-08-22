@@ -78,9 +78,9 @@ const ItemOptionList = ({
 		case 'tags':
 			return (
 				<React.Fragment>
-					{filteredItems.map((item) => {
-						return <ItemOptionWithProps key={item._id} item={item} iconFill={0} />;
-					})}
+					{filteredItems.map((item) => (
+						<ItemOptionWithProps key={item._id || item.name} item={item} iconFill={0} />
+					))}
 				</React.Fragment>
 			);
 		default:

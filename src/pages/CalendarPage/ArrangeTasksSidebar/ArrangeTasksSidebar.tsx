@@ -85,6 +85,8 @@ const ArrangeTasksSidebar = () => {
 	const [selectedProjectsList, setSelectedProjectsList] = useState([allProject]);
 	const [selectedTagList, setSelectedTagList] = useState([allTag]);
 
+	// console.log(selectedProjectsList);
+
 	return (
 		<div>
 			<div ref={topHeaderRef} className="px-3 pt-5 pb-3">
@@ -149,7 +151,11 @@ const ArrangeTasksSidebar = () => {
 							onClick={() => setIsDropdownItemsWithSearchVisible(!isDropdownItemsWithSearchVisible)}
 						>
 							<div className="text-blue-500">All {selectedView.name}</div>
-							<Icon name="chevron_right" fill={0} customClass={classNames(iconClassName, 'mb-[-2px]')} />
+							<Icon
+								name="chevron_right"
+								fill={0}
+								customClass="text-color-gray-50 !text-[18px] cursor-pointer p-1 mb-[-2.5px]"
+							/>
 						</div>
 
 						{!isLoadingGetProjects && selectedView.name === 'Projects' && (
@@ -165,7 +171,6 @@ const ArrangeTasksSidebar = () => {
 							/>
 						)}
 
-						{/* TODO: Bring this back in a moment to also filter by TAGS. */}
 						{!isLoadingGetTags && selectedView.name === 'Tags' && (
 							<DropdownItemsWithSearch
 								toggleRef={dropdownItemsWithSearchRef}
