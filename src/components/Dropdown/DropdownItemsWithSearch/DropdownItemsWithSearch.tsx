@@ -43,7 +43,8 @@ const DropdownItemsWithSearch: React.FC<DropdownItemsWithSearchProps> = memo(
 		const TOP_LIST_NAMES = ['all', 'today', 'tomorrow', 'week'];
 		const topListProjects = TOP_LIST_NAMES.map((name) => SMART_LISTS[name]);
 		const allTag = { name: 'All' };
-		const defaultItems = type === 'project' ? [...items, ...topListProjects] : [allTag, ...items];
+		const noneTag = { name: 'No Tags' };
+		const defaultItems = type === 'project' ? [...items, ...topListProjects] : [allTag, noneTag, ...items];
 
 		const [filteredItems, setFilteredItems] = useState(defaultItems);
 		const [searchText, setSearchText] = useState('');
@@ -135,7 +136,6 @@ const DropdownItemsWithSearch: React.FC<DropdownItemsWithSearchProps> = memo(
 							inboxProject={inboxProject}
 							multiSelect={multiSelect}
 							allProject={allProject}
-							allTag={allTag}
 							nonSmartListProjects={nonSmartListProjects}
 							defaultItems={defaultItems}
 							filteredItems={filteredItems}

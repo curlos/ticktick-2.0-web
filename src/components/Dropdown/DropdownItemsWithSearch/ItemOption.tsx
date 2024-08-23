@@ -29,6 +29,10 @@ const ItemOption: React.FC<ItemOptionProps> = ({
 	isForAddingNewTask,
 }) => {
 	const { name, _id, isFolder } = item;
+	const isAllItem =
+		type === 'project' ? item.urlName && item.urlName === 'all' : item.name && item.name.toLowerCase() === 'all';
+	const isNoneTag = name === 'No Tags';
+
 	const smartList = type === 'project' && SMART_LISTS[item.urlName];
 
 	// RTK Query - Tasks
@@ -51,7 +55,17 @@ const ItemOption: React.FC<ItemOptionProps> = ({
 
 	const checkIfItemSelected = () => {
 		if (multiSelect) {
-			return selectedItemList.find((itemInList) => itemInList._id === item._id);
+			return selectedItemList.find((itemInList) => {
+				if (isAllItem) {
+					debugger;
+				}
+
+				if (type === 'tags' && isNoneTag) {
+					return itemInList.name === item.name;
+				} else {
+					return itemInList._id === item._id;
+				}
+			});
 		} else {
 			if (type === 'project' && smartList) {
 				return selectedItem.urlName === item.urlName;
@@ -67,15 +81,17 @@ const ItemOption: React.FC<ItemOptionProps> = ({
 		e.stopPropagation();
 
 		if (multiSelect) {
-			const isAllItem =
-				type === 'project'
-					? item.urlName && item.urlName === 'all'
-					: item.name && item.name.toLowerCase() === 'all';
 			let newSelectedItemList = [...selectedItemList];
 
 			// If the tag is already selected, then remove it.
 			if (isItemSelected && !isAllItem) {
-				newSelectedItemList = newSelectedItemList.filter((selectedItem) => selectedItem._id !== item._id);
+				newSelectedItemList = newSelectedItemList.filter((selectedItem) => {
+					if (type === 'tags' && isNoneTag) {
+						return selectedItem.name !== item.name;
+					}
+
+					return selectedItem._id !== item._id;
+				});
 			} else {
 				// If the project being selected is the "All" project, then every other selected project should be removed.
 				if (isAllItem) {
@@ -106,6 +122,7 @@ const ItemOption: React.FC<ItemOptionProps> = ({
 					newSelectedItemList = [allItem];
 				}
 			}
+			console.log(newSelectedItemList);
 
 			setSelectedItemList(newSelectedItemList);
 		} else {
