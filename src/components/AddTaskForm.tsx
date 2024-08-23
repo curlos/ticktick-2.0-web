@@ -26,6 +26,8 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
 	defaultPriority,
 	setIsDropdownAddTaskFormVisible,
 }) => {
+	const fromDropdown = setIsDropdownAddTaskFormVisible;
+
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const params = useParams();
@@ -125,8 +127,6 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
 	};
 
 	const handleTaskNavigation = (task) => {
-		const fromDropdown = setIsDropdownAddTaskFormVisible;
-
 		if (fromDropdown) {
 			setIsDropdownAddTaskFormVisible(false);
 		} else {
@@ -277,10 +277,14 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({
 						<button
 							className="border border-color-gray-200 rounded-md py-1 cursor-pointer hover:bg-color-gray-200 p-3"
 							onClick={() => {
-								if (setShowAddTaskForm) {
-									setShowAddTaskForm(false);
+								if (fromDropdown) {
+									setIsDropdownAddTaskFormVisible(false);
 								} else {
-									dispatch(setModalState({ modalId: 'ModalAddTaskForm', isOpen: false }));
+									if (setShowAddTaskForm) {
+										setShowAddTaskForm(false);
+									} else {
+										dispatch(setModalState({ modalId: 'ModalAddTaskForm', isOpen: false }));
+									}
 								}
 							}}
 						>
