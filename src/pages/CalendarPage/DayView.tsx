@@ -1,5 +1,12 @@
-import { useRef, useState } from 'react';
-import { formatCheckedInDayDate, generateQuarterHourDates, getAllHours } from '../../utils/date.utils';
+import { useEffect, useRef, useState } from 'react';
+import {
+	areDatesEqual,
+	formatCheckedInDayDate,
+	generateQuarterHourDates,
+	getAllHours,
+	getTimeString,
+	isTimeWithin25Minutes,
+} from '../../utils/date.utils';
 import MiniActionItem from './MiniActionItem';
 import DropdownAddNewTaskDetails from '../../components/Dropdown/DropdownAddNewTaskDetails';
 import useContextMenu from '../../hooks/useContextMenu';
@@ -39,12 +46,7 @@ const DayView = ({ groupedItemsByDateObj, currDueDate }) => {
 	const safeFocusRecords = focusRecords ? focusRecords : [];
 	const flattenedActionItems = [...safeTasks, ...safeFocusRecords];
 
-	const getTopPositioning = (focusRecord) => {
-		const { startTime } = focusRecord;
-
-		// Create a Date object from the startTime
-		const date = new Date(startTime);
-
+	const getTopPositioningFromTime = (date) => {
 		// Extract the hours and minutes
 		const hours = date.getHours();
 		const minutes = date.getMinutes();
@@ -96,6 +98,40 @@ const DayView = ({ groupedItemsByDateObj, currDueDate }) => {
 		);
 	};
 
+	const [todayDateObj, setTodayDateObj] = useState(new Date());
+	const [todayDayTopValue, setTodayDayTopValue] = useState(getTopPositioningFromTime(todayDateObj));
+
+	useEffect(() => {
+		// Function to update both currentDateObj and currentDayTopValue
+		const updateDateTime = () => {
+			const newDate = new Date();
+			setTodayDateObj(newDate);
+			setTodayDayTopValue(getTopPositioningFromTime(newDate));
+		};
+
+		// Calculate how long to wait until the next minute starts
+		const now = new Date();
+		const msUntilNextMinute = 60000 - (now.getSeconds() * 1000 + now.getMilliseconds());
+
+		// Update immediately at the next minute mark
+		const timeoutId = setTimeout(() => {
+			updateDateTime();
+			// Then set an interval to continue updating every minute
+			const intervalId = setInterval(updateDateTime, 60000);
+			// Clear this interval on cleanup
+			return () => {
+				clearInterval(intervalId);
+			};
+		}, msUntilNextMinute);
+
+		// Clean up the timeout and interval
+		return () => {
+			clearTimeout(timeoutId);
+		};
+	}, []); // Empty dependency array ensures this effect runs only once after initial render
+
+	const dueDateIsToday = areDatesEqual(currDueDate, todayDateObj);
+
 	return (
 		<div>
 			<div>
@@ -136,7 +172,11 @@ const DayView = ({ groupedItemsByDateObj, currDueDate }) => {
 				<div className="flex overflow-auto gray-scrollbar" style={{ maxHeight }}>
 					<div className="relative">
 						{safeFocusRecords?.map((focusRecord, index) => {
-							const topValue = getTopPositioning(focusRecord);
+							const { startTime } = focusRecord;
+							// Create a Date object from the startTime
+							const date = new Date(startTime);
+
+							const topValue = getTopPositioningFromTime(date);
 							const heightValue = getHeightValue(focusRecord);
 
 							return (
@@ -161,15 +201,63 @@ const DayView = ({ groupedItemsByDateObj, currDueDate }) => {
 								/>
 							);
 						})}
+
+						{dueDateIsToday && (
+							<div>
+								<div
+									className="bg-red-500/20 text-red-500 rounded text-[12px] w-[60px] flex items-center justify-center"
+									style={{
+										position: 'absolute',
+										top: todayDayTopValue - 10,
+										left: '20px',
+										zIndex: 1,
+									}}
+								>
+									{getTimeString(todayDateObj)}
+								</div>
+
+								<div
+									className="bg-red-500 h-[10px] w-[10px] rounded-full"
+									style={{
+										position: 'absolute',
+										top: todayDayTopValue - 5,
+										left: '90px',
+										zIndex: 1,
+									}}
+								></div>
+
+								<div
+									className="bg-red-500 h-[1px]"
+									style={{
+										position: 'absolute',
+										top: todayDayTopValue,
+										left: '90px',
+										width: formattedDayWidth - 2,
+										zIndex: 1,
+									}}
+								></div>
+							</div>
+						)}
 					</div>
 					{/* Sidebar thing */}
 					<div className="py-1 px-2 w-[90px] text-right">
 						<div>
-							{allHours.map((hour) => (
-								<div key={hour} className="text-color-gray-100 text-[12px] h-[60px]">
-									{hour}
-								</div>
-							))}
+							{allHours.map((hour) => {
+								const isWithin25MinOfCurrentTime =
+									dueDateIsToday && isTimeWithin25Minutes(hour, todayDateObj);
+
+								return (
+									<div
+										key={hour}
+										className={classNames(
+											'text-color-gray-100 text-[12px] h-[60px]',
+											isWithin25MinOfCurrentTime && 'invisible'
+										)}
+									>
+										{hour}
+									</div>
+								);
+							})}
 						</div>
 					</div>
 
@@ -181,7 +269,7 @@ const DayView = ({ groupedItemsByDateObj, currDueDate }) => {
 
 									return (
 										<div
-											key={hour}
+											key={currDueDate.toLocaleTimeString() + hour}
 											className="text-color-gray-100 text-[12px] h-[60px] w-full border-l border-b border-color-gray-200"
 										>
 											{quarterHours.map((quarterHourDate) => (

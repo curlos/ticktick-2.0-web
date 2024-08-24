@@ -585,3 +585,42 @@ export function generateQuarterHourDates(date, timeString) {
 
 	return quarterHourDates;
 }
+
+/**
+ * Checks if a given time string is within 25 minutes of a reference date.
+ *
+ * @param {string} timeString - Time in the format "hh:mm PM" or "hh:mm AM" (e.g., "11:00 PM").
+ * @param {Date} referenceDate - The reference date to compare against.
+ * @returns {boolean} - Returns true if the time string is within 25 minutes of the reference date.
+ */
+export function isTimeWithin25Minutes(timeString, referenceDate) {
+	// Parse the time string to extract hours, minutes, and AM/PM
+	const timeParts = timeString.match(/(\d+):(\d+)\s(AM|PM)/i);
+	if (!timeParts) return false; // Return false if the format is incorrect
+
+	const hours = parseInt(timeParts[1], 10);
+	const minutes = parseInt(timeParts[2], 10);
+	const period = timeParts[3];
+
+	// Create a new date object based on the reference date
+	let comparisonDate = new Date(referenceDate);
+
+	// Convert 12-hour format to 24-hour by adjusting hours based on AM/PM
+	if (period === 'PM' && hours !== 12) {
+		comparisonDate.setHours(hours + 12);
+	} else if (period === 'AM' && hours === 12) {
+		comparisonDate.setHours(0);
+	} else {
+		comparisonDate.setHours(hours);
+	}
+	comparisonDate.setMinutes(minutes);
+	comparisonDate.setSeconds(0);
+	comparisonDate.setMilliseconds(0);
+
+	// Calculate the time difference in minutes
+	const timeDifference = Math.abs(comparisonDate - referenceDate);
+	const minutesDifference = Math.floor(timeDifference / 60000); // Convert milliseconds to minutes
+
+	// Return true if the difference is 25 minutes or less
+	return minutesDifference <= 25;
+}
