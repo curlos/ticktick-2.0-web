@@ -8,6 +8,7 @@ import classNames from 'classnames';
 import useMaxHeight from '../../hooks/useMaxHeight';
 import { useCalendarContext } from '../../contexts/useCalendarContext';
 import { secondsToMinutes } from '../../utils/helpers.utils';
+import useResizeObserver from '../../hooks/useResizeObserver';
 
 const DayView = ({ groupedItemsByDateObj, currentDate, currDueDate }) => {
 	const { allItemsGroupedByDate } = groupedItemsByDateObj;
@@ -42,17 +43,15 @@ const DayView = ({ groupedItemsByDateObj, currentDate, currDueDate }) => {
 		}
 	}, [sortedGroupedFocusRecordsAsc]);
 
-	useEffect(() => {
-		if (formattedDayRef.current && document.readyState === 'complete') {
-			setFormattedDayWidth(formattedDayRef.current.getBoundingClientRect().width);
-		}
-	}, [formattedDayRef]);
+	// Observe changes in width for the formattedDayRef element
+	useResizeObserver(formattedDayRef, setFormattedDayWidth, 'width');
 
-	useEffect(() => {
-		if (miniTopHeaderRef.current && document.readyState === 'complete') {
-			setMiniTopHeaderHeight(miniTopHeaderRef.current.getBoundingClientRect().height);
-		}
-	}, [miniTopHeaderRef, miniTopHeaderRef?.current?.getBoundingClientRect()?.height]);
+	// Observe changes in height for the miniTopHeaderRef element
+	useResizeObserver(miniTopHeaderRef, setMiniTopHeaderHeight, 'height');
+
+	// console.log(formattedDayWidth);
+	console.log(miniTopHeaderHeight);
+	console.log(headerHeight);
 
 	const formattedDay = formatCheckedInDayDate(currDueDate);
 	const actionItems = allItemsGroupedByDate[formattedDay] || {};
@@ -177,39 +176,6 @@ const DayView = ({ groupedItemsByDateObj, currentDate, currDueDate }) => {
 								))}
 							</div>
 						</div>
-
-						{/* Use this as a basic for how to show focus trecords */}
-						{focusRecordsForTheDay && focusRecordsForTheDay.length > 0 && (
-							<div className="absolute top-[4px] left-[4px] text-[12px] w-[99%]">
-								<div>
-									{allHours.map((hour, i) => {
-										const currentFocusRecord = focusRecordsForTheDay[0];
-
-										const hourDate = new Date(
-											parseTimeStringAMorPM(hour, currentFocusRecord.startTime)
-										);
-										const focusRecordDate = new Date(currentFocusRecord.startTime);
-
-										const datesInSameHour = isInSameHour(hourDate, focusRecordDate);
-
-										// TODO: Position this correctly. Probably will have to use absolute positioning to actually get it precisely positioned.
-										if (!datesInSameHour) {
-											return null;
-										}
-
-										return (
-											<div
-												key={hour}
-												className="p-1 border border-red-500 bg-red-900 rounded opacity-50 w-full"
-											>
-												<div>Prepare for Marco Island</div>
-												<div>12:00PM - 1:00PM</div>
-											</div>
-										);
-									})}
-								</div>
-							</div>
-						)}
 					</div>
 				</div>
 			</div>

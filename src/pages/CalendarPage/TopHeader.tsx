@@ -6,6 +6,7 @@ import DropdownIntervalSelect from './Dropdown/DropdownIntervalSelect';
 import ModalViewOptions from './ModalViewOptions';
 import { useCalendarContext } from '../../contexts/useCalendarContext';
 import DropdownAddNewTaskDetails from '../../components/Dropdown/DropdownAddNewTaskDetails';
+import useResizeObserver from '../../hooks/useResizeObserver';
 
 const TopHeader = () => {
 	const {
@@ -25,11 +26,13 @@ const TopHeader = () => {
 
 	const [isModalViewOptionsOpen, setIsModalViewOptionsOpen] = useState(false);
 
-	useEffect(() => {
-		if (topHeaderRef.current && document.readyState === 'complete') {
-			setHeaderHeight(topHeaderRef.current.getBoundingClientRect().height);
-		}
-	}, [topHeaderRef, topHeaderRef?.current?.getBoundingClientRect()?.height, selectedInterval, setHeaderHeight]);
+	// useEffect(() => {
+	// 	if (topHeaderRef.current && document.readyState === 'complete') {
+	// 		setHeaderHeight(topHeaderRef.current.getBoundingClientRect().height);
+	// 	}
+	// }, [topHeaderRef, topHeaderRef?.current?.getBoundingClientRect()?.height, selectedInterval, setHeaderHeight]);
+
+	useResizeObserver(topHeaderRef, setHeaderHeight, 'height');
 
 	useEffect(() => {
 		if (connectedCurrentDate) {
