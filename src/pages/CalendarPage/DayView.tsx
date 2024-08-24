@@ -10,7 +10,7 @@ import { useCalendarContext } from '../../contexts/useCalendarContext';
 import { secondsToMinutes } from '../../utils/helpers.utils';
 
 const DayView = ({ groupedItemsByDateObj, currentDate, currDueDate }) => {
-	const allHours = getAllHours();
+	const { allItemsGroupedByDate } = groupedItemsByDateObj;
 
 	// RTK Query - Focus Records
 	const {
@@ -22,10 +22,18 @@ const DayView = ({ groupedItemsByDateObj, currentDate, currDueDate }) => {
 	const [focusRecordsForTheDay, setFocusRecordsForTheDay] = useState([]);
 
 	const contextMenuObj = useContextMenu();
-
 	const { contextMenu, isDropdownVisible, handleContextMenu } = contextMenuObj;
 
-	const { allItemsGroupedByDate } = groupedItemsByDateObj;
+	const formattedDayRef = useRef(null);
+	const [formattedDayWidth, setFormattedDayWidth] = useState(0);
+
+	const [miniTopHeaderHeight, setMiniTopHeaderHeight] = useState(0);
+	const miniTopHeaderRef = useRef(null);
+
+	const { headerHeight } = useCalendarContext();
+	const maxHeight = useMaxHeight(headerHeight + miniTopHeaderHeight);
+
+	const allHours = getAllHours();
 
 	useEffect(() => {
 		if (sortedGroupedFocusRecordsAsc) {
@@ -34,33 +42,24 @@ const DayView = ({ groupedItemsByDateObj, currentDate, currDueDate }) => {
 		}
 	}, [sortedGroupedFocusRecordsAsc]);
 
-	const currentFocusRecordIndex = 0;
+	useEffect(() => {
+		if (formattedDayRef.current && document.readyState === 'complete') {
+			setFormattedDayWidth(formattedDayRef.current.getBoundingClientRect().width);
+		}
+	}, [formattedDayRef]);
+
+	useEffect(() => {
+		if (miniTopHeaderRef.current && document.readyState === 'complete') {
+			setMiniTopHeaderHeight(miniTopHeaderRef.current.getBoundingClientRect().height);
+		}
+	}, [miniTopHeaderRef, miniTopHeaderRef?.current?.getBoundingClientRect()?.height]);
 
 	const formattedDay = formatCheckedInDayDate(currDueDate);
 	const actionItems = allItemsGroupedByDate[formattedDay] || {};
 	const { tasks, focusRecords } = actionItems;
 	const safeTasks = tasks ? tasks : [];
 	const safeFocusRecords = focusRecords ? focusRecords : [];
-
 	const flattenedActionItems = [...safeTasks, ...safeFocusRecords];
-
-	console.log(flattenedActionItems);
-
-	const { headerHeight } = useCalendarContext();
-
-	const maxHeight = useMaxHeight(headerHeight);
-
-	console.log(headerHeight);
-	console.log(maxHeight);
-
-	const formattedDayRef = useRef(null);
-	const [formattedDayWidth, setFormattedDayWidth] = useState(0);
-
-	useEffect(() => {
-		if (formattedDayRef.current && document.readyState === 'complete') {
-			setFormattedDayWidth(formattedDayRef.current.getBoundingClientRect().width);
-		}
-	}, [formattedDayRef]);
 
 	const getTopPositioning = (focusRecord) => {
 		const { startTime } = focusRecord;
@@ -92,12 +91,13 @@ const DayView = ({ groupedItemsByDateObj, currentDate, currDueDate }) => {
 
 	return (
 		<div>
-			<div className="overflow-auto gray-scrollbar" style={{ maxHeight }}>
+			<div>
 				<div className="flex">
 					<div className="w-[90px]" />
 					<div
+						ref={miniTopHeaderRef}
 						className={classNames(
-							'border-l border-color-gray-200 p-1 flex-1',
+							'border-l border-b border-color-gray-200 p-1 flex-1 max-h-[150px] overflow-auto gray-scrollbar',
 							contextMenu && 'bg-color-gray-200'
 						)}
 						onClick={(e) => {
@@ -120,37 +120,41 @@ const DayView = ({ groupedItemsByDateObj, currentDate, currDueDate }) => {
 									formattedDay={formattedDay}
 								/>
 							))}
-
-							{safeFocusRecords?.map((focusRecord, index) => {
-								const topValue = getTopPositioning(focusRecord);
-								const heightValue = getHeightValue(focusRecord);
-
-								return (
-									<MiniActionItem
-										key={focusRecord._id}
-										index={(tasks?.length ? tasks.length : 0) + index}
-										focusRecord={focusRecord}
-										actionItems={actionItems}
-										flattenedActionItems={flattenedActionItems}
-										shownActionItems={flattenedActionItems}
-										formattedDay={formattedDay}
-										customStyling={{
-											width: formattedDayWidth,
-											position: 'absolute',
-											zIndex: 1,
-											top: topValue,
-											height: heightValue,
-										}}
-									/>
-								);
-							})}
 						</div>
 					</div>
 
 					<DropdownAddNewTaskDetails contextMenuObj={contextMenuObj} defaultDueDate={currDueDate} />
 				</div>
 
-				<div className="flex">
+				<div className="flex overflow-auto gray-scrollbar" style={{ maxHeight }}>
+					<div className="relative">
+						{safeFocusRecords?.map((focusRecord, index) => {
+							const topValue = getTopPositioning(focusRecord);
+							const heightValue = getHeightValue(focusRecord);
+
+							return (
+								<MiniActionItem
+									key={focusRecord._id}
+									index={(tasks?.length ? tasks.length : 0) + index}
+									focusRecord={focusRecord}
+									actionItems={actionItems}
+									flattenedActionItems={flattenedActionItems}
+									shownActionItems={flattenedActionItems}
+									formattedDay={formattedDay}
+									customStyling={{
+										width: formattedDayWidth - 10,
+										position: 'absolute',
+										zIndex: 1,
+										top: topValue,
+										height: heightValue,
+										left: '95px',
+										fontSize: '13px',
+									}}
+									dayViewHeightValue={heightValue}
+								/>
+							);
+						})}
+					</div>
 					{/* Sidebar thing */}
 					<div className="py-1 px-2 w-[90px] text-right">
 						<div>
@@ -173,11 +177,13 @@ const DayView = ({ groupedItemsByDateObj, currentDate, currDueDate }) => {
 								))}
 							</div>
 						</div>
+
+						{/* Use this as a basic for how to show focus trecords */}
 						{focusRecordsForTheDay && focusRecordsForTheDay.length > 0 && (
 							<div className="absolute top-[4px] left-[4px] text-[12px] w-[99%]">
 								<div>
 									{allHours.map((hour, i) => {
-										const currentFocusRecord = focusRecordsForTheDay[currentFocusRecordIndex];
+										const currentFocusRecord = focusRecordsForTheDay[0];
 
 										const hourDate = new Date(
 											parseTimeStringAMorPM(hour, currentFocusRecord.startTime)

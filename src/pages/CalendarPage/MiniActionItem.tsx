@@ -21,7 +21,7 @@ const MiniActionItem = ({
 	formattedDay,
 	innerClickElemRefs,
 	setInnerClickElemRefs,
-	fromDayView,
+	dayViewHeightValue,
 	customStyling,
 }) => {
 	const getTaskBgColor = useGetTaskBgColor();
@@ -38,7 +38,7 @@ const MiniActionItem = ({
 	const { data: fetchedHabits } = useGetHabitsQuery();
 	const { habitsById } = fetchedHabits || {};
 
-	const { taskId, habitId, startTime } = focusRecord || {};
+	const { taskId, habitId, startTime, endTime } = focusRecord || {};
 	const focusRecordTask = isForFocusRecord && tasksById && tasksById[taskId];
 	const habit = isForFocusRecord && habitsById && habitsById[habitId];
 	const name = isForFocusRecord ? focusRecordTask?.title || habit?.name : task.title;
@@ -91,11 +91,16 @@ const MiniActionItem = ({
 				}}
 			>
 				<span className="truncate">{name}</span>
-				{isForFocusRecord && (
-					<span className={classNames('text-gray-200 min-w-[55px] text-right', customStartTimeClasses)}>
-						{formatDateTime(startTime).time}
-					</span>
-				)}
+				{isForFocusRecord &&
+					(!dayViewHeightValue || dayViewHeightValue < 40 ? (
+						<span className={classNames('text-gray-200 min-w-[55px] text-right', customStartTimeClasses)}>
+							{formatDateTime(startTime).time}
+						</span>
+					) : (
+						<span className={classNames('text-gray-200 min-w-[55px] text-right', customStartTimeClasses)}>
+							{formatDateTime(startTime).time} - {formatDateTime(endTime).time}
+						</span>
+					))}
 			</div>
 
 			{isLastActionItem && thereAreLeftoverActionItems && (

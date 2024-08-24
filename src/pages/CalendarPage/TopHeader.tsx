@@ -29,7 +29,7 @@ const TopHeader = () => {
 		if (topHeaderRef.current && document.readyState === 'complete') {
 			setHeaderHeight(topHeaderRef.current.getBoundingClientRect().height);
 		}
-	}, [topHeaderRef, setHeaderHeight]);
+	}, [topHeaderRef, topHeaderRef?.current?.getBoundingClientRect()?.height, selectedInterval, setHeaderHeight]);
 
 	useEffect(() => {
 		if (connectedCurrentDate) {
