@@ -1,5 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
-import { useGetFocusRecordsQuery } from '../../services/resources/focusRecordsApi';
+import { useRef, useState } from 'react';
 import { formatCheckedInDayDate, generateQuarterHourDates, getAllHours } from '../../utils/date.utils';
 import MiniActionItem from './MiniActionItem';
 import DropdownAddNewTaskDetails from '../../components/Dropdown/DropdownAddNewTaskDetails';
@@ -10,20 +9,11 @@ import { useCalendarContext } from '../../contexts/useCalendarContext';
 import { secondsToMinutes } from '../../utils/helpers.utils';
 import useResizeObserver from '../../hooks/useResizeObserver';
 
-const DayView = ({ groupedItemsByDateObj, currentDate, currDueDate }) => {
+const DayView = ({ groupedItemsByDateObj, currDueDate }) => {
 	const { allItemsGroupedByDate } = groupedItemsByDateObj;
 
-	// RTK Query - Focus Records
-	const {
-		data: fetchedFocusRecords,
-		isLoading: isLoadingFocusRecords,
-		error: errorFocusRecords,
-	} = useGetFocusRecordsQuery();
-	const { sortedGroupedFocusRecordsAsc } = fetchedFocusRecords || {};
-	const [focusRecordsForTheDay, setFocusRecordsForTheDay] = useState([]);
-
 	const contextMenuObj = useContextMenu();
-	const { contextMenu, isDropdownVisible, handleContextMenu } = contextMenuObj;
+	const { contextMenu, handleContextMenu } = contextMenuObj;
 
 	const formattedDayRef = useRef(null);
 	const [formattedDayWidth, setFormattedDayWidth] = useState(0);
@@ -36,22 +26,11 @@ const DayView = ({ groupedItemsByDateObj, currentDate, currDueDate }) => {
 
 	const allHours = getAllHours();
 
-	useEffect(() => {
-		if (sortedGroupedFocusRecordsAsc) {
-			const newFocusRecordsForTheDay = sortedGroupedFocusRecordsAsc['July 30, 2024'];
-			setFocusRecordsForTheDay(newFocusRecordsForTheDay);
-		}
-	}, [sortedGroupedFocusRecordsAsc]);
-
 	// Observe changes in width for the formattedDayRef element
 	useResizeObserver(formattedDayRef, setFormattedDayWidth, 'width');
 
 	// Observe changes in height for the miniTopHeaderRef element
 	useResizeObserver(miniTopHeaderRef, setMiniTopHeaderHeight, 'height');
-
-	// console.log(formattedDayWidth);
-	console.log(miniTopHeaderHeight);
-	console.log(headerHeight);
 
 	const formattedDay = formatCheckedInDayDate(currDueDate);
 	const actionItems = allItemsGroupedByDate[formattedDay] || {};

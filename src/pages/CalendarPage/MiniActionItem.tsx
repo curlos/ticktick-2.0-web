@@ -9,6 +9,7 @@ import DrodpownAddFocusRecord from '../../components/Dropdown/DropdownAddFocusRe
 import DropdownTaskDetails from '../../components/Dropdown/DropdownTaskDetails';
 import DropdownAllActionItemsForDay from './Dropdown/DropdownAllActionItemsForDay';
 import useGetTaskBgColor from '../../hooks/useGetTaskBgColor';
+import Icon from '../../components/Icon';
 
 const MiniActionItem = ({
 	index,
@@ -38,7 +39,7 @@ const MiniActionItem = ({
 	const { data: fetchedHabits } = useGetHabitsQuery();
 	const { habitsById } = fetchedHabits || {};
 
-	const { taskId, habitId, startTime, endTime } = focusRecord || {};
+	const { taskId, habitId, startTime, endTime, pomos } = focusRecord || {};
 	const focusRecordTask = isForFocusRecord && tasksById && tasksById[taskId];
 	const habit = isForFocusRecord && habitsById && habitsById[habitId];
 	const name = isForFocusRecord ? focusRecordTask?.title || habit?.name : task.title;
@@ -73,6 +74,51 @@ const MiniActionItem = ({
 
 	const showFullOpacity = isToday || isDateBasedOnDueDate;
 
+	const getIcon = () => {
+		if (isForFocusRecord) {
+			if (pomos > 0) {
+				return {
+					name: 'nutrition',
+					fill: 1,
+				};
+			}
+
+			return {
+				name: 'timer',
+				fill: 1,
+			};
+		}
+
+		if (isForTask) {
+			const { key } = getAssociatedTimeForTask(task);
+
+			switch (key) {
+				case 'completedTime':
+					return {
+						name: 'check_circle',
+						fill: 1,
+					};
+				case 'isDeleted':
+					return {
+						name: 'delete',
+						fill: 1,
+					};
+				case 'willNotDo':
+					return {
+						name: 'disabled_by_default',
+						fill: 1,
+					};
+				default:
+					return {
+						name: 'radio_button_unchecked',
+						fill: 0,
+					};
+			}
+		}
+	};
+
+	const { name: iconName, fill: iconFill } = getIcon();
+
 	return (
 		<div onClick={(e) => e.stopPropagation()} className="flex items-center gap-1 w-full" style={customStyling}>
 			<div
@@ -90,7 +136,12 @@ const MiniActionItem = ({
 					handleContextMenu(e);
 				}}
 			>
-				<span className="truncate">{name}</span>
+				<div className="truncate">
+					<div className="flex items-center gap-1">
+						<Icon name={iconName} customClass={'!text-[14px] text-white cursor-pointer'} fill={iconFill} />
+						<span className="truncate">{name}</span>
+					</div>
+				</div>
 				{isForFocusRecord &&
 					(!dayViewHeightValue || dayViewHeightValue < 40 ? (
 						<span className={classNames('text-gray-200 min-w-[55px] text-right', customStartTimeClasses)}>
