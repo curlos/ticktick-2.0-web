@@ -548,3 +548,40 @@ export const isWeekendDay = (date) => {
 	const dayOfWeek = date.getDay();
 	return dayOfWeek === 0 || dayOfWeek === 6; // 0 is Sunday, 6 is Saturday
 };
+
+export function generateQuarterHourDates(date, timeString) {
+	// Determine if the timeString is in 12-hour format with AM/PM
+	const isTwelveHourFormat = /AM|PM/i.test(timeString);
+
+	// Parse the timeString to get hours and minutes
+	let [time, period] = timeString.split(' ');
+	let [hours, minutes] = time.split(':');
+
+	if (isTwelveHourFormat) {
+		// Convert 12-hour format to 24-hour format if necessary
+		hours = parseInt(hours);
+		minutes = parseInt(minutes);
+		if (period === 'PM' && hours !== 12) {
+			hours += 12;
+		} else if (period === 'AM' && hours === 12) {
+			hours = 0;
+		}
+	} else {
+		// Handle 24-hour time format
+		hours = parseInt(hours);
+		minutes = parseInt(minutes);
+	}
+
+	// Set the hours and minutes to the date object
+	date.setHours(hours, minutes, 0, 0);
+
+	// Generate each quarter-hour increment as a new Date object
+	const quarterHourDates = [];
+	for (let i = 0; i < 4; i++) {
+		let newDate = new Date(date.getTime()); // Create a new Date object from the current date
+		newDate.setMinutes(date.getMinutes() + 15 * i); // Set minutes to quarter-hour marks
+		quarterHourDates.push(newDate);
+	}
+
+	return quarterHourDates;
+}
