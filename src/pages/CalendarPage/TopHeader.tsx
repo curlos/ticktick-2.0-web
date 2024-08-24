@@ -26,12 +26,6 @@ const TopHeader = () => {
 
 	const [isModalViewOptionsOpen, setIsModalViewOptionsOpen] = useState(false);
 
-	// useEffect(() => {
-	// 	if (topHeaderRef.current && document.readyState === 'complete') {
-	// 		setHeaderHeight(topHeaderRef.current.getBoundingClientRect().height);
-	// 	}
-	// }, [topHeaderRef, topHeaderRef?.current?.getBoundingClientRect()?.height, selectedInterval, setHeaderHeight]);
-
 	useResizeObserver(topHeaderRef, setHeaderHeight, 'height');
 
 	useEffect(() => {

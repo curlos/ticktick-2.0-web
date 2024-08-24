@@ -3,6 +3,7 @@ import DropdownItemsWithSearch from '../../../components/Dropdown/DropdownItemsW
 import Icon from '../../../components/Icon';
 import { useCalendarContext } from '../../../contexts/useCalendarContext';
 import classNames from 'classnames';
+import useResizeObserver from '../../../hooks/useResizeObserver';
 
 const TopHeader = ({
 	selectedView,
@@ -40,11 +41,7 @@ const TopHeader = ({
 	const { setShowArrangeTasksSidebar } = useCalendarContext();
 	const iconClassName = 'text-color-gray-50 !text-[18px] cursor-pointer p-1 hover:bg-color-gray-300 rounded';
 
-	useEffect(() => {
-		if (topHeaderRef.current && document.readyState === 'complete') {
-			setHeaderHeight(topHeaderRef.current.getBoundingClientRect().height);
-		}
-	}, [topHeaderRef?.current?.getBoundingClientRect()?.height, setHeaderHeight, selectedView, document]);
+	useResizeObserver(topHeaderRef, setHeaderHeight, 'height');
 
 	return (
 		<div ref={topHeaderRef} className="px-3 pt-5 pb-3">
