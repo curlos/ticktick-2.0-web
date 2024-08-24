@@ -148,7 +148,10 @@ const DayView = ({ groupedItemsByDateObj, currDueDate }) => {
 							handleContextMenu(e);
 						}}
 					>
-						<div ref={formattedDayRef} className="font-bold">
+						<div
+							ref={formattedDayRef}
+							className={classNames('font-bold', dueDateIsToday && 'text-blue-500')}
+						>
 							{formattedDay}
 						</div>
 						<div className="space-y-[2px] my-3 text-[13px]">
