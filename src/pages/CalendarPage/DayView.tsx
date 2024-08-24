@@ -8,6 +8,9 @@ import {
 	sortArrayByEndTime,
 } from '../../utils/date.utils';
 import MiniActionItem from './MiniActionItem';
+import DropdownAddNewTaskDetails from '../../components/Dropdown/DropdownAddNewTaskDetails';
+import useContextMenu from '../../hooks/useContextMenu';
+import classNames from 'classnames';
 
 const DayView = ({ groupedItemsByDateObj, currentDate, currDueDate }) => {
 	const allHours = getAllHours();
@@ -20,6 +23,10 @@ const DayView = ({ groupedItemsByDateObj, currentDate, currDueDate }) => {
 	} = useGetFocusRecordsQuery();
 	const { sortedGroupedFocusRecordsAsc } = fetchedFocusRecords || {};
 	const [focusRecordsForTheDay, setFocusRecordsForTheDay] = useState([]);
+
+	const contextMenuObj = useContextMenu();
+
+	const { contextMenu, isDropdownVisible, handleContextMenu } = contextMenuObj;
 
 	const { allItemsGroupedByDate } = groupedItemsByDateObj;
 
@@ -46,7 +53,16 @@ const DayView = ({ groupedItemsByDateObj, currentDate, currDueDate }) => {
 
 			<div className="flex">
 				<div className="w-[90px]" />
-				<div className="border-l border-color-gray-200 p-1 flex-1">
+				<div
+					className={classNames(
+						'border-l border-color-gray-200 p-1 flex-1',
+						contextMenu && 'bg-color-gray-200'
+					)}
+					onClick={(e) => {
+						e.stopPropagation();
+						handleContextMenu(e);
+					}}
+				>
 					<div className="font-bold">{formattedDay}</div>
 					<div className="space-y-[2px] my-3">
 						{safeTasks.map((task, index) => (
@@ -63,6 +79,8 @@ const DayView = ({ groupedItemsByDateObj, currentDate, currDueDate }) => {
 						))}
 					</div>
 				</div>
+
+				<DropdownAddNewTaskDetails contextMenuObj={contextMenuObj} defaultDueDate={currDueDate} />
 			</div>
 
 			<div className="flex">
