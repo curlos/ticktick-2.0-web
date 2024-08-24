@@ -10,7 +10,7 @@ const DropdownTopHeaderMoreOptions = ({
 	customClasses,
 	setIsModalViewOptionsOpen,
 }) => {
-	const { setShowArrangeTasksSidebar } = useCalendarContext();
+	const { showArrangeTasksSidebar, setShowArrangeTasksSidebar } = useCalendarContext();
 
 	return (
 		<Dropdown
@@ -29,7 +29,7 @@ const DropdownTopHeaderMoreOptions = ({
 				<SelectOption
 					name="Arrange Tasks"
 					iconName="layers"
-					onClick={() => setShowArrangeTasksSidebar(true)}
+					onClick={() => setShowArrangeTasksSidebar(!showArrangeTasksSidebar)}
 					setIsVisible={setIsVisible}
 				/>
 			</div>

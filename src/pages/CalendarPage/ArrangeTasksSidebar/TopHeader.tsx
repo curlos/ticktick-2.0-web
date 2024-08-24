@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from 'react';
 import DropdownItemsWithSearch from '../../../components/Dropdown/DropdownItemsWithSearch/DropdownItemsWithSearch';
 import Icon from '../../../components/Icon';
 import { useCalendarContext } from '../../../contexts/useCalendarContext';
+import classNames from 'classnames';
 
 const TopHeader = ({
 	selectedView,
@@ -43,7 +44,7 @@ const TopHeader = ({
 		if (topHeaderRef.current && document.readyState === 'complete') {
 			setHeaderHeight(topHeaderRef.current.getBoundingClientRect().height);
 		}
-	}, [topHeaderRef, setHeaderHeight, selectedView]);
+	}, [topHeaderRef?.current?.getBoundingClientRect()?.height, setHeaderHeight, selectedView, document]);
 
 	return (
 		<div ref={topHeaderRef} className="px-3 pt-5 pb-3">
@@ -100,11 +101,14 @@ const TopHeader = ({
 					}}
 				/>
 			</div>
-			{selectedView.name !== 'Priority' && (
+			{
 				<div className="relative">
 					<div
 						ref={dropdownItemsWithSearchRef}
-						className="flex items-center mt-4 cursor-pointer"
+						className={classNames(
+							'flex items-center mt-4 cursor-pointer',
+							selectedView.name === 'Priority' && 'invisible'
+						)}
 						onClick={() => setIsDropdownItemsWithSearchVisible(!isDropdownItemsWithSearchVisible)}
 					>
 						<div className="text-blue-500">All {selectedView.name}</div>
@@ -141,7 +145,7 @@ const TopHeader = ({
 						/>
 					)}
 				</div>
-			)}
+			}
 		</div>
 	);
 };

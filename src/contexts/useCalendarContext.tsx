@@ -23,7 +23,7 @@ const useCalendar = () => {
 
 	// useState: TopHeader
 	const [showFilterSidebar, setShowFilterSidebar] = useState(true);
-	const [showArrangeTasksSidebar, setShowArrangeTasksSidebar] = useState(true);
+	const [showArrangeTasksSidebar, setShowArrangeTasksSidebar] = useState(false);
 	const [selectedInterval, setSelectedInterval] = useState('Month');
 	const [currentDate, setCurrentDate] = useState(new Date());
 	const topHeaderRef = useRef(null);

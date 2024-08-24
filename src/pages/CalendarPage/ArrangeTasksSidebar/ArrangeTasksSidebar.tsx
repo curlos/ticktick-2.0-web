@@ -98,7 +98,7 @@ const ArrangeTasksSidebar = () => {
 				}}
 			/>
 
-			<div className="px-3 pt-5 overflow-auto max-h-screen gray-scrollbar" style={{ maxHeight }}>
+			<div className="px-3 overflow-auto max-h-screen gray-scrollbar" style={{ maxHeight }}>
 				<TaskListByGroup
 					tasks={tasksWithNoParent.filter((task) => {
 						if (task.isDeleted) {
