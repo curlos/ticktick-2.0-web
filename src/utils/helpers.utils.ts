@@ -29,6 +29,16 @@ export function secondsToHoursAndMinutes(seconds: number) {
 	};
 }
 
+export function secondsToMinutes(seconds: number) {
+	// Convert seconds to total minutes
+	const minutes = Math.floor(seconds / 60);
+
+	// Calculate remaining seconds after converting to minutes
+	const remainingSeconds = seconds % 60;
+
+	return minutes;
+}
+
 /**
  * Transforms an array of objects into an object with keys based on a specified property.
  * @param {Object[]} array - The array of objects to transform.
