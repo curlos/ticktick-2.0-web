@@ -21,6 +21,7 @@ const MiniActionItem = ({
 	formattedDay,
 	innerClickElemRefs,
 	setInnerClickElemRefs,
+	fromDayView,
 }) => {
 	const getTaskBgColor = useGetTaskBgColor();
 
@@ -75,10 +76,11 @@ const MiniActionItem = ({
 		<div onClick={(e) => e.stopPropagation()} className="flex items-center gap-1 w-full">
 			<div
 				className={classNames(
-					'rounded p-1 py-[2px] h-[20px] flex justify-between flex-1 cursor-pointer',
+					'rounded p-1 py-[2px] flex justify-between flex-1 cursor-pointer',
 					// Necessary for the focus records with "+X" at the end.
 					'w-[88%]',
-					showFullOpacity ? 'opacity-90' : 'opacity-70'
+					showFullOpacity ? 'opacity-90' : 'opacity-70',
+					!fromDayView && 'h-[20px]'
 				)}
 				style={{
 					backgroundColor: getTaskBgColor(isForTask ? task : focusRecordTask),

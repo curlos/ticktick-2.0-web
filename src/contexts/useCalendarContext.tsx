@@ -18,7 +18,8 @@ const useCalendar = () => {
 	const { userSettings } = fetchedUserSettings || {};
 
 	// useState: General
-	const [currDueDate, setCurrDueDate] = useState(new Date());
+	// TODO: Change this back to "new Date()" after I'm done testing the "Day" view feature.
+	const [currDueDate, setCurrDueDate] = useState(new Date('August 17, 2024'));
 	const [connectedCurrentDate, setConnectedCurrentDate] = useState();
 
 	// useState: TopHeader

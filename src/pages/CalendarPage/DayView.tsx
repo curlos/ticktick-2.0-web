@@ -7,6 +7,7 @@ import {
 	parseTimeStringAMorPM,
 	sortArrayByEndTime,
 } from '../../utils/date.utils';
+import MiniActionItem from './MiniActionItem';
 
 const DayView = ({ groupedItemsByDateObj, currentDate, currDueDate }) => {
 	const allHours = getAllHours();
@@ -31,14 +32,36 @@ const DayView = ({ groupedItemsByDateObj, currentDate, currDueDate }) => {
 
 	const currentFocusRecordIndex = 0;
 
+	const formattedDay = formatCheckedInDayDate(currDueDate);
+	const actionItems = allItemsGroupedByDate[formattedDay] || {};
+	const { tasks, focusRecords } = actionItems;
+	const safeTasks = tasks ? tasks : [];
+	const safeFocusRecords = focusRecords ? focusRecords : [];
+
+	const flattenedActionItems = [...safeTasks, ...safeFocusRecords];
+
 	return (
 		<div>
 			<div className="text-center text-color-gray-100 border-b border-color-gray-200 pb-2">Tue</div>
 
 			<div className="flex">
-				<div className="w-[90px]">a</div>
-				<div className="border-l border-color-gray-200 p-1 font-bold">
-					{formatCheckedInDayDate(currDueDate)}
+				<div className="w-[90px]" />
+				<div className="border-l border-color-gray-200 p-1 flex-1">
+					<div className="font-bold">{formattedDay}</div>
+					<div className="space-y-[2px] my-3">
+						{safeTasks.map((task, index) => (
+							<MiniActionItem
+								key={task._id}
+								index={index}
+								task={task}
+								actionItems={actionItems}
+								flattenedActionItems={flattenedActionItems}
+								shownActionItems={flattenedActionItems}
+								formattedDay={formattedDay}
+								fromDayView={true}
+							/>
+						))}
+					</div>
 				</div>
 			</div>
 
