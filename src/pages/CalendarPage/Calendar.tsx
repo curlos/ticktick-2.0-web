@@ -24,21 +24,17 @@ const Calendar = () => {
 	const maxHeight = useMaxHeight(headerHeight);
 	const groupedItemsByDateObj = useGroupedItemsByDate(filters);
 
+	const sharedProps = {
+		currentDate,
+		currDueDate,
+		groupedItemsByDateObj,
+	};
+
 	return (
 		<div className="flex flex-col flex-1" style={{ maxHeight }}>
-			{selectedInterval === 'Day' && (
-				<DayView currentDate={currentDate} groupedItemsByDateObj={groupedItemsByDateObj} />
-			)}
-			{selectedInterval === 'Month' && (
-				<MonthView
-					currentDate={currentDate}
-					groupedItemsByDateObj={groupedItemsByDateObj}
-					currDueDate={currDueDate}
-				/>
-			)}
-			{selectedInterval === 'Agenda' && (
-				<AgendaView currentDate={currentDate} groupedItemsByDateObj={groupedItemsByDateObj} />
-			)}
+			{selectedInterval === 'Day' && <DayView {...sharedProps} />}
+			{selectedInterval === 'Month' && <MonthView {...sharedProps} />}
+			{selectedInterval === 'Agenda' && <AgendaView {...sharedProps} />}
 		</div>
 	);
 };

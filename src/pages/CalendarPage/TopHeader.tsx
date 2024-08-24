@@ -17,6 +17,8 @@ const TopHeader = () => {
 		setShowFilterSidebar,
 		currentDate,
 		setCurrentDate,
+		currDueDate,
+		setCurrDueDate,
 		selectedInterval,
 		setSelectedInterval,
 	} = useCalendarContext();
@@ -46,8 +48,43 @@ const TopHeader = () => {
 		// TODO: For now, assume the interval is always monthly. This logic has to be reworked once other intervals come into play.
 		if (selectedInterval === 'Month') {
 			const currentMonth = currentDate.toLocaleString('default', { month: 'long', year: 'numeric' });
-			return `${currentMonth}`;
+			return currentMonth;
+		} else if (selectedInterval === 'Day') {
+			const currentDay = currDueDate?.toLocaleString('default', {
+				day: 'numeric',
+				month: 'long',
+				year: 'numeric',
+			});
+			return currentDay;
 		}
+	};
+
+	const goToPrevious = () => {
+		if (selectedInterval === 'Month') {
+			goToPreviousMonth();
+		} else if (selectedInterval === 'Day') {
+			goToPreviousDay();
+		}
+	};
+
+	const goToNext = () => {
+		if (selectedInterval === 'Month') {
+			goToNextMonth();
+		} else if (selectedInterval === 'Day') {
+			goToNextDay();
+		}
+	};
+
+	const goToPreviousDay = () => {
+		const prevDay = new Date(currDueDate);
+		prevDay.setDate(currDueDate.getDate() - 1);
+		setCurrDueDate(prevDay);
+	};
+
+	const goToNextDay = () => {
+		const nextDay = new Date(currDueDate);
+		nextDay.setDate(currDueDate.getDate() + 1);
+		setCurrDueDate(nextDay);
 	};
 
 	const goToPreviousMonth = () => {
@@ -106,18 +143,19 @@ const TopHeader = () => {
 					/>
 				</div>
 
+				{/* TODO: Make this work for the "Day View" as well. */}
 				<div>
 					<div className="border border-color-gray-150 py-1 px-2 rounded flex items-center cursor-pointer justify-between gap-3">
 						<Icon
 							name="keyboard_arrow_left"
 							customClass="text-color-gray-100 !text-[18px] hover:text-blue-500"
-							onClick={goToPreviousMonth}
+							onClick={goToPrevious}
 						/>
 						<span className="hover:text-blue-500">{getName()}</span>
 						<Icon
 							name="keyboard_arrow_right"
 							customClass="text-color-gray-100 !text-[18px] hover:text-blue-500"
-							onClick={goToNextMonth}
+							onClick={goToNext}
 						/>
 					</div>
 				</div>

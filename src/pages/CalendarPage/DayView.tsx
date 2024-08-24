@@ -1,8 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useGetFocusRecordsQuery } from '../../services/resources/focusRecordsApi';
-import { getAllHours, isInSameHour, parseTimeStringAMorPM, sortArrayByEndTime } from '../../utils/date.utils';
+import {
+	formatCheckedInDayDate,
+	getAllHours,
+	isInSameHour,
+	parseTimeStringAMorPM,
+	sortArrayByEndTime,
+} from '../../utils/date.utils';
 
-const DayView = () => {
+const DayView = ({ groupedItemsByDateObj, currentDate, currDueDate }) => {
 	const allHours = getAllHours();
 
 	// RTK Query - Focus Records
@@ -13,6 +19,8 @@ const DayView = () => {
 	} = useGetFocusRecordsQuery();
 	const { sortedGroupedFocusRecordsAsc } = fetchedFocusRecords || {};
 	const [focusRecordsForTheDay, setFocusRecordsForTheDay] = useState([]);
+
+	const { allItemsGroupedByDate } = groupedItemsByDateObj;
 
 	useEffect(() => {
 		if (sortedGroupedFocusRecordsAsc) {
@@ -26,9 +34,17 @@ const DayView = () => {
 	return (
 		<div>
 			<div className="text-center text-color-gray-100 border-b border-color-gray-200 pb-2">Tue</div>
+
+			<div className="flex">
+				<div className="w-[90px]">a</div>
+				<div className="border-l border-color-gray-200 p-1 font-bold">
+					{formatCheckedInDayDate(currDueDate)}
+				</div>
+			</div>
+
 			<div className="flex">
 				{/* Sidebar thing */}
-				<div className="py-1 px-2">
+				<div className="py-1 px-2 w-[90px] text-right">
 					<div>
 						{allHours.map((hour) => (
 							<div key={hour} className="text-color-gray-100 text-[12px] h-[60px]">

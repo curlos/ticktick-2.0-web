@@ -18,13 +18,13 @@ const useCalendar = () => {
 	const { userSettings } = fetchedUserSettings || {};
 
 	// useState: General
-	const [currDueDate, setCurrDueDate] = useState(null);
+	const [currDueDate, setCurrDueDate] = useState(new Date());
 	const [connectedCurrentDate, setConnectedCurrentDate] = useState();
 
 	// useState: TopHeader
 	const [showFilterSidebar, setShowFilterSidebar] = useState(true);
 	const [showArrangeTasksSidebar, setShowArrangeTasksSidebar] = useState(false);
-	const [selectedInterval, setSelectedInterval] = useState('Month');
+	const [selectedInterval, setSelectedInterval] = useState('Day');
 	const [currentDate, setCurrentDate] = useState(new Date());
 	const topHeaderRef = useRef(null);
 	const [headerHeight, setHeaderHeight] = useState(0);
