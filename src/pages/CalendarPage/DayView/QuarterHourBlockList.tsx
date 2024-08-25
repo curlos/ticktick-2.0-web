@@ -12,7 +12,7 @@ const QuarterHourBlock = ({ date, fromWeekView }) => {
 
 	return (
 		<div
-			className={classNames(fromWeekView ? 'h-[30px]' : 'h-[15px]')}
+			className={classNames('h-[15px]')}
 			onClick={(e) => {
 				e.stopPropagation();
 				handleContextMenu(e);
@@ -43,7 +43,7 @@ const QuarterHourBlockList = ({ allHours, currDueDate, fromWeekView }) => {
 						key={hour}
 						className={classNames(
 							'text-color-gray-100 text-[12px] w-full border-l border-b border-color-gray-200',
-							fromWeekView ? 'h-[120px]' : 'h-[60px]'
+							fromWeekView ? 'h-[60px]' : 'h-[60px]'
 						)}
 					>
 						{quarterHours.map((quarterHourDate) => (

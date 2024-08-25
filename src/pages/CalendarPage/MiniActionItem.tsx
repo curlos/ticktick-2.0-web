@@ -146,9 +146,13 @@ const MiniActionItem = ({
 				</div>
 				{isForFocusRecord &&
 					(!dayViewHeightValue || dayViewHeightValue < 40 ? (
-						<span className={classNames('text-gray-200 min-w-[55px] text-right', customStartTimeClasses)}>
-							{formatDateTime(startTime).time}
-						</span>
+						!fromWeekView && (
+							<span
+								className={classNames('text-gray-200 min-w-[55px] text-right', customStartTimeClasses)}
+							>
+								{formatDateTime(startTime).time}
+							</span>
+						)
 					) : (
 						<span className={classNames('text-gray-200 min-w-[55px] text-right', customStartTimeClasses)}>
 							{formatDateTime(startTime).time} - {formatDateTime(endTime).time}

@@ -22,9 +22,9 @@ const AbsolutePosFocusRecords = ({
 				const heightValue = getHeightValue(focusRecord, fromWeekView);
 				let leftValue = fromWeekView ? 95 + formattedDayWidth * weekDayIndex : 95;
 
-				// Use to adjust the mini action item a little more.
+				// TODO: Use to adjust the mini action item a little more. This seems to be dependent on the formatted width.
 				if (fromWeekView && weekDayIndex !== 0) {
-					leftValue += 20;
+					leftValue += 45;
 				}
 
 				return (
@@ -43,9 +43,9 @@ const AbsolutePosFocusRecords = ({
 							top: topValue,
 							height: heightValue,
 							left: leftValue,
-							fontSize: fromWeekView ? '12px' : '13px',
+							fontSize: fromWeekView ? '11px' : '13px',
 						}}
-						dayViewHeightValue={heightValue}
+						dayViewHeightValue={parseFloat(heightValue)}
 						fromWeekView={fromWeekView}
 					/>
 				);

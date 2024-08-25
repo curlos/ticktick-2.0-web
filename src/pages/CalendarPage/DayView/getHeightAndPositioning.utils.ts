@@ -9,19 +9,20 @@ export const getTopPositioningFromTime = (date, fromWeekView) => {
 	let topPosition = hours * 60 + minutes;
 
 	if (fromWeekView) {
-		topPosition *= 2;
+		topPosition *= 1;
 	}
 
 	return topPosition;
 };
 
 export const getHeightValue = (focusRecord, fromWeekView) => {
-	let heightValue = fromWeekView ? 40 : 20;
+	let heightValue = fromWeekView ? 20 * 1 : 20;
+
 	const { duration } = focusRecord;
 	const durationInMinutes = secondsToMinutes(duration);
 
 	if (durationInMinutes > 20) {
-		heightValue = fromWeekView ? durationInMinutes * 2 : durationInMinutes;
+		heightValue = fromWeekView ? durationInMinutes * 1 : durationInMinutes;
 	}
 
 	return heightValue + 'px';
