@@ -67,6 +67,7 @@ const DayView = ({ groupedItemsByDateObj, currDueDate }) => {
 							flattenedActionItems,
 							formattedDay,
 							formattedDayWidth,
+							miniTopHeaderValues,
 						}}
 					/>
 

@@ -141,7 +141,7 @@ const MiniActionItem = ({
 				<div className="truncate">
 					<div className="flex items-center gap-1">
 						<Icon name={iconName} customClass={'!text-[14px] text-white cursor-pointer'} fill={iconFill} />
-						<span className=" truncate">{name}</span>
+						<span className=" truncate max-w-[900px]">{name}</span>
 					</div>
 				</div>
 				{isForFocusRecord &&

@@ -23,12 +23,12 @@ const AbsolutePosFocusRecords = ({
 				const heightValue = getHeightValue(focusRecord, fromWeekView);
 				let leftValue = fromWeekView ? 95 + (miniTopHeaderValues?.width - 10) * weekDayIndex : 95;
 
-				// TODO: Use to adjust the mini action item a little more. This seems to be dependent on the formatted width.
+				// Use to adjust the mini action item a little more. This seems to be dependent on the formatted width.
 				if (fromWeekView && weekDayIndex !== 0) {
 					leftValue += 10 * weekDayIndex;
 				}
 
-				let customWidth = fromWeekView ? miniTopHeaderValues?.width - 10 : miniTopHeaderValues?.width - 10;
+				let customWidth = fromWeekView ? miniTopHeaderValues?.width - 10 : miniTopHeaderValues?.width - 20;
 
 				// For the final day of the week, Sunday, the width has to be cut off by 20px instead of 10px because of that damn scrollbar or else it'll overflow.
 				if (fromWeekView && weekDayIndex === 6) {
