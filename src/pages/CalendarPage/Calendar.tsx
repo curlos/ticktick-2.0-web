@@ -2,7 +2,7 @@ import { useCalendarContext } from '../../contexts/useCalendarContext';
 import useGroupedItemsByDate from '../../hooks/useGroupedItemsByDate';
 import useMaxHeight from '../../hooks/useMaxHeight';
 import AgendaView from './AgendaView';
-import DayView from './DayView';
+import DayView from './DayView/DayView';
 import MonthView from './MonthView';
 import WeekView from './WeekView';
 
