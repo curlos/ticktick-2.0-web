@@ -128,7 +128,7 @@ const SelectCalendar: React.FC<CalendarProps> = ({
 									let appliedStyles = [];
 
 									if (isCurrentMonth) {
-										if (isChosenDay) {
+										if (isChosenDay && selectedInterval !== 'Week') {
 											appliedStyles.push('bg-blue-500 text-white');
 										} else if (isDayToday) {
 											appliedStyles.push(
@@ -144,10 +144,6 @@ const SelectCalendar: React.FC<CalendarProps> = ({
 									const handleClick = () => {
 										setLocalCurrentDate(new Date(day.getFullYear(), day.getMonth(), 1));
 
-										if (setConnectedCurrentDate) {
-											setConnectedCurrentDate(new Date(day.getFullYear(), day.getMonth(), 1));
-										}
-
 										let newDueDate = day ? day : new Date();
 
 										if (time) {
@@ -155,7 +151,18 @@ const SelectCalendar: React.FC<CalendarProps> = ({
 											newDueDate = newDateObject;
 										}
 
-										setDueDate(newDueDate);
+										if (selectedInterval === 'Week') {
+											if (setConnectedCurrentDate) {
+												setConnectedCurrentDate(newDueDate);
+											}
+
+											// setOuterCurrentDate(newDueDate);
+										} else {
+											if (setConnectedCurrentDate) {
+												setConnectedCurrentDate(new Date(day.getFullYear(), day.getMonth(), 1));
+											}
+											setDueDate(newDueDate);
+										}
 									};
 
 									return (
