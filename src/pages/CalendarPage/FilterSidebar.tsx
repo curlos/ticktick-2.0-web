@@ -10,6 +10,7 @@ const FilterSidebar = () => {
 	const {
 		currDueDate,
 		setCurrDueDate,
+		currentDate,
 		connectedCurrentDate,
 		setConnectedCurrentDate,
 		allValue,
@@ -18,6 +19,7 @@ const FilterSidebar = () => {
 		setSelectedValuesById,
 		selectedCollapsibleValues,
 		setSelectedCollapsibleValues,
+		selectedInterval,
 	} = useCalendarContext();
 
 	const { data: fetchedProjects, isLoading: isLoadingGetProjects, error } = useGetProjectsQuery();
@@ -79,6 +81,8 @@ const FilterSidebar = () => {
 				setDueDate={setCurrDueDate}
 				connectedCurrentDate={connectedCurrentDate}
 				setConnectedCurrentDate={setConnectedCurrentDate}
+				selectedInterval={selectedInterval}
+				outerCurrentDate={currentDate}
 			/>
 
 			<div className="px-4">

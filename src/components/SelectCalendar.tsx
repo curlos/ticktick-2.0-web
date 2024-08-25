@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import Icon from './Icon';
-import { areDatesEqual, getCalendarMonth } from '../utils/date.utils';
+import { areDatesEqual, formatCheckedInDayDate, getAllDaysInWeekFromDate, getCalendarMonth } from '../utils/date.utils';
 import { setTimeOnDateString } from '../utils/date.utils';
+import classNames from 'classnames';
 
 interface CalendarProps {
 	dueDate: Date | null;
@@ -14,8 +15,11 @@ const SelectCalendar: React.FC<CalendarProps> = ({
 	time,
 	connectedCurrentDate,
 	setConnectedCurrentDate,
+	selectedInterval,
+	outerCurrentDate,
 }) => {
-	const [currentDate, setCurrentDate] = useState(new Date());
+	const [localCurrentDate, setLocalCurrentDate] = useState(new Date());
+	const [allDaysInWeekFromDate, setAllDaysInWeekFromDate] = useState(null);
 
 	useEffect(() => {
 		if (dueDate) {
@@ -27,32 +31,47 @@ const SelectCalendar: React.FC<CalendarProps> = ({
 				newDueDate = newDateObject;
 			}
 
-			setCurrentDate(newDueDate);
+			setLocalCurrentDate(newDueDate);
 		}
 	}, [dueDate]);
 
 	useEffect(() => {
 		if (connectedCurrentDate) {
-			setCurrentDate(connectedCurrentDate);
+			setLocalCurrentDate(connectedCurrentDate);
 		}
 	}, [connectedCurrentDate]);
 
 	const goToPreviousMonth = () => {
-		setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
+		setLocalCurrentDate(new Date(localCurrentDate.getFullYear(), localCurrentDate.getMonth() - 1, 1));
 	};
 
 	const goToNextMonth = () => {
-		setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
+		setLocalCurrentDate(new Date(localCurrentDate.getFullYear(), localCurrentDate.getMonth() + 1, 1));
 	};
 
-	const calendarMonth = getCalendarMonth(currentDate.getFullYear(), currentDate.getMonth());
-	const monthName = currentDate.toLocaleString('default', { month: 'long' });
+	const calendarMonth = getCalendarMonth(localCurrentDate.getFullYear(), localCurrentDate.getMonth());
+	const monthName = localCurrentDate.toLocaleString('default', { month: 'long' });
+
+	useEffect(() => {
+		if (selectedInterval === 'Week') {
+			const newAllDaysInWeekFromDate = {};
+
+			getAllDaysInWeekFromDate(outerCurrentDate).forEach((day) => {
+				const dateKey = formatCheckedInDayDate(day);
+				newAllDaysInWeekFromDate[dateKey] = day;
+			});
+
+			setAllDaysInWeekFromDate(newAllDaysInWeekFromDate);
+		} else {
+			setAllDaysInWeekFromDate(null);
+		}
+	}, [selectedInterval, outerCurrentDate]);
 
 	return (
 		<div>
 			<div className="flex items-center justify-between px-4">
 				<div>
-					{monthName} {currentDate.getFullYear()}
+					{monthName} {localCurrentDate.getFullYear()}
 				</div>
 				<div className="flex items-center">
 					<Icon
@@ -86,55 +105,72 @@ const SelectCalendar: React.FC<CalendarProps> = ({
 					</div>
 				</div>
 				<div className="text-center">
-					{calendarMonth.map((week, index) => (
-						<div key={`week-${index}`} className="mb-1 grid grid-cols-7 gap-1">
-							{week.map((day, index) => {
-								const isCurrentMonth = day.getMonth() === currentDate.getMonth();
-								const isDayToday = areDatesEqual(new Date(), day);
-								const isChosenDay = areDatesEqual(dueDate, day);
-								let appliedStyles = [];
+					{calendarMonth.map((week, index) => {
+						let isSelectedWeek = false;
 
-								if (isCurrentMonth) {
-									if (isChosenDay) {
-										appliedStyles.push('bg-blue-500 text-white');
-									} else if (isDayToday) {
-										appliedStyles.push('bg-color-gray-200 hover:bg-color-gray-200 text-blue-500');
+						if (allDaysInWeekFromDate) {
+							const firstDayOfThisWeekKey = formatCheckedInDayDate(week[0]);
+							isSelectedWeek = allDaysInWeekFromDate[firstDayOfThisWeekKey];
+						}
+
+						return (
+							<div
+								key={`week-${index}`}
+								className={classNames(
+									'mb-1 grid grid-cols-7 gap-1',
+									isSelectedWeek && 'bg-color-gray-200 rounded-full'
+								)}
+							>
+								{week.map((day, index) => {
+									const isCurrentMonth = day.getMonth() === localCurrentDate.getMonth();
+									const isDayToday = areDatesEqual(new Date(), day);
+									const isChosenDay = areDatesEqual(dueDate, day);
+									let appliedStyles = [];
+
+									if (isCurrentMonth) {
+										if (isChosenDay) {
+											appliedStyles.push('bg-blue-500 text-white');
+										} else if (isDayToday) {
+											appliedStyles.push(
+												'bg-color-gray-200 hover:bg-color-gray-200 text-blue-500'
+											);
+										} else {
+											appliedStyles.push('text-white bg-transparent hover:bg-color-gray-300');
+										}
 									} else {
-										appliedStyles.push('text-white bg-transparent hover:bg-color-gray-300');
-									}
-								} else {
-									appliedStyles.push('text-color-gray-100 bg-transparent hover:bg-color-gray-20');
-								}
-
-								const handleClick = () => {
-									setCurrentDate(new Date(day.getFullYear(), day.getMonth(), 1));
-
-									if (setConnectedCurrentDate) {
-										setConnectedCurrentDate(new Date(day.getFullYear(), day.getMonth(), 1));
+										appliedStyles.push('text-color-gray-100 bg-transparent hover:bg-color-gray-20');
 									}
 
-									let newDueDate = day ? day : new Date();
+									const handleClick = () => {
+										setLocalCurrentDate(new Date(day.getFullYear(), day.getMonth(), 1));
 
-									if (time) {
-										const newDateObject = setTimeOnDateString(newDueDate, time);
-										newDueDate = newDateObject;
-									}
+										if (setConnectedCurrentDate) {
+											setConnectedCurrentDate(new Date(day.getFullYear(), day.getMonth(), 1));
+										}
 
-									setDueDate(newDueDate);
-								};
+										let newDueDate = day ? day : new Date();
 
-								return (
-									<div
-										key={`day-${index}`}
-										className={`py-1 cursor-pointer rounded-full ${appliedStyles}`}
-										onClick={handleClick}
-									>
-										{day.getDate()}
-									</div>
-								);
-							})}
-						</div>
-					))}
+										if (time) {
+											const newDateObject = setTimeOnDateString(newDueDate, time);
+											newDueDate = newDateObject;
+										}
+
+										setDueDate(newDueDate);
+									};
+
+									return (
+										<div
+											key={`day-${index}`}
+											className={`py-1 cursor-pointer rounded-full ${appliedStyles}`}
+											onClick={handleClick}
+										>
+											{day.getDate()}
+										</div>
+									);
+								})}
+							</div>
+						);
+					})}
 				</div>
 			</div>
 		</div>
