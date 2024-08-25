@@ -13,7 +13,11 @@ const TodayCurrentTimeLine = ({ dueDateIsToday, todayDayTopValue, todayDateObj, 
 	);
 };
 
-export const TodayCurrentTimeBox = ({ todayDayTopValue, todayDateObj }) => {
+export const TodayCurrentTimeBox = ({ dueDateIsToday, todayDayTopValue, todayDateObj }) => {
+	if (!dueDateIsToday) {
+		return null;
+	}
+
 	return (
 		<div
 			className="bg-red-500/20 text-red-500 rounded text-[12px] w-[60px] flex items-center justify-center"

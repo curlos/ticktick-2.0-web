@@ -140,6 +140,16 @@ const WeekView = ({ groupedItemsByDateObj, currDueDate }) => {
 							);
 						})}
 
+					{/* 7 Lines going downwards vertically  */}
+					{allDaysInWeekFromDate.map((_, index) => {
+						return (
+							<div
+								className="border-[1px] border-color-gray-200 absolute"
+								style={{ left: 90 + miniTopHeaderValues.width * (index || 1), height: 60 * 24 }}
+							></div>
+						);
+					})}
+
 					<TodayCurrentTimeLine
 						{...{
 							dueDateIsToday,
@@ -150,7 +160,7 @@ const WeekView = ({ groupedItemsByDateObj, currDueDate }) => {
 						}}
 					/>
 
-					<TodayCurrentTimeBox {...{ todayDayTopValue, todayDateObj }} />
+					<TodayCurrentTimeBox {...{ dueDateIsToday, todayDayTopValue, todayDateObj }} />
 
 					{/* <TodayCurrentTimeLine
 						{...{
@@ -193,7 +203,7 @@ const TodayCurrentTimeLine = ({
 
 	// For the last day of the week, Sunday, it's possible to overflow so subtract 20px from the end to ensure it doesn't.
 	if (indexOfTodaysDate === 6) {
-		customWidth -= 20;
+		customWidth -= 11;
 	}
 
 	return (
@@ -217,7 +227,7 @@ const TodayCurrentTimeLine = ({
 				style={{
 					position: 'absolute',
 					top: todayDayTopValue - 5,
-					left: 90 + miniTopHeaderValues.width * (indexOfTodaysDate || 1),
+					left: 90 + miniTopHeaderValues.width * (indexOfTodaysDate || 1) - 3,
 					zIndex: 1,
 				}}
 			></div>
