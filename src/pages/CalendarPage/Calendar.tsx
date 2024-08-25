@@ -4,6 +4,7 @@ import useMaxHeight from '../../hooks/useMaxHeight';
 import AgendaView from './AgendaView';
 import DayView from './DayView';
 import MonthView from './MonthView';
+import WeekView from './WeekView';
 
 const Calendar = () => {
 	const {
@@ -33,6 +34,7 @@ const Calendar = () => {
 	return (
 		<div className="flex flex-col flex-1" style={{ maxHeight }}>
 			{selectedInterval === 'Day' && <DayView {...sharedProps} />}
+			{selectedInterval === 'Week' && <WeekView {...sharedProps} />}
 			{selectedInterval === 'Month' && <MonthView {...sharedProps} />}
 			{selectedInterval === 'Agenda' && <AgendaView {...sharedProps} />}
 		</div>

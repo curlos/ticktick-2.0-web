@@ -56,9 +56,10 @@ const ItemOption: React.FC<ItemOptionProps> = ({
 	const checkIfItemSelected = () => {
 		if (multiSelect) {
 			return selectedItemList.find((itemInList) => {
-				if (isAllItem) {
-					debugger;
-				}
+				// TODO: Was working on this to add the "No Tags" item to the array. Come back to this later for the "Arrange Tasks Sidebar".
+				// if (isAllItem) {
+				// 	debugger;
+				// }
 
 				if (type === 'tags' && isNoneTag) {
 					return itemInList.name === item.name;

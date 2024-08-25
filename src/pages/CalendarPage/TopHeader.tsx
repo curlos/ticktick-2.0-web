@@ -7,6 +7,7 @@ import ModalViewOptions from './ModalViewOptions';
 import { useCalendarContext } from '../../contexts/useCalendarContext';
 import DropdownAddNewTaskDetails from '../../components/Dropdown/DropdownAddNewTaskDetails';
 import useResizeObserver from '../../hooks/useResizeObserver';
+import { formatCheckedInDayDate, getAllDaysInWeekFromDate } from '../../utils/date.utils';
 
 const TopHeader = () => {
 	const {
@@ -41,34 +42,59 @@ const TopHeader = () => {
 	const dropdownTopHeaderMoreOptions = useRef(null);
 	const [isDropdownTopHeaderMoreOptionsVisible, setIsDropdownTopHeaderMoreOptionsVisible] = useState(false);
 
+	const allDaysInWeekFromDate = getAllDaysInWeekFromDate(currentDate);
+
 	const getName = () => {
-		// TODO: For now, assume the interval is always monthly. This logic has to be reworked once other intervals come into play.
-		if (selectedInterval === 'Month') {
-			const currentMonth = currentDate.toLocaleString('default', { month: 'long', year: 'numeric' });
-			return currentMonth;
-		} else if (selectedInterval === 'Day') {
-			const currentDay = currDueDate?.toLocaleString('default', {
-				day: 'numeric',
-				month: 'long',
-				year: 'numeric',
-			});
-			return currentDay;
+		switch (selectedInterval) {
+			case 'Day': {
+				const currentDay = currDueDate?.toLocaleString('default', {
+					day: 'numeric',
+					month: 'long',
+					year: 'numeric',
+				});
+				return currentDay;
+			}
+			case 'Week': {
+				const firstDay = formatCheckedInDayDate(allDaysInWeekFromDate[0]);
+				const lastDay = formatCheckedInDayDate(allDaysInWeekFromDate[allDaysInWeekFromDate.length - 1]);
+				return `${firstDay} - ${lastDay}`;
+			}
+			case 'Month': {
+				const currentMonth = currentDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+				return currentMonth;
+			}
 		}
 	};
 
 	const goToPrevious = () => {
-		if (selectedInterval === 'Month') {
-			goToPreviousMonth();
-		} else if (selectedInterval === 'Day') {
-			goToPreviousDay();
+		switch (selectedInterval) {
+			case 'Day':
+				goToPreviousDay();
+				break;
+			case 'Week':
+				goToPreviousWeek();
+				break;
+			case 'Month':
+				goToPreviousMonth();
+				break;
+			default:
+				return;
 		}
 	};
 
 	const goToNext = () => {
-		if (selectedInterval === 'Month') {
-			goToNextMonth();
-		} else if (selectedInterval === 'Day') {
-			goToNextDay();
+		switch (selectedInterval) {
+			case 'Day':
+				goToNextDay();
+				break;
+			case 'Week':
+				goToNextWeek();
+				break;
+			case 'Month':
+				goToNextMonth();
+				break;
+			default:
+				return;
 		}
 	};
 
@@ -82,6 +108,20 @@ const TopHeader = () => {
 		const nextDay = new Date(currDueDate);
 		nextDay.setDate(currDueDate.getDate() + 1);
 		setCurrDueDate(nextDay);
+	};
+
+	const goToPreviousWeek = () => {
+		const prevWeek = new Date(currentDate);
+		prevWeek.setDate(currentDate.getDate() - 7);
+		setCurrentDate(prevWeek);
+		setConnectedCurrentDate(prevWeek);
+	};
+
+	const goToNextWeek = () => {
+		const nextWeek = new Date(currentDate);
+		nextWeek.setDate(currentDate.getDate() + 7);
+		setCurrentDate(nextWeek);
+		setConnectedCurrentDate(nextWeek);
 	};
 
 	const goToPreviousMonth = () => {

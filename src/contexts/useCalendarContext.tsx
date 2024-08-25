@@ -25,7 +25,7 @@ const useCalendar = () => {
 	// useState: TopHeader
 	const [showFilterSidebar, setShowFilterSidebar] = useState(true);
 	const [showArrangeTasksSidebar, setShowArrangeTasksSidebar] = useState(false);
-	const [selectedInterval, setSelectedInterval] = useState('Day');
+	const [selectedInterval, setSelectedInterval] = useState('Week');
 	const [currentDate, setCurrentDate] = useState(new Date());
 	const topHeaderRef = useRef(null);
 	const [headerHeight, setHeaderHeight] = useState(0);
