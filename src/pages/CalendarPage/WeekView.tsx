@@ -7,7 +7,7 @@ import { getTopPositioningFromTime } from './DayView/getHeightAndPositioning.uti
 import SidebarHourBlockList from './DayView/SidebarHourBlockList';
 import AbsolutePosFocusRecords from './DayView/AbsolutePosFocusRecords';
 import StickyHeader from './DayView/StickyHeader';
-import TodayCurrentTimeLine from './DayView/TodayCurrentTimeLine';
+import { TodayCurrentTimeBox } from './DayView/TodayCurrentTimeLine';
 import QuarterHourBlockList from './DayView/QuarterHourBlockList';
 
 const WeekView = ({ groupedItemsByDateObj, currDueDate }) => {
@@ -140,6 +140,18 @@ const WeekView = ({ groupedItemsByDateObj, currDueDate }) => {
 							);
 						})}
 
+					<TodayCurrentTimeLine
+						{...{
+							dueDateIsToday,
+							allDaysInWeekFromDate,
+							todayDateObj,
+							todayDayTopValue,
+							miniTopHeaderValues,
+						}}
+					/>
+
+					<TodayCurrentTimeBox {...{ todayDayTopValue, todayDateObj }} />
+
 					{/* <TodayCurrentTimeLine
 						{...{
 							dueDateIsToday,
@@ -159,6 +171,70 @@ const WeekView = ({ groupedItemsByDateObj, currDueDate }) => {
 				</div>
 			</div>
 		</div>
+	);
+};
+
+const TodayCurrentTimeLine = ({
+	dueDateIsToday,
+	allDaysInWeekFromDate,
+	todayDateObj,
+	todayDayTopValue,
+	miniTopHeaderValues,
+}) => {
+	if (!dueDateIsToday) {
+		return null;
+	}
+
+	const indexOfTodaysDate = allDaysInWeekFromDate.findIndex((day) => areDatesEqual(day, todayDateObj));
+
+	console.log(indexOfTodaysDate);
+
+	let customWidth = miniTopHeaderValues.width;
+
+	// For the last day of the week, Sunday, it's possible to overflow so subtract 20px from the end to ensure it doesn't.
+	if (indexOfTodaysDate === 6) {
+		customWidth -= 20;
+	}
+
+	return (
+		<>
+			{/* Full Line */}
+			<div
+				className="bg-red-500 h-[1px]"
+				style={{
+					position: 'absolute',
+					top: todayDayTopValue,
+					left: '90px',
+					width: miniTopHeaderValues.width * 7 - 20,
+					opacity: '30%',
+					zIndex: 1,
+				}}
+			></div>
+
+			{/* Circle */}
+			<div
+				className="bg-red-500 h-[10px] w-[10px] rounded-full"
+				style={{
+					position: 'absolute',
+					top: todayDayTopValue - 5,
+					left: 90 + miniTopHeaderValues.width * (indexOfTodaysDate || 1),
+					zIndex: 1,
+				}}
+			></div>
+
+			{/* Line for the current day of the week */}
+			<div
+				className="bg-red-500 h-[1px]"
+				style={{
+					position: 'absolute',
+					top: todayDayTopValue,
+					left: 90 + miniTopHeaderValues.width * (indexOfTodaysDate || 1),
+					width: customWidth,
+					opacity: '100%',
+					zIndex: 1,
+				}}
+			></div>
+		</>
 	);
 };
 
