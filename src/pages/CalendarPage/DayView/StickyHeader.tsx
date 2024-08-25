@@ -14,6 +14,7 @@ const StickyHeader = ({
 	actionItems,
 	flattenedActionItems,
 	currDueDate,
+	fromWeekView,
 }) => {
 	const contextMenuObj = useContextMenu();
 	const { contextMenu, handleContextMenu } = contextMenuObj;
@@ -28,7 +29,7 @@ const StickyHeader = ({
 
 	return (
 		<div className="flex">
-			<div className="w-[90px]" />
+			{!fromWeekView && <div className="w-[90px]" />}
 			<div
 				ref={miniTopHeaderRef}
 				className={classNames(

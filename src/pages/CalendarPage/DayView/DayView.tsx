@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react';
-import { areDatesEqual, formatCheckedInDayDate, getAllHours, isTimeWithin25Minutes } from '../../../utils/date.utils';
-import classNames from 'classnames';
+import { useState } from 'react';
+import { areDatesEqual, formatCheckedInDayDate, getAllHours } from '../../../utils/date.utils';
 import useMaxHeight from '../../../hooks/useMaxHeight';
 import { useCalendarContext } from '../../../contexts/useCalendarContext';
 import AbsolutePosFocusRecords from './AbsolutePosFocusRecords';

@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 const useGetCurrentTime = (callbackFunction) => {
 	useEffect(() => {
 		// Function to update both currentDateObj and currentDayTopValue
-		const updateDateTime = (callbackFunction) => {
+		const updateDateTime = () => {
 			const newDate = new Date();
 			callbackFunction(newDate);
 		};
@@ -14,7 +14,7 @@ const useGetCurrentTime = (callbackFunction) => {
 
 		// Update immediately at the next minute mark
 		const timeoutId = setTimeout(() => {
-			updateDateTime(callbackFunction);
+			updateDateTime();
 			// Then set an interval to continue updating every minute
 			const intervalId = setInterval(updateDateTime, 60000);
 			// Clear this interval on cleanup
