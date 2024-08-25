@@ -8,6 +8,7 @@ const AbsolutePosFocusRecords = ({
 	flattenedActionItems,
 	formattedDay,
 	formattedDayWidth,
+	miniTopHeaderValues,
 	fromWeekView,
 	weekDayIndex,
 }) => {
@@ -20,11 +21,18 @@ const AbsolutePosFocusRecords = ({
 
 				const topValue = getTopPositioningFromTime(date, fromWeekView);
 				const heightValue = getHeightValue(focusRecord, fromWeekView);
-				let leftValue = fromWeekView ? 95 + formattedDayWidth * weekDayIndex : 95;
+				let leftValue = fromWeekView ? 95 + (miniTopHeaderValues?.width - 10) * weekDayIndex : 95;
 
 				// TODO: Use to adjust the mini action item a little more. This seems to be dependent on the formatted width.
 				if (fromWeekView && weekDayIndex !== 0) {
-					leftValue += 45;
+					leftValue += 10 * weekDayIndex;
+				}
+
+				let customWidth = fromWeekView ? miniTopHeaderValues?.width - 10 : miniTopHeaderValues?.width - 10;
+
+				// For the final day of the week, Sunday, the width has to be cut off by 20px instead of 10px because of that damn scrollbar or else it'll overflow.
+				if (fromWeekView && weekDayIndex === 6) {
+					customWidth = miniTopHeaderValues?.width - 20;
 				}
 
 				return (
@@ -37,7 +45,7 @@ const AbsolutePosFocusRecords = ({
 						shownActionItems={flattenedActionItems}
 						formattedDay={formattedDay}
 						customStyling={{
-							width: fromWeekView ? formattedDayWidth : formattedDayWidth - 10,
+							width: customWidth,
 							position: 'absolute',
 							zIndex: 1,
 							top: topValue,

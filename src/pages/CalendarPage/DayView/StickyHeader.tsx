@@ -6,7 +6,7 @@ import useContextMenu from '../../../hooks/useContextMenu';
 import MiniActionItem from '../MiniActionItem';
 
 const StickyHeader = ({
-	setMiniTopHeaderHeight,
+	setMiniTopHeaderValues,
 	setFormattedDayWidth,
 	formattedDay,
 	dueDateIsToday,
@@ -21,7 +21,7 @@ const StickyHeader = ({
 
 	const miniTopHeaderRef = useRef(null);
 	// Observe changes in height for the miniTopHeaderRef element
-	useResizeObserver(miniTopHeaderRef, setMiniTopHeaderHeight, 'height');
+	useResizeObserver(miniTopHeaderRef, setMiniTopHeaderValues, ['height', 'width']);
 
 	const formattedDayRef = useRef(null);
 	// Observe changes in width for the formattedDayRef element
@@ -44,6 +44,7 @@ const StickyHeader = ({
 				<div ref={formattedDayRef} className={classNames('font-bold', dueDateIsToday && 'text-blue-500')}>
 					{formattedDay}
 				</div>
+
 				<div className="space-y-[2px] my-3 text-[13px]">
 					{safeTasks.map((task, index) => (
 						<MiniActionItem

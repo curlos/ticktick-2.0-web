@@ -15,10 +15,13 @@ const DayView = ({ groupedItemsByDateObj, currDueDate }) => {
 
 	const [formattedDayWidth, setFormattedDayWidth] = useState(0);
 
-	const [miniTopHeaderHeight, setMiniTopHeaderHeight] = useState(0);
+	const [miniTopHeaderValues, setMiniTopHeaderValues] = useState({
+		height: 0,
+		width: 0,
+	});
 
 	const { headerHeight } = useCalendarContext();
-	const maxHeight = useMaxHeight(headerHeight + miniTopHeaderHeight);
+	const maxHeight = useMaxHeight(headerHeight + miniTopHeaderValues.height);
 
 	const allHours = getAllHours();
 
@@ -43,7 +46,7 @@ const DayView = ({ groupedItemsByDateObj, currDueDate }) => {
 		<div>
 			<StickyHeader
 				{...{
-					setMiniTopHeaderHeight,
+					setMiniTopHeaderValues,
 					setFormattedDayWidth,
 					formattedDay,
 					dueDateIsToday,

@@ -1,34 +1,27 @@
 import { useEffect, useRef } from 'react';
 
 // This hook now takes an additional parameter `setState` which is the state setter function for updating dimensions
-const useResizeObserver = (ref, setState, dimension = 'width') => {
+const useResizeObserver = (ref, setState, dimensions = 'width') => {
 	const observer = useRef(null);
 
 	useEffect(() => {
 		observer.current = new ResizeObserver((entries) => {
 			for (let entry of entries) {
-				const computedStyle = getComputedStyle(entry.target);
-				const padTop = parseFloat(computedStyle.paddingTop);
-				const padBottom = parseFloat(computedStyle.paddingBottom);
-				const padLeft = parseFloat(computedStyle.paddingLeft);
-				const padRight = parseFloat(computedStyle.paddingRight);
-				const borderTop = parseFloat(computedStyle.borderTopWidth);
-				const borderBottom = parseFloat(computedStyle.borderBottomWidth);
-				const borderLeft = parseFloat(computedStyle.borderLeftWidth);
-				const borderRight = parseFloat(computedStyle.borderRightWidth);
-				const marginTop = parseFloat(computedStyle.marginTop);
-				const marginBottom = parseFloat(computedStyle.marginBottom);
-				const marginLeft = parseFloat(computedStyle.marginLeft);
-				const marginRight = parseFloat(computedStyle.marginRight);
+				if (Array.isArray(dimensions)) {
+					const newState = {};
 
-				let size = entry.contentRect[dimension];
-				if (dimension === 'width') {
-					size += padLeft + padRight + borderLeft + borderRight + marginLeft + marginRight;
+					for (let dimension of dimensions) {
+						const computedStyle = getComputedStyle(entry.target);
+						let size = parseFloat(computedStyle[dimension]);
+						newState[dimension] = size;
+					}
+
+					setState(newState);
 				} else {
-					size += padTop + padBottom + borderTop + borderBottom + marginTop + marginBottom;
+					const computedStyle = getComputedStyle(entry.target);
+					let size = parseFloat(computedStyle[dimensions]);
+					setState(size);
 				}
-
-				setState(size);
 			}
 		});
 
@@ -42,7 +35,7 @@ const useResizeObserver = (ref, setState, dimension = 'width') => {
 				observer.current.disconnect();
 			}
 		};
-	}, [ref, setState, dimension]); // Removed the padding dependency, now using CSS computed directly
+	}, [ref, setState]);
 
 	return observer.current;
 };

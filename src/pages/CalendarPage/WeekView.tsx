@@ -17,10 +17,13 @@ const WeekView = ({ groupedItemsByDateObj, currDueDate }) => {
 
 	const [formattedDayWidth, setFormattedDayWidth] = useState(0);
 
-	const [miniTopHeaderHeight, setMiniTopHeaderHeight] = useState(0);
+	const [miniTopHeaderValues, setMiniTopHeaderValues] = useState({
+		height: 0,
+		width: 0,
+	});
 
 	const { headerHeight } = useCalendarContext();
-	const maxHeight = useMaxHeight(headerHeight + miniTopHeaderHeight);
+	const maxHeight = useMaxHeight(headerHeight + miniTopHeaderValues.height);
 
 	const allHours = getAllHours();
 
@@ -69,8 +72,6 @@ const WeekView = ({ groupedItemsByDateObj, currDueDate }) => {
 
 	const dueDateIsToday = areDatesEqual(currentDate, todayDateObj);
 
-	console.log(formattedDayWidth);
-
 	return (
 		<div>
 			<div className="flex">
@@ -86,21 +87,13 @@ const WeekView = ({ groupedItemsByDateObj, currDueDate }) => {
 								return null;
 							}
 
-							const {
-								formattedDay,
-								actionItems,
-								tasks,
-								focusRecords,
-								safeTasks,
-								safeFocusRecords,
-								flattenedActionItems,
-								dueDateIsToday,
-							} = dayValues;
+							const { formattedDay, actionItems, safeTasks, flattenedActionItems, dueDateIsToday } =
+								dayValues;
 
 							return (
 								<StickyHeader
 									{...{
-										setMiniTopHeaderHeight,
+										setMiniTopHeaderValues,
 										setFormattedDayWidth,
 										formattedDay,
 										dueDateIsToday,
@@ -127,16 +120,8 @@ const WeekView = ({ groupedItemsByDateObj, currDueDate }) => {
 								return null;
 							}
 
-							const {
-								formattedDay,
-								actionItems,
-								tasks,
-								focusRecords,
-								safeTasks,
-								safeFocusRecords,
-								flattenedActionItems,
-								dueDateIsToday,
-							} = dayValues;
+							const { formattedDay, actionItems, tasks, safeFocusRecords, flattenedActionItems } =
+								dayValues;
 
 							return (
 								<AbsolutePosFocusRecords
@@ -147,6 +132,7 @@ const WeekView = ({ groupedItemsByDateObj, currDueDate }) => {
 										flattenedActionItems,
 										formattedDay,
 										formattedDayWidth,
+										miniTopHeaderValues,
 										fromWeekView: true,
 										weekDayIndex: index,
 									}}
