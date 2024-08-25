@@ -24,6 +24,7 @@ const MiniActionItem = ({
 	setInnerClickElemRefs,
 	dayViewHeightValue,
 	customStyling,
+	fromWeekView,
 }) => {
 	const getTaskBgColor = useGetTaskBgColor();
 
@@ -123,11 +124,12 @@ const MiniActionItem = ({
 		<div onClick={(e) => e.stopPropagation()} className="flex items-center gap-1 w-full" style={customStyling}>
 			<div
 				className={classNames(
-					'rounded p-1 py-[2px] flex justify-between flex-1 cursor-pointer',
+					'rounded p-1 py-[2px] flex-1 cursor-pointer',
 					// Necessary for the focus records with "+X" at the end.
 					'w-[88%]',
 					showFullOpacity ? 'opacity-90' : 'opacity-70',
-					customStyling?.height ? 'h-full' : 'h-[20px]'
+					customStyling?.height ? 'h-full' : 'h-[20px]',
+					fromWeekView ? '' : 'flex justify-between'
 				)}
 				style={{
 					backgroundColor: getTaskBgColor(isForTask ? task : focusRecordTask),
@@ -139,7 +141,7 @@ const MiniActionItem = ({
 				<div className="truncate">
 					<div className="flex items-center gap-1">
 						<Icon name={iconName} customClass={'!text-[14px] text-white cursor-pointer'} fill={iconFill} />
-						<span className="truncate">{name}</span>
+						<span className=" truncate">{name}</span>
 					</div>
 				</div>
 				{isForFocusRecord &&

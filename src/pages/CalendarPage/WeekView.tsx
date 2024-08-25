@@ -7,6 +7,8 @@ import { getTopPositioningFromTime } from './DayView/getHeightAndPositioning.uti
 import SidebarHourBlockList from './DayView/SidebarHourBlockList';
 import AbsolutePosFocusRecords from './DayView/AbsolutePosFocusRecords';
 import StickyHeader from './DayView/StickyHeader';
+import TodayCurrentTimeLine from './DayView/TodayCurrentTimeLine';
+import QuarterHourBlockList from './DayView/QuarterHourBlockList';
 
 const WeekView = ({ groupedItemsByDateObj, currDueDate }) => {
 	const { currentDate } = useCalendarContext();
@@ -38,6 +40,11 @@ const WeekView = ({ groupedItemsByDateObj, currDueDate }) => {
 
 		allDaysInWeekFromDate.forEach((day) => {
 			const formattedDay = formatCheckedInDayDate(day);
+
+			if (newAllDaysInWeekFromDaysObjValues[formattedDay]) {
+				return;
+			}
+
 			const actionItems = allItemsGroupedByDate[formattedDay] || {};
 			const { tasks, focusRecords } = actionItems;
 			const safeTasks = tasks ? tasks : [];
@@ -61,6 +68,8 @@ const WeekView = ({ groupedItemsByDateObj, currDueDate }) => {
 	}, [currentDate, allItemsGroupedByDate]);
 
 	const dueDateIsToday = areDatesEqual(currentDate, todayDateObj);
+
+	console.log(formattedDayWidth);
 
 	return (
 		<div>
@@ -108,19 +117,44 @@ const WeekView = ({ groupedItemsByDateObj, currDueDate }) => {
 			</div>
 
 			<div className="flex overflow-auto gray-scrollbar" style={{ maxHeight }}>
-				{/* <div className="relative">
-					<AbsolutePosFocusRecords
-						{...{
-							safeFocusRecords,
-							tasks,
-							actionItems,
-							flattenedActionItems,
-							formattedDay,
-							formattedDayWidth,
-						}}
-					/>
+				<div className="relative">
+					{allDaysInWeekFromDaysObjValues &&
+						allDaysInWeekFromDate.map((day, index) => {
+							const dayKey = formatCheckedInDayDate(day);
+							const dayValues = allDaysInWeekFromDaysObjValues[dayKey];
 
-					<TodayCurrentTimeLine
+							if (!dayValues) {
+								return null;
+							}
+
+							const {
+								formattedDay,
+								actionItems,
+								tasks,
+								focusRecords,
+								safeTasks,
+								safeFocusRecords,
+								flattenedActionItems,
+								dueDateIsToday,
+							} = dayValues;
+
+							return (
+								<AbsolutePosFocusRecords
+									{...{
+										safeFocusRecords,
+										tasks,
+										actionItems,
+										flattenedActionItems,
+										formattedDay,
+										formattedDayWidth,
+										fromWeekView: true,
+										weekDayIndex: index,
+									}}
+								/>
+							);
+						})}
+
+					{/* <TodayCurrentTimeLine
 						{...{
 							dueDateIsToday,
 							todayDayTopValue,
@@ -129,14 +163,14 @@ const WeekView = ({ groupedItemsByDateObj, currDueDate }) => {
 							setTodayDateObj,
 							setTodayDayTopValue,
 						}}
-					/>
-				</div> */}
+					/> */}
+				</div>
 
-				<SidebarHourBlockList {...{ allHours, dueDateIsToday, todayDateObj }} />
+				<SidebarHourBlockList {...{ allHours, dueDateIsToday, todayDateObj, fromWeekView: true }} />
 
-				{/* <div className="flex-1 relative w-full">
-					<QuarterHourBlockList {...{ allHours, currDueDate }} />
-				</div> */}
+				<div className="flex-1 relative w-full">
+					<QuarterHourBlockList {...{ allHours, currDueDate, fromWeekView: true }} />
+				</div>
 			</div>
 		</div>
 	);

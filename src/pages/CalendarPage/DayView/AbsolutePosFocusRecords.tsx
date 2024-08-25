@@ -8,6 +8,8 @@ const AbsolutePosFocusRecords = ({
 	flattenedActionItems,
 	formattedDay,
 	formattedDayWidth,
+	fromWeekView,
+	weekDayIndex,
 }) => {
 	return (
 		<>
@@ -16,8 +18,14 @@ const AbsolutePosFocusRecords = ({
 				// Create a Date object from the startTime
 				const date = new Date(startTime);
 
-				const topValue = getTopPositioningFromTime(date);
-				const heightValue = getHeightValue(focusRecord);
+				const topValue = getTopPositioningFromTime(date, fromWeekView);
+				const heightValue = getHeightValue(focusRecord, fromWeekView);
+				let leftValue = fromWeekView ? 95 + formattedDayWidth * weekDayIndex : 95;
+
+				// Use to adjust the mini action item a little more.
+				if (fromWeekView && weekDayIndex !== 0) {
+					leftValue += 20;
+				}
 
 				return (
 					<MiniActionItem
@@ -29,15 +37,16 @@ const AbsolutePosFocusRecords = ({
 						shownActionItems={flattenedActionItems}
 						formattedDay={formattedDay}
 						customStyling={{
-							width: formattedDayWidth - 10,
+							width: fromWeekView ? formattedDayWidth : formattedDayWidth - 10,
 							position: 'absolute',
 							zIndex: 1,
 							top: topValue,
 							height: heightValue,
-							left: '95px',
-							fontSize: '13px',
+							left: leftValue,
+							fontSize: fromWeekView ? '12px' : '13px',
 						}}
 						dayViewHeightValue={heightValue}
+						fromWeekView={fromWeekView}
 					/>
 				);
 			})}
