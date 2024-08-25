@@ -224,8 +224,25 @@ const TopHeader = () => {
 				<ModalViewOptions isOpen={isModalViewOptionsOpen} setIsOpen={setIsModalViewOptionsOpen} />
 			</div>
 
+			{/* TODO: Should use the current day's date instead of a random "Tue". For later. */}
 			{selectedInterval === 'Day' && (
 				<div className="text-center text-color-gray-100 border-b border-color-gray-200 pb-2">Tue</div>
+			)}
+
+			{selectedInterval === 'Week' && (
+				<div className="text-center text-color-gray-100 border-b border-color-gray-200 pb-2 flex mt-2">
+					<div className="w-[90px]"></div>
+
+					<div className="grid grid-cols-7 flex-1">
+						<div>Mon</div>
+						<div>Tue</div>
+						<div>Wed</div>
+						<div>Thu</div>
+						<div>Fri</div>
+						<div>Sat</div>
+						<div>Sun</div>
+					</div>
+				</div>
 			)}
 		</div>
 	);
