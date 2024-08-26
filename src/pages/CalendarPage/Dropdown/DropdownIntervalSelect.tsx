@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import Dropdown from '../../../components/Dropdown/Dropdown';
 import Icon from '../../../components/Icon';
 import { useState } from 'react';
+import { useCalendarContext } from '../../../contexts/useCalendarContext';
 
 const DropdownIntervalSelect = ({
 	toggleRef,
@@ -12,10 +13,11 @@ const DropdownIntervalSelect = ({
 	setSelected,
 	onClick,
 }) => {
+	const { multiDays, setMultiDays, multiWeeks, setMultiWeeks } = useCalendarContext();
+
 	const intervalOptionsTop = ['Day', 'Week', 'Month', 'Agenda'];
 
-	const [multiDays, setMultiDays] = useState(7);
-
+	// Multi-Days
 	const canDecrementMultiDays = multiDays - 1 >= 2;
 	const canIncrementMultiDays = multiDays + 1 <= 14;
 
@@ -28,6 +30,22 @@ const DropdownIntervalSelect = ({
 	const handleMultiDayIncrement = () => {
 		if (canIncrementMultiDays) {
 			setMultiDays(multiDays + 1);
+		}
+	};
+
+	// Multi-Weeks
+	const canDecrementMultiWeeks = multiWeeks - 1 >= 2;
+	const canIncrementMultiWeeks = multiWeeks + 1 <= 6;
+
+	const handleMultiWeekDecrement = () => {
+		if (canDecrementMultiWeeks) {
+			setMultiWeeks(multiWeeks - 1);
+		}
+	};
+
+	const handleMultiWeekIncrement = () => {
+		if (canIncrementMultiWeeks) {
+			setMultiWeeks(multiWeeks + 1);
 		}
 	};
 
@@ -52,10 +70,23 @@ const DropdownIntervalSelect = ({
 						key="Multi-Day"
 						name="Multi-Day"
 						multiIntervalAmount={multiDays}
+						multiIntervalType={'Days'}
 						handleDecrement={handleMultiDayDecrement}
 						handleIncrement={handleMultiDayIncrement}
 						canDecrement={canDecrementMultiDays}
 						canIncrement={canIncrementMultiDays}
+						{...{ selected, setSelected, setIsVisible, onClick }}
+					/>
+
+					<SelectOptionMulti
+						key="Multi-Week"
+						name="Multi-Week"
+						multiIntervalAmount={multiWeeks}
+						multiIntervalType={'Weeks'}
+						handleDecrement={handleMultiWeekDecrement}
+						handleIncrement={handleMultiWeekIncrement}
+						canDecrement={canDecrementMultiWeeks}
+						canIncrement={canIncrementMultiWeeks}
 						{...{ selected, setSelected, setIsVisible, onClick }}
 					/>
 				</div>
@@ -79,7 +110,7 @@ const SelectOption = ({ name, selected, setSelected, setIsVisible, onClick }: { 
 			}}
 		>
 			<div className="flex items-center">
-				<div className="w-[25px] flex items-center">
+				<div className="w-[20px] flex items-center">
 					{selected === name && (
 						<Icon
 							name="check"
@@ -97,6 +128,7 @@ const SelectOption = ({ name, selected, setSelected, setIsVisible, onClick }: { 
 const SelectOptionMulti = ({
 	name,
 	multiIntervalAmount,
+	multiIntervalType,
 	handleDecrement,
 	handleIncrement,
 	canDecrement,
@@ -130,7 +162,7 @@ const SelectOptionMulti = ({
 			}}
 		>
 			<div className="flex items-center">
-				<div className="w-[25px] flex items-center">
+				<div className="w-[20px] flex items-center">
 					{selected === name && (
 						<Icon
 							name="check"
@@ -169,7 +201,7 @@ const SelectOptionMulti = ({
 						</div>
 					</div>
 				) : (
-					`${multiIntervalAmount} Days`
+					`${multiIntervalAmount} ${multiIntervalType}`
 				)}
 			</div>
 		</div>

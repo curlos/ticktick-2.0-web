@@ -96,6 +96,9 @@ const useCalendar = () => {
 		},
 	});
 
+	const [multiDays, setMultiDays] = useState(7);
+	const [multiWeeks, setMultiWeeks] = useState(4);
+
 	useEffect(() => {
 		if (isLoadingGetUserSettings) {
 			return;
@@ -141,6 +144,10 @@ const useCalendar = () => {
 		setColorsType,
 		shownTasksFilters,
 		setShownTasksFilters,
+		multiDays,
+		setMultiDays,
+		multiWeeks,
+		setMultiWeeks,
 
 		// useState: Filter Sidebar
 		allValue,

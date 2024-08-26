@@ -411,6 +411,16 @@ export const getAllDaysInWeekFromDate = (date) => {
 	return result;
 };
 
+export const getAllMultiDaysFromDate = (date, multiDays) => {
+	const dates = [];
+	for (let i = 0; i < multiDays; i++) {
+		const newDate = new Date(date); // Create a new Date object based on the initial date
+		newDate.setDate(date.getDate() + i); // Increment the day by 'i'
+		dates.push(newDate);
+	}
+	return dates;
+};
+
 export const getAllDaysInMonthFromDate = (date) => {
 	let result = [];
 	let year = date.getFullYear(); // Get the year of the date

@@ -144,8 +144,8 @@ const WeekView = ({ groupedItemsByDateObj, currDueDate }) => {
 					{allDaysInWeekFromDate.map((_, index) => {
 						return (
 							<div
-								className="border-[1px] border-color-gray-200 absolute"
-								style={{ left: 90 + miniTopHeaderValues.width * (index || 1), height: 60 * 24 }}
+								className="border-l-[1px] border-color-gray-200 absolute"
+								style={{ left: 90 + miniTopHeaderValues.width * index, height: 60 * 24, width: 1 }}
 							></div>
 						);
 					})}
@@ -197,8 +197,6 @@ const TodayCurrentTimeLine = ({
 
 	const indexOfTodaysDate = allDaysInWeekFromDate.findIndex((day) => areDatesEqual(day, todayDateObj));
 
-	console.log(indexOfTodaysDate);
-
 	let customWidth = miniTopHeaderValues.width;
 
 	// For the last day of the week, Sunday, it's possible to overflow so subtract 20px from the end to ensure it doesn't.
@@ -227,7 +225,7 @@ const TodayCurrentTimeLine = ({
 				style={{
 					position: 'absolute',
 					top: todayDayTopValue - 5,
-					left: 90 + miniTopHeaderValues.width * (indexOfTodaysDate || 1) - 3,
+					left: 90 + miniTopHeaderValues.width * indexOfTodaysDate - 3,
 					zIndex: 1,
 				}}
 			></div>
@@ -238,7 +236,7 @@ const TodayCurrentTimeLine = ({
 				style={{
 					position: 'absolute',
 					top: todayDayTopValue,
-					left: 90 + miniTopHeaderValues.width * (indexOfTodaysDate || 1),
+					left: 90 + miniTopHeaderValues.width * indexOfTodaysDate,
 					width: customWidth,
 					opacity: '100%',
 					zIndex: 1,

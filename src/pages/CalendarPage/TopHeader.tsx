@@ -7,7 +7,7 @@ import ModalViewOptions from './ModalViewOptions';
 import { useCalendarContext } from '../../contexts/useCalendarContext';
 import DropdownAddNewTaskDetails from '../../components/Dropdown/DropdownAddNewTaskDetails';
 import useResizeObserver from '../../hooks/useResizeObserver';
-import { formatCheckedInDayDate, getAllDaysInWeekFromDate } from '../../utils/date.utils';
+import { formatCheckedInDayDate, getAllDaysInWeekFromDate, getAllMultiDaysFromDate } from '../../utils/date.utils';
 
 const TopHeader = () => {
 	const {
@@ -23,6 +23,7 @@ const TopHeader = () => {
 		setCurrDueDate,
 		selectedInterval,
 		setSelectedInterval,
+		multiDays,
 	} = useCalendarContext();
 
 	const [isModalViewOptionsOpen, setIsModalViewOptionsOpen] = useState(false);
@@ -43,6 +44,9 @@ const TopHeader = () => {
 	const [isDropdownTopHeaderMoreOptionsVisible, setIsDropdownTopHeaderMoreOptionsVisible] = useState(false);
 
 	const allDaysInWeekFromDate = getAllDaysInWeekFromDate(currentDate);
+	const allMultiDaysFromDate = getAllMultiDaysFromDate(currentDate, multiDays);
+
+	console.log(allMultiDaysFromDate);
 
 	const getName = () => {
 		switch (selectedInterval) {
@@ -230,6 +234,18 @@ const TopHeader = () => {
 			)}
 
 			{selectedInterval === 'Week' && (
+				<div className="text-center text-color-gray-100 border-b border-color-gray-200 pb-2 flex mt-2">
+					<div className="w-[90px]"></div>
+
+					<div className="grid grid-cols-7 flex-1">
+						{allDaysInWeekFromDate.map((day) => (
+							<div>{day.toLocaleDateString('en-US', { weekday: 'short' })}</div>
+						))}
+					</div>
+				</div>
+			)}
+
+			{selectedInterval === 'Multi-Day' && (
 				<div className="text-center text-color-gray-100 border-b border-color-gray-200 pb-2 flex mt-2">
 					<div className="w-[90px]"></div>
 

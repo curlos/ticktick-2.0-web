@@ -37,6 +37,7 @@ const Calendar = () => {
 			{selectedInterval === 'Week' && <WeekView {...sharedProps} />}
 			{selectedInterval === 'Month' && <MonthView {...sharedProps} />}
 			{selectedInterval === 'Agenda' && <AgendaView {...sharedProps} />}
+			{selectedInterval === 'Multi-Day' && <WeekView {...sharedProps} />}
 		</div>
 	);
 };
