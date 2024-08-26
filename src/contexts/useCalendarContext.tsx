@@ -25,7 +25,7 @@ const useCalendar = () => {
 	// useState: TopHeader
 	const [showFilterSidebar, setShowFilterSidebar] = useState(true);
 	const [showArrangeTasksSidebar, setShowArrangeTasksSidebar] = useState(false);
-	const [selectedInterval, setSelectedInterval] = useState('Week');
+	const [selectedInterval, setSelectedInterval] = useState('Multi-Day');
 	const [currentDate, setCurrentDate] = useState(new Date());
 	const topHeaderRef = useRef(null);
 	const [headerHeight, setHeaderHeight] = useState(0);
@@ -96,7 +96,7 @@ const useCalendar = () => {
 		},
 	});
 
-	const [multiDays, setMultiDays] = useState(7);
+	const [multiDays, setMultiDays] = useState(4);
 	const [multiWeeks, setMultiWeeks] = useState(4);
 
 	useEffect(() => {

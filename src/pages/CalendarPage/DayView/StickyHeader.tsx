@@ -4,6 +4,8 @@ import { useRef } from 'react';
 import DropdownAddNewTaskDetails from '../../../components/Dropdown/DropdownAddNewTaskDetails';
 import useContextMenu from '../../../hooks/useContextMenu';
 import MiniActionItem from '../MiniActionItem';
+import { useCalendarContext } from '../../../contexts/useCalendarContext';
+import { getMonthDayString } from '../../../utils/date.utils';
 
 const StickyHeader = ({
 	setMiniTopHeaderValues,
@@ -16,6 +18,8 @@ const StickyHeader = ({
 	currDueDate,
 	fromWeekView,
 }) => {
+	const { selectedInterval, multiDays } = useCalendarContext();
+
 	const contextMenuObj = useContextMenu();
 	const { contextMenu, handleContextMenu } = contextMenuObj;
 
@@ -27,8 +31,11 @@ const StickyHeader = ({
 	// Observe changes in width for the formattedDayRef element
 	useResizeObserver(formattedDayRef, setFormattedDayWidth, 'width');
 
+	const finalFormattedDay =
+		selectedInterval === 'Multi-Day' && multiDays > 7 ? getMonthDayString(new Date(formattedDay)) : formattedDay;
+
 	return (
-		<div className="flex">
+		<div className="flex-1 flex">
 			{!fromWeekView && <div className="w-[90px]" />}
 			<div
 				ref={miniTopHeaderRef}
@@ -42,7 +49,7 @@ const StickyHeader = ({
 				}}
 			>
 				<div ref={formattedDayRef} className={classNames('font-bold', dueDateIsToday && 'text-blue-500')}>
-					{formattedDay}
+					{finalFormattedDay}
 				</div>
 
 				<div className="space-y-[2px] my-3 text-[13px]">

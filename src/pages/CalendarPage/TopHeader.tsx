@@ -249,9 +249,9 @@ const TopHeader = () => {
 				<div className="text-center text-color-gray-100 border-b border-color-gray-200 pb-2 flex mt-2">
 					<div className="w-[90px]"></div>
 
-					<div className="grid grid-cols-7 flex-1">
-						{allDaysInWeekFromDate.map((day) => (
-							<div>{day.toLocaleDateString('en-US', { weekday: 'short' })}</div>
+					<div className="flex flex-1">
+						{allMultiDaysFromDate.map((day) => (
+							<div className="flex-1">{day.toLocaleDateString('en-US', { weekday: 'short' })}</div>
 						))}
 					</div>
 				</div>

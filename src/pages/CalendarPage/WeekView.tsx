@@ -2,7 +2,13 @@ import { useEffect, useState } from 'react';
 import { useCalendarContext } from '../../contexts/useCalendarContext';
 import useGetCurrentTime from '../../hooks/useGetCurrentTime';
 import useMaxHeight from '../../hooks/useMaxHeight';
-import { getAllHours, formatCheckedInDayDate, areDatesEqual, getAllDaysInWeekFromDate } from '../../utils/date.utils';
+import {
+	getAllHours,
+	formatCheckedInDayDate,
+	areDatesEqual,
+	getAllDaysInWeekFromDate,
+	getAllMultiDaysFromDate,
+} from '../../utils/date.utils';
 import { getTopPositioningFromTime } from './DayView/getHeightAndPositioning.utils';
 import SidebarHourBlockList from './DayView/SidebarHourBlockList';
 import AbsolutePosFocusRecords from './DayView/AbsolutePosFocusRecords';
@@ -11,7 +17,7 @@ import { TodayCurrentTimeBox } from './DayView/TodayCurrentTimeLine';
 import QuarterHourBlockList from './DayView/QuarterHourBlockList';
 
 const WeekView = ({ groupedItemsByDateObj, currDueDate }) => {
-	const { currentDate } = useCalendarContext();
+	const { currentDate, selectedInterval, multiDays } = useCalendarContext();
 
 	const { allItemsGroupedByDate } = groupedItemsByDateObj;
 
@@ -35,16 +41,19 @@ const WeekView = ({ groupedItemsByDateObj, currDueDate }) => {
 		setTodayDayTopValue(getTopPositioningFromTime(newDate));
 	});
 
-	const allDaysInWeekFromDate = getAllDaysInWeekFromDate(currentDate);
-	const [allDaysInWeekFromDaysObjValues, setAllDaysInWeekFromDaysObjValues] = useState(null);
+	const listOfDays =
+		selectedInterval === 'Week'
+			? getAllDaysInWeekFromDate(currentDate)
+			: getAllMultiDaysFromDate(currentDate, multiDays);
+	const [listOfDaysObjValues, setListOfDaysObjValues] = useState(null);
 
 	useEffect(() => {
-		let newAllDaysInWeekFromDaysObjValues = {};
+		let newListOfDaysObjValues = {};
 
-		allDaysInWeekFromDate.forEach((day) => {
+		listOfDays.forEach((day) => {
 			const formattedDay = formatCheckedInDayDate(day);
 
-			if (newAllDaysInWeekFromDaysObjValues[formattedDay]) {
+			if (newListOfDaysObjValues[formattedDay]) {
 				return;
 			}
 
@@ -55,7 +64,7 @@ const WeekView = ({ groupedItemsByDateObj, currDueDate }) => {
 			const flattenedActionItems = [...safeTasks, ...safeFocusRecords];
 			const dueDateIsToday = areDatesEqual(day, todayDateObj);
 
-			newAllDaysInWeekFromDaysObjValues[formattedDay] = {
+			newListOfDaysObjValues[formattedDay] = {
 				formattedDay,
 				actionItems,
 				tasks,
@@ -67,8 +76,8 @@ const WeekView = ({ groupedItemsByDateObj, currDueDate }) => {
 			};
 		});
 
-		setAllDaysInWeekFromDaysObjValues(newAllDaysInWeekFromDaysObjValues);
-	}, [currentDate, allItemsGroupedByDate]);
+		setListOfDaysObjValues(newListOfDaysObjValues);
+	}, [currentDate, allItemsGroupedByDate, multiDays]);
 
 	const dueDateIsToday = areDatesEqual(currentDate, todayDateObj);
 
@@ -77,11 +86,11 @@ const WeekView = ({ groupedItemsByDateObj, currDueDate }) => {
 			<div className="flex">
 				<div className="w-[90px]" />
 
-				<div className="grid grid-cols-7 flex-1">
-					{allDaysInWeekFromDaysObjValues &&
-						allDaysInWeekFromDate.map((day) => {
+				<div className="flex flex-1">
+					{listOfDaysObjValues &&
+						listOfDays.map((day) => {
 							const dayKey = formatCheckedInDayDate(day);
-							const dayValues = allDaysInWeekFromDaysObjValues[dayKey];
+							const dayValues = listOfDaysObjValues[dayKey];
 
 							if (!dayValues) {
 								return null;
@@ -111,10 +120,10 @@ const WeekView = ({ groupedItemsByDateObj, currDueDate }) => {
 
 			<div className="flex overflow-auto gray-scrollbar" style={{ maxHeight }}>
 				<div className="relative">
-					{allDaysInWeekFromDaysObjValues &&
-						allDaysInWeekFromDate.map((day, index) => {
+					{listOfDaysObjValues &&
+						listOfDays.map((day, index) => {
 							const dayKey = formatCheckedInDayDate(day);
-							const dayValues = allDaysInWeekFromDaysObjValues[dayKey];
+							const dayValues = listOfDaysObjValues[dayKey];
 
 							if (!dayValues) {
 								return null;
@@ -141,7 +150,7 @@ const WeekView = ({ groupedItemsByDateObj, currDueDate }) => {
 						})}
 
 					{/* 7 Lines going downwards vertically  */}
-					{allDaysInWeekFromDate.map((_, index) => {
+					{listOfDays.map((_, index) => {
 						return (
 							<div
 								className="border-l-[1px] border-color-gray-200 absolute"
@@ -153,7 +162,7 @@ const WeekView = ({ groupedItemsByDateObj, currDueDate }) => {
 					<TodayCurrentTimeLine
 						{...{
 							dueDateIsToday,
-							allDaysInWeekFromDate,
+							listOfDays,
 							todayDateObj,
 							todayDayTopValue,
 							miniTopHeaderValues,
@@ -184,18 +193,12 @@ const WeekView = ({ groupedItemsByDateObj, currDueDate }) => {
 	);
 };
 
-const TodayCurrentTimeLine = ({
-	dueDateIsToday,
-	allDaysInWeekFromDate,
-	todayDateObj,
-	todayDayTopValue,
-	miniTopHeaderValues,
-}) => {
+const TodayCurrentTimeLine = ({ dueDateIsToday, listOfDays, todayDateObj, todayDayTopValue, miniTopHeaderValues }) => {
 	if (!dueDateIsToday) {
 		return null;
 	}
 
-	const indexOfTodaysDate = allDaysInWeekFromDate.findIndex((day) => areDatesEqual(day, todayDateObj));
+	const indexOfTodaysDate = listOfDays.findIndex((day) => areDatesEqual(day, todayDateObj));
 
 	let customWidth = miniTopHeaderValues.width;
 
