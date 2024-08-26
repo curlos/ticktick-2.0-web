@@ -234,13 +234,9 @@ const TopHeader = () => {
 					<div className="w-[90px]"></div>
 
 					<div className="grid grid-cols-7 flex-1">
-						<div>Mon</div>
-						<div>Tue</div>
-						<div>Wed</div>
-						<div>Thu</div>
-						<div>Fri</div>
-						<div>Sat</div>
-						<div>Sun</div>
+						{allDaysInWeekFromDate.map((day) => (
+							<div>{day.toLocaleDateString('en-US', { weekday: 'short' })}</div>
+						))}
 					</div>
 				</div>
 			)}

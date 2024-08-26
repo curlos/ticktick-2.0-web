@@ -7,7 +7,7 @@ const TodayCurrentTimeLine = ({ dueDateIsToday, todayDayTopValue, todayDateObj, 
 
 	return (
 		<div>
-			<TodayCurrentTimeBox {...{ todayDayTopValue, todayDateObj }} />
+			<TodayCurrentTimeBox {...{ dueDateIsToday, todayDayTopValue, todayDateObj }} />
 			<TodayCurrentLine {...{ todayDayTopValue, formattedDayWidth }} />
 		</div>
 	);

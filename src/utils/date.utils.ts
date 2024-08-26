@@ -391,6 +391,7 @@ export const isFutureDate = (dateStr) => {
 	return targetDate > currentDate;
 };
 
+// TODO: Add a second, optional parameter in this function so that we can get X amount of days instead of only the surrounding week.
 export const getAllDaysInWeekFromDate = (date) => {
 	let result = [];
 	let dayOfWeek = date.getDay(); // Get day of the week (0 is Sunday, 1 is Monday, etc.)
