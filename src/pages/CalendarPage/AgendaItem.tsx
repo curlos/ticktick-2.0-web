@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import ContextMenuGeneric from '../../components/ContextMenu/ContextMenuGeneric';
 import DrodpownAddFocusRecord from '../../components/Dropdown/DropdownAddFocusRecord';
 import DropdownTaskDetails from '../../components/Dropdown/DropdownTaskDetails';
