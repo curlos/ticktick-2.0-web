@@ -1,5 +1,7 @@
 {
   "name": "super-ticktick-web",
+  "description": "Your App Description Here",
+  "author": "Your Name <your.email@example.com>",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,8 +12,11 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "formatAllFilesPrettier": "npx prettier --write '**/*.{ts,tsx}'",
-    "test": "jest"
+    "test": "jest",
+    "start-electron": "electron .",
+    "build-electron": "electron-builder"
   },
+  "main": "src/electron/main.js",
   "dependencies": {
     "@dnd-kit/core": "^6.1.0",
     "@dnd-kit/sortable": "^8.0.0",
@@ -58,6 +63,8 @@
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.18",
     "cypress": "^13.10.0",
+    "electron": "^32.0.1",
+    "electron-builder": "^24.13.3",
     "eslint": "^8.56.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",

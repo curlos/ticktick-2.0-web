@@ -1,0 +1,52 @@
+appId: 'com.yourcompany.yourapp'
+productName: 'YourAppName'
+directories:
+    output: 'dist'
+    buildResources: 'build'
+files:
+    - '**/*'
+    - '!**/*.ts'
+    - '!*.code-workspace'
+    - '!**/*.js.map'
+    - '!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}'
+    - '!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}'
+    - '!**/node_modules/*.d.ts'
+    - '!**/node_modules/.bin'
+    - '!**/*.{o,hprof,orig,pyc,pyo,rbc}'
+    - '!**/._*'
+    - '!**/electron-builder.yml'
+    - '!**/*.config.js'
+    - '!**/*.log'
+    - '!**/yarn.lock'
+
+asar: true
+
+win:
+    target: 'nsis'
+    icon: 'build/icons/icon.ico'
+
+mac:
+    target: 'dmg'
+    icon: 'build/icons/icon.icns'
+    category: 'public.app-category.productivity'
+
+linux:
+    target:
+        - 'AppImage'
+        - 'deb'
+        - 'rpm'
+    icon: 'build/icons'
+
+dmg:
+    contents:
+        - x: 410
+          y: 220
+          type: 'link'
+          path: '/Applications'
+        - x: 130
+          y: 220
+          type: 'file'
+
+nsis:
+    oneClick: false
+    allowToChangeInstallationDirectory: true
