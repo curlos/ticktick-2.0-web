@@ -1,8 +1,12 @@
 import { CircularProgressbarWithChildren, buildStyles } from 'react-circular-progressbar';
 import { useGetPomoAndStopwatchFocusRecordsQuery } from '../../services/resources/ticktickOneApi';
 import { areDatesEqual } from '../../utils/date.utils';
+import { getFocusDuration, getFormattedDuration } from '../../utils/helpers.utils';
 
 const DailyHoursFocusGoal = () => {
+	// 18,000 seconds = 5 Hours, the daily goal for number of focus hours per day.
+	const GOAL_SECONDS = 18000;
+
 	// RTK Query - TickTick 1.0 - Focus Records
 	const {
 		data: fetchedFocusRecords,
@@ -14,8 +18,6 @@ const DailyHoursFocusGoal = () => {
 	if (!focusRecords) {
 		return null;
 	}
-
-	console.log(focusRecords);
 
 	const getFocusRecordsFromToday = () => {
 		const focusRecordsFromToday = [];
@@ -34,15 +36,31 @@ const DailyHoursFocusGoal = () => {
 		return focusRecordsFromToday;
 	};
 
-	// Using this, calculate the total time focused today.
-	const focusRecordsFromToday = getFocusRecordsFromToday();
+	const getTotalFocusDurationToday = () => {
+		const focusRecordsFromToday = getFocusRecordsFromToday();
+		let totalFocusDurationToday = 0;
 
-	console.log(focusRecordsFromToday);
+		focusRecordsFromToday.forEach((focusRecord) => {
+			totalFocusDurationToday += getFocusDuration(focusRecord);
+		});
+
+		return totalFocusDurationToday;
+	};
+
+	const getPercentageOfFocusedGoalHours = () => {
+		const totalFocusDurationToday = getTotalFocusDurationToday();
+		return (totalFocusDurationToday / GOAL_SECONDS) * 100;
+	};
+
+	const totalFocusDurationToday = getTotalFocusDurationToday();
+	const percentageOfFocusedGoalHours = getPercentageOfFocusedGoalHours();
+
+	// TODO: Related to this but later on, there should be a version of this added that will get a require daily number of hours for a specific list or task that can be connected to the goal. I'll have to add a backend endpoint and probably a model in the DB to handle these new changes to connect tasks.
 
 	return (
 		<div>
 			<CircularProgressbarWithChildren
-				value={23}
+				value={getPercentageOfFocusedGoalHours()}
 				strokeWidth={1.5}
 				styles={buildStyles({
 					textColor: '#4772F9',
@@ -55,8 +73,13 @@ const DailyHoursFocusGoal = () => {
 					className="text-white text-[40px] flex justify-center gap-4 w-[100%] select-none cursor-pointer mb-[-10px]"
 					onMouseOver={() => {}}
 				>
-					<div data-cy="timer-display" className="text-center text-[45px]">
-						1h/5h
+					<div data-cy="timer-display" className="text-center text-[35px]">
+						<div className="mt-3">
+							{getFormattedDuration(totalFocusDurationToday, false)}/
+							{getFormattedDuration(GOAL_SECONDS, false)}
+						</div>
+
+						<div className="text-[20px] mt-[-5px] text-color-gray-100">{percentageOfFocusedGoalHours}%</div>
 					</div>
 				</div>
 			</CircularProgressbarWithChildren>
