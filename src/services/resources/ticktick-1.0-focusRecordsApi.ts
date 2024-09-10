@@ -3,7 +3,7 @@ import { baseAPI, buildQueryString } from '../api';
 
 export const tickTickFocusRecordsApi = baseAPI.injectEndpoints({
 	endpoints: (builder) => ({
-		getTickTickFocusRecords: builder.query({
+		getTickTickFocusRecordsRealTime: builder.query({
 			query: (queryParams) => {
 				const queryString = buildQueryString(queryParams);
 				return queryString ? `//ticktick-1.0/focus-records?${queryString}` : '/ticktick-1.0/focus-records';
@@ -17,4 +17,4 @@ export const tickTickFocusRecordsApi = baseAPI.injectEndpoints({
 	}),
 });
 
-export const { useGetTickTickFocusRecordsQuery } = tickTickFocusRecordsApi;
+export const { useGetTickTickFocusRecordsRealTimeQuery } = tickTickFocusRecordsApi;

@@ -226,4 +226,7 @@
 
 .react-markdown li {
     list-style-type: circle;
+    margin-left: 1.25em;
+    text-align: left;
+    max-width: 100%;
 }

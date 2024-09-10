@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { getFormattedLongDay, sortArrayByProperty, sortObjectByDateKeys } from '../../utils/date.utils';
 import { getFocusDuration, getFormattedDuration } from '../../utils/helpers.utils';
 import FocusRecord from './FocusRecord';
-import { useGetTickTickFocusRecordsQuery } from '../../services/resources/ticktick-1.0-focusRecordsApi';
+import { useGetTickTickFocusRecordsRealTimeQuery } from '../../services/resources/ticktick-1.0-focusRecordsApi';
 
 const FocusRecordsPage = () => {
 	// RTK Query - TickTick 1.0 - Focus Records
@@ -10,13 +10,13 @@ const FocusRecordsPage = () => {
 		data: fetchedFocusRecords,
 		isLoading: isLoadingGetFocusRecords,
 		error: errorGetFocusRecords,
-	} = useGetTickTickFocusRecordsQuery();
+	} = useGetTickTickFocusRecordsRealTimeQuery();
 	const { focusRecords, focusRecordsById } = fetchedFocusRecords || {};
 
-	const [groupedBy, setGroupedBy] = useState('tasks');
+	const [groupedBy, setGroupedBy] = useState('day');
 
 	if (!focusRecords) {
-		return null;
+		return <div>Loading...</div>;
 	}
 
 	const tasksById = getTasksById(focusRecords);
@@ -24,7 +24,7 @@ const FocusRecordsPage = () => {
 	const groupedFocusRecordsByDate = getGroupedFocusRecordsByDate(focusRecords);
 	const groupedFocusRecordsByTask = getGroupedFocusRecordsByTask(focusRecords, tasksById);
 
-	const groupedByFocusRecords = groupedFocusRecordsByTask;
+	const groupedByFocusRecords = groupedFocusRecordsByDate;
 
 	const getInfoForGroup = (key, focusRecord, index) => {
 		const infoForGroupedByDay = {
@@ -86,8 +86,6 @@ const FocusRecordsPage = () => {
 
 const GroupedFocusRecordListByDate = ({ focusRecords, getInfoForGroup, groupedBy, groupKey }) => {
 	const groupedFocusRecordsByDate = getGroupedFocusRecordsByDate(focusRecords);
-
-	console.log(groupedFocusRecordsByDate);
 
 	return (
 		<div>
@@ -221,12 +219,8 @@ const getGroupedFocusRecordsByTask = (focusRecords, tasksById) => {
 	Object.keys(groupedFocusRecordsByTask).forEach((taskId) => {
 		const focusRecords = groupedFocusRecordsByTask[taskId];
 
-		// console.log(focusRecords);
-
 		groupedFocusRecordsByTask[taskId] = focusRecords.map((focusRecord) => {
 			const { tasks } = focusRecord;
-
-			console.log(focusRecord);
 
 			return {
 				...focusRecord,
