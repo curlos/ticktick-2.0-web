@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { getFormattedLongDay, sortArrayByProperty, sortObjectByDateKeys } from '../../utils/date.utils';
 import { getFocusDuration, getFormattedDuration } from '../../utils/helpers.utils';
 import FocusRecord from './FocusRecord';
-import { useGetTickTickFocusRecordsRealTimeQuery } from '../../services/resources/ticktick-1.0-focusRecordsApi';
+import { useGetPomoAndStopwatchFocusRecordsQuery, useGetAllTasksQuery } from '../../services/resources/ticktickOneApi';
+import DailyHoursFocusGoal from './DailyHoursFocusGoal';
 
 const FocusRecordsPage = () => {
 	// RTK Query - TickTick 1.0 - Focus Records
@@ -10,8 +11,13 @@ const FocusRecordsPage = () => {
 		data: fetchedFocusRecords,
 		isLoading: isLoadingGetFocusRecords,
 		error: errorGetFocusRecords,
-	} = useGetTickTickFocusRecordsRealTimeQuery();
+	} = useGetPomoAndStopwatchFocusRecordsQuery();
 	const { focusRecords, focusRecordsById } = fetchedFocusRecords || {};
+
+	const { data: fetchedTasks, isLoading: isLoadingGetTasks, error: errorGetTasks } = useGetAllTasksQuery();
+	const { tasks, tasksById } = fetchedTasks || {};
+
+	console.log(tasksById);
 
 	const [groupedBy, setGroupedBy] = useState('day');
 
@@ -19,10 +25,20 @@ const FocusRecordsPage = () => {
 		return <div>Loading...</div>;
 	}
 
-	const tasksById = getTasksById(focusRecords);
+	// if (tasks) {
+	// 	return (
+	// 		<div className="flex max-w-screen bg-color-gray-700 text-white">
+	// 			<div>
+	// 				{tasks.map((task) => (
+	// 					<div>{task.title}</div>
+	// 				))}
+	// 			</div>
+	// 		</div>
+	// 	);
+	// }
 
 	const groupedFocusRecordsByDate = getGroupedFocusRecordsByDate(focusRecords);
-	const groupedFocusRecordsByTask = getGroupedFocusRecordsByTask(focusRecords, tasksById);
+	// const groupedFocusRecordsByTask = getGroupedFocusRecordsByTask(focusRecords, tasksById);
 
 	const groupedByFocusRecords = groupedFocusRecordsByDate;
 
@@ -48,6 +64,10 @@ const FocusRecordsPage = () => {
 	return (
 		<div className="flex max-w-screen bg-color-gray-700">
 			<div className="container mx-auto p-1">
+				<div className="flex">
+					<DailyHoursFocusGoal />
+				</div>
+
 				{Object.keys(groupedByFocusRecords).map((groupKey) => {
 					const focusRecords = groupedByFocusRecords[groupKey];
 					const totalFocusDuration = getTotalFocusDuration(focusRecords, groupedBy);
@@ -160,24 +180,6 @@ const getGroupedFocusRecordsByDate = (focusRecords) => {
 	});
 
 	return sortedGroupedFocusRecordsAsc;
-};
-
-const getTasksById = (focusRecords) => {
-	const tasksById = {};
-
-	focusRecords.forEach((focusRecord) => {
-		const { tasks } = focusRecord;
-
-		tasks.forEach((task) => {
-			const { taskId, title, projectName } = task;
-
-			if (taskId && !tasksById[taskId]) {
-				tasksById[taskId] = { taskId, title, projectName };
-			}
-		});
-	});
-
-	return tasksById;
 };
 
 /**
