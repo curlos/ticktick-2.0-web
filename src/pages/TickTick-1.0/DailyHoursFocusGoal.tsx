@@ -80,7 +80,9 @@ const DailyHoursFocusGoal = () => {
 							{getFormattedDuration(GOAL_SECONDS, false)}
 						</div>
 
-						<div className="text-[20px] mt-[-5px] text-color-gray-100">{percentageOfFocusedGoalHours}%</div>
+						<div className="text-[20px] mt-[-5px] text-color-gray-100">
+							{Number(percentageOfFocusedGoalHours).toFixed(2)}%
+						</div>
 					</div>
 				</div>
 			</CircularProgressbarWithChildren>

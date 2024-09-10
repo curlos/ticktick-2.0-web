@@ -8,6 +8,7 @@ import {
 	useGetAllProjectsQuery,
 } from '../../services/resources/ticktickOneApi';
 import DailyHoursFocusGoal from './DailyHoursFocusGoal';
+import ActionSidebar from '../../components/ActionSidebar';
 
 const FocusRecordsPage = () => {
 	// RTK Query - TickTick 1.0 - Focus Records
@@ -32,10 +33,6 @@ const FocusRecordsPage = () => {
 
 	const [groupedBy, setGroupedBy] = useState('day');
 
-	if (!focusRecords) {
-		return <div>Loading...</div>;
-	}
-
 	// if (tasks) {
 	// 	return (
 	// 		<div className="flex max-w-screen bg-color-gray-700 text-white">
@@ -48,8 +45,8 @@ const FocusRecordsPage = () => {
 	// 	);
 	// }
 
-	const groupedFocusRecordsByDate = getGroupedFocusRecordsByDate(focusRecords);
-	// const groupedFocusRecordsByTask = getGroupedFocusRecordsByTask(focusRecords, tasksById);
+	const groupedFocusRecordsByDate = focusRecords && getGroupedFocusRecordsByDate(focusRecords);
+	// const groupedFocusRecordsByTask = focusRecords && getGroupedFocusRecordsByTask(focusRecords, tasksById);
 
 	const groupedByFocusRecords = groupedFocusRecordsByDate;
 
@@ -73,44 +70,54 @@ const FocusRecordsPage = () => {
 	};
 
 	return (
-		<div className="flex max-w-screen bg-color-gray-700">
-			<div className="container mx-auto p-1">
-				<div className="flex">
-					<DailyHoursFocusGoal />
+		<div className="flex max-w-screen max-h-screen bg-color-gray-700">
+			<div className="">
+				<ActionSidebar />
+			</div>
+
+			{isLoadingGetFocusRecords ? (
+				<div className="flex w-screen h-screen bg-color-gray-700 flex items-center justify-center">
+					<div>
+						<img src="/cod-bo3-icons/Unstoppable_Medal_BO3.webp" className="h-[200px] animate-pulse" />
+					</div>
 				</div>
+			) : (
+				<div className="h-[100vh] w-full overflow-scroll gray-scrollbar flex justify-center">
+					<div className="container px-auto p-1">
+						{Object.keys(groupedByFocusRecords).map((groupKey) => {
+							const focusRecords = groupedByFocusRecords[groupKey];
+							const totalFocusDuration = getTotalFocusDuration(focusRecords, groupedBy);
+							const { title } = getInfoForGroup(groupKey);
 
-				{Object.keys(groupedByFocusRecords).map((groupKey) => {
-					const focusRecords = groupedByFocusRecords[groupKey];
-					const totalFocusDuration = getTotalFocusDuration(focusRecords, groupedBy);
-					const { title } = getInfoForGroup(groupKey);
+							// TODO: If grouped by tasks, then we need to group those focus records for that task by date.
+							if (groupedBy === 'tasks') {
+							}
 
-					// TODO: If grouped by tasks, then we need to group those focus records for that task by date.
-					if (groupedBy === 'tasks') {
-					}
+							return (
+								<div key={groupKey} className="mb-[100px]">
+									<div className="flex items-center gap-3 mb-5">
+										<h2 className="text-[32px] font-bold border-b border-b-2">{title}</h2>
+										<div className="text-[24px] text-color-gray-100">
+											({getFormattedDuration(totalFocusDuration, false)})
+										</div>
+									</div>
 
-					return (
-						<div key={groupKey} className="mb-[100px]">
-							<div className="flex items-center gap-3 mb-5">
-								<h2 className="text-[32px] font-bold border-b border-b-2">{title}</h2>
-								<div className="text-[24px] text-color-gray-100">
-									({getFormattedDuration(totalFocusDuration, false)})
+									{groupedBy === 'tasks' ? (
+										<GroupedFocusRecordListByDate
+											{...{ focusRecords, getInfoForGroup, groupedBy, groupKey }}
+										/>
+									) : (
+										<FocusRecordList {...{ focusRecords, getInfoForGroup, groupedBy, groupKey }} />
+									)}
 								</div>
-							</div>
-
-							{groupedBy === 'tasks' ? (
-								<GroupedFocusRecordListByDate
-									{...{ focusRecords, getInfoForGroup, groupedBy, groupKey }}
-								/>
-							) : (
-								<FocusRecordList {...{ focusRecords, getInfoForGroup, groupedBy, groupKey }} />
-							)}
-						</div>
-					);
-				})}
-				{/* {focusDataStopwatch.map((focusRecord) => (
+							);
+						})}
+						{/* {focusDataStopwatch.map((focusRecord) => (
 					<FocusRecord focusRecord={focusRecord} />
 				))} */}
-			</div>
+					</div>
+				</div>
+			)}
 		</div>
 	);
 };
