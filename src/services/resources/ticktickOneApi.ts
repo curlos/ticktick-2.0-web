@@ -28,7 +28,18 @@ export const tickTickOneApi = baseAPI.injectEndpoints({
 				return { tasks: response, tasksById };
 			},
 		}),
+		getAllProjects: builder.query({
+			query: (queryParams) => {
+				const queryString = buildQueryString(queryParams);
+				return queryString ? `/ticktick-1.0/projects?${queryString}` : '/ticktick-1.0/projects';
+			},
+			transformResponse: (response) => {
+				const projectsById = arrayToObjectByKey(response, 'id');
+
+				return { projects: response, projectsById };
+			},
+		}),
 	}),
 });
 
-export const { useGetPomoAndStopwatchFocusRecordsQuery, useGetAllTasksQuery } = tickTickOneApi;
+export const { useGetPomoAndStopwatchFocusRecordsQuery, useGetAllTasksQuery, useGetAllProjectsQuery } = tickTickOneApi;

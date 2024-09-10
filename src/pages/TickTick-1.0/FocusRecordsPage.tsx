@@ -2,7 +2,11 @@ import { useState } from 'react';
 import { getFormattedLongDay, sortArrayByProperty, sortObjectByDateKeys } from '../../utils/date.utils';
 import { getFocusDuration, getFormattedDuration } from '../../utils/helpers.utils';
 import FocusRecord from './FocusRecord';
-import { useGetPomoAndStopwatchFocusRecordsQuery, useGetAllTasksQuery } from '../../services/resources/ticktickOneApi';
+import {
+	useGetPomoAndStopwatchFocusRecordsQuery,
+	useGetAllTasksQuery,
+	useGetAllProjectsQuery,
+} from '../../services/resources/ticktickOneApi';
 import DailyHoursFocusGoal from './DailyHoursFocusGoal';
 
 const FocusRecordsPage = () => {
@@ -14,10 +18,17 @@ const FocusRecordsPage = () => {
 	} = useGetPomoAndStopwatchFocusRecordsQuery();
 	const { focusRecords, focusRecordsById } = fetchedFocusRecords || {};
 
+	// RTK Query - TickTick 1.0 - Tasks
 	const { data: fetchedTasks, isLoading: isLoadingGetTasks, error: errorGetTasks } = useGetAllTasksQuery();
 	const { tasks, tasksById } = fetchedTasks || {};
 
-	console.log(tasksById);
+	// RTK Query - TickTick 1.0 - Projects
+	const {
+		data: fetchedProjects,
+		isLoading: isLoadingGetProjects,
+		error: errorGetProjects,
+	} = useGetAllProjectsQuery();
+	const { projects, projectsById } = fetchedProjects || {};
 
 	const [groupedBy, setGroupedBy] = useState('day');
 

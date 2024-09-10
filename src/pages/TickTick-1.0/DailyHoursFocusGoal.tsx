@@ -5,6 +5,7 @@ import { getFocusDuration, getFormattedDuration } from '../../utils/helpers.util
 
 const DailyHoursFocusGoal = () => {
 	// 18,000 seconds = 5 Hours, the daily goal for number of focus hours per day.
+	// TODO: GOAL number of seconds should editable in the "/user-settings" endpoint and that should come from there.
 	const GOAL_SECONDS = 18000;
 
 	// RTK Query - TickTick 1.0 - Focus Records
