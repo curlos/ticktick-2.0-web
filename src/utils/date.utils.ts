@@ -316,6 +316,10 @@ export const formatCheckedInDayDate = (inputDate) => {
 	return inputDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 };
 
+export const getFormattedLongDay = (inputDate) => {
+	return inputDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+};
+
 export const getCalendarMonth = (year, month, weeksInCalendar = 6) => {
 	const calendar = [];
 	const firstDayOfMonth = new Date(year, month, 1);
@@ -501,6 +505,17 @@ export const sortArrayByEndTime = (array, type = 'descending') => {
 	}
 
 	return arrayCopy.sort((a, b) => new Date(a.endTime) - new Date(b.endTime));
+};
+
+export const sortArrayByProperty = (array, property, type = 'descending') => {
+	// Create a deep copy of the array to avoid modifying the original
+	const arrayCopy = array.map((item) => ({ ...item }));
+
+	if (type === 'descending') {
+		return arrayCopy.sort((a, b) => new Date(b[property]) - new Date(a[property]));
+	}
+
+	return arrayCopy.sort((a, b) => new Date(a[property]) - new Date(b[property]));
 };
 
 export const parseTimeStringAMorPM = (timeStr, baseDateStr) => {

@@ -11,6 +11,7 @@ import FocusStatsPage from './pages/FocusStatsPage';
 import StatsPage from './pages/StatsPage/StatsPage';
 import CalendarPage from './pages/CalendarPage/CalendarPage';
 import { CalendarProvider } from './contexts/useCalendarContext';
+import FocusRecordsPage from './pages/TickTick-1.0/FocusRecordsPage';
 
 function App() {
 	return (
@@ -18,6 +19,10 @@ function App() {
 			<div className="w-[100vw] max-w-[100%] text-white text-[14px] select-none">
 				<Router>
 					<Routes>
+						{/* TickTick 1.0 */}
+						<Route path="/ticktick-1.0/focus-records" element={<FocusRecordsPage />}></Route>
+
+						{/* Starting Pages */}
 						<Route path="/login" element={<LoginPage />}></Route>
 						<Route path="/signup" element={<LoginPage />}></Route>
 						<Route path="/" element={<HomePage />}></Route>
