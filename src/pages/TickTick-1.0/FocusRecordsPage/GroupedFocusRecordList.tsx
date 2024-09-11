@@ -52,6 +52,27 @@ const GroupedFocusRecordList = ({ groupedBy }) => {
 		}
 	};
 
+	const getShownGroupedFocusRecords = () => {
+		let currentShownFocusRecords = 0;
+		const maxShownFocusRecords = 50;
+		const shownGroupedByFocusRecords = {};
+
+		for (let key of Object.keys(groupedByFocusRecords)) {
+			const focusRecordsForTheDay = groupedByFocusRecords[key];
+
+			if (currentShownFocusRecords >= maxShownFocusRecords) {
+				break;
+			}
+
+			shownGroupedByFocusRecords[key] = focusRecordsForTheDay;
+			currentShownFocusRecords += focusRecordsForTheDay.length;
+		}
+
+		return shownGroupedByFocusRecords;
+	};
+
+	const shownGroupedFocusRecords = focusRecords && getShownGroupedFocusRecords();
+
 	return (
 		<>
 			{isLoadingGetFocusRecords ? (
@@ -62,7 +83,7 @@ const GroupedFocusRecordList = ({ groupedBy }) => {
 				</div>
 			) : (
 				<>
-					{/* {Object.keys(groupedByFocusRecords).map((groupKey) => {
+					{Object.keys(shownGroupedFocusRecords).map((groupKey) => {
 						const focusRecords = groupedByFocusRecords[groupKey];
 						const totalFocusDuration = getTotalFocusDuration(focusRecords, groupedBy);
 						const { title } = getInfoForGroup(groupKey);
@@ -89,7 +110,7 @@ const GroupedFocusRecordList = ({ groupedBy }) => {
 								)}
 							</div>
 						);
-					})} */}
+					})}
 				</>
 			)}
 		</>

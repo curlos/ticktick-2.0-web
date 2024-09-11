@@ -25,12 +25,19 @@ const FocusRecordsPage = () => {
 
 			<div className="w-full">
 				<TopHeader
-					{...{ topHeaderRef, headerHeight, setHeaderHeight, groupedBy, setGroupedBy, sortedBy, setSortedBy }}
+					{...{
+						topHeaderRef,
+						headerHeight,
+						setHeaderHeight,
+						groupedBy,
+						setGroupedBy,
+						sortedBy,
+						setSortedBy,
+						currentPage,
+						setCurrentPage,
+						totalPages,
+					}}
 				/>
-
-				<div className="flex justify-center">
-					<Pagination total={totalPages} current={currentPage} onChange={setCurrentPage} />
-				</div>
 
 				<div className="flex justify-center overflow-scroll gray-scrollbar" style={{ maxHeight }}>
 					<div className="container px-auto p-1">
