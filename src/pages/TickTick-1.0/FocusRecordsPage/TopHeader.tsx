@@ -13,7 +13,7 @@ const TopHeader = ({ topHeaderRef, setHeaderHeight, groupedBy, setGroupedBy, sor
 
 	return (
 		<div ref={topHeaderRef} className="flex justify-between items-center py-5 px-[50px]">
-			<h2 className="font-bold text-[24px]">Focus Records Page</h2>
+			<h2 className="font-bold text-[24px]">Focus Records</h2>
 
 			<div className="flex items-center gap-2">
 				<div className="relative">

@@ -62,7 +62,7 @@ const GroupedFocusRecordList = ({ groupedBy }) => {
 				</div>
 			) : (
 				<>
-					{Object.keys(groupedByFocusRecords).map((groupKey) => {
+					{/* {Object.keys(groupedByFocusRecords).map((groupKey) => {
 						const focusRecords = groupedByFocusRecords[groupKey];
 						const totalFocusDuration = getTotalFocusDuration(focusRecords, groupedBy);
 						const { title } = getInfoForGroup(groupKey);
@@ -89,7 +89,7 @@ const GroupedFocusRecordList = ({ groupedBy }) => {
 								)}
 							</div>
 						);
-					})}
+					})} */}
 				</>
 			)}
 		</>
