@@ -40,7 +40,7 @@ const GroupedFocusRecordList = ({ groupedBy }) => {
 		};
 
 		switch (groupedBy) {
-			case 'day':
+			case 'date':
 				return infoForGroupedByDay;
 			case 'tasks':
 				return {
