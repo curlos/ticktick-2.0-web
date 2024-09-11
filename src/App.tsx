@@ -11,7 +11,7 @@ import FocusStatsPage from './pages/FocusStatsPage';
 import StatsPage from './pages/StatsPage/StatsPage';
 import CalendarPage from './pages/CalendarPage/CalendarPage';
 import { CalendarProvider } from './contexts/useCalendarContext';
-import FocusRecordsPage from './pages/TickTick-1.0/FocusRecordsPage';
+import FocusRecordsPage from './pages/TickTick-1.0/FocusRecordsPage/FocusRecordsPage';
 
 function App() {
 	return (

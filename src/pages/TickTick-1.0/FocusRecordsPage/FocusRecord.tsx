@@ -1,7 +1,7 @@
 import ReactMarkdown from 'react-markdown';
-import { formatDateTime, getFormattedLongDay } from '../../utils/date.utils';
-import { getFocusDuration, getFormattedDuration } from '../../utils/helpers.utils';
-import Icon from '../../components/Icon';
+import { formatDateTime, getFormattedLongDay } from '../../../utils/date.utils';
+import { getFocusDuration, getFormattedDuration } from '../../../utils/helpers.utils';
+import Icon from '../../../components/Icon';
 import classNames from 'classnames';
 
 const FocusRecord = ({ focusRecord, showSubtaskTime = true, isLastItemForTheDay = false, focusDuration }) => {

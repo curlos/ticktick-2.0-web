@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { getFormattedLongDay, sortArrayByProperty, sortObjectByDateKeys } from '../../utils/date.utils';
-import { getFocusDuration, getFormattedDuration } from '../../utils/helpers.utils';
+import { getFormattedLongDay, sortArrayByProperty, sortObjectByDateKeys } from '../../../utils/date.utils';
+import { getFocusDuration, getFormattedDuration } from '../../../utils/helpers.utils';
 import FocusRecord from './FocusRecord';
 import {
 	useGetPomoAndStopwatchFocusRecordsQuery,
 	useGetAllTasksQuery,
 	useGetAllProjectsQuery,
-} from '../../services/resources/ticktickOneApi';
-import DailyHoursFocusGoal from './DailyHoursFocusGoal';
-import ActionSidebar from '../../components/ActionSidebar';
+} from '../../../services/resources/ticktickOneApi';
+import DailyHoursFocusGoal from '../DailyHoursFocusGoal';
+import ActionSidebar from '../../../components/ActionSidebar';
 
 const FocusRecordsPage = () => {
 	// RTK Query - TickTick 1.0 - Focus Records
