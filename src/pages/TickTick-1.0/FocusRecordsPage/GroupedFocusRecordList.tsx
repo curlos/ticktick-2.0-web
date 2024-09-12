@@ -71,46 +71,51 @@ const GroupedFocusRecordList = ({ groupedBy }) => {
 		return shownGroupedByFocusRecords;
 	};
 
-	const shownGroupedFocusRecords = focusRecords && getShownGroupedFocusRecords();
+	const isGrouped = groupedBy !== 'No Group';
+	const shownGroupedFocusRecords = focusRecords && isGrouped && getShownGroupedFocusRecords();
 
 	return (
 		<>
 			{isLoadingGetFocusRecords ? (
-				<div className="flex w-screen h-screen bg-color-gray-700 flex items-center justify-center">
+				<div className="flex w-full h-full bg-color-gray-700 flex items-center justify-center">
 					<div>
 						<img src="/cod-bo3-icons/Unstoppable_Medal_BO3.webp" className="h-[200px] animate-pulse" />
 					</div>
 				</div>
 			) : (
 				<>
-					{Object.keys(shownGroupedFocusRecords).map((groupKey) => {
-						const focusRecords = groupedByFocusRecords[groupKey];
-						const totalFocusDuration = getTotalFocusDuration(focusRecords, groupedBy);
-						const { title } = getInfoForGroup(groupKey);
+					{isGrouped ? (
+						Object.keys(shownGroupedFocusRecords).map((groupKey) => {
+							const focusRecords = groupedByFocusRecords[groupKey];
+							const totalFocusDuration = getTotalFocusDuration(focusRecords, groupedBy);
+							const { title } = getInfoForGroup(groupKey);
 
-						// TODO: If grouped by tasks, then we need to group those focus records for that task by date.
-						if (groupedBy === 'tasks') {
-						}
+							// TODO: If grouped by tasks, then we need to group those focus records for that task by date.
+							if (groupedBy === 'tasks') {
+							}
 
-						return (
-							<div key={groupKey} className="mb-[100px]">
-								<div className="flex items-center gap-3 mb-5">
-									<h2 className="text-[32px] font-bold border-b border-b-2">{title}</h2>
-									<div className="text-[24px] text-color-gray-100">
-										({getFormattedDuration(totalFocusDuration, false)})
+							return (
+								<div key={groupKey} className="mb-[100px]">
+									<div className="flex items-center gap-3 mb-5">
+										<h2 className="text-[32px] font-bold border-b border-b-2">{title}</h2>
+										<div className="text-[24px] text-color-gray-100">
+											({getFormattedDuration(totalFocusDuration, false)})
+										</div>
 									</div>
-								</div>
 
-								{groupedBy === 'tasks' ? (
-									<GroupedFocusRecordListByDate
-										{...{ focusRecords, getInfoForGroup, groupedBy, groupKey }}
-									/>
-								) : (
-									<FocusRecordList {...{ focusRecords, getInfoForGroup, groupedBy, groupKey }} />
-								)}
-							</div>
-						);
-					})}
+									{groupedBy === 'tasks' ? (
+										<GroupedFocusRecordListByDate
+											{...{ focusRecords, getInfoForGroup, groupedBy, groupKey }}
+										/>
+									) : (
+										<FocusRecordList {...{ focusRecords, getInfoForGroup, groupedBy, groupKey }} />
+									)}
+								</div>
+							);
+						})
+					) : (
+						<FocusRecordList {...{ focusRecords, getInfoForGroup, groupedBy, groupKey: null }} />
+					)}
 				</>
 			)}
 		</>
@@ -214,7 +219,8 @@ const FocusRecordList = ({ focusRecords, getInfoForGroup, groupedBy, groupKey })
 		<div className="space-y-3">
 			{focusRecords.map((focusRecord, index) => {
 				const isLastItem = index === focusRecords.length - 1;
-				const { focusRecordKey } = getInfoForGroup(groupKey, focusRecord, index);
+				const groupedInfo = groupKey && getInfoForGroup(groupKey, focusRecord, index);
+				const focusRecordKey = groupedInfo?.focusRecordKey || focusRecord.id;
 
 				return <FocusRecord key={focusRecordKey} focusRecord={focusRecord} isLastItemForTheDay={isLastItem} />;
 			})}

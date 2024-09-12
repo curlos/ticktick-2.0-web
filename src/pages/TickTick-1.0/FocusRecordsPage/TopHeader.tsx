@@ -46,7 +46,7 @@ const TopHeader = ({
 							setIsVisible={setIsDropdownGroupedByVisible}
 							selected={groupedBy}
 							setSelected={setGroupedBy}
-							selectedOptions={['Date', 'Task', 'Project']}
+							selectedOptions={['Date', 'Task', 'Project', 'No Group']}
 						/>
 					</div>
 
