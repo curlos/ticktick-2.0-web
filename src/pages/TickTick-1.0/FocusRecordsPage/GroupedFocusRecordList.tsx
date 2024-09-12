@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import {
 	useGetPomoAndStopwatchFocusRecordsQuery,
 	useGetAllTasksQuery,
@@ -8,7 +9,9 @@ import { getFocusDuration, getFormattedDuration } from '../../../utils/helpers.u
 import FocusRecord from './FocusRecord';
 import GroupedFocusRecordListByDate from './GroupedFocusRecordListByDate';
 
-const GroupedFocusRecordList = ({ groupedBy }) => {
+const MAX_SHOWN_FOCUS_RECORDS = 50;
+
+const GroupedFocusRecordList = ({ groupedBy, sortedBy, currentPage, setTotalPages }) => {
 	// RTK Query - TickTick 1.0 - Focus Records
 	const {
 		data: fetchedFocusRecords,
@@ -33,6 +36,16 @@ const GroupedFocusRecordList = ({ groupedBy }) => {
 	// const groupedFocusRecordsByTask = focusRecords && getGroupedFocusRecordsByTask(focusRecords, tasksById);
 	const groupedByFocusRecords = groupedFocusRecordsByDate;
 
+	useEffect(() => {
+		if (isLoadingGetFocusRecords || !focusRecords) {
+			return;
+		}
+
+		console.log(focusRecords);
+		const newTotalPages = Math.ceil(focusRecords.length / MAX_SHOWN_FOCUS_RECORDS);
+		setTotalPages(newTotalPages);
+	}, [isLoadingGetFocusRecords, focusRecords]);
+
 	const getInfoForGroup = (key, focusRecord, index) => {
 		const infoForGroupedByDay = {
 			title: key,
@@ -54,13 +67,12 @@ const GroupedFocusRecordList = ({ groupedBy }) => {
 
 	const getShownGroupedFocusRecords = () => {
 		let currentShownFocusRecords = 0;
-		const maxShownFocusRecords = 50;
 		const shownGroupedByFocusRecords = {};
 
 		for (let key of Object.keys(groupedByFocusRecords)) {
 			const focusRecordsForTheDay = groupedByFocusRecords[key];
 
-			if (currentShownFocusRecords >= maxShownFocusRecords) {
+			if (currentShownFocusRecords >= MAX_SHOWN_FOCUS_RECORDS) {
 				break;
 			}
 
@@ -71,8 +83,18 @@ const GroupedFocusRecordList = ({ groupedBy }) => {
 		return shownGroupedByFocusRecords;
 	};
 
+	const getShownUngroupedFocusRecords = () => {
+		const endIndex = currentPage * MAX_SHOWN_FOCUS_RECORDS;
+		const startIndex = endIndex - MAX_SHOWN_FOCUS_RECORDS;
+
+		// Get the current page and multiply it by MAX_FOCUS_RECORDS to get the starting index and then show the next MAX_FOCUS_RECORDS entries
+
+		return focusRecords.slice(startIndex, endIndex);
+	};
+
 	const isGrouped = groupedBy !== 'No Group';
 	const shownGroupedFocusRecords = focusRecords && isGrouped && getShownGroupedFocusRecords();
+	const shownUngroupedFocusRecords = focusRecords && !isGrouped && getShownUngroupedFocusRecords();
 
 	return (
 		<>
@@ -114,7 +136,14 @@ const GroupedFocusRecordList = ({ groupedBy }) => {
 							);
 						})
 					) : (
-						<FocusRecordList {...{ focusRecords, getInfoForGroup, groupedBy, groupKey: null }} />
+						<FocusRecordList
+							{...{
+								focusRecords: shownUngroupedFocusRecords,
+								getInfoForGroup,
+								groupedBy,
+								groupKey: null,
+							}}
+						/>
 					)}
 				</>
 			)}
