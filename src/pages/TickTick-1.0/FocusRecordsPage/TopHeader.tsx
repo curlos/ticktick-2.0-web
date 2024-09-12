@@ -77,7 +77,12 @@ const TopHeader = ({
 			{/* TODO: Move to the bottom of the focus records when done testing the Pagination and it works. */}
 			{totalPages && (
 				<div className="flex justify-center">
-					<Pagination total={totalPages} current={currentPage} onChange={setCurrentPage} />
+					<Pagination
+						total={totalPages}
+						currentPage={currentPage}
+						setCurrentPage={setCurrentPage}
+						totalPages={totalPages}
+					/>
 				</div>
 			)}
 		</div>
