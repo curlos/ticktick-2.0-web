@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Dropdown from './Dropdown/Dropdown';
 import { DropdownProps } from '../interfaces/interfaces';
 import classNames from 'classnames';
@@ -141,13 +141,15 @@ const DropdownCustomPageNumber: React.FC<DropdownAccountDetailsProps> = ({
 	const minPages = 1;
 	const maxPages = totalPages;
 
+	useEffect(() => {
+		setLocalCurrentPage(currentPage);
+	}, [currentPage]);
+
 	const handlePageChange = (newCurrentPage) => {
 		if (newCurrentPage >= minPages && newCurrentPage <= maxPages) {
 			setLocalCurrentPage(Number(newCurrentPage));
 		}
 	};
-
-	console.log(currentPage);
 
 	return (
 		<Dropdown
@@ -156,7 +158,14 @@ const DropdownCustomPageNumber: React.FC<DropdownAccountDetailsProps> = ({
 			setIsVisible={setIsVisible}
 			customClasses={classNames('shadow-2xl border border-color-gray-200 rounded-lg', customClasses)}
 		>
-			<div className="p-2 w-[80px]">
+			<form
+				onSubmit={(e) => {
+					e.preventDefault();
+					setCurrentPage(localCurrentPage);
+					setIsVisible(false);
+				}}
+				className="p-2 w-[80px]"
+			>
 				<CustomInput
 					value={localCurrentPage}
 					setValue={handlePageChange}
@@ -165,15 +174,12 @@ const DropdownCustomPageNumber: React.FC<DropdownAccountDetailsProps> = ({
 					max={totalPages}
 				/>
 				<button
+					type="submit"
 					className="mt-2 w-full bg-blue-500 rounded-md py-1 cursor-pointer hover:bg-color-blue-600 p-3"
-					onClick={() => {
-						setCurrentPage(localCurrentPage);
-						setIsVisible(false);
-					}}
 				>
 					Ok
 				</button>
-			</div>
+			</form>
 		</Dropdown>
 	);
 };
