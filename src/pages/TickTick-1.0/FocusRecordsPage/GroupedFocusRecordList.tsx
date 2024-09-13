@@ -87,9 +87,29 @@ const GroupedFocusRecordList = ({ groupedBy, sortedBy, currentPage, setTotalPage
 		const endIndex = currentPage * MAX_SHOWN_FOCUS_RECORDS;
 		const startIndex = endIndex - MAX_SHOWN_FOCUS_RECORDS;
 
-		// Get the current page and multiply it by MAX_FOCUS_RECORDS to get the starting index and then show the next MAX_FOCUS_RECORDS entries
+		const sortedFocusRecords = focusRecords.toSorted((focusRecordOne, focusRecordTwo) => {
+			if (sortedBy === 'Newest' || sortedBy === 'Oldest') {
+				const startTimeOne = new Date(focusRecordOne.startTime);
+				const startTimeTwo = new Date(focusRecordTwo.startTime);
 
-		return focusRecords.slice(startIndex, endIndex);
+				if (sortedBy === 'Newest') {
+					return startTimeTwo - startTimeOne;
+				} else if (sortedBy === 'Oldest') {
+					return startTimeOne - startTimeTwo;
+				}
+			} else if (sortedBy.startsWith('Focus Hours')) {
+				const durationOne = getFocusDuration(focusRecordOne, groupedBy);
+				const durationTwo = getFocusDuration(focusRecordTwo, groupedBy);
+
+				if (sortedBy === 'Focus Hours: Most-Least') {
+					return durationTwo - durationOne;
+				} else if (sortedBy === 'Focus Hours: Least-Most') {
+					return durationOne - durationTwo;
+				}
+			}
+		});
+
+		return sortedFocusRecords.slice(startIndex, endIndex);
 	};
 
 	const isGrouped = groupedBy !== 'No Group';

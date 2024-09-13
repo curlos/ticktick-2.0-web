@@ -20,7 +20,11 @@ const FocusRecordsPage = () => {
 	useEffect(() => {
 		// Scroll to the top of the focus records whenever you go to a new page.
 		focusRecordListRef?.current?.scrollTo(0, 0);
-	}, [currentPage]);
+	}, [currentPage, groupedBy, sortedBy]);
+
+	useEffect(() => {
+		setCurrentPage(1);
+	}, [groupedBy, sortedBy]);
 
 	return (
 		<div className="flex max-w-screen max-h-screen bg-color-gray-700">

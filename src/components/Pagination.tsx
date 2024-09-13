@@ -46,6 +46,13 @@ const Pagination: React.FC<PaginationProps> = ({ total, currentPage, setCurrentP
 			<button
 				className={`p-2 rounded ${currentPage === 1 ? 'cursor-not-allowed opacity-50' : 'hover:bg-blue-500/50'}`}
 				disabled={currentPage === 1}
+				onClick={() => setCurrentPage(1)}
+			>
+				{'<<'}
+			</button>
+			<button
+				className={`p-2 rounded ${currentPage === 1 ? 'cursor-not-allowed opacity-50' : 'hover:bg-blue-500/50'}`}
+				disabled={currentPage === 1}
 				onClick={() => setCurrentPage(currentPage - 1)}
 			>
 				{'<'}
@@ -95,6 +102,13 @@ const Pagination: React.FC<PaginationProps> = ({ total, currentPage, setCurrentP
 				onClick={() => setCurrentPage(currentPage + 1)}
 			>
 				{'>'}
+			</button>
+			<button
+				className={`p-2 rounded ${currentPage === total ? 'cursor-not-allowed opacity-50' : 'hover:bg-blue-500/50'}`}
+				disabled={currentPage === total}
+				onClick={() => setCurrentPage(total)}
+			>
+				{'>>'}
 			</button>
 		</div>
 	);

@@ -36,9 +36,9 @@ const FocusRecord = ({ focusRecord, showSubtaskTime = true, isLastItemForTheDay 
 	const { textColor, bgColor, borderColor } = cssStyles[themeColor];
 
 	return (
-		<div className="relative m-0 list-none last:mb-[4px] cursor-pointer" style={{ minHeight: '54px' }}>
+		<div className="relative m-0 list-none last:mb-[4px]" style={{ minHeight: '54px' }}>
 			<div className="absolute w-[24px] h-[24px] bg-primary-10 rounded-full flex items-center justify-center">
-				<Icon name="timer" customClass={classNames('!text-[20px] cursor-pointer', textColor)} />
+				<Icon name="timer" customClass={classNames('!text-[20px]', textColor)} />
 			</div>
 
 			{!isLastItemForTheDay && (
