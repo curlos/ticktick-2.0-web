@@ -1,4 +1,8 @@
-import { arrayToObjectByKey, getCompletedTasksGroupedByDate } from '../../utils/helpers.utils';
+import {
+	arrayToObjectByKey,
+	getAllTasksAndItemsTickTickOne,
+	getCompletedTasksGroupedByDate,
+} from '../../utils/helpers.utils';
 import { baseAPI, buildQueryString } from '../api';
 
 /**
@@ -25,6 +29,7 @@ export const tickTickOneApi = baseAPI.injectEndpoints({
 			transformResponse: (response) => {
 				const tasks = response;
 				const tasksById = arrayToObjectByKey(response, 'id');
+				const allTasksAndItems = getAllTasksAndItemsTickTickOne(tasks);
 				const completedTasksGroupedByDate = getCompletedTasksGroupedByDate(tasks);
 
 				let totalCompletedTasks = 0;
@@ -35,7 +40,7 @@ export const tickTickOneApi = baseAPI.injectEndpoints({
 					}
 				});
 
-				return { tasks, tasksById, completedTasksGroupedByDate, totalCompletedTasks };
+				return { tasks, tasksById, allTasksAndItems, completedTasksGroupedByDate, totalCompletedTasks };
 			},
 		}),
 		getAllProjects: builder.query({

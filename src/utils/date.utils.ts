@@ -672,3 +672,27 @@ export const isTimeBetween = (targetDate, startDate, endDate, offsetMinutes = 10
 	// Check if the target time in milliseconds is between the adjusted start and end times
 	return targetTime > startTime && targetTime < endTime;
 };
+
+export const getTimeSince = (date) => {
+	const now = new Date(); // Current date and time
+	const past = new Date(date); // Convert the input date to a Date object
+	if (isNaN(past.getTime())) {
+		return 'Invalid date'; // Check if the input date is valid
+	}
+
+	const seconds = Math.floor((now - past) / 1000);
+	const minutes = Math.floor(seconds / 60);
+	const hours = Math.floor(minutes / 60);
+	const days = Math.floor(hours / 24);
+	const months = Math.floor(days / 30); // Approximation
+	const years = Math.floor(days / 365);
+
+	return {
+		seconds: seconds,
+		minutes: minutes,
+		hours: hours,
+		days: days,
+		months: months,
+		years: years,
+	};
+};

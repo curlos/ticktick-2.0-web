@@ -8,8 +8,6 @@ import TopBar from './TopBar';
 const StatsPage = () => {
 	const location = useLocation();
 
-	console.log(location);
-
 	return (
 		<div className="flex max-w-screen max-h-[100vh]">
 			<div className="">
