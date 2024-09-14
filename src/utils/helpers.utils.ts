@@ -1,3 +1,4 @@
+import { getFormattedLongDay } from './date.utils';
 import { filterTasksByFilter } from './filters.util';
 import { SMART_LISTS } from './smartLists.utils';
 
@@ -538,4 +539,42 @@ export const getFocusDuration = (focusRecord, groupedBy) => {
 	const realFocusTimeSeconds = totalDurationSeconds - pauseDuration;
 
 	return realFocusTimeSeconds;
+};
+
+export const getCompletedTasksGroupedByDate = (tasks) => {
+	const completedTasksGroupedByDate = {};
+
+	const storeTaskInCompletedDateKey = (completedTime, task) => {
+		const completedTimeDate = new Date(completedTime);
+		const completedTimeKey = getFormattedLongDay(completedTimeDate);
+
+		if (!completedTasksGroupedByDate[completedTimeKey]) {
+			completedTasksGroupedByDate[completedTimeKey] = [];
+		}
+
+		completedTasksGroupedByDate[completedTimeKey].push(task);
+	};
+
+	for (let task of tasks) {
+		const { completedTime, items } = task;
+		const noCompletedTasksOrTaskItems = !completedTime && (!items || items.length === 0);
+
+		if (noCompletedTasksOrTaskItems) {
+			continue;
+		}
+
+		if (completedTime) {
+			storeTaskInCompletedDateKey(completedTime, task, completedTasksGroupedByDate);
+		}
+
+		for (let item of items) {
+			const { completedTime } = item;
+
+			if (completedTime) {
+				storeTaskInCompletedDateKey(completedTime, item, completedTasksGroupedByDate);
+			}
+		}
+	}
+
+	return completedTasksGroupedByDate;
 };

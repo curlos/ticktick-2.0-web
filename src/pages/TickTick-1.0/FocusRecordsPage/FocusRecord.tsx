@@ -5,6 +5,10 @@ import Icon from '../../../components/Icon';
 import classNames from 'classnames';
 
 const FocusRecord = ({ focusRecord, showSubtaskTime = true, isLastItemForTheDay = false, focusDuration }) => {
+	// RTK Query - TickTick 1.0 - Tasks
+	const { data: fetchedTasks, isLoading: isLoadingGetTasks, error: errorGetTasks } = useGetAllTasksQuery();
+	const { tasks, tasksById, completedTasksGroupedByDate } = fetchedTasks || {};
+
 	const { note, startTime, endTime, tasks } = focusRecord;
 
 	const startTimeObj = formatDateTime(startTime);
@@ -34,6 +38,20 @@ const FocusRecord = ({ focusRecord, showSubtaskTime = true, isLastItemForTheDay 
 	};
 
 	const { textColor, bgColor, borderColor } = cssStyles[themeColor];
+
+	const getAllCompletedTasksDuringFocusRecord = () => {
+		const startTimeDate = new Date(startTime);
+		const endTimeDate = new Date(endTime);
+		const startTimeKey = getFormattedLongDay(startTimeDate);
+		const endTimeKey = getFormattedLongDay(endTimeDate);
+
+		if (startTimeKey === endTimeKey) {
+			completedTasksGroupedByDate[startTimeKey];
+		} else {
+			completedTasksGroupedByDate[startTimeKey];
+			completedTasksGroupedByDate[endTimeKey];
+		}
+	};
 
 	return (
 		<div className="relative m-0 list-none last:mb-[4px]" style={{ minHeight: '54px' }}>
@@ -76,7 +94,7 @@ const FocusRecord = ({ focusRecord, showSubtaskTime = true, isLastItemForTheDay 
 
 						return (
 							<div key={`${taskId} - ${startTime}`} className="flex justify-between items-center">
-								<h3 className="text-[20px] font-bold truncate md:max-w-[500px] lg:max-w-[700px] xl:max-w-[900px]">
+								<h3 className="text-[22px] underline font-bold truncate md:max-w-[500px] lg:max-w-[700px] xl:max-w-[900px]">
 									{task?.title}
 								</h3>
 
@@ -89,9 +107,13 @@ const FocusRecord = ({ focusRecord, showSubtaskTime = true, isLastItemForTheDay 
 						);
 					})}
 
-					<div className="text-color-gray-100 text-white text-[15px] mt-1 break-words react-markdown">
+					<div className="text-color-gray-100 text-white text-[15px] mt-[-15px] break-words react-markdown">
 						<ReactMarkdown>{note}</ReactMarkdown>
 					</div>
+
+					<h4 className="text-[16px] font-bold underline mt-4">Completed Tasks</h4>
+
+					<div></div>
 				</div>
 			</div>
 		</div>

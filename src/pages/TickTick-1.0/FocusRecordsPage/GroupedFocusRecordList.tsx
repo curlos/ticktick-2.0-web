@@ -22,7 +22,9 @@ const GroupedFocusRecordList = ({ groupedBy, sortedBy, currentPage, setTotalPage
 
 	// RTK Query - TickTick 1.0 - Tasks
 	const { data: fetchedTasks, isLoading: isLoadingGetTasks, error: errorGetTasks } = useGetAllTasksQuery();
-	const { tasks, tasksById } = fetchedTasks || {};
+	const { tasks, tasksById, completedTasksGroupedByDate } = fetchedTasks || {};
+
+	console.log(completedTasksGroupedByDate);
 
 	// RTK Query - TickTick 1.0 - Projects
 	const {
@@ -41,7 +43,6 @@ const GroupedFocusRecordList = ({ groupedBy, sortedBy, currentPage, setTotalPage
 			return;
 		}
 
-		console.log(focusRecords);
 		const newTotalPages = Math.ceil(focusRecords.length / MAX_SHOWN_FOCUS_RECORDS);
 		setTotalPages(newTotalPages);
 	}, [isLoadingGetFocusRecords, focusRecords]);

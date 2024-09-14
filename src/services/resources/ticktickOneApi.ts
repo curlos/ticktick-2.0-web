@@ -1,4 +1,4 @@
-import { arrayToObjectByKey } from '../../utils/helpers.utils';
+import { arrayToObjectByKey, getCompletedTasksGroupedByDate } from '../../utils/helpers.utils';
 import { baseAPI, buildQueryString } from '../api';
 
 /**
@@ -23,9 +23,13 @@ export const tickTickOneApi = baseAPI.injectEndpoints({
 				return queryString ? `/ticktick-1.0/tasks?${queryString}` : '/ticktick-1.0/tasks';
 			},
 			transformResponse: (response) => {
+				const tasks = response;
 				const tasksById = arrayToObjectByKey(response, 'id');
+				const completedTasksGroupedByDate = getCompletedTasksGroupedByDate(tasks);
 
-				return { tasks: response, tasksById };
+				console.log(completedTasksGroupedByDate);
+
+				return { tasks, tasksById, completedTasksGroupedByDate };
 			},
 		}),
 		getAllProjects: builder.query({

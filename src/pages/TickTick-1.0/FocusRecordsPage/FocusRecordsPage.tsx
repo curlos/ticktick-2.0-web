@@ -10,7 +10,7 @@ const FocusRecordsPage = () => {
 
 	const focusRecordListRef = useRef(null);
 	const [groupedBy, setGroupedBy] = useState('No Group');
-	const [sortedBy, setSortedBy] = useState('Oldest');
+	const [sortedBy, setSortedBy] = useState('Newest');
 
 	const maxHeight = useMaxHeight(headerHeight);
 
