@@ -81,27 +81,31 @@ const GroupedFocusRecordList = ({
 		const endIndex = currentPage * MAX_SHOWN_FOCUS_RECORDS;
 		const startIndex = endIndex - MAX_SHOWN_FOCUS_RECORDS;
 
-		const sortedFocusRecords = filteredFocusRecords.toSorted((focusRecordOne, focusRecordTwo) => {
-			if (sortedBy === 'Newest' || sortedBy === 'Oldest') {
-				const startTimeOne = new Date(focusRecordOne.startTime);
-				const startTimeTwo = new Date(focusRecordTwo.startTime);
+		const noSearchText = sortedBy !== 'Most Relevant';
 
-				if (sortedBy === 'Newest') {
-					return startTimeTwo - startTimeOne;
-				} else if (sortedBy === 'Oldest') {
-					return startTimeOne - startTimeTwo;
-				}
-			} else if (sortedBy.startsWith('Focus Hours')) {
-				const durationOne = getFocusDuration(focusRecordOne, groupedBy);
-				const durationTwo = getFocusDuration(focusRecordTwo, groupedBy);
+		const sortedFocusRecords = noSearchText
+			? filteredFocusRecords.toSorted((focusRecordOne, focusRecordTwo) => {
+					if (sortedBy === 'Newest' || sortedBy === 'Oldest') {
+						const startTimeOne = new Date(focusRecordOne.startTime);
+						const startTimeTwo = new Date(focusRecordTwo.startTime);
 
-				if (sortedBy === 'Focus Hours: Most-Least') {
-					return durationTwo - durationOne;
-				} else if (sortedBy === 'Focus Hours: Least-Most') {
-					return durationOne - durationTwo;
-				}
-			}
-		});
+						if (sortedBy === 'Newest') {
+							return startTimeTwo - startTimeOne;
+						} else if (sortedBy === 'Oldest') {
+							return startTimeOne - startTimeTwo;
+						}
+					} else if (sortedBy.startsWith('Focus Hours')) {
+						const durationOne = getFocusDuration(focusRecordOne, groupedBy);
+						const durationTwo = getFocusDuration(focusRecordTwo, groupedBy);
+
+						if (sortedBy === 'Focus Hours: Most-Least') {
+							return durationTwo - durationOne;
+						} else if (sortedBy === 'Focus Hours: Least-Most') {
+							return durationOne - durationTwo;
+						}
+					}
+				})
+			: filteredFocusRecords;
 
 		return sortedFocusRecords.slice(startIndex, endIndex);
 	};
@@ -112,7 +116,7 @@ const GroupedFocusRecordList = ({
 
 	return (
 		<>
-			{isLoadingGetFocusRecords ? (
+			{isLoadingGetFocusRecords || !filteredFocusRecords ? (
 				<div className="flex w-full h-full bg-color-gray-700 flex items-center justify-center">
 					<div>
 						<img src="/cod-bo3-icons/Unstoppable_Medal_BO3.webp" className="h-[200px] animate-pulse" />
@@ -141,10 +145,22 @@ const GroupedFocusRecordList = ({
 
 									{groupedBy === 'tasks' ? (
 										<GroupedFocusRecordListByDate
-											{...{ focusRecords, getInfoForGroup, groupedBy, groupKey }}
+											{...{
+												focusRecords: filteredFocusRecords,
+												getInfoForGroup,
+												groupedBy,
+												groupKey,
+											}}
 										/>
 									) : (
-										<FocusRecordList {...{ focusRecords, getInfoForGroup, groupedBy, groupKey }} />
+										<FocusRecordList
+											{...{
+												focusRecords: filteredFocusRecords,
+												getInfoForGroup,
+												groupedBy,
+												groupKey,
+											}}
+										/>
 									)}
 								</div>
 							);

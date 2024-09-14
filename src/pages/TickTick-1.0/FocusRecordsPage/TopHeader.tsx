@@ -21,9 +21,18 @@ const TopHeader = ({
 	setFilteredFocusRecords,
 	focusRecordListRef,
 }) => {
+	const DEFAULT_SORT_BY_OPTIONS = ['Newest', 'Oldest', 'Focus Hours: Most-Least', 'Focus Hours: Least-Most'];
+	const [sortByOptions, setSortByOptions] = useState(DEFAULT_SORT_BY_OPTIONS);
+
 	const [searchText, setSearchText] = useState('');
 	const fuse = new Fuse(defaultFocusRecords, {
 		includeScore: true,
+		isCaseSensitive: false,
+		findAllMatches: false,
+		threshold: 0.3, // Lower threshold for stricter matches
+		location: 0,
+		distance: 100, // Lower distance to prefer closer matches
+		minMatchCharLength: 3, // Increase min match character length for longer matches
 		keys: [
 			{ name: 'tasks.title', weight: 1 },
 			{ name: 'note', weight: 1 },
@@ -49,9 +58,15 @@ const TopHeader = ({
 		if (searchText.trim() === '') {
 			// If searchText is empty, consider all focus records as the searched result.
 			searchedItems = defaultFocusRecords.map((focusRecord) => ({ item: focusRecord }));
+			setSortByOptions(DEFAULT_SORT_BY_OPTIONS);
+			setSortedBy('Newest');
 		} else {
 			// When searchText is not empty, perform the search using Fuse.js
 			searchedItems = fuse.search(searchText);
+
+			const mostRelevantSortByOption = 'Most Relevant';
+			setSortByOptions([mostRelevantSortByOption, ...DEFAULT_SORT_BY_OPTIONS]);
+			setSortedBy(mostRelevantSortByOption);
 		}
 
 		setFilteredFocusRecords(searchedItems.map((result) => result.item));
@@ -112,7 +127,7 @@ const TopHeader = ({
 							setIsVisible={setIsDropdownSortedByVisible}
 							selected={sortedBy}
 							setSelected={setSortedBy}
-							selectedOptions={['Newest', 'Oldest', 'Focus Hours: Most-Least', 'Focus Hours: Least-Most']}
+							selectedOptions={sortByOptions}
 						/>
 					</div>
 
