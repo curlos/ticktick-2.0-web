@@ -659,3 +659,16 @@ export function isTimeWithin25Minutes(timeString, referenceDate) {
 	// Return true if the difference is 25 minutes or less
 	return minutesDifference <= 25;
 }
+
+export const isTimeBetween = (targetDate, startDate, endDate, offsetMinutes = 10) => {
+	// Convert offset minutes to milliseconds
+	const offsetMilliseconds = offsetMinutes * 60 * 1000;
+
+	// Get the time in milliseconds since the epoch for each date
+	const targetTime = targetDate.getTime();
+	const startTime = startDate.getTime() - offsetMilliseconds; // Apply offset to start time
+	const endTime = endDate.getTime() + offsetMilliseconds; // Apply offset to end time
+
+	// Check if the target time in milliseconds is between the adjusted start and end times
+	return targetTime > startTime && targetTime < endTime;
+};
