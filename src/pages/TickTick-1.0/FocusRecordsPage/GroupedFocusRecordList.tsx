@@ -31,6 +31,8 @@ const GroupedFocusRecordList = ({
 	// const groupedFocusRecordsByTask = filteredFocusRecords && getGroupedFocusRecordsByTask(filteredFocusRecords, tasksById);
 	const groupedByFocusRecords = groupedFocusRecordsByDate;
 
+	console.log(groupedByFocusRecords);
+
 	useEffect(() => {
 		if (isLoadingGetFocusRecords || !filteredFocusRecords) {
 			return;
@@ -124,15 +126,17 @@ const GroupedFocusRecordList = ({
 				</div>
 			) : (
 				<>
-					{isGrouped ? (
+					{filteredFocusRecords.length === 0 ? (
+						<div>No Focus Records</div>
+					) : isGrouped ? (
 						Object.keys(shownGroupedFocusRecords).map((groupKey) => {
 							const focusRecords = groupedByFocusRecords[groupKey];
 							const totalFocusDuration = getTotalFocusDuration(focusRecords, groupedBy);
 							const { title } = getInfoForGroup(groupKey);
 
 							// TODO: If grouped by tasks, then we need to group those focus records for that task by date.
-							if (groupedBy === 'tasks') {
-							}
+							// if (groupedBy === 'tasks') {
+							// }
 
 							return (
 								<div key={groupKey} className="mb-[100px]">

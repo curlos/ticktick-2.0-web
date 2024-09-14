@@ -79,8 +79,6 @@ const TopHeader = ({
 
 	useResizeObserver(topHeaderRef, setHeaderHeight, 'height');
 
-	console.log(filteredFocusRecords);
-
 	return (
 		<div ref={topHeaderRef}>
 			<div className="flex justify-between items-center py-5 px-[50px]">
@@ -141,14 +139,14 @@ const TopHeader = ({
 							placeholder="Search"
 							value={searchText}
 							onChange={(e) => setSearchText(e.target.value)}
-							className="text-[13px] bg-transparent placeholder:text-[#7C7C7C] mb-0 w-full outline-none resize-none p-1"
+							className="text-[14px] bg-transparent placeholder:text-[#7C7C7C] mb-0 w-full outline-none resize-none p-1"
 						/>
 					</div>
 				</div>
 			</div>
 
 			{/* TODO: Move to the bottom of the focus records when done testing the Pagination and it works. */}
-			{totalPages && (
+			{totalPages > 0 && (
 				<div className="flex justify-center">
 					<Pagination
 						total={totalPages}
