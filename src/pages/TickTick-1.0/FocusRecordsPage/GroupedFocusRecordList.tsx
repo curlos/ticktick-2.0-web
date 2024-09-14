@@ -1,9 +1,5 @@
 import { useEffect } from 'react';
-import {
-	useGetPomoAndStopwatchFocusRecordsQuery,
-	useGetAllTasksQuery,
-	useGetAllProjectsQuery,
-} from '../../../services/resources/ticktickOneApi';
+import { useGetAllTasksQuery, useGetAllProjectsQuery } from '../../../services/resources/ticktickOneApi';
 import { getFormattedLongDay, sortObjectByDateKeys, sortArrayByProperty } from '../../../utils/date.utils';
 import { getFocusDuration, getFormattedDuration } from '../../../utils/helpers.utils';
 import FocusRecord from './FocusRecord';
@@ -11,18 +7,17 @@ import GroupedFocusRecordListByDate from './GroupedFocusRecordListByDate';
 
 const MAX_SHOWN_FOCUS_RECORDS = 50;
 
-const GroupedFocusRecordList = ({ groupedBy, sortedBy, currentPage, setTotalPages }) => {
-	// RTK Query - TickTick 1.0 - Focus Records
-	const {
-		data: fetchedFocusRecords,
-		isLoading: isLoadingGetFocusRecords,
-		error: errorGetFocusRecords,
-	} = useGetPomoAndStopwatchFocusRecordsQuery();
-	const { focusRecords, focusRecordsById } = fetchedFocusRecords || {};
-
+const GroupedFocusRecordList = ({
+	filteredFocusRecords,
+	isLoadingGetFocusRecords,
+	groupedBy,
+	sortedBy,
+	currentPage,
+	setTotalPages,
+}) => {
 	// RTK Query - TickTick 1.0 - Tasks
 	const { data: fetchedTasks, isLoading: isLoadingGetTasks, error: errorGetTasks } = useGetAllTasksQuery();
-	const { tasksById, totalCompletedTasks } = fetchedTasks || {};
+	const { tasksById } = fetchedTasks || {};
 
 	// RTK Query - TickTick 1.0 - Projects
 	const {
@@ -32,18 +27,18 @@ const GroupedFocusRecordList = ({ groupedBy, sortedBy, currentPage, setTotalPage
 	} = useGetAllProjectsQuery();
 	const { projects, projectsById } = fetchedProjects || {};
 
-	const groupedFocusRecordsByDate = focusRecords && getGroupedFocusRecordsByDate(focusRecords);
-	// const groupedFocusRecordsByTask = focusRecords && getGroupedFocusRecordsByTask(focusRecords, tasksById);
+	const groupedFocusRecordsByDate = filteredFocusRecords && getGroupedFocusRecordsByDate(filteredFocusRecords);
+	// const groupedFocusRecordsByTask = filteredFocusRecords && getGroupedFocusRecordsByTask(filteredFocusRecords, tasksById);
 	const groupedByFocusRecords = groupedFocusRecordsByDate;
 
 	useEffect(() => {
-		if (isLoadingGetFocusRecords || !focusRecords) {
+		if (isLoadingGetFocusRecords || !filteredFocusRecords) {
 			return;
 		}
 
-		const newTotalPages = Math.ceil(focusRecords.length / MAX_SHOWN_FOCUS_RECORDS);
+		const newTotalPages = Math.ceil(filteredFocusRecords.length / MAX_SHOWN_FOCUS_RECORDS);
 		setTotalPages(newTotalPages);
-	}, [isLoadingGetFocusRecords, focusRecords]);
+	}, [isLoadingGetFocusRecords, filteredFocusRecords]);
 
 	const getInfoForGroup = (key, focusRecord, index) => {
 		const infoForGroupedByDay = {
@@ -86,7 +81,7 @@ const GroupedFocusRecordList = ({ groupedBy, sortedBy, currentPage, setTotalPage
 		const endIndex = currentPage * MAX_SHOWN_FOCUS_RECORDS;
 		const startIndex = endIndex - MAX_SHOWN_FOCUS_RECORDS;
 
-		const sortedFocusRecords = focusRecords.toSorted((focusRecordOne, focusRecordTwo) => {
+		const sortedFocusRecords = filteredFocusRecords.toSorted((focusRecordOne, focusRecordTwo) => {
 			if (sortedBy === 'Newest' || sortedBy === 'Oldest') {
 				const startTimeOne = new Date(focusRecordOne.startTime);
 				const startTimeTwo = new Date(focusRecordTwo.startTime);
@@ -112,8 +107,8 @@ const GroupedFocusRecordList = ({ groupedBy, sortedBy, currentPage, setTotalPage
 	};
 
 	const isGrouped = groupedBy !== 'No Group';
-	const shownGroupedFocusRecords = focusRecords && isGrouped && getShownGroupedFocusRecords();
-	const shownUngroupedFocusRecords = focusRecords && !isGrouped && getShownUngroupedFocusRecords();
+	const shownGroupedFocusRecords = filteredFocusRecords && isGrouped && getShownGroupedFocusRecords();
+	const shownUngroupedFocusRecords = filteredFocusRecords && !isGrouped && getShownUngroupedFocusRecords();
 
 	return (
 		<>

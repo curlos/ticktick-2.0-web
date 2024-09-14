@@ -159,7 +159,7 @@ const FocusRecord = ({ focusRecord, showSubtaskTime = true, isLastItemForTheDay 
 
 							<ul className="list-disc ml-[20px]">
 								{completedTasksDuringFocusSession.map((completedTask) => (
-									<li>{completedTask.title}</li>
+									<li key={`${focusRecord.id} ${completedTask.id}`}>{completedTask.title}</li>
 								))}
 							</ul>
 						</>
