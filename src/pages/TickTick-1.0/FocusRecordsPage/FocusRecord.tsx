@@ -39,6 +39,10 @@ const FocusRecord = ({ focusRecord, showSubtaskTime = true, isLastItemForTheDay 
 	const { textColor, bgColor, borderColor } = cssStyles[themeColor];
 
 	const getAllCompletedTasksDuringFocusRecord = () => {
+		if (!completedTasksGroupedByDate) {
+			return [];
+		}
+
 		const startTimeDate = new Date(startTime);
 		const endTimeDate = new Date(endTime);
 		const startTimeKey = getFormattedLongDay(startTimeDate);
@@ -70,8 +74,12 @@ const FocusRecord = ({ focusRecord, showSubtaskTime = true, isLastItemForTheDay 
 		return completedTasksDuringFocusSession;
 	};
 
-	const getCompletedTasksBetweenTimes = (completedTaskInTimeDay, startTimeDate, endTimeDate) => {
-		return completedTaskInTimeDay.filter((completedTask) => {
+	const getCompletedTasksBetweenTimes = (completedTasksInTimeDay, startTimeDate, endTimeDate) => {
+		if (!completedTasksInTimeDay) {
+			return [];
+		}
+
+		return completedTasksInTimeDay.filter((completedTask) => {
 			const { completedTime } = completedTask;
 			const completedTimeDate = new Date(completedTime);
 
@@ -140,10 +148,7 @@ const FocusRecord = ({ focusRecord, showSubtaskTime = true, isLastItemForTheDay 
 					})}
 
 					<div
-						className={classNames(
-							'text-color-gray-100 text-white text-[15px] break-words react-markdown',
-							thereAreCompletedTasks && 'mt-[-15px]'
-						)}
+						className={classNames('text-color-gray-100 text-white text-[15px] break-words react-markdown')}
 					>
 						<ReactMarkdown>{note}</ReactMarkdown>
 					</div>

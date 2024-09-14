@@ -27,9 +27,15 @@ export const tickTickOneApi = baseAPI.injectEndpoints({
 				const tasksById = arrayToObjectByKey(response, 'id');
 				const completedTasksGroupedByDate = getCompletedTasksGroupedByDate(tasks);
 
-				console.log(completedTasksGroupedByDate);
+				let totalCompletedTasks = 0;
 
-				return { tasks, tasksById, completedTasksGroupedByDate };
+				Object.values(completedTasksGroupedByDate).forEach((arr) => {
+					if (arr) {
+						totalCompletedTasks += arr.length;
+					}
+				});
+
+				return { tasks, tasksById, completedTasksGroupedByDate, totalCompletedTasks };
 			},
 		}),
 		getAllProjects: builder.query({

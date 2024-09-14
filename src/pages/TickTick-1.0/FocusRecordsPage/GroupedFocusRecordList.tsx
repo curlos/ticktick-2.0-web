@@ -22,9 +22,7 @@ const GroupedFocusRecordList = ({ groupedBy, sortedBy, currentPage, setTotalPage
 
 	// RTK Query - TickTick 1.0 - Tasks
 	const { data: fetchedTasks, isLoading: isLoadingGetTasks, error: errorGetTasks } = useGetAllTasksQuery();
-	const { tasks, tasksById, completedTasksGroupedByDate } = fetchedTasks || {};
-
-	console.log(completedTasksGroupedByDate);
+	const { tasksById, totalCompletedTasks } = fetchedTasks || {};
 
 	// RTK Query - TickTick 1.0 - Projects
 	const {
