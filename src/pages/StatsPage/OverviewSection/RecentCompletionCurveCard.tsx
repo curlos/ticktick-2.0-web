@@ -2,40 +2,16 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import GeneralSelectButtonAndDropdown from '../GeneralSelectButtonAndDropdown';
 import { useEffect, useState } from 'react';
 import { useStatsContext } from '../../../contexts/useStatsContext';
-
-const DEFAULT_DATA = [
-	{
-		name: 'July 8',
-		score: 2,
-	},
-	{
-		name: 'July 9',
-		score: 2,
-	},
-	{
-		name: 'July 10',
-		score: 0,
-	},
-	{
-		name: 'July 11',
-		score: 1,
-	},
-	{
-		name: 'July 12',
-		score: 1,
-	},
-	{
-		name: 'July 13',
-		score: 0,
-	},
-	{
-		name: 'July 14',
-		score: 1,
-	},
-];
+import { getLast7Days } from '../../../utils/date.utils';
 
 const RecentCompletionCurveCard = () => {
-	const [data, setData] = useState(DEFAULT_DATA);
+	const lastSevenDays = getLast7Days();
+	const defaultData = lastSevenDays.map((day) => ({
+		name: day.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+		score: 0,
+	}));
+
+	const [data, setData] = useState(defaultData);
 	const selectedOptions = ['Day', 'Week', 'Month'];
 	const [selected, setSelected] = useState(selectedOptions[0]);
 

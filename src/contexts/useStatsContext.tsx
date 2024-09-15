@@ -104,8 +104,6 @@ const useStats = () => {
 		return lastSevenDaysData;
 	};
 
-	console.log(statsForLastSevenDays);
-
 	return {
 		total: {
 			numOfAllTasks: allTasksAndItems?.length || 0,
