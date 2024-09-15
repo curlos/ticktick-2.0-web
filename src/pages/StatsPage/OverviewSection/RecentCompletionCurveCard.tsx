@@ -15,17 +15,35 @@ const RecentCompletionCurveCard = () => {
 	const selectedOptions = ['Day', 'Week', 'Month'];
 	const [selected, setSelected] = useState(selectedOptions[0]);
 
-	const { statsForLastSevenDays } = useStatsContext();
+	const { statsForLastSevenDays, statsForLastSevenWeeks } = useStatsContext();
 
 	useEffect(() => {
-		if (statsForLastSevenDays) {
-			const newData = statsForLastSevenDays?.map((dataForTheDay) => ({
-				name: dataForTheDay.name,
-				score: dataForTheDay.completedTasks?.length || 0,
-			}));
-			setData(newData);
+		if (!statsForLastSevenDays || !statsForLastSevenWeeks) {
+			return;
 		}
-	}, [statsForLastSevenDays]);
+
+		let statsToUse = null;
+
+		switch (selected) {
+			case 'Day':
+				statsToUse = statsForLastSevenDays;
+				break;
+			case 'Week':
+				statsToUse = statsForLastSevenWeeks;
+				break;
+			default:
+				statsToUse = statsForLastSevenDays;
+		}
+
+		const newData = statsToUse?.map((dataForTheDay) => ({
+			name: dataForTheDay.name,
+			fullName: dataForTheDay.fullName || dataForTheDay.name,
+			score: dataForTheDay.completedTasks?.length || 0,
+		}));
+		setData(newData);
+	}, [selected, statsForLastSevenDays, statsForLastSevenWeeks]);
+
+	console.log(data);
 
 	return (
 		<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col h-[350px]">
@@ -72,9 +90,12 @@ const RecentCompletionCurveCard = () => {
 						content={({ payload }) => {
 							// "payload" property is an empty array if the tooltip is not active. Otherwise, if it is active, then it'll show an element in the "payload" array.
 							if (payload && payload[0]) {
-								const { name, score } = payload[0].payload;
+								const { name, fullName, score } = payload[0].payload;
+
+								const nameToUse = fullName ? fullName : name;
+
 								return (
-									<div className="bg-black text-blue-500 p-2 rounded-md">{`${name}, ${score}`}</div>
+									<div className="bg-black text-blue-500 p-2 rounded-md">{`${nameToUse} = ${score}`}</div>
 								);
 							}
 

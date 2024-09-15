@@ -4,7 +4,7 @@ import {
 	useGetAllProjectsQuery,
 	useGetPomoAndStopwatchFocusRecordsQuery,
 } from '../services/resources/ticktickOneApi';
-import { getFormattedLongDay, getLast7Days, getTimeSince } from '../utils/date.utils';
+import { getFormattedLongDay, getLast7Days, getLast7Weeks, getTimeSince } from '../utils/date.utils';
 import { getFocusDurationFromArray, getGroupedFocusRecordsByDate } from '../utils/helpers.utils';
 
 const StatsContext = createContext();
@@ -49,6 +49,7 @@ const useStats = () => {
 	const [totalFocusDuration, setTotalFocusDuration] = useState(0);
 	const [focusDurationForToday, setFocusDurationForToday] = useState(0);
 	const [statsForLastSevenDays, setStatsForLastSevenDays] = useState(null);
+	const [statsForLastSevenWeeks, setStatsForLastSevenWeeks] = useState(null);
 
 	// TODO: I've set it to September 13, 2024 for now since that's the last date with the most up-to-date data but once I stop getting the local data, I need to set this back to Today's date so remove "September 13, 2024".
 	const todayDate = new Date('September 13, 2024');
@@ -79,6 +80,7 @@ const useStats = () => {
 		setCompletedTasksForToday(completedTasksGroupedByDate[todayDateKey]);
 		setFocusDurationForToday(getFocusDurationFromArray(focusRecordsFromToday));
 		setStatsForLastSevenDays(getStatsForLast7Days());
+		setStatsForLastSevenWeeks(getStatsForLast7Weeks());
 	}, [focusRecordsFromToday, completedTasksGroupedByDate, groupedFocusRecordsByDate]);
 
 	const getStatsForLast7Days = () => {
@@ -104,6 +106,45 @@ const useStats = () => {
 		return lastSevenDaysData;
 	};
 
+	const getStatsForLast7Weeks = () => {
+		const lastSevenWeeks = getLast7Weeks();
+		const lastSevenWeeksData = [];
+
+		for (let week of lastSevenWeeks) {
+			const lastDayOfTheWeek = week[0];
+			const firstDayOfTheWeek = week[week.length - 1];
+			const lastDayShortName = lastDayOfTheWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+			const firstDayShortName = firstDayOfTheWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+			lastSevenWeeksData.push({
+				name: lastDayShortName,
+				fullName: `${firstDayShortName} - ${lastDayShortName}`,
+				completedTasks: [],
+				focusRecords: [],
+				focusDuration: 0,
+			});
+		}
+
+		for (let i = 0; i < lastSevenWeeks.length; i++) {
+			const week = lastSevenWeeks[i];
+			const currentWeekData = lastSevenWeeksData[i];
+
+			for (let day of week) {
+				const dayKey = getFormattedLongDay(day);
+
+				const completedTasks = completedTasksGroupedByDate[dayKey] || [];
+				const focusRecords = groupedFocusRecordsByDate[dayKey] || [];
+				const focusDuration = (focusRecords && getFocusDurationFromArray(focusRecords)) || 0;
+
+				currentWeekData.completedTasks.push(...completedTasks);
+				currentWeekData.focusRecords.push(...focusRecords);
+				currentWeekData.focusDuration += focusDuration;
+			}
+		}
+
+		return lastSevenWeeksData;
+	};
+
 	return {
 		total: {
 			numOfAllTasks: allTasksAndItems?.length || 0,
@@ -119,5 +160,6 @@ const useStats = () => {
 			focusDuration: focusDurationForToday || 0,
 		},
 		statsForLastSevenDays,
+		statsForLastSevenWeeks,
 	};
 };

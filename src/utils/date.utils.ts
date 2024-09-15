@@ -260,6 +260,43 @@ export const getLast7Days = () => {
 	return result.reverse(); // Reverse the array to start from 7 days ago to today
 };
 
+export const getLast7Weeks = () => {
+	let result = [];
+
+	for (let i = 0; i < 7; i++) {
+		let week = [];
+		for (let j = 0; j < 7; j++) {
+			// Get each day of the week
+			const date = new Date();
+			date.setDate(date.getDate() - (i * 7 + j)); // Subtract `i * 7 + j` days to get each day of the week
+			week.push(new Date(date)); // Add the date to the current week
+		}
+		result.push(week); // Add the week to the result array
+	}
+
+	return result.reverse(); // Reverse to start from 7 weeks ago to today
+};
+
+export const getLast7Months = () => {
+	let result = [];
+
+	for (let i = 0; i < 7; i++) {
+		let month = [];
+		const today = new Date();
+		const monthDate = new Date(today.getFullYear(), today.getMonth() - i, 1); // Start at the 1st of the month
+
+		// Loop through all days in the current month
+		while (monthDate.getMonth() === (today.getMonth() - i + 12) % 12) {
+			month.push(new Date(monthDate)); // Add the day to the current month array
+			monthDate.setDate(monthDate.getDate() + 1); // Go to the next day
+		}
+
+		result.push(month); // Add the month to the result array
+	}
+
+	return result.reverse(); // Reverse to start from 7 months ago to this month
+};
+
 export const getDayNameAbbreviation = (date) => {
 	// Get the full name of the day in English
 	const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
