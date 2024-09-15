@@ -1,4 +1,6 @@
-const SmallLabel = ({ data }) => {
+import classNames from 'classnames';
+
+const SmallLabel = ({ data, fromDropdown = false }) => {
 	const { name, value, color } = data;
 
 	return (
@@ -10,7 +12,9 @@ const SmallLabel = ({ data }) => {
 				}}
 			></div>
 			<div className="w-[25px]">{value}</div>
-			<div className="border-l border-color-gray-100 pl-2">{name}</div>
+			<div className={classNames('border-l border-color-gray-100 pl-2 w-[200px]', !fromDropdown && 'truncate')}>
+				{name}
+			</div>
 		</div>
 	);
 };

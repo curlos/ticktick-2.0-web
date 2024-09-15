@@ -29,7 +29,7 @@ const DropdownCompletedSmallLabeList: React.FC<DropdownPrioritiesProps> = ({
 
 				<div className="space-y-2 w-full">
 					{progressBarData.map((data) => (
-						<SmallLabel key={data.name} data={data} />
+						<SmallLabel key={data.name} data={data} fromDropdown={true} />
 					))}
 				</div>
 			</div>
