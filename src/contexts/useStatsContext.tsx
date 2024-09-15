@@ -206,5 +206,6 @@ const useStats = () => {
 		statsForLastSevenDays,
 		statsForLastSevenWeeks,
 		statsForLastSevenMonths,
+		completedTasksGroupedByDate,
 	};
 };

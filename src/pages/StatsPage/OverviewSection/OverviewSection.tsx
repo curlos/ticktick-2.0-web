@@ -17,20 +17,21 @@ const OverviewSection = () => {
 				<div className="flex justify-between items-center">
 					<div className="flex gap-6">
 						<div>
-							<span className="font-bold">{total.numOfAllTasks}</span> Tasks
+							<span className="font-bold">{total.numOfAllTasks.toLocaleString()}</span> Tasks
 						</div>
 
 						<div>
-							<span className="font-bold">{total.numOfCompletedTasks}</span> Completed
+							<span className="font-bold">{total.numOfCompletedTasks.toLocaleString()}</span> Completed
 						</div>
 
 						<div>
-							<span className="font-bold">{total.numOfProjects}</span> Projects
+							<span className="font-bold">{total.numOfProjects.toLocaleString()}</span> Projects
 						</div>
 
 						{/* TODO: Populate with real user account data after TickTick 2.0 is done. Use the date the account was created in to do so. */}
 						<div>
-							<span className="font-bold">{total.numOfDaysSinceAccountCreated}</span> Days
+							<span className="font-bold">{total.numOfDaysSinceAccountCreated.toLocaleString()}</span>{' '}
+							Days
 						</div>
 					</div>
 				</div>
