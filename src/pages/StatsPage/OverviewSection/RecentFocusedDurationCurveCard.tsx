@@ -39,9 +39,11 @@ const RecentFocusedDurationCurveCard = () => {
 						content={({ payload }) => {
 							// "payload" property is an empty array if the tooltip is not active. Otherwise, if it is active, then it'll show an element in the "payload" array.
 							if (payload && payload[0]) {
-								const { name, score: seconds } = payload[0].payload;
+								const { name, fullName, score: seconds } = payload[0].payload;
+								const nameToUse = fullName ? fullName : name;
+
 								return (
-									<div className="bg-black text-blue-500 p-2 rounded-md">{`${name}, ${getFormattedDuration(seconds, false)}`}</div>
+									<div className="bg-black text-blue-500 p-2 rounded-md">{`${nameToUse}, ${getFormattedDuration(seconds, false)}`}</div>
 								);
 							}
 

@@ -186,29 +186,31 @@ const SmallLabelList = ({ progressBarData }) => {
 	const [isDropdownCompletedSmallListVisible, setIsDropdownCompletedSmallListVisible] = useState(false);
 
 	return (
-		<div classan>
+		<div>
 			<div className="space-y-2 w-full">
 				{progressBarData.slice(0, 5).map((data) => (
 					<SmallLabel key={data.name} data={data} />
 				))}
 			</div>
 
-			<div className="relative">
-				<div
-					ref={dropdownFocusRankingListRef}
-					onClick={() => setIsDropdownCompletedSmallListVisible(!isDropdownCompletedSmallListVisible)}
-					className="text-color-gray-100 cursor-pointer mt-2"
-				>
-					View More
-				</div>
+			{progressBarData?.length > 5 && (
+				<div className="relative">
+					<div
+						ref={dropdownFocusRankingListRef}
+						onClick={() => setIsDropdownCompletedSmallListVisible(!isDropdownCompletedSmallListVisible)}
+						className="text-color-gray-100 cursor-pointer mt-2"
+					>
+						View More
+					</div>
 
-				<DropdownCompletedSmallLabeList
-					toggleRef={dropdownFocusRankingListRef}
-					isVisible={isDropdownCompletedSmallListVisible}
-					setIsVisible={setIsDropdownCompletedSmallListVisible}
-					progressBarData={progressBarData}
-				/>
-			</div>
+					<DropdownCompletedSmallLabeList
+						toggleRef={dropdownFocusRankingListRef}
+						isVisible={isDropdownCompletedSmallListVisible}
+						setIsVisible={setIsDropdownCompletedSmallListVisible}
+						progressBarData={progressBarData}
+					/>
+				</div>
+			)}
 		</div>
 	);
 };
