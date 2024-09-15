@@ -39,7 +39,6 @@ const TaskSection = () => {
 		}
 	};
 
-	// Handling right arrow click
 	const handleArrowClick = (arrowType) => {
 		const date = new Date(selectedDates[0]);
 		switch (selectedTimeInterval) {
