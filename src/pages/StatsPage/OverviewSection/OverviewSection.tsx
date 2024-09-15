@@ -1,4 +1,5 @@
-import useGetRelevantStats from '../../../hooks/useGetRelevantStats';
+import { useStatsContext } from '../../../contexts/useStatsContext';
+import DailyHoursFocusGoal from '../../TickTick-1.0/DailyHoursFocusGoal';
 import MyAchievementScoreCard from './MyAchievementScoreCard';
 import OverviewCard from './OverviewCard';
 import RecentCompletionCurveCard from './RecentCompletionCurveCard';
@@ -8,7 +9,7 @@ import RecentPomoCurveCard from './RecentPomoCurveCard';
 import WeeklyHabitStatusCard from './WeeklyHabitStatusCard';
 
 const OverviewSection = () => {
-	const { total } = useGetRelevantStats();
+	const { total } = useStatsContext();
 
 	return (
 		<div>
@@ -35,14 +36,20 @@ const OverviewSection = () => {
 				</div>
 			</div>
 
+			{/* <div className="flex">
+				<DailyHoursFocusGoal />
+			</div> */}
+
 			<div className="grid grid-cols-2 gap-5 mt-3">
 				<OverviewCard />
-				<MyAchievementScoreCard />
+				{/* I will probably replace this with the medals. Will have to create a design of some sorts first though. */}
+				{/* <MyAchievementScoreCard /> */}
 				<RecentCompletionCurveCard />
-				<RecentCompletionRateCurveCard />
+				{/* <RecentCompletionRateCurveCard /> */}
 				<RecentPomoCurveCard />
 				<RecentFocusedDurationCurveCard />
-				<WeeklyHabitStatusCard />
+				{/* TODO: Possibly bring back if I go any further with implementing habits on TickTick 2.0. I'll have ot think about it. */}
+				{/* <WeeklyHabitStatusCard /> */}
 			</div>
 		</div>
 	);

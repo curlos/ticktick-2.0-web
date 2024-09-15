@@ -396,6 +396,10 @@ export const sumProperty = (array, propertyName) => {
 };
 
 export const getFormattedDuration = (duration, includeSeconds = true) => {
+	if (!duration) {
+		return includeSeconds ? '0h0m0s' : '0h0m';
+	}
+
 	const { hours, minutes, seconds } = formatTimeToHoursMinutesSeconds(duration);
 
 	const hoursStr = hours !== 0 ? `${hours.toLocaleString()}h` : '';

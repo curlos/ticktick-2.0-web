@@ -1,8 +1,9 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import GeneralSelectButtonAndDropdown from '../GeneralSelectButtonAndDropdown';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useStatsContext } from '../../../contexts/useStatsContext';
 
-const data = [
+const DEFAULT_DATA = [
 	{
 		name: 'July 8',
 		score: 2,
@@ -34,8 +35,21 @@ const data = [
 ];
 
 const RecentCompletionCurveCard = () => {
+	const [data, setData] = useState(DEFAULT_DATA);
 	const selectedOptions = ['Day', 'Week', 'Month'];
 	const [selected, setSelected] = useState(selectedOptions[0]);
+
+	const { statsForLastSevenDays } = useStatsContext();
+
+	useEffect(() => {
+		if (statsForLastSevenDays) {
+			const newData = statsForLastSevenDays?.map((dataForTheDay) => ({
+				name: dataForTheDay.name,
+				score: dataForTheDay.completedTasks?.length || 0,
+			}));
+			setData(newData);
+		}
+	}, [statsForLastSevenDays]);
 
 	return (
 		<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col h-[350px]">
