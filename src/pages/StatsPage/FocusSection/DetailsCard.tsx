@@ -154,7 +154,7 @@ const ProgressBarList: React.FC<ProgressBarListProps> = ({ data }) => {
 					onClick={() => setIsDropdownFocusRankingListVisible(!isDropdownFocusRankingListVisible)}
 					className="text-color-gray-100 cursor-pointer"
 				>
-					View more
+					View More
 				</div>
 
 				<DropdownFocusRankingList

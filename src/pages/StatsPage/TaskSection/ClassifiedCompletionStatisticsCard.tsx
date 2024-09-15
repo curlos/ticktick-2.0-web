@@ -1,9 +1,11 @@
 import { PieChart, Pie, Cell, Label } from 'recharts';
 import GeneralSelectButtonAndDropdown from '../GeneralSelectButtonAndDropdown';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useStatsContext } from '../../../contexts/useStatsContext';
 import { checkIfInboxProject } from '../../../utils/tickTickOne.util';
 import classNames from 'classnames';
+import SmallLabel from './SmallLabel';
+import DropdownCompletedSmallLabeList from './DropdownCompletedSmallLabeList';
 
 const noData = [
 	{
@@ -82,23 +84,6 @@ const ClassifiedCompletionStatisticsCard = ({ selectedTimeInterval, selectedDate
 		setNumOfCompletedTasks(newNumOfCompletedTasks);
 		setProgressBarData(newProgressBarData);
 	}, [completedTasksGroupedByDate, selectedDates, projectsById]);
-
-	const SmallLabel = ({ data }) => {
-		const { name, value, color } = data;
-
-		return (
-			<div className="flex items-center gap-2">
-				<div
-					className="w-[15px] h-[15px] rounded-full"
-					style={{
-						backgroundColor: color,
-					}}
-				></div>
-				<div className="w-[25px]">{value}</div>
-				<div className="border-l border-color-gray-100 pl-2">{name}</div>
-			</div>
-		);
-	};
 
 	const selectedOptions = ['Project', 'Tag'];
 	const [selected, setSelected] = useState(selectedOptions[0]);
@@ -185,12 +170,45 @@ const ClassifiedCompletionStatisticsCard = ({ selectedTimeInterval, selectedDate
 				</div>
 
 				{!thereIsNoData && (
-					<div className="space-y-2">
-						{progressBarData.map((data) => (
-							<SmallLabel key={data.name} data={data} />
-						))}
-					</div>
+					<SmallLabelList progressBarData={progressBarData} />
+					// <div className="space-y-2">
+					// 	{progressBarData.map((data) => (
+					// 		<SmallLabel key={data.name} data={data} />
+					// 	))}
+					// </div>
 				)}
+			</div>
+		</div>
+	);
+};
+
+const SmallLabelList = ({ progressBarData }) => {
+	const dropdownFocusRankingListRef = useRef(null);
+	const [isDropdownCompletedSmallListVisible, setIsDropdownCompletedSmallListVisible] = useState(false);
+
+	return (
+		<div classan>
+			<div className="space-y-2 w-full">
+				{progressBarData.slice(0, 5).map((data) => (
+					<SmallLabel key={data.name} data={data} />
+				))}
+			</div>
+
+			<div className="relative">
+				<div
+					ref={dropdownFocusRankingListRef}
+					onClick={() => setIsDropdownCompletedSmallListVisible(!isDropdownCompletedSmallListVisible)}
+					className="text-color-gray-100 cursor-pointer mt-2"
+				>
+					View More
+				</div>
+
+				<DropdownCompletedSmallLabeList
+					toggleRef={dropdownFocusRankingListRef}
+					isVisible={isDropdownCompletedSmallListVisible}
+					setIsVisible={setIsDropdownCompletedSmallListVisible}
+					progressBarData={progressBarData}
+				/>
 			</div>
 		</div>
 	);

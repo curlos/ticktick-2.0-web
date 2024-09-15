@@ -56,9 +56,10 @@ export const tickTickOneApi = baseAPI.injectEndpoints({
 				return queryString ? `/ticktick-1.0/projects?${queryString}` : '/ticktick-1.0/projects';
 			},
 			transformResponse: (response) => {
+				const projects = response;
 				const projectsById = arrayToObjectByKey(response, 'id');
 
-				return { projects: response, projectsById };
+				return { projects, projectsById };
 			},
 		}),
 	}),
