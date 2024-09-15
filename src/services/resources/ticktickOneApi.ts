@@ -62,7 +62,25 @@ export const tickTickOneApi = baseAPI.injectEndpoints({
 				return { projects, projectsById };
 			},
 		}),
+		getAllTags: builder.query({
+			query: (queryParams) => {
+				const queryString = buildQueryString(queryParams);
+				return queryString ? `/ticktick-1.0/tags?${queryString}` : '/ticktick-1.0/tags';
+			},
+			transformResponse: (response) => {
+				const tags = response;
+				// TickTick 1.0 Tags do not have an "id" property. Thie closest thing I see to a key is either "name" or "rawName".
+				const tagsByRawName = arrayToObjectByKey(tags, 'rawName');
+
+				return { tags, tagsByRawName };
+			},
+		}),
 	}),
 });
 
-export const { useGetPomoAndStopwatchFocusRecordsQuery, useGetAllTasksQuery, useGetAllProjectsQuery } = tickTickOneApi;
+export const {
+	useGetPomoAndStopwatchFocusRecordsQuery,
+	useGetAllTasksQuery,
+	useGetAllProjectsQuery,
+	useGetAllTagsQuery,
+} = tickTickOneApi;

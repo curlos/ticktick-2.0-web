@@ -3,6 +3,7 @@ import {
 	useGetAllTasksQuery,
 	useGetAllProjectsQuery,
 	useGetPomoAndStopwatchFocusRecordsQuery,
+	useGetAllTagsQuery,
 } from '../services/resources/ticktickOneApi';
 import { getFormattedLongDay, getLast7Days, getLast7Months, getLast7Weeks, getTimeSince } from '../utils/date.utils';
 import { getFocusDurationFromArray, getGroupedFocusRecordsByDate } from '../utils/helpers.utils';
@@ -39,6 +40,12 @@ const useStats = () => {
 		error: errorGetFocusRecords,
 	} = useGetPomoAndStopwatchFocusRecordsQuery();
 	const { focusRecords } = fetchedFocusRecords || {};
+
+	// RTK Query - TickTick 1.0 - Tags
+	const { data: fetchedTags, isLoading: isLoadingGetTags, error: errorGetTags } = useGetAllTagsQuery();
+	const { tags, tagsByRawName } = fetchedTags || {};
+
+	console.log(tags);
 
 	const accountCreatedDate = new Date('November 3, 2020');
 	const timeSinceAccountCreated = getTimeSince(accountCreatedDate);
@@ -223,6 +230,8 @@ const useStats = () => {
 		completedTasksGroupedByDate,
 		completedTasksGroupedByProject,
 		projectsById,
+		tags,
+		tagsByRawName,
 
 		// Functions
 		getCompletedTasksFromSelectedDates,
