@@ -21,7 +21,8 @@ export const StatsProvider = ({ children }) => {
 const useStats = () => {
 	// RTK Query - TickTick 1.0 - Tasks
 	const { data: fetchedTasks, isLoading: isLoadingGetTasks, error: errorGetTasks } = useGetAllTasksQuery();
-	const { allTasksAndItems, totalCompletedTasks, completedTasksGroupedByDate } = fetchedTasks || {};
+	const { allTasksAndItems, totalCompletedTasks, completedTasksGroupedByDate, completedTasksGroupedByProject } =
+		fetchedTasks || {};
 
 	// RTK Query - TickTick 1.0 - Projects
 	const {
@@ -218,7 +219,12 @@ const useStats = () => {
 		statsForLastSevenDays,
 		statsForLastSevenWeeks,
 		statsForLastSevenMonths,
+		// From RTK Query
 		completedTasksGroupedByDate,
+		completedTasksGroupedByProject,
+		projectsById,
+
+		// Functions
 		getCompletedTasksFromSelectedDates,
 	};
 };

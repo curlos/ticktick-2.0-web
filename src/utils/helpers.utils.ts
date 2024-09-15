@@ -577,8 +577,8 @@ export const getGroupedCompletedTasks = (tasks) => {
 			completedTasksGroupedByProject[projectId] = [];
 		}
 
-		completedTasksGroupedByDate[completedTimeKey].push(task);
-		completedTasksGroupedByProject[projectId].push(task);
+		completedTasksGroupedByDate[completedTimeKey].push({ ...task, projectId });
+		completedTasksGroupedByProject[projectId].push({ ...task, projectId });
 	};
 
 	for (let task of tasks) {

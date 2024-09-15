@@ -5,7 +5,7 @@ import { getAllDaysInMonthFromDate, getAllDaysInWeekFromDate } from '../../../ut
 import classNames from 'classnames';
 
 const OverviewCard = ({ selectedTimeInterval, selectedDates }) => {
-	const { completedTasksGroupedByDate, getCompletedTasksFromSelectedDates } = useStatsContext();
+	const { completedTasksGroupedByDate, getCompletedTasksFromSelectedDates } = useStatsContext() || {};
 	const [numOfCompletedTasksForInterval, setNumOfCompletedTasksForInterval] = useState(0);
 	const [diffOfCompletedTasksFromPrevInterval, setDiffOfCompletedTasksFromPrevInterval] = useState({
 		numDiff: 0,
