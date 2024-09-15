@@ -15,7 +15,7 @@ const RecentCompletionCurveCard = () => {
 	const selectedOptions = ['Day', 'Week', 'Month'];
 	const [selected, setSelected] = useState(selectedOptions[0]);
 
-	const { statsForLastSevenDays, statsForLastSevenWeeks } = useStatsContext();
+	const { statsForLastSevenDays, statsForLastSevenWeeks, statsForLastSevenMonths } = useStatsContext();
 
 	useEffect(() => {
 		if (!statsForLastSevenDays || !statsForLastSevenWeeks) {
@@ -31,6 +31,9 @@ const RecentCompletionCurveCard = () => {
 			case 'Week':
 				statsToUse = statsForLastSevenWeeks;
 				break;
+			case 'Month':
+				statsToUse = statsForLastSevenMonths;
+				break;
 			default:
 				statsToUse = statsForLastSevenDays;
 		}
@@ -42,8 +45,6 @@ const RecentCompletionCurveCard = () => {
 		}));
 		setData(newData);
 	}, [selected, statsForLastSevenDays, statsForLastSevenWeeks]);
-
-	console.log(data);
 
 	return (
 		<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col h-[350px]">

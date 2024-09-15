@@ -4,7 +4,7 @@ import {
 	useGetAllProjectsQuery,
 	useGetPomoAndStopwatchFocusRecordsQuery,
 } from '../services/resources/ticktickOneApi';
-import { getFormattedLongDay, getLast7Days, getLast7Weeks, getTimeSince } from '../utils/date.utils';
+import { getFormattedLongDay, getLast7Days, getLast7Months, getLast7Weeks, getTimeSince } from '../utils/date.utils';
 import { getFocusDurationFromArray, getGroupedFocusRecordsByDate } from '../utils/helpers.utils';
 
 const StatsContext = createContext();
@@ -50,6 +50,7 @@ const useStats = () => {
 	const [focusDurationForToday, setFocusDurationForToday] = useState(0);
 	const [statsForLastSevenDays, setStatsForLastSevenDays] = useState(null);
 	const [statsForLastSevenWeeks, setStatsForLastSevenWeeks] = useState(null);
+	const [statsForLastSevenMonths, setStatsForLastSevenMonths] = useState(null);
 
 	// TODO: I've set it to September 13, 2024 for now since that's the last date with the most up-to-date data but once I stop getting the local data, I need to set this back to Today's date so remove "September 13, 2024".
 	const todayDate = new Date('September 13, 2024');
@@ -81,6 +82,7 @@ const useStats = () => {
 		setFocusDurationForToday(getFocusDurationFromArray(focusRecordsFromToday));
 		setStatsForLastSevenDays(getStatsForLast7Days());
 		setStatsForLastSevenWeeks(getStatsForLast7Weeks());
+		setStatsForLastSevenMonths(getStatsForLast7Months());
 	}, [focusRecordsFromToday, completedTasksGroupedByDate, groupedFocusRecordsByDate]);
 
 	const getStatsForLast7Days = () => {
@@ -110,6 +112,7 @@ const useStats = () => {
 		const lastSevenWeeks = getLast7Weeks();
 		const lastSevenWeeksData = [];
 
+		// Fill in the default data that we'll need to edit in the following for loop with the different properties for the stats.
 		for (let week of lastSevenWeeks) {
 			const lastDayOfTheWeek = week[0];
 			const firstDayOfTheWeek = week[week.length - 1];
@@ -118,13 +121,14 @@ const useStats = () => {
 
 			lastSevenWeeksData.push({
 				name: lastDayShortName,
-				fullName: `${firstDayShortName} - ${lastDayShortName}`,
+				fullName: `${firstDayShortName} to ${lastDayShortName}`,
 				completedTasks: [],
 				focusRecords: [],
 				focusDuration: 0,
 			});
 		}
 
+		// Go through each week and each day in that week, get the stats for that day and add or push it to its week's total stats.
 		for (let i = 0; i < lastSevenWeeks.length; i++) {
 			const week = lastSevenWeeks[i];
 			const currentWeekData = lastSevenWeeksData[i];
@@ -145,6 +149,46 @@ const useStats = () => {
 		return lastSevenWeeksData;
 	};
 
+	const getStatsForLast7Months = () => {
+		const lastSevenMonths = getLast7Months();
+		const lastSevenMonthsData = [];
+
+		// Fill in the default data that we'll need to edit in the following for loop with the different properties for the stats.
+		for (let month of lastSevenMonths) {
+			const firstDayOfTheMonth = month[0];
+			const monthShortName = firstDayOfTheMonth.toLocaleDateString('en-US', { month: 'short' });
+			const monthLongName = firstDayOfTheMonth.toLocaleDateString('en-US', { month: 'long' });
+
+			lastSevenMonthsData.push({
+				name: monthShortName,
+				fullName: `${monthLongName}`,
+				completedTasks: [],
+				focusRecords: [],
+				focusDuration: 0,
+			});
+		}
+
+		// Go through each month and each day in that month, get the stats for that day and add or push it to its month's total stats.
+		for (let i = 0; i < lastSevenMonths.length; i++) {
+			const month = lastSevenMonths[i];
+			const currentMonthData = lastSevenMonthsData[i];
+
+			for (let day of month) {
+				const dayKey = getFormattedLongDay(day);
+
+				const completedTasks = completedTasksGroupedByDate[dayKey] || [];
+				const focusRecords = groupedFocusRecordsByDate[dayKey] || [];
+				const focusDuration = (focusRecords && getFocusDurationFromArray(focusRecords)) || 0;
+
+				currentMonthData.completedTasks.push(...completedTasks);
+				currentMonthData.focusRecords.push(...focusRecords);
+				currentMonthData.focusDuration += focusDuration;
+			}
+		}
+
+		return lastSevenMonthsData;
+	};
+
 	return {
 		total: {
 			numOfAllTasks: allTasksAndItems?.length || 0,
@@ -161,5 +205,6 @@ const useStats = () => {
 		},
 		statsForLastSevenDays,
 		statsForLastSevenWeeks,
+		statsForLastSevenMonths,
 	};
 };
