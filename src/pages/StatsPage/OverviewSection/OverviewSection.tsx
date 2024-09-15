@@ -5,7 +5,7 @@ import OverviewCard from './OverviewCard';
 import RecentCompletionCurveCard from './RecentCompletionCurveCard';
 import RecentCompletionRateCurveCard from './RecentCompletionRateCurveCard';
 import RecentFocusedDurationCurveCard from './RecentFocusedDurationCurveCard';
-import RecentPomoCurveCard from './RecentPomoCurveCard';
+import RecentFocusRecordsCurveCard from './RecentFocusRecordsCurveCard';
 import WeeklyHabitStatusCard from './WeeklyHabitStatusCard';
 
 const OverviewSection = () => {
@@ -46,7 +46,7 @@ const OverviewSection = () => {
 				{/* <MyAchievementScoreCard /> */}
 				<RecentCompletionCurveCard />
 				{/* <RecentCompletionRateCurveCard /> */}
-				<RecentPomoCurveCard />
+				<RecentFocusRecordsCurveCard />
 				<RecentFocusedDurationCurveCard />
 				{/* TODO: Possibly bring back if I go any further with implementing habits on TickTick 2.0. I'll have ot think about it. */}
 				{/* <WeeklyHabitStatusCard /> */}

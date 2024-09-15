@@ -1,8 +1,5 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import GeneralSelectButtonAndDropdown from '../GeneralSelectButtonAndDropdown';
-import { useEffect, useState } from 'react';
-import { useStatsContext } from '../../../contexts/useStatsContext';
-import { getLast7Days } from '../../../utils/date.utils';
 import { useGetStatsForInterval } from '../hooks/useGetStatsForInterval';
 
 const RecentCompletionCurveCard = () => {
@@ -54,7 +51,6 @@ const RecentCompletionCurveCard = () => {
 							// "payload" property is an empty array if the tooltip is not active. Otherwise, if it is active, then it'll show an element in the "payload" array.
 							if (payload && payload[0]) {
 								const { name, fullName, score } = payload[0].payload;
-
 								const nameToUse = fullName ? fullName : name;
 
 								return (

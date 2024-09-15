@@ -1,22 +1,14 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import GeneralSelectButtonAndDropdown from '../GeneralSelectButtonAndDropdown';
-import { useState } from 'react';
-import { getLast7Days } from '../../../utils/date.utils';
+import { useGetStatsForInterval } from '../hooks/useGetStatsForInterval';
 
-const RecentPomoCurveCard = () => {
-	const lastSevenDays = getLast7Days();
-	const defaultData = lastSevenDays.map((day) => ({
-		name: day.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-		score: 0,
-	}));
-	const [data, setData] = useState(defaultData);
-	const selectedOptions = ['Day', 'Week', 'Month'];
-	const [selected, setSelected] = useState(selectedOptions[0]);
+const RecentFocusRecordsCurveCard = () => {
+	const { selected, setSelected, selectedOptions, data } = useGetStatsForInterval('focusRecords');
 
 	return (
 		<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col h-[350px]">
 			<div className="flex justify-between items-center mb-6">
-				<h3 className="font-bold text-[16px]">Recent Pomo Curve</h3>
+				<h3 className="font-bold text-[16px]">Recent Focus Records Curve</h3>
 
 				<GeneralSelectButtonAndDropdown
 					selected={selected}
@@ -58,9 +50,11 @@ const RecentPomoCurveCard = () => {
 						content={({ payload }) => {
 							// "payload" property is an empty array if the tooltip is not active. Otherwise, if it is active, then it'll show an element in the "payload" array.
 							if (payload && payload[0]) {
-								const { name, score } = payload[0].payload;
+								const { name, fullName, score } = payload[0].payload;
+								const nameToUse = fullName ? fullName : name;
+
 								return (
-									<div className="bg-black text-blue-500 p-2 rounded-md">{`${name}, ${score}`}</div>
+									<div className="bg-black text-blue-500 p-2 rounded-md">{`${nameToUse}, ${score}`}</div>
 								);
 							}
 
@@ -74,4 +68,4 @@ const RecentPomoCurveCard = () => {
 	);
 };
 
-export default RecentPomoCurveCard;
+export default RecentFocusRecordsCurveCard;

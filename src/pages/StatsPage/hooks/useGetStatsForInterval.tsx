@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useStatsContext } from '../../../contexts/useStatsContext';
 import { getLast7Days } from '../../../utils/date.utils';
 
-export const useGetStatsForInterval = () => {
+export const useGetStatsForInterval = (scoreType = 'completedTasks') => {
 	const lastSevenDays = getLast7Days();
 	const defaultData = lastSevenDays.map((day) => ({
 		name: day.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
@@ -36,11 +36,21 @@ export const useGetStatsForInterval = () => {
 				statsToUse = statsForLastSevenDays;
 		}
 
-		const newData = statsToUse?.map((dataForTheDay) => ({
-			name: dataForTheDay.name,
-			fullName: dataForTheDay.fullName || dataForTheDay.name,
-			score: dataForTheDay.completedTasks?.length || 0,
-		}));
+		const newData = statsToUse?.map((dataForTheDay) => {
+			let score = 0;
+
+			if (scoreType !== 'focusDuration') {
+				score = dataForTheDay[scoreType]?.length || 0;
+			} else {
+				score = dataForTheDay[scoreType] || 0;
+			}
+
+			return {
+				name: dataForTheDay.name,
+				fullName: dataForTheDay.fullName || dataForTheDay.name,
+				score: score,
+			};
+		});
 		setData(newData);
 	}, [selected, statsForLastSevenDays, statsForLastSevenWeeks]);
 
