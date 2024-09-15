@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import Icon from '../../../components/Icon';
 import { useStatsContext } from '../../../contexts/useStatsContext';
-import { getAllDaysInMonthFromDate, getAllDaysInWeekFromDate, getFormattedLongDay } from '../../../utils/date.utils';
+import { getAllDaysInMonthFromDate, getAllDaysInWeekFromDate } from '../../../utils/date.utils';
 import classNames from 'classnames';
 
 const OverviewCard = ({ selectedTimeInterval, selectedDates }) => {
-	const { completedTasksGroupedByDate } = useStatsContext();
+	const { completedTasksGroupedByDate, getCompletedTasksFromSelectedDates } = useStatsContext();
 	const [numOfCompletedTasksForInterval, setNumOfCompletedTasksForInterval] = useState(0);
 	const [diffOfCompletedTasksFromPrevInterval, setDiffOfCompletedTasksFromPrevInterval] = useState({
 		numDiff: 0,
@@ -19,12 +19,8 @@ const OverviewCard = ({ selectedTimeInterval, selectedDates }) => {
 
 		const prevIntervalDates = getPrevIntervalDates();
 		const currIntervalDates = selectedDates;
-
-		const prevIntervalCompletedTasks = getNumOfCompletedTasksFromSelectedDates(prevIntervalDates);
-		const currIntervalCompletedTasks = getNumOfCompletedTasksFromSelectedDates(currIntervalDates);
-
-		console.log(prevIntervalCompletedTasks);
-		console.log(currIntervalCompletedTasks);
+		const prevIntervalCompletedTasks = getCompletedTasksFromSelectedDates(prevIntervalDates).length;
+		const currIntervalCompletedTasks = getCompletedTasksFromSelectedDates(currIntervalDates).length;
 
 		setNumOfCompletedTasksForInterval(currIntervalCompletedTasks);
 		setDiffOfCompletedTasksFromPrevInterval({
@@ -49,18 +45,6 @@ const OverviewCard = ({ selectedTimeInterval, selectedDates }) => {
 			default:
 				return [];
 		}
-	};
-
-	const getNumOfCompletedTasksFromSelectedDates = (datesArr) => {
-		let sum = 0;
-
-		for (let date of datesArr) {
-			const dateKey = getFormattedLongDay(date);
-			const completedTasksArr = completedTasksGroupedByDate[dateKey];
-			sum += completedTasksArr?.length || 0;
-		}
-
-		return sum;
 	};
 
 	const getPrevIntervalName = () => {

@@ -1,9 +1,9 @@
-import { getFormattedDuration } from '../../../utils/helpers.utils';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Label } from 'recharts';
-import GeneralSelectButtonAndDropdown from '../GeneralSelectButtonAndDropdown';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { useStatsContext } from '../../../contexts/useStatsContext';
+import { getFormattedLongDay } from '../../../utils/date.utils';
 
-const data = [
+const defaultData = [
 	{
 		name: 'July 8',
 		completedTasks: 2,
@@ -34,7 +34,37 @@ const data = [
 	},
 ];
 
-const CompletionDistributionCard = () => {
+const CompletionDistributionCard = ({ selectedDates }) => {
+	const { completedTasksGroupedByDate } = useStatsContext();
+
+	const [data, setData] = useState(defaultData);
+
+	useEffect(() => {
+		if (!completedTasksGroupedByDate) {
+			return;
+		}
+
+		const newData = getCompletedTasksData();
+
+		setData(newData);
+	}, [completedTasksGroupedByDate, selectedDates]);
+
+	const getCompletedTasksData = () => {
+		return selectedDates.map((date) => {
+			const dateKey = getFormattedLongDay(date);
+			const completedTasksForDateArr = completedTasksGroupedByDate[dateKey] || [];
+
+			const dayShortName = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+			const dayLongName = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+
+			return {
+				name: dayShortName,
+				fullName: dayLongName,
+				completedTasks: completedTasksForDateArr.length,
+			};
+		});
+	};
+
 	return (
 		<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col">
 			<div className="flex justify-between items-center mb-6">
@@ -60,11 +90,11 @@ const CompletionDistributionCard = () => {
 						content={({ payload }) => {
 							// "payload" property is an empty array if the tooltip is not active. Otherwise, if it is active, then it'll show an element in the "payload" array.
 							if (payload && payload[0]) {
-								const { name, completedTasks } = payload[0].payload;
-								console.log(completedTasks);
+								const { name, fullName, completedTasks } = payload[0].payload;
+								const nameToUse = fullName || name;
 
 								return (
-									<div className="bg-black text-blue-500 p-2 rounded-md">{`${name}, ${completedTasks}`}</div>
+									<div className="bg-black text-blue-500 p-2 rounded-md">{`${nameToUse}, ${completedTasks}`}</div>
 								);
 							}
 

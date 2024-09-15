@@ -99,7 +99,7 @@ const TaskSection = () => {
 
 			<div className="grid grid-cols-2 gap-5 mt-3">
 				<OverviewCard {...{ selectedTimeInterval, selectedDates }} />
-				<CompletionDistributionCard {...{ selectedTimeInterval }} />
+				<CompletionDistributionCard {...{ selectedTimeInterval, selectedDates }} />
 				{/* <CompletionRateDistributionCard /> */}
 				<ClassifiedCompletionStatisticsCard {...{ selectedTimeInterval }} />
 			</div>

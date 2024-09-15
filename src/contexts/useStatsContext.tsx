@@ -189,6 +189,18 @@ const useStats = () => {
 		return lastSevenMonthsData;
 	};
 
+	const getCompletedTasksFromSelectedDates = (datesArr) => {
+		const completedTasks = [];
+
+		for (let date of datesArr) {
+			const dateKey = getFormattedLongDay(date);
+			const completedTasksForDateArr = completedTasksGroupedByDate[dateKey] || [];
+			completedTasks.push(...completedTasksForDateArr);
+		}
+
+		return completedTasks;
+	};
+
 	return {
 		total: {
 			numOfAllTasks: allTasksAndItems?.length || 0,
@@ -207,5 +219,6 @@ const useStats = () => {
 		statsForLastSevenWeeks,
 		statsForLastSevenMonths,
 		completedTasksGroupedByDate,
+		getCompletedTasksFromSelectedDates,
 	};
 };
