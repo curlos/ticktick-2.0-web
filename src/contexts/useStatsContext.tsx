@@ -45,8 +45,6 @@ const useStats = () => {
 	const { data: fetchedTags, isLoading: isLoadingGetTags, error: errorGetTags } = useGetAllTagsQuery();
 	const { tags, tagsByRawName } = fetchedTags || {};
 
-	console.log(tags);
-
 	const accountCreatedDate = new Date('November 3, 2020');
 	const timeSinceAccountCreated = getTimeSince(accountCreatedDate);
 	const { days } = timeSinceAccountCreated;

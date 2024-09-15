@@ -20,6 +20,9 @@ const ClassifiedCompletionStatisticsCard = ({ selectedTimeInterval, selectedDate
 	const { completedTasksGroupedByDate, getCompletedTasksFromSelectedDates, projectsById, tags, tagsByRawName } =
 		useStatsContext() || {};
 
+	const selectedOptions = ['Project', 'Tag'];
+	const [selected, setSelected] = useState(selectedOptions[0]);
+
 	const [progressBarData, setProgressBarData] = useState(noData);
 	const [numOfCompletedTasks, setNumOfCompletedTasks] = useState(0);
 	const [thereIsNoData, setThereIsNoData] = useState(true);
@@ -33,7 +36,36 @@ const ClassifiedCompletionStatisticsCard = ({ selectedTimeInterval, selectedDate
 		const allCompletedTasksForInterval = getCompletedTasksFromSelectedDates(selectedDates);
 		const newNumOfCompletedTasks = allCompletedTasksForInterval.length;
 
-		// Group up those tasks by project
+		let newProgressBarData = progressBarData;
+
+		switch (selected) {
+			case 'Project':
+				newProgressBarData = getDataByProjects(allCompletedTasksForInterval, newNumOfCompletedTasks);
+				break;
+			case 'Tag':
+				newProgressBarData = getDataByTags(allCompletedTasksForInterval, newNumOfCompletedTasks);
+				break;
+			default:
+				newProgressBarData = getDataByProjects(allCompletedTasksForInterval, newNumOfCompletedTasks);
+			// case 'Task':
+			// 	newProgressBarData = getDataByProjects(allCompletedTasksForInterval, newNumOfCompletedTasks);
+		}
+
+		const thereIsNoData = !newProgressBarData || newProgressBarData.length === 0;
+
+		if (thereIsNoData) {
+			newProgressBarData = noData;
+
+			setThereIsNoData(true);
+		} else {
+			setThereIsNoData(false);
+		}
+
+		setNumOfCompletedTasks(newNumOfCompletedTasks);
+		setProgressBarData(newProgressBarData);
+	}, [completedTasksGroupedByDate, selectedDates, projectsById, tagsByRawName, selected]);
+
+	const getDataByProjects = (allCompletedTasksForInterval, newNumOfCompletedTasks) => {
 		const completedTasksGroupedByProject = {};
 
 		allCompletedTasksForInterval.forEach((task) => {
@@ -46,7 +78,7 @@ const ClassifiedCompletionStatisticsCard = ({ selectedTimeInterval, selectedDate
 			completedTasksGroupedByProject[projectId].push(task);
 		});
 
-		let newProgressBarData = Object.keys(completedTasksGroupedByProject).map((projectId) => {
+		return Object.keys(completedTasksGroupedByProject).map((projectId) => {
 			const completedTasksArr = completedTasksGroupedByProject[projectId];
 			const numOfCompletedTasks = completedTasksArr.length;
 			const percentage = Number(((numOfCompletedTasks / newNumOfCompletedTasks) * 100).toFixed(2));
@@ -69,23 +101,60 @@ const ClassifiedCompletionStatisticsCard = ({ selectedTimeInterval, selectedDate
 				percentage,
 			};
 		});
+	};
 
-		const thereIsNoData = !newProgressBarData || newProgressBarData.length === 0;
+	const getDataByTags = (allCompletedTasksForInterval, newNumOfCompletedTasks) => {
+		const completedTasksGroupedByTags = {};
+		const UNCLASSIFIED_KEY = 'UNCLASSIFIED';
 
-		if (thereIsNoData) {
-			newProgressBarData = noData;
+		allCompletedTasksForInterval.forEach((task) => {
+			const { tags } = task;
 
-			setThereIsNoData(true);
-		} else {
-			setThereIsNoData(false);
-		}
+			if (tags && tags.length > 0) {
+				console.log(task);
+				console.log(tags);
 
-		setNumOfCompletedTasks(newNumOfCompletedTasks);
-		setProgressBarData(newProgressBarData);
-	}, [completedTasksGroupedByDate, selectedDates, projectsById]);
+				for (let tagName of tags) {
+					if (!completedTasksGroupedByTags[tagName]) {
+						completedTasksGroupedByTags[tagName] = [];
+					}
 
-	const selectedOptions = ['Project', 'Tag'];
-	const [selected, setSelected] = useState(selectedOptions[0]);
+					completedTasksGroupedByTags[tagName].push(task);
+				}
+			} else {
+				// If the task is unclassified (no tags)
+				if (!completedTasksGroupedByTags[UNCLASSIFIED_KEY]) {
+					completedTasksGroupedByTags[UNCLASSIFIED_KEY] = [];
+				}
+
+				completedTasksGroupedByTags[UNCLASSIFIED_KEY].push(task);
+			}
+		});
+
+		return Object.keys(completedTasksGroupedByTags).map((tagName) => {
+			const completedTasksArr = completedTasksGroupedByTags[tagName];
+			const numOfCompletedTasks = completedTasksArr.length;
+			const percentage = Number(((numOfCompletedTasks / newNumOfCompletedTasks) * 100).toFixed(2));
+
+			const isUnclassifiedTag = tagName === UNCLASSIFIED_KEY;
+
+			let name = 'Unclassified';
+			let color = 'black';
+
+			if (!isUnclassifiedTag) {
+				const tag = tagsByRawName[tagName];
+				name = tag.name;
+				color = tag.color;
+			}
+
+			return {
+				name,
+				color,
+				value: numOfCompletedTasks,
+				percentage,
+			};
+		});
+	};
 
 	return (
 		<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col h-[280px]">

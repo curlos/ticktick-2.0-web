@@ -6,8 +6,6 @@ import { useGetStatsForInterval } from '../hooks/useGetStatsForInterval';
 const RecentFocusedDurationCurveCard = () => {
 	const { selected, setSelected, selectedOptions, data } = useGetStatsForInterval('focusDuration');
 
-	console.log(data);
-
 	return (
 		<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col h-[350px]">
 			<div className="flex justify-between items-center mb-6">
