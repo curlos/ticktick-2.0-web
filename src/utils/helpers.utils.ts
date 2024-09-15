@@ -561,10 +561,11 @@ export const getAllTasksAndItemsTickTickOne = (tasks) => {
 	return allTasksAndItems;
 };
 
-export const getCompletedTasksGroupedByDate = (tasks) => {
+export const getGroupedCompletedTasks = (tasks) => {
 	const completedTasksGroupedByDate = {};
+	const completedTasksGroupedByProject = {};
 
-	const storeTaskInCompletedDateKey = (completedTime, task) => {
+	const storeTaskInCompletedDateKey = (completedTime, task, projectId) => {
 		const completedTimeDate = new Date(completedTime);
 		const completedTimeKey = getFormattedLongDay(completedTimeDate);
 
@@ -572,11 +573,16 @@ export const getCompletedTasksGroupedByDate = (tasks) => {
 			completedTasksGroupedByDate[completedTimeKey] = [];
 		}
 
+		if (!completedTasksGroupedByProject[projectId]) {
+			completedTasksGroupedByProject[projectId] = [];
+		}
+
 		completedTasksGroupedByDate[completedTimeKey].push(task);
+		completedTasksGroupedByProject[projectId].push(task);
 	};
 
 	for (let task of tasks) {
-		const { completedTime, items } = task;
+		const { completedTime, items, projectId } = task;
 		const noCompletedTasksOrTaskItems = !completedTime && (!items || items.length === 0);
 
 		if (noCompletedTasksOrTaskItems) {
@@ -584,19 +590,22 @@ export const getCompletedTasksGroupedByDate = (tasks) => {
 		}
 
 		if (completedTime) {
-			storeTaskInCompletedDateKey(completedTime, task, completedTasksGroupedByDate);
+			storeTaskInCompletedDateKey(completedTime, task, projectId);
 		}
 
 		for (let item of items) {
 			const { completedTime } = item;
 
 			if (completedTime) {
-				storeTaskInCompletedDateKey(completedTime, item, completedTasksGroupedByDate);
+				storeTaskInCompletedDateKey(completedTime, item, projectId);
 			}
 		}
 	}
 
-	return completedTasksGroupedByDate;
+	return {
+		completedTasksGroupedByDate,
+		completedTasksGroupedByProject,
+	};
 };
 
 /**
