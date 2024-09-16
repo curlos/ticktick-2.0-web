@@ -51,8 +51,6 @@ const DetailsCard = () => {
 			return;
 		}
 
-		console.log(selectedDates);
-
 		// Get all the completed tasks from the selected interval of dates
 		const allFocusRecordsForInterval = getFocusRecordsFromSelectedDates(selectedDates);
 		const newNumOfFocusRecords = allFocusRecordsForInterval.length;
@@ -88,7 +86,8 @@ const DetailsCard = () => {
 	const getDataByProjects = (allFocusRecordsForInterval, focusDurationForInterval) => {
 		const focusRecordsGroupedByProject = {};
 
-		const UNCLASSIFIED_KEY = 'Unclassified';
+		// Default it to the "Inbox" project if the focus record has no task with a project.
+		const INBOX_PROJECT_ID = 'inbox116577688';
 
 		allFocusRecordsForInterval.forEach((focusRecord) => {
 			const { tasks, startTime, endTime, pauseDuration } = focusRecord;
@@ -97,7 +96,7 @@ const DetailsCard = () => {
 				// TODO: Take into account if it does not have a task as well.
 				for (const task of tasks) {
 					const { taskId, startTime, endTime } = task;
-					let projectKey = UNCLASSIFIED_KEY;
+					let projectKey = INBOX_PROJECT_ID;
 
 					if (taskId) {
 						const { projectId } = tasksById[taskId];
@@ -114,11 +113,11 @@ const DetailsCard = () => {
 			// TODO: Test this out to make sure it actually does something. Very rare to have focus records without at least one task though.
 			// If there are no tasks in the focus records, there is no connected project, so it's unclassified.
 			else {
-				if (!focusRecordsGroupedByProject[UNCLASSIFIED_KEY]) {
-					focusRecordsGroupedByProject[UNCLASSIFIED_KEY] = [];
+				if (!focusRecordsGroupedByProject[INBOX_PROJECT_ID]) {
+					focusRecordsGroupedByProject[INBOX_PROJECT_ID] = [];
 				}
 
-				focusRecordsGroupedByProject[UNCLASSIFIED_KEY].push(focusRecord);
+				focusRecordsGroupedByProject[INBOX_PROJECT_ID].push(focusRecord);
 			}
 		});
 
@@ -315,9 +314,11 @@ const ProgressBarList: React.FC<ProgressBarListProps> = ({ data }) => {
 	const dropdownFocusRankingListRef = useRef(null);
 	const [isDropdownFocusRankingListVisible, setIsDropdownFocusRankingListVisible] = useState(false);
 
+	const sortedData = data.sort((a, b) => b.percentage - a.percentage);
+
 	return (
 		<div className="space-y-4 w-full">
-			{data.map((item) => (
+			{sortedData.slice(0, 5).map((item) => (
 				<ProgressBar key={item.name} item={item} />
 			))}
 

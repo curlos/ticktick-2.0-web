@@ -29,7 +29,7 @@ const DropdownFocusRankingList: React.FC<DropdownPrioritiesProps> = ({
 
 				<div className="space-y-4">
 					{progressData.map((item) => (
-						<ProgressBar key={item.name} item={item} />
+						<ProgressBar key={item.name} item={item} fromDropdown={true} />
 					))}
 				</div>
 			</div>
