@@ -49,7 +49,7 @@ const useStats = () => {
 	const timeSinceAccountCreated = getTimeSince(accountCreatedDate);
 	const { days } = timeSinceAccountCreated;
 
-	const [groupedFocusRecordsByDate, setGroupedFocusRecordsByDate] = useState(null);
+	const [focusRecordsGroupedByDate, setFocusRecordsGroupedByDate] = useState(null);
 	const [focusRecordsFromToday, setFocusRecordsFromToday] = useState(null);
 	const [completedTasksForToday, setCompletedTasksForToday] = useState(null);
 	const [totalFocusDuration, setTotalFocusDuration] = useState(0);
@@ -67,20 +67,20 @@ const useStats = () => {
 			return;
 		}
 
-		setGroupedFocusRecordsByDate(getGroupedFocusRecordsByDate(focusRecords));
+		setFocusRecordsGroupedByDate(getGroupedFocusRecordsByDate(focusRecords));
 		setTotalFocusDuration(getFocusDurationFromArray(focusRecords));
 	}, [isLoadingGetFocusRecords, isLoadingGetTasks, isLoadingGetProjects]);
 
 	useEffect(() => {
-		if (!groupedFocusRecordsByDate) {
+		if (!focusRecordsGroupedByDate) {
 			return;
 		}
 
-		setFocusRecordsFromToday(groupedFocusRecordsByDate[todayDateKey]);
-	}, [groupedFocusRecordsByDate]);
+		setFocusRecordsFromToday(focusRecordsGroupedByDate[todayDateKey]);
+	}, [focusRecordsGroupedByDate]);
 
 	useEffect(() => {
-		if (!focusRecordsFromToday || !completedTasksGroupedByDate || !groupedFocusRecordsByDate) {
+		if (!focusRecordsFromToday || !completedTasksGroupedByDate || !focusRecordsGroupedByDate) {
 			return;
 		}
 
@@ -89,7 +89,7 @@ const useStats = () => {
 		setStatsForLastSevenDays(getStatsForLast7Days());
 		setStatsForLastSevenWeeks(getStatsForLast7Weeks());
 		setStatsForLastSevenMonths(getStatsForLast7Months());
-	}, [focusRecordsFromToday, completedTasksGroupedByDate, groupedFocusRecordsByDate]);
+	}, [focusRecordsFromToday, completedTasksGroupedByDate, focusRecordsGroupedByDate]);
 
 	const getStatsForLast7Days = () => {
 		// Get the past 7 days including today
@@ -100,7 +100,7 @@ const useStats = () => {
 			const dayKey = getFormattedLongDay(day);
 
 			const completedTasks = completedTasksGroupedByDate[dayKey];
-			const focusRecords = groupedFocusRecordsByDate[dayKey];
+			const focusRecords = focusRecordsGroupedByDate[dayKey];
 			const focusDuration = (focusRecords && getFocusDurationFromArray(focusRecords)) || 0;
 
 			lastSevenDaysData.push({
@@ -143,7 +143,7 @@ const useStats = () => {
 				const dayKey = getFormattedLongDay(day);
 
 				const completedTasks = completedTasksGroupedByDate[dayKey] || [];
-				const focusRecords = groupedFocusRecordsByDate[dayKey] || [];
+				const focusRecords = focusRecordsGroupedByDate[dayKey] || [];
 				const focusDuration = (focusRecords && getFocusDurationFromArray(focusRecords)) || 0;
 
 				currentWeekData.completedTasks.push(...completedTasks);
@@ -183,7 +183,7 @@ const useStats = () => {
 				const dayKey = getFormattedLongDay(day);
 
 				const completedTasks = completedTasksGroupedByDate[dayKey] || [];
-				const focusRecords = groupedFocusRecordsByDate[dayKey] || [];
+				const focusRecords = focusRecordsGroupedByDate[dayKey] || [];
 				const focusDuration = (focusRecords && getFocusDurationFromArray(focusRecords)) || 0;
 
 				currentMonthData.completedTasks.push(...completedTasks);
@@ -230,6 +230,7 @@ const useStats = () => {
 		projectsById,
 		tags,
 		tagsByRawName,
+		focusRecordsGroupedByDate,
 
 		// Functions
 		getCompletedTasksFromSelectedDates,

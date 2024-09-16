@@ -47,8 +47,6 @@ const ClassifiedCompletionStatisticsCard = ({ selectedTimeInterval, selectedDate
 				break;
 			default:
 				newProgressBarData = getDataByProjects(allCompletedTasksForInterval, newNumOfCompletedTasks);
-			// case 'Task':
-			// 	newProgressBarData = getDataByProjects(allCompletedTasksForInterval, newNumOfCompletedTasks);
 		}
 
 		const thereIsNoData = !newProgressBarData || newProgressBarData.length === 0;
@@ -111,9 +109,6 @@ const ClassifiedCompletionStatisticsCard = ({ selectedTimeInterval, selectedDate
 			const { tags } = task;
 
 			if (tags && tags.length > 0) {
-				console.log(task);
-				console.log(tags);
-
 				for (let tagName of tags) {
 					if (!completedTasksGroupedByTags[tagName]) {
 						completedTasksGroupedByTags[tagName] = [];
@@ -239,11 +234,6 @@ const ClassifiedCompletionStatisticsCard = ({ selectedTimeInterval, selectedDate
 
 				{!thereIsNoData && (
 					<SmallLabelList progressBarData={progressBarData} />
-					// <div className="space-y-2">
-					// 	{progressBarData.map((data) => (
-					// 		<SmallLabel key={data.name} data={data} />
-					// 	))}
-					// </div>
 				)}
 			</div>
 		</div>
