@@ -1,6 +1,11 @@
 import { useEffect } from 'react';
 import Icon from '../../../components/Icon';
-import { getAllDaysInWeekFromDate, getAllDaysInMonthFromDate, formatCheckedInDayDate } from '../../../utils/date.utils';
+import {
+	getAllDaysInWeekFromDate,
+	getAllDaysInMonthFromDate,
+	formatCheckedInDayDate,
+	getAllDaysInYearFromDate,
+} from '../../../utils/date.utils';
 
 const DateRangePicker = ({ selectedDates, setSelectedDates, selectedInterval, startDate, endDate }) => {
 	useEffect(() => {
@@ -13,6 +18,10 @@ const DateRangePicker = ({ selectedDates, setSelectedDates, selectedInterval, st
 				break;
 			case 'Month':
 				setSelectedDates(getAllDaysInMonthFromDate(selectedDates[0]));
+				break;
+			case 'Year':
+				setSelectedDates(getAllDaysInYearFromDate(selectedDates[0]));
+				break;
 				break;
 		}
 	}, [selectedInterval]);

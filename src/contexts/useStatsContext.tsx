@@ -22,8 +22,13 @@ export const StatsProvider = ({ children }) => {
 const useStats = () => {
 	// RTK Query - TickTick 1.0 - Tasks
 	const { data: fetchedTasks, isLoading: isLoadingGetTasks, error: errorGetTasks } = useGetAllTasksQuery();
-	const { allTasksAndItems, totalCompletedTasks, completedTasksGroupedByDate, completedTasksGroupedByProject } =
-		fetchedTasks || {};
+	const {
+		tasksById,
+		allTasksAndItems,
+		totalCompletedTasks,
+		completedTasksGroupedByDate,
+		completedTasksGroupedByProject,
+	} = fetchedTasks || {};
 
 	// RTK Query - TickTick 1.0 - Projects
 	const {
@@ -207,6 +212,18 @@ const useStats = () => {
 		return completedTasks;
 	};
 
+	const getFocusRecordsFromSelectedDates = (datesArr) => {
+		const focusRecords = [];
+
+		for (let date of datesArr) {
+			const dateKey = getFormattedLongDay(date);
+			const focusRecordsForDateArr = focusRecordsGroupedByDate[dateKey] || [];
+			focusRecords.push(...focusRecordsForDateArr);
+		}
+
+		return focusRecords;
+	};
+
 	return {
 		total: {
 			numOfAllTasks: allTasksAndItems?.length || 0,
@@ -227,6 +244,7 @@ const useStats = () => {
 		// From RTK Query
 		completedTasksGroupedByDate,
 		completedTasksGroupedByProject,
+		tasksById,
 		projectsById,
 		tags,
 		tagsByRawName,
@@ -234,5 +252,6 @@ const useStats = () => {
 
 		// Functions
 		getCompletedTasksFromSelectedDates,
+		getFocusRecordsFromSelectedDates,
 	};
 };

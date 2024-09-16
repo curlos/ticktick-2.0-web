@@ -1,31 +1,204 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { PieChart, Pie, Cell, Label } from 'recharts';
 import GeneralSelectButtonAndDropdown from '../GeneralSelectButtonAndDropdown';
 import DateRangePicker from './DateRangePicker';
 import DropdownFocusRankingList from './DropdownFocusRankingList';
 import ModalPickDateRange from './ModalPickDateRange';
 import ProgressBar from './ProgressBar';
+import { useStatsContext } from '../../../contexts/useStatsContext';
+import { checkIfInboxProject } from '../../../utils/tickTickOne.util';
+import { getFocusDurationFromArray, getFormattedDuration } from '../../../utils/helpers.utils';
+
+const noData = [
+	{
+		name: 'No Data',
+		color: 'gray',
+		value: 0,
+		percentage: 100,
+	},
+];
 
 const DetailsCard = () => {
-	const progressBarData = [
-		{ name: 'Hello Mobile', value: '426h28m', percentage: 53.47, color: '#3b82f6' },
-		{ name: 'Side Projects', value: '246h33m', percentage: 30.91, color: '#dc2626' },
-		{ name: 'GUNPLA', value: '42h12m', percentage: 5.29, color: '#7e22ce' },
-		{ name: 'Q Link Wireless', value: '23h47m', percentage: 5.29, color: '#f97316' },
-		{ name: 'GFE - Handbook', value: '16h21m', percentage: 2.05, color: '#2dd4bf' },
-	];
+	const { focusRecordsGroupedByDate, getFocusRecordsFromSelectedDates, tasksById, projectsById, tagsByRawName } =
+		useStatsContext();
 
-	const selectedOptions = ['List', 'Tag', 'Task'];
+	// const progressBarData = [
+	// 	{ name: 'Hello Mobile', value: '426h28m', percentage: 53.47, color: '#3b82f6' },
+	// 	{ name: 'Side Projects', value: '246h33m', percentage: 30.91, color: '#dc2626' },
+	// 	{ name: 'GUNPLA', value: '42h12m', percentage: 5.29, color: '#7e22ce' },
+	// 	{ name: 'Q Link Wireless', value: '23h47m', percentage: 5.29, color: '#f97316' },
+	// 	{ name: 'GFE - Handbook', value: '16h21m', percentage: 2.05, color: '#2dd4bf' },
+	// ];
+
+	const [progressBarData, setProgressBarData] = useState(noData);
+	const [thereIsNoData, setThereIsNoData] = useState(true);
+
+	const selectedOptions = ['Project', 'Tag', 'Task'];
 	const [selected, setSelected] = useState(selectedOptions[0]);
 
 	const selectedIntervalOptions = ['Day', 'Week', 'Month', 'Year', 'Custom'];
 	const [selectedInterval, setSelectedInterval] = useState(selectedIntervalOptions[0]);
 	const [selectedDates, setSelectedDates] = useState([new Date()]);
+	const [focusDurationForInterval, setFocusDurationForInterval] = useState(0);
 
 	// Custom
 	const [isModalPickDateRangeOpen, setIsModalPickDateRangeOpen] = useState(false);
 	const [startDate, setStartDate] = useState(new Date('January 1, 2024'));
 	const [endDate, setEndDate] = useState(new Date());
+
+	useEffect(() => {
+		if (!focusRecordsGroupedByDate || !projectsById || !tasksById) {
+			return;
+		}
+
+		console.log(selectedDates);
+
+		// Get all the completed tasks from the selected interval of dates
+		const allFocusRecordsForInterval = getFocusRecordsFromSelectedDates(selectedDates);
+		const newNumOfFocusRecords = allFocusRecordsForInterval.length;
+		const newFocusDurationForInterval = getFocusDurationFromArray(allFocusRecordsForInterval);
+
+		let newProgressBarData = progressBarData;
+
+		switch (selected) {
+			case 'Project':
+				newProgressBarData = getDataByProjects(allFocusRecordsForInterval, newFocusDurationForInterval);
+				break;
+			// case 'Tag':
+			// 	newProgressBarData = getDataByTags(allCompletedTasksForInterval, newNumOfCompletedTasks);
+			// 	break;
+			default:
+				newProgressBarData = getDataByProjects(allFocusRecordsForInterval, newFocusDurationForInterval);
+		}
+
+		const thereIsNoData = !newProgressBarData || newProgressBarData.length === 0;
+
+		if (thereIsNoData) {
+			newProgressBarData = noData;
+
+			setThereIsNoData(true);
+		} else {
+			setThereIsNoData(false);
+		}
+
+		setProgressBarData(newProgressBarData);
+		setFocusDurationForInterval(newFocusDurationForInterval);
+	}, [focusRecordsGroupedByDate, selectedDates, projectsById, tagsByRawName, selected, tasksById]);
+
+	const getDataByProjects = (allFocusRecordsForInterval, focusDurationForInterval) => {
+		const focusRecordsGroupedByProject = {};
+
+		const UNCLASSIFIED_KEY = 'Unclassified';
+
+		allFocusRecordsForInterval.forEach((focusRecord) => {
+			const { tasks, startTime, endTime, pauseDuration } = focusRecord;
+
+			if (tasks?.length > 0) {
+				// TODO: Take into account if it does not have a task as well.
+				for (const task of tasks) {
+					const { taskId, startTime, endTime } = task;
+					let projectKey = UNCLASSIFIED_KEY;
+
+					if (taskId) {
+						const { projectId } = tasksById[taskId];
+						projectKey = projectId;
+					}
+
+					if (!focusRecordsGroupedByProject[projectKey]) {
+						focusRecordsGroupedByProject[projectKey] = [];
+					}
+
+					focusRecordsGroupedByProject[projectKey].push(task);
+				}
+			}
+			// TODO: Test this out to make sure it actually does something. Very rare to have focus records without at least one task though.
+			// If there are no tasks in the focus records, there is no connected project, so it's unclassified.
+			else {
+				if (!focusRecordsGroupedByProject[UNCLASSIFIED_KEY]) {
+					focusRecordsGroupedByProject[UNCLASSIFIED_KEY] = [];
+				}
+
+				focusRecordsGroupedByProject[UNCLASSIFIED_KEY].push(focusRecord);
+			}
+		});
+
+		return Object.keys(focusRecordsGroupedByProject).map((projectId) => {
+			const focusRecordsArr = focusRecordsGroupedByProject[projectId];
+			const focusDurationForProject = getFocusDurationFromArray(focusRecordsArr);
+
+			// const numOfFocusRecords = focusRecordsArr.length;
+
+			const percentage = Number(((focusDurationForProject / focusDurationForInterval) * 100).toFixed(2));
+
+			const isFromInboxProject = checkIfInboxProject(projectId);
+
+			let name = 'Inbox';
+			let color = 'green';
+
+			if (!isFromInboxProject) {
+				const project = projectsById[projectId];
+				name = project.name;
+				color = project.color;
+			}
+
+			return {
+				name,
+				color,
+				value: getFormattedDuration(focusDurationForProject, false),
+				percentage,
+			};
+		});
+	};
+
+	// const getDataByTags = (allCompletedTasksForInterval, newNumOfCompletedTasks) => {
+	// 	const completedTasksGroupedByTags = {};
+	// 	const UNCLASSIFIED_KEY = 'UNCLASSIFIED';
+
+	// 	allCompletedTasksForInterval.forEach((task) => {
+	// 		const { tags } = task;
+
+	// 		if (tags && tags.length > 0) {
+	// 			for (let tagName of tags) {
+	// 				if (!completedTasksGroupedByTags[tagName]) {
+	// 					completedTasksGroupedByTags[tagName] = [];
+	// 				}
+
+	// 				completedTasksGroupedByTags[tagName].push(task);
+	// 			}
+	// 		} else {
+	// 			// If the task is unclassified (no tags)
+	// 			if (!completedTasksGroupedByTags[UNCLASSIFIED_KEY]) {
+	// 				completedTasksGroupedByTags[UNCLASSIFIED_KEY] = [];
+	// 			}
+
+	// 			completedTasksGroupedByTags[UNCLASSIFIED_KEY].push(task);
+	// 		}
+	// 	});
+
+	// 	return Object.keys(completedTasksGroupedByTags).map((tagName) => {
+	// 		const completedTasksArr = completedTasksGroupedByTags[tagName];
+	// 		const numOfCompletedTasks = completedTasksArr.length;
+	// 		const percentage = Number(((numOfCompletedTasks / newNumOfCompletedTasks) * 100).toFixed(2));
+
+	// 		const isUnclassifiedTag = tagName === UNCLASSIFIED_KEY;
+
+	// 		let name = 'Unclassified';
+	// 		let color = 'black';
+
+	// 		if (!isUnclassifiedTag) {
+	// 			const tag = tagsByRawName[tagName];
+	// 			name = tag.name;
+	// 			color = tag.color;
+	// 		}
+
+	// 		return {
+	// 			name,
+	// 			color,
+	// 			value: numOfCompletedTasks,
+	// 			percentage,
+	// 		};
+	// 	});
+	// };
 
 	return (
 		<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col h-full">
@@ -96,7 +269,7 @@ const DetailsCard = () => {
 												dominantBaseline="central"
 												className="text-[24px] font-bold"
 											>
-												797h39m
+												{getFormattedDuration(focusDurationForInterval, false)}
 											</text>
 											<text
 												x={cx}

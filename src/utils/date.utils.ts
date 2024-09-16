@@ -478,6 +478,24 @@ export const getAllDaysInMonthFromDate = (date) => {
 	return result;
 };
 
+export const getAllDaysInYearFromDate = (date) => {
+	let result = [];
+	let year = date.getFullYear(); // Get the year of the date
+
+	// Loop through all months of the year
+	for (let month = 0; month < 12; month++) {
+		// Calculate the number of days in the month
+		let daysInMonth = new Date(year, month + 1, 0).getDate();
+
+		// Loop through all days of the month
+		for (let day = 1; day <= daysInMonth; day++) {
+			result.push(new Date(year, month, day));
+		}
+	}
+
+	return result;
+};
+
 export const getMonthDayString = (date) => {
 	// Using toLocaleDateString with options for locale-specific month name and day number
 	const month = date.toLocaleDateString('en-US', { month: 'short' }); // Gets the abbreviated month
