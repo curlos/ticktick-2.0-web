@@ -734,7 +734,7 @@ export const getGroupedFocusRecordsByTask = (focusRecords, tasksById) => {
 export const getFocusDurationFromArray = (focusRecords) => {
 	let totalFocusDuration = 0;
 
-	focusRecords.forEach((focusRecord) => {
+	focusRecords?.forEach((focusRecord) => {
 		totalFocusDuration += getFocusDuration(focusRecord);
 	});
 

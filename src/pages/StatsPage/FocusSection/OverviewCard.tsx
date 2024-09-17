@@ -26,7 +26,7 @@ const OverviewCard = () => {
 		yesterdayDate.setDate(yesterdayDate.getDate() - 1);
 		const yesterdayDateKey = getFormattedLongDay(yesterdayDate);
 
-		const yesterdayFocusRecords = focusRecordsGroupedByDate[yesterdayDateKey];
+		const yesterdayFocusRecords = focusRecordsGroupedByDate[yesterdayDateKey] || [];
 		const yesterdayFocusDuration = getFocusDurationFromArray(yesterdayFocusRecords);
 
 		setDiffTodayFromYesterdayFocusRecords({
