@@ -99,6 +99,9 @@ const DetailsCard = () => {
 					let projectKey = INBOX_PROJECT_ID;
 
 					if (taskId) {
+						console.log(task);
+						console.log(taskId);
+
 						const { projectId } = tasksById[taskId];
 						projectKey = projectId;
 					}
