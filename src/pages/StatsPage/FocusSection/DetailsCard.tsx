@@ -98,7 +98,8 @@ const DetailsCard = () => {
 					const { taskId, startTime, endTime } = task;
 					let projectKey = INBOX_PROJECT_ID;
 
-					if (taskId) {
+					// TODO: Check task that is missing - potentially deleted forever from 2022.
+					if (taskId && tasksById[taskId]) {
 						console.log(task);
 						console.log(taskId);
 
