@@ -84,6 +84,7 @@ const DetailsCard = () => {
 	}, [focusRecordsGroupedByDate, selectedDates, projectsById, tagsByRawName, selected, tasksById]);
 
 	const getDataByProjects = (allFocusRecordsForInterval, focusDurationForInterval) => {
+		// TODO:
 		const focusRecordsGroupedByProject = {};
 
 		// Default it to the "Inbox" project if the focus record has no task with a project.
