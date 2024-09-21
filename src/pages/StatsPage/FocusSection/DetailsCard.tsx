@@ -101,11 +101,13 @@ const DetailsCard = () => {
 
 					// TODO: Check task that is missing - potentially deleted forever from 2022.
 					if (taskId) {
-						// console.log(task);
-						// console.log(taskId);
+						console.log(task);
+						console.log(taskId);
 
-						const { projectId } = tasksById[taskId];
-						projectKey = projectId;
+						if (tasksById[taskId]) {
+							const { projectId } = tasksById[taskId];
+							projectKey = projectId;
+						}
 					}
 
 					if (!focusRecordsGroupedByProject[projectKey]) {
@@ -203,8 +205,6 @@ const DetailsCard = () => {
 	// 		};
 	// 	});
 	// };
-
-	console.log(progressBarData);
 
 	return (
 		<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col h-full">
