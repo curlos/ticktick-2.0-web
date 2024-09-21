@@ -1,35 +1,55 @@
 import classNames from 'classnames';
 import { useState, useRef } from 'react';
 import Dropdown from '../../../components/Dropdown/Dropdown';
-import { getAllDatesInYear } from '../../../utils/date.utils';
+import { getAllDatesInYear, getFormattedLongDay } from '../../../utils/date.utils';
+import { useStatsContext } from '../../../contexts/useStatsContext';
+import {
+	getFocusDurationFromArray,
+	getFormattedDuration,
+	secondsToHoursAndMinutes,
+} from '../../../utils/helpers.utils';
 
 interface CalendarHeatmapProps {
 	data: number[]; // Array of numbers (0-4)
 }
 
-const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({ data = [1] }) => {
-	const allDatesInYear = getAllDatesInYear(2024);
+const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({ selectedDates }) => {
+	const { focusRecordsGroupedByDate } = useStatsContext();
+
+	const allDatesInYear = getAllDatesInYear(selectedDates[0].getFullYear());
 
 	const durations = [
 		{
 			value: '0m',
-			bgColor: 'bg-transparent',
+			bgColor: 'bg-color-gray-600',
 		},
 		{
-			value: '0-1h',
-			bgColor: 'bg-gray-300',
+			value: '0-59m',
+			bgColor: 'bg-blue-200',
 		},
 		{
-			value: '1h-3h',
+			value: '1h+',
 			bgColor: 'bg-blue-300',
 		},
 		{
-			value: '3h-5h',
+			value: '2h+',
+			bgColor: 'bg-blue-400',
+		},
+		{
+			value: '3h+',
 			bgColor: 'bg-blue-500',
 		},
 		{
-			value: '>5h',
+			value: '4h+',
+			bgColor: 'bg-blue-600',
+		},
+		{
+			value: '5h+',
 			bgColor: 'bg-blue-800',
+		},
+		{
+			value: '6h+',
+			bgColor: 'bg-blue-900',
 		},
 	];
 
@@ -45,7 +65,11 @@ const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({ data = [1] }) => {
 				</div>
 				<div className="flex flex-col flex-wrap max-h-[210px]">
 					{allDatesInYear.map((date) => (
-						<CalendarDay key={date.toLocaleDateString()} date={date} />
+						<CalendarDay
+							key={date.toLocaleDateString()}
+							date={date}
+							focusRecordsGroupedByDate={focusRecordsGroupedByDate}
+						/>
 					))}
 				</div>
 			</div>
@@ -64,17 +88,24 @@ const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({ data = [1] }) => {
 	);
 };
 
-const CalendarDay = ({ date }) => {
+const CalendarDay = ({ date, focusRecordsGroupedByDate }) => {
 	const [isHovering, setIsHovering] = useState(false);
 	const dropdownRef = useRef(null);
-	const rangeClass = getRangeClass(Math.floor(Math.random() * 5));
+
+	const dateKey = getFormattedLongDay(date);
+	const focusRecordsFromDate = (focusRecordsGroupedByDate && focusRecordsGroupedByDate[dateKey]) || [];
+	const focusDurationForDay = getFocusDurationFromArray(focusRecordsFromDate);
+	const { hours, minutes } = secondsToHoursAndMinutes(focusDurationForDay);
+	const rangeClass = getRangeClass(hours, minutes);
+
+	const formattedDurationForTheDay = getFormattedDuration(focusDurationForDay, false);
 
 	return (
 		<div className="relative">
 			<div
 				key={date.toLocaleDateString()}
 				className={classNames(
-					`h-[15px] w-[15px] cursor-pointer border border-[1.5px] border-black hover:border-[2px] hover:border-sky-400`,
+					`h-[15px] w-[15px] cursor-pointer border-[1.25px] border-color-gray-600 hover:border-[2px] hover:border-sky-400`,
 					rangeClass
 				)}
 				onMouseEnter={() => setIsHovering(true)}
@@ -88,27 +119,44 @@ const CalendarDay = ({ date }) => {
 				customClasses={'!bg-black'}
 			>
 				<div className="p-2 text-[12px] text-blue-500 bg-black text-nowrap rounded">
-					{date.toLocaleDateString()}
+					{dateKey} - {formattedDurationForTheDay}
 				</div>
 			</Dropdown>
 		</div>
 	);
 };
 
-const getRangeClass = (value: number): string => {
-	switch (value) {
-		case 0:
-			return 'bg-gray-300';
-		case 1:
-			return 'bg-blue-300';
-		case 2:
-			return 'bg-blue-500';
-		case 3:
-			return 'bg-blue-600';
-		case 4:
-			return 'bg-blue-800';
-		default:
-			return 'bg-gray-100';
+const getRangeClass = (hours, minutes): string => {
+	if (hours === 6) {
+		return 'bg-blue-900';
+	}
+
+	if (hours === 5) {
+		return 'bg-blue-700';
+	}
+
+	if (hours === 4) {
+		return 'bg-blue-600';
+	}
+
+	if (hours === 3) {
+		return 'bg-blue-500';
+	}
+
+	if (hours === 2) {
+		return 'bg-blue-400';
+	}
+
+	if (hours === 1) {
+		return 'bg-blue-300';
+	}
+
+	if (minutes > 0) {
+		return 'bg-blue-100';
+	}
+
+	if (hours === 0 && minutes === 0) {
+		return 'bg-color-gray-700';
 	}
 };
 
