@@ -496,15 +496,6 @@ export const getAllDaysInYearFromDate = (date) => {
 	return result;
 };
 
-export const getMonthDayString = (date) => {
-	// Using toLocaleDateString with options for locale-specific month name and day number
-	const month = date.toLocaleDateString('en-US', { month: 'short' }); // Gets the abbreviated month
-	const day = date.getDate(); // Gets the day of the month
-
-	// Concatenate month and day to form the required string
-	return `${month} ${day}`;
-};
-
 /**
  * Generates all dates between two dates inclusively.
  * @param {Date} startDate - The start date of the range.
@@ -521,6 +512,15 @@ export const getAllDaysInRange = (startDate, endDate) => {
 	}
 
 	return dates;
+};
+
+export const getMonthDayString = (date) => {
+	// Using toLocaleDateString with options for locale-specific month name and day number
+	const month = date.toLocaleDateString('en-US', { month: 'short' }); // Gets the abbreviated month
+	const day = date.getDate(); // Gets the day of the month
+
+	// Concatenate month and day to form the required string
+	return `${month} ${day}`;
 };
 
 export const getAllDatesInYear = (year) => {

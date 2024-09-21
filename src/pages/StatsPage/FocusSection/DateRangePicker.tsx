@@ -5,6 +5,7 @@ import {
 	getAllDaysInMonthFromDate,
 	formatCheckedInDayDate,
 	getAllDaysInYearFromDate,
+	getAllDaysInRange,
 } from '../../../utils/date.utils';
 
 const DateRangePicker = ({ selectedDates, setSelectedDates, selectedInterval, startDate, endDate }) => {
@@ -22,9 +23,11 @@ const DateRangePicker = ({ selectedDates, setSelectedDates, selectedInterval, st
 			case 'Year':
 				setSelectedDates(getAllDaysInYearFromDate(selectedDates[0]));
 				break;
+			case 'Custom':
+				setSelectedDates(getAllDaysInRange(startDate, endDate));
 				break;
 		}
-	}, [selectedInterval]);
+	}, [selectedInterval, startDate, endDate]);
 
 	const handleArrowClick = (arrowType) => {
 		const date = new Date(selectedDates[0]);
