@@ -100,9 +100,9 @@ const DetailsCard = () => {
 					let projectKey = INBOX_PROJECT_ID;
 
 					// TODO: Check task that is missing - potentially deleted forever from 2022.
-					if (taskId && tasksById[taskId]) {
-						console.log(task);
-						console.log(taskId);
+					if (taskId) {
+						// console.log(task);
+						// console.log(taskId);
 
 						const { projectId } = tasksById[taskId];
 						projectKey = projectId;
@@ -203,6 +203,8 @@ const DetailsCard = () => {
 	// 		};
 	// 	});
 	// };
+
+	console.log(progressBarData);
 
 	return (
 		<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col h-full">

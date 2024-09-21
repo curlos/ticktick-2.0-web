@@ -511,8 +511,9 @@ export const getMultiSelectFilteredTasks = (tasks, filters) => {
 export const getFocusDuration = (focusRecord, groupedBy) => {
 	// TODO: Refactor to work for simpler ones that are not full focus records (like the passed in tasks)
 	const isTaskFromFocusRecord = focusRecord?.taskId;
+	const focusRecordWithoutTask = !focusRecord?.tasks;
 
-	if (isTaskFromFocusRecord) {
+	if (isTaskFromFocusRecord || focusRecordWithoutTask) {
 		const task = focusRecord;
 		const { startTime, endTime } = task;
 
