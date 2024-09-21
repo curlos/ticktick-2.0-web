@@ -241,6 +241,7 @@ const useStats = () => {
 		statsForLastSevenDays,
 		statsForLastSevenWeeks,
 		statsForLastSevenMonths,
+
 		// From RTK Query
 		completedTasksGroupedByDate,
 		completedTasksGroupedByProject,

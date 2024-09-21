@@ -22,7 +22,8 @@ const FocusSection = () => {
 				</div>
 
 				<div className="flex-[4] w-full">
-					<div className="bg-color-gray-600 p-3 rounded-lg h-[350px]">
+					{/* TODO: See what to do about this later. I could show the smaller versions of the focus records I guess but it seems unnecessary here. Either show the focus records in a smaller format here or maybe have something like the Daily Streak and focus hours show up here. The daily streak/goal sounds like a good idea for this spot. */}
+					{/* <div className="bg-color-gray-600 p-3 rounded-lg h-[350px]">
 						<div className="flex justify-between items-center gap-2 mb-5">
 							<div className="text-[15px] font-bold">Focus Record</div>
 							<Icon
@@ -39,14 +40,14 @@ const FocusSection = () => {
 						<div className="max-h-[270px] overflow-auto gray-scrollbar">
 							<FocusRecordList />
 						</div>
-					</div>
+					</div> */}
 				</div>
 			</div>
 
 			<div className="grid grid-cols-2 gap-5 mt-5">
-				<TrendsCard />
-				<TimelineCard />
-				<MostFocusedTimeCard />
+				{/* <TrendsCard /> */}
+				{/* <TimelineCard /> */}
+				{/* <MostFocusedTimeCard /> */}
 				<YearGridsCard />
 			</div>
 		</div>
