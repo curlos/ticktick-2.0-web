@@ -7,7 +7,7 @@ import ModalPickDateRange from './ModalPickDateRange';
 import ProgressBar from './ProgressBar';
 import { useStatsContext } from '../../../contexts/useStatsContext';
 import { checkIfInboxProject } from '../../../utils/tickTickOne.util';
-import { getFocusDurationFromArray, getFormattedDuration } from '../../../utils/helpers.utils';
+import { getFocusDurationFromArray, getFormattedDuration, getRandomColor } from '../../../utils/helpers.utils';
 
 const noData = [
 	{
@@ -94,16 +94,11 @@ const DetailsCard = () => {
 			const { tasks, startTime, endTime, pauseDuration } = focusRecord;
 
 			if (tasks?.length > 0) {
-				// TODO: Take into account if it does not have a task as well.
 				for (const task of tasks) {
 					const { taskId, startTime, endTime } = task;
 					let projectKey = INBOX_PROJECT_ID;
 
-					// TODO: Check task that is missing - potentially deleted forever from 2022.
 					if (taskId) {
-						console.log(task);
-						console.log(taskId);
-
 						if (tasksById[taskId]) {
 							const { projectId } = tasksById[taskId];
 							projectKey = projectId;
@@ -116,10 +111,8 @@ const DetailsCard = () => {
 
 					focusRecordsGroupedByProject[projectKey].push(task);
 				}
-			}
-			// TODO: Test this out to make sure it actually does something. Very rare to have focus records without at least one task though.
-			// If there are no tasks in the focus records, there is no connected project, so it's unclassified.
-			else {
+			} else {
+				// If there are no tasks in the focus records, there is no connected project, so just put it in the "Inbox" project by default.
 				if (!focusRecordsGroupedByProject[INBOX_PROJECT_ID]) {
 					focusRecordsGroupedByProject[INBOX_PROJECT_ID] = [];
 				}
@@ -144,7 +137,13 @@ const DetailsCard = () => {
 			if (!isFromInboxProject) {
 				const project = projectsById[projectId];
 				name = project.name;
-				color = project.color;
+
+				if (project.color) {
+					color = project.color;
+				} else {
+					// If there's no color, assign a random color.
+					color = getRandomColor();
+				}
 			}
 
 			return {

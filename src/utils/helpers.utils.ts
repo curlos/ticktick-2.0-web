@@ -741,3 +741,10 @@ export const getFocusDurationFromArray = (focusRecords) => {
 
 	return totalFocusDuration;
 };
+
+export const getRandomColor = () => {
+	const red = Math.floor(Math.random() * 256); // Random number between 0-255
+	const green = Math.floor(Math.random() * 256); // Random number between 0-255
+	const blue = Math.floor(Math.random() * 256); // Random number between 0-255
+	return `rgb(${red}, ${green}, ${blue})`; // Construct RGB color string
+};
