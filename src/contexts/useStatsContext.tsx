@@ -249,6 +249,7 @@ const useStats = () => {
 		projectsById,
 		tags,
 		tagsByRawName,
+		focusRecords,
 		focusRecordsGroupedByDate,
 
 		// Functions

@@ -9,6 +9,8 @@ import {
 	getFormattedLongDay,
 	getTimeInBlocks,
 } from '../../../utils/date.utils';
+import ModalPickDateRange from './ModalPickDateRange';
+import GeneralSelectButtonAndDropdown from '../GeneralSelectButtonAndDropdown';
 
 const data = [
 	{
@@ -42,51 +44,46 @@ const data = [
 ];
 
 const MostFocusedTimeCard = () => {
-	const { focusRecordsGroupedByDate } = useStatsContext();
+	const { focusRecords, focusRecordsGroupedByDate } = useStatsContext();
 	const [selectedDates, setSelectedDates] = useState([new Date('August 1, 2024')]);
-	const [monthTimeBlock, setMonthTimeBlock] = useState({});
 	const [data, setData] = useState([]);
 
-	// For each day in the selectedDates, get the focus records array for that date and go through each focus record and add it to the time block based on the start and end time.
+	const selectedIntervalOptions = ['Day', 'Week', 'Month', 'Year', 'All', 'Custom'];
+	const [selectedInterval, setSelectedInterval] = useState('Month');
+
+	// Custom
+	const [isModalPickDateRangeOpen, setIsModalPickDateRangeOpen] = useState(false);
+	const [startDate, setStartDate] = useState(new Date('January 1, 2024'));
+	const [endDate, setEndDate] = useState(new Date());
 
 	useEffect(() => {
-		if (selectedDates?.length > 0 && focusRecordsGroupedByDate) {
-			getNewMonthTimeBlock();
+		if (selectedInterval === 'All' && focusRecords) {
+			getTimeBlockTotalsForInterval();
+		} else if (selectedInterval !== 'All' && selectedDates?.length > 0 && focusRecordsGroupedByDate) {
+			getTimeBlockTotalsForInterval();
 		}
-	}, [selectedDates, focusRecordsGroupedByDate]);
+	}, [selectedDates, focusRecordsGroupedByDate, focusRecords, selectedInterval]);
 
-	const getNewMonthTimeBlock = () => {
+	const getTimeBlockTotalsForInterval = () => {
 		console.log(selectedDates);
 
 		const newDailyHourBlocks = getDailyHourBlocks();
 
-		for (let date of selectedDates) {
-			const dateKey = getFormattedLongDay(date);
-			const focusRecordsForTheDay = focusRecordsGroupedByDate[dateKey];
+		// If the selected interval is "Day", "Week", "Month", "Year", or "Custom"
+		if (selectedInterval !== 'All') {
+			for (let date of selectedDates) {
+				const dateKey = getFormattedLongDay(date);
+				const focusRecordsForTheDay = focusRecordsGroupedByDate[dateKey];
 
-			if (focusRecordsForTheDay) {
-				for (let focusRecord of focusRecordsForTheDay) {
-					const { startTime, endTime, pauseDuration, tasks } = focusRecord;
-
-					if (tasks?.length > 0) {
-						for (let task of tasks) {
-							const { startTime, endTime } = task;
-							const timeInBlocks = getTimeInBlocks(startTime, endTime);
-
-							for (let timeBlock of timeInBlocks) {
-								const { from, to, seconds } = timeBlock;
-
-								newDailyHourBlocks[from].seconds += seconds;
-							}
-						}
-					} else {
-						console.log('TODO:');
-					}
+				if (focusRecordsForTheDay) {
+					fillInHourBlocksWithSeconds(focusRecordsForTheDay, newDailyHourBlocks);
 				}
 			}
+		} else {
+			if (focusRecords) {
+				fillInHourBlocksWithSeconds(focusRecords, newDailyHourBlocks);
+			}
 		}
-
-		console.log(newDailyHourBlocks);
 
 		const newData = Object.keys(newDailyHourBlocks).map((timeHourBlockKey) => {
 			const timeHourBlock = newDailyHourBlocks[timeHourBlockKey];
@@ -101,16 +98,56 @@ const MostFocusedTimeCard = () => {
 		setData(newData);
 	};
 
+	const fillInHourBlocksWithSeconds = (focusRecords, newDailyHourBlocks) => {
+		for (let focusRecord of focusRecords) {
+			const { startTime, endTime, pauseDuration, tasks } = focusRecord;
+
+			if (tasks?.length > 0) {
+				for (let task of tasks) {
+					const { startTime, endTime } = task;
+					const timeInBlocks = getTimeInBlocks(startTime, endTime);
+
+					for (let timeBlock of timeInBlocks) {
+						const { from, to, seconds } = timeBlock;
+
+						newDailyHourBlocks[from].seconds += seconds;
+					}
+				}
+			} else {
+				console.log('TODO:');
+			}
+		}
+	};
+
 	return (
 		<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col h-[350px]">
 			<div className="flex justify-between items-center mb-6">
 				<h3 className="font-bold text-[16px]">Most Focused Time</h3>
 
-				<DateRangePicker
-					selectedDates={selectedDates}
-					setSelectedDates={setSelectedDates}
-					selectedInterval={'Month'}
-				/>
+				<div className="flex items-center gap-2">
+					<GeneralSelectButtonAndDropdown
+						selected={selectedInterval}
+						setSelected={setSelectedInterval}
+						selectedOptions={selectedIntervalOptions}
+						onClick={(name) => {
+							if (name?.toLowerCase() !== 'custom') {
+								return;
+							}
+
+							setIsModalPickDateRangeOpen(true);
+						}}
+					/>
+
+					{selectedInterval !== 'All' && (
+						<DateRangePicker
+							selectedDates={selectedDates}
+							setSelectedDates={setSelectedDates}
+							selectedInterval={selectedInterval}
+							startDate={startDate}
+							endDate={endDate}
+						/>
+					)}
+				</div>
 			</div>
 
 			<ResponsiveContainer width="100%" height="100%">
@@ -150,6 +187,15 @@ const MostFocusedTimeCard = () => {
 					/>
 				</BarChart>
 			</ResponsiveContainer>
+
+			<ModalPickDateRange
+				isModalOpen={isModalPickDateRangeOpen}
+				setIsModalOpen={setIsModalPickDateRangeOpen}
+				startDate={startDate}
+				setStartDate={setStartDate}
+				endDate={endDate}
+				setEndDate={setEndDate}
+			/>
 		</div>
 	);
 };
