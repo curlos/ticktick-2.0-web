@@ -4,16 +4,26 @@ import { useEffect, useState } from 'react';
 import DateRangePicker from './DateRangePicker';
 import ModalPickDateRange from './ModalPickDateRange';
 import { useStatsContext } from '../../../contexts/useStatsContext';
-import { getFormattedLongDay, getFormattedShortMonthDay, hasDatePassed } from '../../../utils/date.utils';
+import {
+	getFormattedLongDay,
+	getFormattedShortMonthDay,
+	groupDatesByInterval,
+	hasDatePassed,
+} from '../../../utils/date.utils';
 import { getFocusDurationFromArray, getFormattedDuration } from '../../../utils/helpers.utils';
+import classNames from 'classnames';
 
 const TrendsCard = () => {
 	const { focusRecords, focusRecordsGroupedByDate } = useStatsContext();
 
 	const [data, setData] = useState([]);
+
 	const selectedIntervalOptions = ['Week', 'Month', 'Year', 'All', 'Custom'];
 	const [selectedInterval, setSelectedInterval] = useState(selectedIntervalOptions[0]);
 	const [selectedDates, setSelectedDates] = useState([new Date()]);
+
+	const selectedGroupedIntervalOptions = ['Days', 'Weeks', 'Months'];
+	const [selectedGroupedInterval, setSelectedGroupedInterval] = useState('Days');
 
 	// Custom
 	const [isModalPickDateRangeOpen, setIsModalPickDateRangeOpen] = useState(false);
@@ -22,54 +32,42 @@ const TrendsCard = () => {
 
 	useEffect(() => {
 		if (selectedInterval === 'All' && focusRecords) {
-			const newData = [];
-
-			Object.keys(focusRecordsGroupedByDate).forEach((dateKey) => {
-				const focusRecordsForDay = focusRecordsGroupedByDate[dateKey];
-				const focusDurationForDay = getFocusDurationFromArray(focusRecordsForDay);
-
-				newData.push({
-					name: dateKey,
-					seconds: focusDurationForDay,
-				});
-			});
-
+			const allFocusRecordDates = Object.keys(focusRecordsGroupedByDate).map((dateKey) => new Date(dateKey));
+			const newData = getUpdatedData(allFocusRecordDates);
 			setData(newData);
 		} else if (selectedInterval !== 'All' && selectedDates?.length > 0 && focusRecordsGroupedByDate) {
-			const newData = [];
+			const newData = getUpdatedData(selectedDates);
+			setData(newData);
+		}
+	}, [selectedDates, selectedInterval, selectedGroupedInterval, focusRecordsGroupedByDate, focusRecords]);
 
-			for (let date of selectedDates) {
+	useEffect(() => {
+		if (selectedInterval === 'Month') {
+			setSelectedGroupedInterval('Days');
+		}
+	}, [selectedInterval]);
+
+	const getUpdatedData = (selectedDates) => {
+		const newData = [];
+
+		const groupedDates = groupDatesByInterval(selectedDates, selectedGroupedInterval);
+
+		Object.keys(groupedDates).forEach((groupedKey) => {
+			const daysInGroupedInterval = groupedDates[groupedKey];
+			let focusDurationForGroup = 0;
+
+			for (let date of daysInGroupedInterval) {
 				const dateKey = getFormattedLongDay(date);
 
 				const focusRecordsForDay = focusRecordsGroupedByDate[dateKey];
-				const focusDurationForDay = getFocusDurationFromArray(focusRecordsForDay);
-
-				newData.push({
-					name: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-					seconds: focusDurationForDay,
-				});
+				focusDurationForGroup += getFocusDurationFromArray(focusRecordsForDay);
 			}
 
-			setData(newData);
-		}
-	}, [selectedDates, selectedInterval, focusRecordsGroupedByDate, focusRecords]);
-
-	const getNewData = (selectedDates) => {
-		const newData = [];
-
-		for (let date of selectedDates) {
-			const dateKey = getFormattedLongDay(date);
-
-			const focusRecordsForDay = focusRecordsGroupedByDate[dateKey];
-			const focusDurationForDay = getFocusDurationFromArray(focusRecordsForDay);
-
 			newData.push({
-				name: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-				seconds: focusDurationForDay,
+				name: groupedKey,
+				seconds: focusDurationForGroup,
 			});
-		}
-
-		console.log(newData);
+		});
 
 		return newData;
 	};
@@ -97,7 +95,17 @@ const TrendsCard = () => {
 			<div className="flex justify-between items-center mb-4">
 				<h3 className="font-bold text-[16px]">Trends</h3>
 
-				<div className="flex gap-2 items-center">
+				<div className={classNames('flex gap-2 items-center', selectedInterval === 'All' && 'py-2')}>
+					{selectedInterval !== 'Week' && (
+						<GeneralSelectButtonAndDropdown
+							selected={selectedGroupedInterval}
+							setSelected={setSelectedGroupedInterval}
+							selectedOptions={
+								selectedInterval === 'Month' ? ['Days', 'Weeks'] : selectedGroupedIntervalOptions
+							}
+						/>
+					)}
+
 					<GeneralSelectButtonAndDropdown
 						selected={selectedInterval}
 						setSelected={setSelectedInterval}
@@ -111,13 +119,15 @@ const TrendsCard = () => {
 						}}
 					/>
 
-					<DateRangePicker
-						selectedDates={selectedDates}
-						setSelectedDates={setSelectedDates}
-						selectedInterval={selectedInterval}
-						startDate={startDate}
-						endDate={endDate}
-					/>
+					{selectedInterval !== 'All' && (
+						<DateRangePicker
+							selectedDates={selectedDates}
+							setSelectedDates={setSelectedDates}
+							selectedInterval={selectedInterval}
+							startDate={startDate}
+							endDate={endDate}
+						/>
+					)}
 				</div>
 			</div>
 

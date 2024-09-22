@@ -837,3 +837,44 @@ export const hasDatePassed = (inputDate) => {
 	// Compare the given date with the current date
 	return givenDate < currentDate;
 };
+
+function getStartOfWeek(d) {
+	const date = new Date(d);
+	const day = date.getDay();
+	const diff = date.getDate() - day + (day === 0 ? -6 : 1); // adjust when day is Sunday
+	return new Date(date.setDate(diff));
+}
+
+function getStartOfMonth(d) {
+	return new Date(d.getFullYear(), d.getMonth(), 1);
+}
+
+export const groupDatesByInterval = (dates, interval) => {
+	const grouped = {};
+
+	dates.forEach((dateObj) => {
+		let key;
+		const d = new Date(dateObj);
+
+		switch (interval) {
+			case 'Days':
+				key = getFormattedShortMonthDay(d);
+				break;
+			case 'Weeks':
+				key = getFormattedShortMonthDay(getStartOfWeek(d));
+				break;
+			case 'Months':
+				key = d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+				break;
+			default:
+				throw new Error('Invalid grouping option. Use "days", "weeks", or "months".');
+		}
+
+		if (!grouped[key]) {
+			grouped[key] = [];
+		}
+		grouped[key].push(dateObj);
+	});
+
+	return grouped;
+};
