@@ -8,6 +8,7 @@ import ProgressBar from './ProgressBar';
 import { useStatsContext } from '../../../contexts/useStatsContext';
 import { checkIfInboxProject } from '../../../utils/tickTickOne.util';
 import { getFocusDurationFromArray, getFormattedDuration, getRandomColor } from '../../../utils/helpers.utils';
+import classNames from 'classnames';
 
 const noData = [
 	{
@@ -19,8 +20,14 @@ const noData = [
 ];
 
 const DetailsCard = () => {
-	const { focusRecordsGroupedByDate, getFocusRecordsFromSelectedDates, tasksById, projectsById, tagsByRawName } =
-		useStatsContext();
+	const {
+		focusRecords,
+		focusRecordsGroupedByDate,
+		getFocusRecordsFromSelectedDates,
+		tasksById,
+		projectsById,
+		tagsByRawName,
+	} = useStatsContext();
 
 	// const progressBarData = [
 	// 	{ name: 'Hello Mobile', value: '426h28m', percentage: 53.47, color: '#3b82f6' },
@@ -36,7 +43,7 @@ const DetailsCard = () => {
 	const selectedOptions = ['Project', 'Tag', 'Task'];
 	const [selected, setSelected] = useState(selectedOptions[0]);
 
-	const selectedIntervalOptions = ['Day', 'Week', 'Month', 'Year', 'Custom'];
+	const selectedIntervalOptions = ['Day', 'Week', 'Month', 'Year', 'All', 'Custom'];
 	const [selectedInterval, setSelectedInterval] = useState(selectedIntervalOptions[0]);
 	const [selectedDates, setSelectedDates] = useState([new Date()]);
 	const [focusDurationForInterval, setFocusDurationForInterval] = useState(0);
@@ -47,12 +54,13 @@ const DetailsCard = () => {
 	const [endDate, setEndDate] = useState(new Date());
 
 	useEffect(() => {
-		if (!focusRecordsGroupedByDate || !projectsById || !tasksById) {
+		if (!focusRecords || !focusRecordsGroupedByDate || !projectsById || !tasksById) {
 			return;
 		}
 
 		// Get all the completed tasks from the selected interval of dates
-		const allFocusRecordsForInterval = getFocusRecordsFromSelectedDates(selectedDates);
+		const allFocusRecordsForInterval =
+			selectedInterval === 'All' ? focusRecords : getFocusRecordsFromSelectedDates(selectedDates);
 		const newNumOfFocusRecords = allFocusRecordsForInterval.length;
 		const newFocusDurationForInterval = getFocusDurationFromArray(allFocusRecordsForInterval);
 
@@ -81,7 +89,16 @@ const DetailsCard = () => {
 
 		setProgressBarData(newProgressBarData);
 		setFocusDurationForInterval(newFocusDurationForInterval);
-	}, [focusRecordsGroupedByDate, selectedDates, projectsById, tagsByRawName, selected, tasksById]);
+	}, [
+		focusRecords,
+		focusRecordsGroupedByDate,
+		selectedDates,
+		projectsById,
+		tagsByRawName,
+		selected,
+		selectedInterval,
+		tasksById,
+	]);
 
 	const getDataByProjects = (allFocusRecordsForInterval, focusDurationForInterval) => {
 		const focusRecordsGroupedByProject = {};
@@ -258,12 +275,23 @@ const DetailsCard = () => {
 		focusRecordsGroupedByTag[UNCLASSIFIED_KEY].push(taskFromFocusRecord);
 	};
 
+	const getPaddingAngle = () => {
+		switch (selectedInterval) {
+			case 'All':
+				return 0.5;
+			case 'Year':
+				return 2;
+			default:
+				return 5;
+		}
+	};
+
 	return (
 		<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col h-full">
 			<div className="flex justify-between items-center">
 				<h3 className="font-bold text-[16px]">Details</h3>
 
-				<div className="flex items-center gap-4">
+				<div className={classNames('flex items-center gap-4', selectedInterval === 'All' && 'py-2')}>
 					<GeneralSelectButtonAndDropdown
 						selected={selected}
 						setSelected={setSelected}
@@ -283,13 +311,15 @@ const DetailsCard = () => {
 						}}
 					/>
 
-					<DateRangePicker
-						selectedDates={selectedDates}
-						setSelectedDates={setSelectedDates}
-						selectedInterval={selectedInterval}
-						startDate={startDate}
-						endDate={endDate}
-					/>
+					{selectedInterval !== 'All' && (
+						<DateRangePicker
+							selectedDates={selectedDates}
+							setSelectedDates={setSelectedDates}
+							selectedInterval={selectedInterval}
+							startDate={startDate}
+							endDate={endDate}
+						/>
+					)}
 				</div>
 			</div>
 
@@ -302,7 +332,7 @@ const DetailsCard = () => {
 							cy={100}
 							innerRadius={85}
 							outerRadius={100}
-							paddingAngle={5}
+							paddingAngle={getPaddingAngle()}
 							dataKey="percentage"
 						>
 							{progressBarData.map((entry, index) => (

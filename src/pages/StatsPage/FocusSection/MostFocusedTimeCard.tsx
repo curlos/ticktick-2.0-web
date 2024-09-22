@@ -65,8 +65,6 @@ const MostFocusedTimeCard = () => {
 	}, [selectedDates, focusRecordsGroupedByDate, focusRecords, selectedInterval]);
 
 	const getTimeBlockTotalsForInterval = () => {
-		console.log(selectedDates);
-
 		const newDailyHourBlocks = getDailyHourBlocks();
 
 		// If the selected interval is "Day", "Week", "Month", "Year", or "Custom"
