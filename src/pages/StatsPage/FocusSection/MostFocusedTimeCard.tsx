@@ -1,7 +1,14 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ResponsiveContainer, BarChart, XAxis, YAxis, Tooltip, CartesianGrid, Bar } from 'recharts';
 import { getFormattedDuration } from '../../../utils/helpers.utils';
 import DateRangePicker from './DateRangePicker';
+import { useStatsContext } from '../../../contexts/useStatsContext';
+import {
+	convertTo12HourFormat,
+	getDailyHourBlocks,
+	getFormattedLongDay,
+	getTimeInBlocks,
+} from '../../../utils/date.utils';
 
 const data = [
 	{
@@ -35,7 +42,64 @@ const data = [
 ];
 
 const MostFocusedTimeCard = () => {
-	const [selectedDates, setSelectedDates] = useState([new Date()]);
+	const { focusRecordsGroupedByDate } = useStatsContext();
+	const [selectedDates, setSelectedDates] = useState([new Date('August 1, 2024')]);
+	const [monthTimeBlock, setMonthTimeBlock] = useState({});
+	const [data, setData] = useState([]);
+
+	// For each day in the selectedDates, get the focus records array for that date and go through each focus record and add it to the time block based on the start and end time.
+
+	useEffect(() => {
+		if (selectedDates?.length > 0 && focusRecordsGroupedByDate) {
+			getNewMonthTimeBlock();
+		}
+	}, [selectedDates, focusRecordsGroupedByDate]);
+
+	const getNewMonthTimeBlock = () => {
+		console.log(selectedDates);
+
+		const newDailyHourBlocks = getDailyHourBlocks();
+
+		for (let date of selectedDates) {
+			const dateKey = getFormattedLongDay(date);
+			const focusRecordsForTheDay = focusRecordsGroupedByDate[dateKey];
+
+			if (focusRecordsForTheDay) {
+				for (let focusRecord of focusRecordsForTheDay) {
+					const { startTime, endTime, pauseDuration, tasks } = focusRecord;
+
+					if (tasks?.length > 0) {
+						for (let task of tasks) {
+							const { startTime, endTime } = task;
+							const timeInBlocks = getTimeInBlocks(startTime, endTime);
+
+							for (let timeBlock of timeInBlocks) {
+								const { from, to, seconds } = timeBlock;
+
+								newDailyHourBlocks[from].seconds += seconds;
+							}
+						}
+					} else {
+						console.log('TODO:');
+					}
+				}
+			}
+		}
+
+		console.log(newDailyHourBlocks);
+
+		const newData = Object.keys(newDailyHourBlocks).map((timeHourBlockKey) => {
+			const timeHourBlock = newDailyHourBlocks[timeHourBlockKey];
+			const { from, seconds } = timeHourBlock;
+
+			return {
+				name: convertTo12HourFormat(from),
+				seconds,
+			};
+		});
+
+		setData(newData);
+	};
 
 	return (
 		<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col h-[350px]">

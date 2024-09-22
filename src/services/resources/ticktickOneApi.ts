@@ -33,7 +33,7 @@ export const tickTickOneApi = baseAPI.injectEndpoints({
 				const { completedTasksGroupedByDate, completedTasksGroupedByProject, completedTasksGroupedByTag } =
 					getGroupedCompletedTasks(tasks);
 
-				console.log(completedTasksGroupedByTag);
+				// console.log(completedTasksGroupedByTag);
 
 				let totalCompletedTasks = 0;
 

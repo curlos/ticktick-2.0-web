@@ -120,12 +120,11 @@ const DetailsCard = () => {
 			}
 		});
 
-		console.log(focusRecordsGroupedByProject);
+		// console.log(focusRecordsGroupedByProject);
 
 		let sum = 0;
-		console.log(Object.values(focusRecordsGroupedByProject).forEach((arr) => (sum += arr.length)));
-
-		console.log(sum);
+		// console.log(Object.values(focusRecordsGroupedByProject).forEach((arr) => (sum += arr.length)));
+		// console.log(sum);
 
 		return Object.keys(focusRecordsGroupedByProject).map((projectId) => {
 			const focusRecordsArr = focusRecordsGroupedByProject[projectId];
@@ -181,7 +180,7 @@ const DetailsCard = () => {
 						if (!tags || tags.length === 0) {
 							addFocusRecordToUnclassified(task, focusRecordsGroupedByTag);
 						} else {
-							console.log(tasksById[taskId]);
+							// console.log(tasksById[taskId]);
 
 							for (let tagName of tags) {
 								if (!focusRecordsGroupedByTag[tagName]) {
@@ -196,7 +195,7 @@ const DetailsCard = () => {
 			}
 		});
 
-		console.log(focusRecordsGroupedByTag);
+		// console.log(focusRecordsGroupedByTag);
 
 		const taskAlreadyAppearedInAnotherTag = {};
 

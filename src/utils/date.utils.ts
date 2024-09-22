@@ -751,3 +751,74 @@ export const getTimeSince = (date) => {
 		years: years,
 	};
 };
+
+export const getTimeInBlocks = (startTime, endTime) => {
+	// Parse timestamps
+	const start = new Date(startTime);
+	const end = new Date(endTime);
+
+	// Normalize the start time to the start of the hour
+	const startHour = new Date(start);
+	startHour.setMinutes(0, 0, 0);
+
+	const results = [];
+
+	// Loop over each hour block from startHour until end
+	while (startHour <= end) {
+		const nextHour = new Date(startHour);
+		nextHour.setHours(nextHour.getHours() + 1);
+
+		// Calculate the overlap of the current hour block with the [start, end] interval
+		const overlapStart = startHour < start ? start : startHour;
+		const overlapEnd = nextHour > end ? end : nextHour;
+
+		// Calculate seconds in the current block, if any
+		if (overlapStart < overlapEnd) {
+			const duration = (overlapEnd - overlapStart) / 1000; // convert milliseconds to seconds
+			results.push({
+				from: `${startHour.getHours().toString().padStart(2, '0')}:00`,
+				to: `${nextHour.getHours().toString().padStart(2, '0')}:00`,
+				seconds: duration,
+			});
+		}
+
+		// Move to the next hour block
+		startHour.setHours(startHour.getHours() + 1);
+	}
+
+	return results;
+};
+
+export const getDailyHourBlocks = () => {
+	const hourBlocks = {};
+
+	// Loop over each hour of the day
+	for (let hour = 0; hour < 24; hour++) {
+		// Format the hour to "HH:00" format
+		const fromHour = `${hour.toString().padStart(2, '0')}:00`;
+		const toHour = `${(hour + 1).toString().padStart(2, '0')}:00`;
+
+		// Initialize each block with from, to, and seconds set to 0
+		hourBlocks[fromHour] = {
+			from: fromHour,
+			to: toHour,
+			seconds: 0,
+		};
+	}
+
+	return hourBlocks;
+};
+
+export const convertTo12HourFormat = (hour24) => {
+	// Convert the hour string to an integer
+	const hour = parseInt(hour24.substring(0, 2), 10);
+
+	// Determine AM or PM suffix
+	const suffix = hour >= 12 ? 'PM' : 'AM';
+
+	// Convert 24-hour time to 12-hour format
+	const hour12 = hour % 12 === 0 ? 12 : hour % 12;
+
+	// Return formatted string
+	return `${hour12}:00 ${suffix}`;
+};

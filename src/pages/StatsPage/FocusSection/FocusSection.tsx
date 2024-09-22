@@ -45,9 +45,13 @@ const FocusSection = () => {
 			</div>
 
 			<div className="grid grid-cols-2 gap-5 mt-5">
+				{/* TODO: */}
 				{/* <TrendsCard /> */}
+				{/* TODO: */}
 				{/* <TimelineCard /> */}
-				{/* <MostFocusedTimeCard /> */}
+
+				{/* TODO: */}
+				<MostFocusedTimeCard />
 				<YearGridsCard />
 			</div>
 		</div>
