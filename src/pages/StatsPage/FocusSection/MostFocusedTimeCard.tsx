@@ -12,37 +12,6 @@ import {
 import ModalPickDateRange from './ModalPickDateRange';
 import GeneralSelectButtonAndDropdown from '../GeneralSelectButtonAndDropdown';
 
-const data = [
-	{
-		name: 'July 8',
-		seconds: 15060,
-	},
-	{
-		name: 'July 9',
-		seconds: 19140,
-	},
-	{
-		name: 'July 10',
-		seconds: 20040,
-	},
-	{
-		name: 'July 11',
-		seconds: 20940,
-	},
-	{
-		name: 'July 12',
-		seconds: 18180,
-	},
-	{
-		name: 'July 13',
-		seconds: 21600,
-	},
-	{
-		name: 'July 14',
-		seconds: 10800,
-	},
-];
-
 const MostFocusedTimeCard = () => {
 	const { focusRecords, focusRecordsGroupedByDate } = useStatsContext();
 	const [selectedDates, setSelectedDates] = useState([new Date('August 1, 2024')]);
@@ -162,7 +131,12 @@ const MostFocusedTimeCard = () => {
 					barSize={10}
 				>
 					<XAxis dataKey="name" scale="point" padding={{ left: 10, right: 10 }} />
-					<YAxis dataKey="seconds" tickFormatter={(value) => `${getFormattedDuration(value, false)}`} />
+					<YAxis
+						dataKey="seconds"
+						type="number"
+						domain={['dataMin', 'dataMax']}
+						tickFormatter={(value) => `${getFormattedDuration(value, false)}`}
+					/>
 					<Tooltip
 						content={({ payload }) => {
 							// "payload" property is an empty array if the tooltip is not active. Otherwise, if it is active, then it'll show an element in the "payload" array.

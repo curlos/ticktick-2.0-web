@@ -357,6 +357,10 @@ export const getFormattedLongDay = (inputDate) => {
 	return inputDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 };
 
+export const getFormattedShortMonthDay = (inputDate) => {
+	return inputDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+};
+
 export const getCalendarMonth = (year, month, weeksInCalendar = 6) => {
 	const calendar = [];
 	const firstDayOfMonth = new Date(year, month, 1);
@@ -821,4 +825,15 @@ export const convertTo12HourFormat = (hour24) => {
 
 	// Return formatted string
 	return `${hour12}:00 ${suffix}`;
+};
+
+export const hasDatePassed = (inputDate) => {
+	// Create a Date object from the input string
+	const givenDate = new Date(inputDate);
+
+	// Get the current date and time
+	const currentDate = new Date();
+
+	// Compare the given date with the current date
+	return givenDate < currentDate;
 };

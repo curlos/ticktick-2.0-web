@@ -6,6 +6,7 @@ import {
 	formatCheckedInDayDate,
 	getAllDaysInYearFromDate,
 	getAllDaysInRange,
+	getFormattedShortMonthDay,
 } from '../../../utils/date.utils';
 
 const DateRangePicker = ({ selectedDates, setSelectedDates, selectedInterval, startDate, endDate }) => {
@@ -59,7 +60,7 @@ const DateRangePicker = ({ selectedDates, setSelectedDates, selectedInterval, st
 			case 'Day':
 				return formatCheckedInDayDate(selectedDates[0]);
 			case 'Week':
-				return `${formatCheckedInDayDate(selectedDates[0])} - ${formatCheckedInDayDate(selectedDates[selectedDates.length - 1])}`;
+				return `${getFormattedShortMonthDay(selectedDates[0])} - ${getFormattedShortMonthDay(selectedDates[selectedDates.length - 1])}`;
 			case 'Month':
 				return selectedDates[0].toLocaleString('default', { month: 'long', year: 'numeric' });
 			case 'Year':

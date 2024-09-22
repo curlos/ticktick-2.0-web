@@ -1,45 +1,17 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import GeneralSelectButtonAndDropdown from '../GeneralSelectButtonAndDropdown';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import DateRangePicker from './DateRangePicker';
 import ModalPickDateRange from './ModalPickDateRange';
-
-const data = [
-	{
-		name: 'July 8',
-		score: 2,
-	},
-	{
-		name: 'July 9',
-		score: 2,
-	},
-	{
-		name: 'July 10',
-		score: 7,
-	},
-	{
-		name: 'July 11',
-		score: 1,
-	},
-	{
-		name: 'July 12',
-		score: 1,
-	},
-	{
-		name: 'July 13',
-		score: 8,
-	},
-	{
-		name: 'July 14',
-		score: 4,
-	},
-];
+import { useStatsContext } from '../../../contexts/useStatsContext';
+import { getFormattedLongDay, getFormattedShortMonthDay, hasDatePassed } from '../../../utils/date.utils';
+import { getFocusDurationFromArray, getFormattedDuration } from '../../../utils/helpers.utils';
 
 const TrendsCard = () => {
-	const selectedOptions = ['List', 'Tag', 'Task'];
-	const [selected, setSelected] = useState(selectedOptions[0]);
+	const { focusRecords, focusRecordsGroupedByDate } = useStatsContext();
 
-	const selectedIntervalOptions = ['Day', 'Week', 'Month', 'Year', 'Custom'];
+	const [data, setData] = useState([]);
+	const selectedIntervalOptions = ['Week', 'Month', 'Year', 'All', 'Custom'];
 	const [selectedInterval, setSelectedInterval] = useState(selectedIntervalOptions[0]);
 	const [selectedDates, setSelectedDates] = useState([new Date()]);
 
@@ -47,6 +19,78 @@ const TrendsCard = () => {
 	const [isModalPickDateRangeOpen, setIsModalPickDateRangeOpen] = useState(false);
 	const [startDate, setStartDate] = useState(new Date('January 1, 2024'));
 	const [endDate, setEndDate] = useState(new Date());
+
+	useEffect(() => {
+		if (selectedInterval === 'All' && focusRecords) {
+			const newData = [];
+
+			Object.keys(focusRecordsGroupedByDate).forEach((dateKey) => {
+				const focusRecordsForDay = focusRecordsGroupedByDate[dateKey];
+				const focusDurationForDay = getFocusDurationFromArray(focusRecordsForDay);
+
+				newData.push({
+					name: dateKey,
+					seconds: focusDurationForDay,
+				});
+			});
+
+			setData(newData);
+		} else if (selectedInterval !== 'All' && selectedDates?.length > 0 && focusRecordsGroupedByDate) {
+			const newData = [];
+
+			for (let date of selectedDates) {
+				const dateKey = getFormattedLongDay(date);
+
+				const focusRecordsForDay = focusRecordsGroupedByDate[dateKey];
+				const focusDurationForDay = getFocusDurationFromArray(focusRecordsForDay);
+
+				newData.push({
+					name: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+					seconds: focusDurationForDay,
+				});
+			}
+
+			setData(newData);
+		}
+	}, [selectedDates, selectedInterval, focusRecordsGroupedByDate, focusRecords]);
+
+	const getNewData = (selectedDates) => {
+		const newData = [];
+
+		for (let date of selectedDates) {
+			const dateKey = getFormattedLongDay(date);
+
+			const focusRecordsForDay = focusRecordsGroupedByDate[dateKey];
+			const focusDurationForDay = getFocusDurationFromArray(focusRecordsForDay);
+
+			newData.push({
+				name: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+				seconds: focusDurationForDay,
+			});
+		}
+
+		console.log(newData);
+
+		return newData;
+	};
+
+	const getAverage = () => {
+		let totalSeconds = 0;
+		let daysWithAtLeastOneFocusRecord = 0;
+
+		data.forEach((day) => {
+			const { seconds } = day;
+			totalSeconds += seconds;
+
+			if (seconds) {
+				daysWithAtLeastOneFocusRecord += 1;
+			}
+		});
+
+		const averageSeconds = totalSeconds / daysWithAtLeastOneFocusRecord;
+
+		return `Daily Average: ${getFormattedDuration(averageSeconds, false)}`;
+	};
 
 	return (
 		<div className="bg-color-gray-600 p-3 rounded-lg flex flex-col h-[350px]">
@@ -77,7 +121,7 @@ const TrendsCard = () => {
 				</div>
 			</div>
 
-			<div className="text-color-gray-100 mb-2">Daily Average: 5h36m</div>
+			<div className="text-color-gray-100 mb-2">{getAverage()}</div>
 
 			<ResponsiveContainer width="100%" height="100%">
 				<AreaChart
@@ -92,10 +136,6 @@ const TrendsCard = () => {
 					}}
 				>
 					<defs>
-						{/* <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-							<stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
-							<stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
-						</linearGradient> */}
 						<linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
 							<stop offset="30%" stopColor="#3b82f6" stopOpacity={0.8} />
 							<stop offset="95%" stopColor="black" stopOpacity={0} />
@@ -103,7 +143,12 @@ const TrendsCard = () => {
 					</defs>
 					<CartesianGrid strokeDasharray="5" strokeOpacity={0.3} />
 					<XAxis dataKey="name" />
-					<YAxis />
+					<YAxis
+						dataKey="seconds"
+						type="number"
+						domain={['dataMin', 'dataMax']}
+						tickFormatter={(seconds) => getFormattedDuration(seconds, false)}
+					/>
 					<Tooltip
 						offset={10}
 						contentStyle={{
@@ -112,16 +157,16 @@ const TrendsCard = () => {
 						content={({ payload }) => {
 							// "payload" property is an empty array if the tooltip is not active. Otherwise, if it is active, then it'll show an element in the "payload" array.
 							if (payload && payload[0]) {
-								const { name, score } = payload[0].payload;
+								const { name, seconds } = payload[0].payload;
 								return (
-									<div className="bg-black text-blue-500 p-2 rounded-md">{`${name}, ${score}`}</div>
+									<div className="bg-black text-blue-500 p-2 rounded-md">{`${name}, ${getFormattedDuration(seconds, false)}`}</div>
 								);
 							}
 
 							return null;
 						}}
 					/>
-					<Area type="monotone" dataKey="score" stroke="#3b82f6" strokeWidth={3} fill="url(#colorPv)" />
+					<Area type="monotone" dataKey="seconds" stroke="#3b82f6" strokeWidth={3} fill="url(#colorPv)" />
 				</AreaChart>
 			</ResponsiveContainer>
 
