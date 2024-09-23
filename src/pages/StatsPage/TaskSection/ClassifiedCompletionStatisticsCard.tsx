@@ -60,7 +60,9 @@ const ClassifiedCompletionStatisticsCard = ({ selectedTimeInterval, selectedDate
 		}
 
 		setNumOfCompletedTasks(newNumOfCompletedTasks);
-		setProgressBarData(newProgressBarData);
+
+		const sortedProgressBarData = newProgressBarData.sort((a, b) => b.value - a.value);
+		setProgressBarData(sortedProgressBarData);
 	}, [completedTasksGroupedByDate, selectedDates, projectsById, tagsByRawName, selected]);
 
 	const getDataByProjects = (allCompletedTasksForInterval, newNumOfCompletedTasks) => {
@@ -232,9 +234,7 @@ const ClassifiedCompletionStatisticsCard = ({ selectedTimeInterval, selectedDate
 					</PieChart>
 				</div>
 
-				{!thereIsNoData && (
-					<SmallLabelList progressBarData={progressBarData} />
-				)}
+				{!thereIsNoData && <SmallLabelList progressBarData={progressBarData} />}
 			</div>
 		</div>
 	);
