@@ -578,6 +578,7 @@ export const getAllTasksAndItemsTickTickOne = (tasks) => {
 };
 
 export const getGroupedCompletedTasks = (tasks) => {
+	const allCompletedTasks = [];
 	const completedTasksGroupedByDate = {};
 	const completedTasksGroupedByProject = {};
 	const completedTasksGroupedByTag = {};
@@ -609,6 +610,7 @@ export const getGroupedCompletedTasks = (tasks) => {
 
 		completedTasksGroupedByDate[completedTimeKey].push(taskWithAllProperties);
 		completedTasksGroupedByProject[projectId].push(taskWithAllProperties);
+		allCompletedTasks.push(taskWithAllProperties);
 	};
 
 	for (let task of tasks) {
@@ -636,6 +638,7 @@ export const getGroupedCompletedTasks = (tasks) => {
 		completedTasksGroupedByDate,
 		completedTasksGroupedByProject,
 		completedTasksGroupedByTag,
+		allCompletedTasks,
 	};
 };
 

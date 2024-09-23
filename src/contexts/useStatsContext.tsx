@@ -26,6 +26,7 @@ const useStats = () => {
 		tasksById,
 		allTasksAndItems,
 		totalCompletedTasks,
+		allCompletedTasks,
 		completedTasksGroupedByDate,
 		completedTasksGroupedByProject,
 	} = fetchedTasks || {};
@@ -243,6 +244,7 @@ const useStats = () => {
 		statsForLastSevenMonths,
 
 		// From RTK Query
+		allCompletedTasks,
 		completedTasksGroupedByDate,
 		completedTasksGroupedByProject,
 		tasksById,

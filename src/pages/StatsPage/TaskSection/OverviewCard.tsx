@@ -9,7 +9,8 @@ import {
 import classNames from 'classnames';
 
 const OverviewCard = ({ selectedTimeInterval, selectedDates }) => {
-	const { completedTasksGroupedByDate, getCompletedTasksFromSelectedDates } = useStatsContext() || {};
+	const { allCompletedTasks, completedTasksGroupedByDate, getCompletedTasksFromSelectedDates } =
+		useStatsContext() || {};
 	const [numOfCompletedTasksForInterval, setNumOfCompletedTasksForInterval] = useState(0);
 	const [diffOfCompletedTasksFromPrevInterval, setDiffOfCompletedTasksFromPrevInterval] = useState({
 		numDiff: 0,
@@ -21,17 +22,21 @@ const OverviewCard = ({ selectedTimeInterval, selectedDates }) => {
 			return;
 		}
 
-		const prevIntervalDates = getPrevIntervalDates();
-		const currIntervalDates = selectedDates;
-		const prevIntervalCompletedTasks = getCompletedTasksFromSelectedDates(prevIntervalDates).length;
-		const currIntervalCompletedTasks = getCompletedTasksFromSelectedDates(currIntervalDates).length;
+		if (selectedTimeInterval === 'All') {
+			setNumOfCompletedTasksForInterval(allCompletedTasks.length);
+		} else {
+			const prevIntervalDates = getPrevIntervalDates();
+			const currIntervalDates = selectedDates;
+			const prevIntervalCompletedTasks = getCompletedTasksFromSelectedDates(prevIntervalDates).length;
+			const currIntervalCompletedTasks = getCompletedTasksFromSelectedDates(currIntervalDates).length;
 
-		setNumOfCompletedTasksForInterval(currIntervalCompletedTasks);
-		setDiffOfCompletedTasksFromPrevInterval({
-			numDiff: Math.abs(currIntervalCompletedTasks - prevIntervalCompletedTasks),
-			lessThanPrev: currIntervalCompletedTasks < prevIntervalCompletedTasks,
-		});
-	}, [completedTasksGroupedByDate, selectedDates]);
+			setNumOfCompletedTasksForInterval(currIntervalCompletedTasks);
+			setDiffOfCompletedTasksFromPrevInterval({
+				numDiff: Math.abs(currIntervalCompletedTasks - prevIntervalCompletedTasks),
+				lessThanPrev: currIntervalCompletedTasks < prevIntervalCompletedTasks,
+			});
+		}
+	}, [completedTasksGroupedByDate, selectedDates, selectedTimeInterval]);
 
 	const getPrevIntervalDates = () => {
 		const date = new Date(selectedDates[0]);
@@ -77,26 +82,30 @@ const OverviewCard = ({ selectedTimeInterval, selectedDates }) => {
 				<div className="grid grid-cols-1 w-full">
 					<div className="flex flex-col items-center p-2">
 						<div className="text-blue-500 font-bold text-[24px]">{numOfCompletedTasksForInterval}</div>
-						<div className="text-color-gray-100 font-medium">Completed Task</div>
-						<div className="text-color-gray-100 flex items-center gap-1">
-							<div>
-								{diffOfCompletedTasksFromPrevInterval.numDiff} from {getPrevIntervalName()}
-							</div>
-							<Icon
-								name={
-									diffOfCompletedTasksFromPrevInterval.lessThanPrev
-										? 'arrow_downward'
-										: 'arrow_upward'
-								}
-								fill={1}
-								customClass={classNames(
-									'!text-[18px]',
-									diffOfCompletedTasksFromPrevInterval.lessThanPrev
-										? 'text-red-500'
-										: 'text-emerald-500'
-								)}
-							/>
+						<div className="text-color-gray-100 font-medium">
+							{numOfCompletedTasksForInterval > 1 ? 'Completed Tasks' : 'Completed Task'}
 						</div>
+						{selectedTimeInterval !== 'All' && (
+							<div className="text-color-gray-100 flex items-center gap-1">
+								<div>
+									{diffOfCompletedTasksFromPrevInterval.numDiff} from {getPrevIntervalName()}
+								</div>
+								<Icon
+									name={
+										diffOfCompletedTasksFromPrevInterval.lessThanPrev
+											? 'arrow_downward'
+											: 'arrow_upward'
+									}
+									fill={1}
+									customClass={classNames(
+										'!text-[18px]',
+										diffOfCompletedTasksFromPrevInterval.lessThanPrev
+											? 'text-red-500'
+											: 'text-emerald-500'
+									)}
+								/>
+							</div>
+						)}
 					</div>
 				</div>
 			</div>

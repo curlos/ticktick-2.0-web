@@ -3,7 +3,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { useStatsContext } from '../../../contexts/useStatsContext';
 import { getFormattedLongDay, getLast7Days } from '../../../utils/date.utils';
 
-const CompletionDistributionCard = ({ selectedDates }) => {
+const CompletionDistributionCard = ({ selectedTimeInterval, selectedDates }) => {
 	const { completedTasksGroupedByDate } = useStatsContext();
 
 	const lastSevenDays = getLast7Days();
@@ -21,10 +21,36 @@ const CompletionDistributionCard = ({ selectedDates }) => {
 
 		const newData = getCompletedTasksData();
 
+		console.log(newData);
+
 		setData(newData);
-	}, [completedTasksGroupedByDate, selectedDates]);
+	}, [completedTasksGroupedByDate, selectedDates, selectedTimeInterval]);
 
 	const getCompletedTasksData = () => {
+		if (selectedTimeInterval === 'All') {
+			return Object.keys(completedTasksGroupedByDate).map((dateKey) => {
+				const date = new Date(dateKey);
+				const completedTasksForDateArr = completedTasksGroupedByDate[dateKey] || [];
+
+				const dayShortName = date.toLocaleDateString('en-US', {
+					month: 'short',
+					day: 'numeric',
+					year: 'numeric',
+				});
+				const dayLongName = date.toLocaleDateString('en-US', {
+					month: 'long',
+					day: 'numeric',
+					year: 'numeric',
+				});
+
+				return {
+					name: dayShortName,
+					fullName: dayLongName,
+					completedTasks: completedTasksForDateArr.length,
+				};
+			});
+		}
+
 		return selectedDates.map((date) => {
 			const dateKey = getFormattedLongDay(date);
 			const completedTasksForDateArr = completedTasksGroupedByDate[dateKey] || [];

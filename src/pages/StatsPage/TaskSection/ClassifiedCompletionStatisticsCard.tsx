@@ -16,9 +16,15 @@ const noData = [
 	},
 ];
 
-const ClassifiedCompletionStatisticsCard = ({ selectedDates }) => {
-	const { completedTasksGroupedByDate, getCompletedTasksFromSelectedDates, projectsById, tags, tagsByRawName } =
-		useStatsContext() || {};
+const ClassifiedCompletionStatisticsCard = ({ selectedTimeInterval, selectedDates }) => {
+	const {
+		allCompletedTasks,
+		completedTasksGroupedByDate,
+		getCompletedTasksFromSelectedDates,
+		projectsById,
+		tags,
+		tagsByRawName,
+	} = useStatsContext() || {};
 
 	const selectedOptions = ['Project', 'Tag'];
 	const [selected, setSelected] = useState(selectedOptions[0]);
@@ -33,7 +39,8 @@ const ClassifiedCompletionStatisticsCard = ({ selectedDates }) => {
 		}
 
 		// Get all the completed tasks from the selected interval of dates
-		const allCompletedTasksForInterval = getCompletedTasksFromSelectedDates(selectedDates);
+		const allCompletedTasksForInterval =
+			selectedTimeInterval === 'All' ? allCompletedTasks : getCompletedTasksFromSelectedDates(selectedDates);
 		const newNumOfCompletedTasks = allCompletedTasksForInterval.length;
 
 		let newProgressBarData = progressBarData;
