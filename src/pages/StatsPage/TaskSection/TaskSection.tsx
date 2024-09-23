@@ -96,24 +96,26 @@ const TaskSection = () => {
 				</div>
 
 				{/* TODO: In the future, it might be a good idea to use the DropdownCalendar to select a range of dates from the calendar in a more custom manner. I think the IOS app lets you do it so should do it that way. */}
-				<div className="flex justify-between gap-3 bg-color-gray-600 py-2 px-2 rounded-md">
-					<Icon
-						name="keyboard_arrow_left"
-						customClass="!text-[18px] mt-[2px] cursor-pointer"
-						onClick={() => handleArrowClick('left')}
-					/>
-					<div>{getFormattedSelectedDates()}</div>
-					<Icon
-						name="keyboard_arrow_right"
-						customClass="!text-[18px] mt-[2px] cursor-pointer"
-						onClick={() => handleArrowClick('right')}
-					/>
-				</div>
+				{selectedTimeInterval !== 'All' && (
+					<div className="flex justify-between gap-3 bg-color-gray-600 py-2 px-2 rounded-md">
+						<Icon
+							name="keyboard_arrow_left"
+							customClass="!text-[18px] mt-[2px] cursor-pointer"
+							onClick={() => handleArrowClick('left')}
+						/>
+						<div>{getFormattedSelectedDates()}</div>
+						<Icon
+							name="keyboard_arrow_right"
+							customClass="!text-[18px] mt-[2px] cursor-pointer"
+							onClick={() => handleArrowClick('right')}
+						/>
+					</div>
+				)}
 			</div>
 
 			<div className="grid grid-cols-2 gap-5 mt-3">
 				<OverviewCard {...{ selectedTimeInterval, selectedDates }} />
-				<CompletionDistributionCard {...{ selectedTimeInterval, selectedDates }} />
+				<CompletionDistributionCard {...{ selectedDates }} />
 				{/* <CompletionRateDistributionCard /> */}
 				<ClassifiedCompletionStatisticsCard {...{ selectedTimeInterval, selectedDates }} />
 			</div>

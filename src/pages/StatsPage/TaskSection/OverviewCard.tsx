@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
 import Icon from '../../../components/Icon';
 import { useStatsContext } from '../../../contexts/useStatsContext';
-import { getAllDaysInMonthFromDate, getAllDaysInWeekFromDate } from '../../../utils/date.utils';
+import {
+	getAllDaysInMonthFromDate,
+	getAllDaysInWeekFromDate,
+	getAllDaysInYearFromDate,
+} from '../../../utils/date.utils';
 import classNames from 'classnames';
 
 const OverviewCard = ({ selectedTimeInterval, selectedDates }) => {
@@ -33,15 +37,18 @@ const OverviewCard = ({ selectedTimeInterval, selectedDates }) => {
 		const date = new Date(selectedDates[0]);
 
 		switch (selectedTimeInterval) {
-			case 'Daily':
+			case 'Day':
 				date.setDate(date.getDate() - 1);
 				return [date];
-			case 'Weekly':
+			case 'Week':
 				date.setDate(date.getDate() - 7);
 				return getAllDaysInWeekFromDate(date);
-			case 'Monthly':
+			case 'Month':
 				date.setMonth(date.getMonth() + -1);
 				return getAllDaysInMonthFromDate(date);
+			case 'Year':
+				date.setFullYear(date.getFullYear() + -1);
+				return getAllDaysInYearFromDate(date);
 			default:
 				return [];
 		}
@@ -49,12 +56,14 @@ const OverviewCard = ({ selectedTimeInterval, selectedDates }) => {
 
 	const getPrevIntervalName = () => {
 		switch (selectedTimeInterval) {
-			case 'Daily':
+			case 'Day':
 				return 'yesterday';
-			case 'Weekly':
+			case 'Week':
 				return 'last week';
-			case 'Monthly':
+			case 'Month':
 				return 'last month';
+			case 'Year':
+				return 'last year';
 			default:
 				return 'yesterday';
 		}

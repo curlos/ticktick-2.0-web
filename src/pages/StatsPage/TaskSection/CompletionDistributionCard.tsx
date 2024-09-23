@@ -1,41 +1,16 @@
 import { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useStatsContext } from '../../../contexts/useStatsContext';
-import { getFormattedLongDay } from '../../../utils/date.utils';
-
-const defaultData = [
-	{
-		name: 'July 8',
-		completedTasks: 2,
-	},
-	{
-		name: 'July 9',
-		completedTasks: 2,
-	},
-	{
-		name: 'July 10',
-		completedTasks: 0,
-	},
-	{
-		name: 'July 11',
-		completedTasks: 1,
-	},
-	{
-		name: 'July 12',
-		completedTasks: 1,
-	},
-	{
-		name: 'July 13',
-		completedTasks: 0,
-	},
-	{
-		name: 'July 14',
-		completedTasks: 1,
-	},
-];
+import { getFormattedLongDay, getLast7Days } from '../../../utils/date.utils';
 
 const CompletionDistributionCard = ({ selectedDates }) => {
 	const { completedTasksGroupedByDate } = useStatsContext();
+
+	const lastSevenDays = getLast7Days();
+	const defaultData = lastSevenDays.map((day) => ({
+		name: day.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+		completedTasks: 0,
+	}));
 
 	const [data, setData] = useState(defaultData);
 

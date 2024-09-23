@@ -16,7 +16,7 @@ const noData = [
 	},
 ];
 
-const ClassifiedCompletionStatisticsCard = ({ selectedTimeInterval, selectedDates }) => {
+const ClassifiedCompletionStatisticsCard = ({ selectedDates }) => {
 	const { completedTasksGroupedByDate, getCompletedTasksFromSelectedDates, projectsById, tags, tagsByRawName } =
 		useStatsContext() || {};
 
