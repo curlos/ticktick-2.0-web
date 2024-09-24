@@ -31,6 +31,7 @@ const TrendsCard = () => {
 	const [endDate, setEndDate] = useState(new Date());
 
 	useEffect(() => {
+		// TODO:
 		if (selectedInterval === 'All' && focusRecords) {
 			const allFocusRecordDates = Object.keys(focusRecordsGroupedByDate).map((dateKey) => new Date(dateKey));
 			const newData = getUpdatedData(allFocusRecordDates);
