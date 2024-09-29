@@ -46,6 +46,7 @@
     "react-tooltip": "^5.26.3",
     "recharts": "^2.13.0-alpha.4",
     "remark-gfm": "^4.0.0",
+    "rollup": "^4.22.5",
     "ts-jest": "^29.1.4",
     "ts-node": "^10.9.2",
     "vite-plugin-pwa": "^0.18.0"
