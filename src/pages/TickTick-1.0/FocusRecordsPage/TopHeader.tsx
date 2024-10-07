@@ -5,6 +5,8 @@ import Icon from '../../../components/Icon';
 import Pagination from '../../../components/Pagination';
 import Fuse from 'fuse.js';
 import { debounce } from '../../../utils/helpers.utils';
+import { useUpdateQueryParams } from '../../../hooks/useUpdateQueryParams';
+import { useLocation } from 'react-router-dom';
 
 const TopHeader = ({
 	topHeaderRef,
@@ -20,7 +22,13 @@ const TopHeader = ({
 	filteredFocusRecords,
 	setFilteredFocusRecords,
 	focusRecordListRef,
+	defaultSortedBy,
 }) => {
+	const updateQueryParams = useUpdateQueryParams();
+	const location = useLocation();
+	const queryParams = new URLSearchParams(location.search);
+	const taskIdToFilterBy = queryParams.get('taskId');
+
 	const DEFAULT_SORT_BY_OPTIONS = ['Newest', 'Oldest', 'Focus Hours: Most-Least', 'Focus Hours: Least-Most'];
 	const [sortByOptions, setSortByOptions] = useState(DEFAULT_SORT_BY_OPTIONS);
 
@@ -59,7 +67,7 @@ const TopHeader = ({
 			// If searchText is empty, consider all focus records as the searched result.
 			searchedItems = defaultFocusRecords.map((focusRecord) => ({ item: focusRecord }));
 			setSortByOptions(DEFAULT_SORT_BY_OPTIONS);
-			setSortedBy('Newest');
+			setSortedBy(defaultSortedBy);
 		} else {
 			// When searchText is not empty, perform the search using Fuse.js
 			searchedItems = fuse.search(searchText);
@@ -67,6 +75,10 @@ const TopHeader = ({
 			const mostRelevantSortByOption = 'Most Relevant';
 			setSortByOptions([mostRelevantSortByOption, ...DEFAULT_SORT_BY_OPTIONS]);
 			setSortedBy(mostRelevantSortByOption);
+		}
+
+		if (searchText.trim() === '' && taskIdToFilterBy) {
+			return;
 		}
 
 		setFilteredFocusRecords(searchedItems.map((result) => result.item));
@@ -85,7 +97,7 @@ const TopHeader = ({
 				<h2 className="font-bold text-[24px]">Focus Records</h2>
 
 				<div className="flex items-center gap-2">
-					<div className="relative">
+					{/* <div className="relative">
 						<div
 							className="flex gap-[2px] bg-color-gray-600 py-2 px-4 rounded-md cursor-pointer"
 							onClick={() => setIsDropdownGroupedByVisible(!isDropdownGroupedByVisible)}
@@ -105,7 +117,7 @@ const TopHeader = ({
 							setSelected={setGroupedBy}
 							selectedOptions={['Date', 'Task', 'Project', 'No Group']}
 						/>
-					</div>
+					</div> */}
 
 					<div className="relative">
 						<div
@@ -124,7 +136,10 @@ const TopHeader = ({
 							isVisible={isDropdownSortedByVisible}
 							setIsVisible={setIsDropdownSortedByVisible}
 							selected={sortedBy}
-							setSelected={setSortedBy}
+							setSelected={(newSortedBy) => {
+								setSortedBy(newSortedBy);
+								updateQueryParams({ sortBy: newSortedBy });
+							}}
 							selectedOptions={sortByOptions}
 						/>
 					</div>

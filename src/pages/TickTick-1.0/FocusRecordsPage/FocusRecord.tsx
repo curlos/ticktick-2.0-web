@@ -4,8 +4,11 @@ import { getFocusDuration, getFormattedDuration } from '../../../utils/helpers.u
 import Icon from '../../../components/Icon';
 import classNames from 'classnames';
 import { useGetAllTasksQuery } from '../../../services/resources/ticktickOneApi';
+import { useUpdateQueryParams } from '../../../hooks/useUpdateQueryParams';
 
 const FocusRecord = ({ focusRecord, showSubtaskTime = true, isLastItemForTheDay = false, focusDuration }) => {
+	const updateQueryParams = useUpdateQueryParams();
+
 	// RTK Query - TickTick 1.0 - Tasks
 	const { data: fetchedTasks, isLoading: isLoadingGetTasks, error: errorGetTasks } = useGetAllTasksQuery();
 	const { completedTasksGroupedByDate } = fetchedTasks || {};
@@ -93,6 +96,16 @@ const FocusRecord = ({ focusRecord, showSubtaskTime = true, isLastItemForTheDay 
 	const completedTasksDuringFocusSession = getAllCompletedTasksDuringFocusRecord();
 	const thereAreCompletedTasks = completedTasksDuringFocusSession && completedTasksDuringFocusSession.length > 0;
 
+	const updateTaskIdQueryParam = (task) => {
+		if (!task || !task.taskId) {
+			return;
+		}
+
+		const { taskId } = task;
+
+		updateQueryParams({ taskId });
+	};
+
 	return (
 		<div className="relative m-0 list-none last:mb-[4px]" style={{ minHeight: '54px' }}>
 			<div className="absolute w-[24px] h-[24px] bg-primary-10 rounded-full flex items-center justify-center">
@@ -134,7 +147,10 @@ const FocusRecord = ({ focusRecord, showSubtaskTime = true, isLastItemForTheDay 
 
 						return (
 							<div key={`${taskId} - ${startTime}`} className="flex justify-between items-center">
-								<h3 className="text-[22px] font-bold truncate md:max-w-[500px] lg:max-w-[700px] xl:max-w-[900px]">
+								<h3
+									onClick={() => updateTaskIdQueryParam(task)}
+									className="text-[22px] font-bold truncate md:max-w-[500px] lg:max-w-[700px] xl:max-w-[900px] cursor-pointer hover:text-blue-500 hover:underline"
+								>
 									{task?.title}
 								</h3>
 

@@ -4,8 +4,15 @@ import GroupedFocusRecordList from './GroupedFocusRecordList';
 import TopHeader from './TopHeader';
 import useMaxHeight from '../../../hooks/useMaxHeight';
 import { useGetPomoAndStopwatchFocusRecordsQuery } from '../../../services/resources/ticktickOneApi';
+import { useLocation } from 'react-router-dom';
+import { tasksApi } from '../../../services/resources/tasksApi';
 
 const FocusRecordsPage = () => {
+	const location = useLocation();
+	const queryParams = new URLSearchParams(location.search);
+	const taskIdToFilterBy = queryParams.get('taskId');
+	const defaultSortedBy = queryParams.get('sortBy') || 'Newest';
+
 	// RTK Query - TickTick 1.0 - Focus Records
 	const {
 		data: fetchedFocusRecords,
@@ -19,7 +26,7 @@ const FocusRecordsPage = () => {
 
 	const focusRecordListRef = useRef(null);
 	const [groupedBy, setGroupedBy] = useState('No Group');
-	const [sortedBy, setSortedBy] = useState('Newest');
+	const [sortedBy, setSortedBy] = useState(defaultSortedBy);
 
 	const maxHeight = useMaxHeight(headerHeight);
 
@@ -38,8 +45,23 @@ const FocusRecordsPage = () => {
 	}, [groupedBy, sortedBy]);
 
 	useEffect(() => {
-		setFilteredFocusRecords(focusRecords);
-	}, [focusRecords]);
+		if (!taskIdToFilterBy) {
+			setFilteredFocusRecords(focusRecords);
+		} else {
+			const taskIdToFilterByStr = String(taskIdToFilterBy);
+			const focusRecordsThatContainTaskId = focusRecords?.filter((focusRecord) => {
+				if (!focusRecord.tasks || focusRecord.tasks.length === 0) {
+					return false;
+				}
+
+				const { tasks } = focusRecord;
+
+				return tasks.find((task) => String(task.taskId) === taskIdToFilterByStr);
+			});
+
+			setFilteredFocusRecords(focusRecordsThatContainTaskId || []);
+		}
+	}, [focusRecords, taskIdToFilterBy]);
 
 	return (
 		<div className="flex max-w-screen max-h-screen bg-color-gray-700">
@@ -64,6 +86,7 @@ const FocusRecordsPage = () => {
 						filteredFocusRecords,
 						setFilteredFocusRecords,
 						focusRecordListRef,
+						defaultSortedBy,
 					}}
 				/>
 

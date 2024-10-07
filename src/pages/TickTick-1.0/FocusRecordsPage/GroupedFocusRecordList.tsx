@@ -1,12 +1,6 @@
 import { useEffect } from 'react';
-import { useGetAllTasksQuery, useGetAllProjectsQuery } from '../../../services/resources/ticktickOneApi';
-import { getFormattedLongDay, sortObjectByDateKeys, sortArrayByProperty } from '../../../utils/date.utils';
-import {
-	getFocusDuration,
-	getFormattedDuration,
-	getGroupedFocusRecordsByDate,
-	getGroupedFocusRecordsByTask,
-} from '../../../utils/helpers.utils';
+import { useGetAllTasksQuery } from '../../../services/resources/ticktickOneApi';
+import { getFocusDuration, getFormattedDuration, getGroupedFocusRecordsByDate } from '../../../utils/helpers.utils';
 import FocusRecord from './FocusRecord';
 import GroupedFocusRecordListByDate from './GroupedFocusRecordListByDate';
 
