@@ -561,6 +561,30 @@ export const getFocusDuration = (focusRecord, groupedBy) => {
 	return realFocusTimeSeconds;
 };
 
+export const getFocusDurationFilteredByProjects = (focusRecord, filteredProjects) => {
+	const { tasks } = focusRecord;
+	let totalDurationSeconds = 0;
+
+	const filteredTasks = tasks.filter((task) => {
+		const taskIsFromFilteredProjects = filteredProjects[task.projectName];
+		return taskIsFromFilteredProjects;
+	});
+
+	filteredTasks.forEach((task) => {
+		const { startTime, endTime } = task;
+
+		// Convert ISO string times to Date objects
+		const start = new Date(startTime);
+		const end = new Date(endTime);
+
+		// Calculate the total duration in seconds
+		const durationSeconds = (end - start) / 1000; // Convert milliseconds to seconds
+		totalDurationSeconds += durationSeconds;
+	});
+
+	return totalDurationSeconds;
+};
+
 export const getAllTasksAndItemsTickTickOne = (tasks) => {
 	const allTasksAndItems = [];
 

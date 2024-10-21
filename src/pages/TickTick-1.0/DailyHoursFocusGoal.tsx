@@ -1,7 +1,13 @@
 import { CircularProgressbarWithChildren, buildStyles } from 'react-circular-progressbar';
 import { useGetPomoAndStopwatchFocusRecordsQuery } from '../../services/resources/ticktickOneApi';
 import { areDatesEqual } from '../../utils/date.utils';
-import { getFocusDuration, getFormattedDuration } from '../../utils/helpers.utils';
+import { getFocusDuration, getFocusDurationFilteredByProjects, getFormattedDuration } from '../../utils/helpers.utils';
+
+const CRUCIAL_PROJECTS = {
+	LeetCode: true,
+	'Side Projects': true,
+	'Behavioral Interview Prep': true,
+};
 
 const DailyHoursFocusGoal = () => {
 	// 18,000 seconds = 5 Hours, the daily goal for number of focus hours per day.
@@ -39,10 +45,12 @@ const DailyHoursFocusGoal = () => {
 
 	const getTotalFocusDurationToday = () => {
 		const focusRecordsFromToday = getFocusRecordsFromToday();
+		console.log(focusRecordsFromToday);
+
 		let totalFocusDurationToday = 0;
 
 		focusRecordsFromToday.forEach((focusRecord) => {
-			totalFocusDurationToday += getFocusDuration(focusRecord);
+			totalFocusDurationToday += getFocusDurationFilteredByProjects(focusRecord, CRUCIAL_PROJECTS);
 		});
 
 		return totalFocusDurationToday;
@@ -55,8 +63,6 @@ const DailyHoursFocusGoal = () => {
 
 	const totalFocusDurationToday = getTotalFocusDurationToday();
 	const percentageOfFocusedGoalHours = getPercentageOfFocusedGoalHours();
-
-	// TODO: Related to this but later on, there should be a version of this added that will get a require daily number of hours for a specific list or task that can be connected to the goal. I'll have to add a backend endpoint and probably a model in the DB to handle these new changes to connect tasks.
 
 	return (
 		<div>
